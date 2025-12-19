@@ -5,6 +5,10 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "build": "pnpm build:dingbat",
+    "build:dingbat": "esbuild src/js/dingbat.js --bundle --format=iife --outfile=js/dingbat.js --platform=browser --target=es2020 --sourcemap --external:jquery",
+    "build:divs2slides": "esbuild src/js/divs2slides.js --bundle --format=iife --outfile=js/divs2slides.js --platform=browser --target=es2020 --sourcemap --external:jquery",
+    "build:pptxjs": "esbuild src/js/pptxjs.js --bundle --format=iife --outfile=js/pptxjs.js --platform=browser --target=es2020 --sourcemap --external:jquery --external:fs",
     "test": "vitest --run --browser.headless",
     "test:ui": "vitest --ui",
     "test:watch": "vitest"
@@ -25,11 +29,15 @@
   "devDependencies": {
     "@types/d3": "^3.5.53",
     "@types/jquery": "^1.10.45",
+    "@types/jszip": "^3.4.1",
     "@types/nvd3": "^1.8.45",
     "@types/tinycolor2": "^1.4.6",
     "@vitest/browser": "^4.0.16",
     "@vitest/browser-playwright": "^4.0.16",
+    "esbuild": "^0.27.2",
+    "jscodeshift": "^17.3.0",
     "playwright": "^1.57.0",
+    "ts-migrate": "^0.1.35",
     "typescript": "^5.9.3",
     "vite": "^7.3.0",
     "vite-plugin-node-polyfills": "^0.24.0",

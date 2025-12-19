@@ -870,3 +870,5 @@ var dingbat_unicode = [
     {"f": "Wingdings 3", "code": "239",  "unicode": "129173"},
     {"f": "Wingdings 3", "code": "240",  "unicode": "129175"}
 ]
+
+window.dingbat_unicode = dingbat_unicode;

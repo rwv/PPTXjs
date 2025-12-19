@@ -64,3 +64,11 @@ Thumbs.db
 other-repo-code/
 
 # **/__screenshots__/
+
+# Built files (source is in src/js/)
+/js/dingbat.js
+/js/dingbat.js.map
+/js/divs2slides.js
+/js/divs2slides.js.map
+/js/pptxjs.js
+/js/pptxjs.js.map
