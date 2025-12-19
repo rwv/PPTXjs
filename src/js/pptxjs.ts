@@ -53,6 +53,7 @@ import {
 import { extractChartData } from "./utils/chart";
 import tinycolor from "tinycolor2";
 import { tXml } from "./utils/vendors/txml";
+import type { JsZip } from "./types/jszip";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -208,7 +209,7 @@ import { tXml } from "./utils/vendors/txml";
                 return;
             }
             // @ts-expect-error TS(2304): Cannot find name 'JSZip'.
-            var zip = new JSZip(), s;
+            var zip: JsZip = new JSZip(), s;
             //if (typeof file === 'string') { // Load
             zip = zip.load(file);  //zip.load(file, { base64: true });
             var rslt_ary = processPPTX(zip);
@@ -360,7 +361,7 @@ import { tXml } from "./utils/vendors/txml";
 
         }
 
-        function processPPTX(zip: any) {
+        function processPPTX(zip: JsZip) {
             var post_ary = [];
             var dateBefore = new Date();
 
@@ -437,7 +438,7 @@ import { tXml } from "./utils/vendors/txml";
             return post_ary;
         }
 
-        function readXmlFile(zip: any, filename: any, isSlideContent: any) {
+        function readXmlFile(zip: JsZip, filename: any, isSlideContent: any) {
             try {
                 var fileContent = zip.file(filename).asText();
                 if (isSlideContent && app_verssion <= 12) {
@@ -457,7 +458,7 @@ import { tXml } from "./utils/vendors/txml";
             }
 
         }
-        function getContentTypes(zip: any) {
+        function getContentTypes(zip: JsZip) {
             // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var ContentTypesJson = readXmlFile(zip, "[Content_Types].xml");
 
@@ -481,7 +482,7 @@ import { tXml } from "./utils/vendors/txml";
             };
         }
 
-        function getSlideSizeAndSetDefaultTextStyle(zip: any) {
+        function getSlideSizeAndSetDefaultTextStyle(zip: JsZip) {
             //get app version
             // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var app = readXmlFile(zip, "docProps/app.xml");
@@ -543,7 +544,7 @@ import { tXml } from "./utils/vendors/txml";
             };
             return rtenObj;
         }
-        function processSingleSlide(zip: any, sldFileName: any, index: any, slideSize: any) {
+        function processSingleSlide(zip: JsZip, sldFileName: any, index: any, slideSize: any) {
             /*
             self.postMessage({
                 "type": "INFO",
