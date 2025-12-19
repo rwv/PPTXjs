@@ -36,7 +36,7 @@ import {
 } from "./utils/text";
 import { escapeHtml } from "./utils/string";
 import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
-import { getPosition, getSize } from "./utils/layout";
+import { getPosition, getSize, getVerticalAlign } from "./utils/layout";
 import {
   getTextByPathList,
   getTextByPathStr,
@@ -12019,25 +12019,6 @@ import type { JsZip } from "./types/jszip";
             //     return "pregraph-rtl";
             // }
             // return "";
-        }
-        function getVerticalAlign(node: any, slideLayoutSpNode: any, slideMasterSpNode: any, type: any) {
-
-            //X, <a:bodyPr anchor="ctr">, <a:bodyPr anchor="b">
-            var anchor = getTextByPathList(node, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
-            //console.log("getVerticalAlign anchor:", anchor, "slideLayoutSpNode: ", slideLayoutSpNode)
-            if (anchor === undefined) {
-                //console.log("getVerticalAlign type:", type," node:", node, "slideLayoutSpNode:", slideLayoutSpNode, "slideMasterSpNode:", slideMasterSpNode)
-                anchor = getTextByPathList(slideLayoutSpNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
-                if (anchor === undefined) {
-                    anchor = getTextByPathList(slideMasterSpNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
-                    if (anchor === undefined) {
-                        //"If this attribute is omitted, then a value of t, or top is implied."
-                        anchor = "t";//getTextByPathList(slideMasterSpNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
-                    }
-                }
-            }
-            //console.log("getVerticalAlign:", node, slideLayoutSpNode, slideMasterSpNode, type, anchor)
-            return (anchor === "ctr")?"v-mid" : ((anchor === "b") ? "v-down" : "v-up");
         }
 
         function getContentDir(node: any, type: any, warpObj: any) {
