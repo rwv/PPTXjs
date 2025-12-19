@@ -40,9 +40,6 @@ describe('PPTXjs Loading', () => {
       }
 
       console.log(`✓ Successfully loaded ${pages.length} slides`)
-
-      // Clean up
-      element.remove()
     } catch (error) {
       console.error('Test failed:', error)
       throw error
