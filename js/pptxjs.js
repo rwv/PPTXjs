@@ -111,26 +111,15 @@
                 }
             });
         }
-        FileReaderJS.setSync(false);
         if (settings.pptxFileUrl != "") {
             try{
                 JSZipUtils.getBinaryContent(settings.pptxFileUrl, function (err, content) {
                     var blob = new Blob([content]);
-                    var file_name = settings.pptxFileUrl;
-                    var fArry = file_name.split(".");
-                    fArry.pop();
-                    blob.name = fArry[0];
-                    FileReaderJS.setupBlob(blob, {
-                        readAsDefault: "ArrayBuffer",
-                        on: {
-                            load: function (e, file) {
-                                //console.log(e.target.result);
-                                convertToHtml(e.target.result);
-                            }
-                        }
+                    blob.arrayBuffer().then(function(arrayBuffer) {
+                        convertToHtml(arrayBuffer);
                     });
                 });
-            }catch(e){ 
+            }catch(e){
                 console.error("file url error (" + settings.pptxFileUrl+ "0)")
                 $(".slides-loadnig-msg").remove();
             }
@@ -145,14 +134,8 @@
                 //var fileSize = file[0].size;
                 var fileType = file.type;
                 if (fileType == "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
-                    FileReaderJS.setupBlob(file, {
-                        readAsDefault: "ArrayBuffer",
-                        on: {
-                            load: function (e, file) {
-                                //console.log(e.target.result);
-                                convertToHtml(e.target.result);
-                            }
-                        }
+                    file.arrayBuffer().then(function(arrayBuffer) {
+                        convertToHtml(arrayBuffer);
                     });
                 } else {
                     alert("This is not pptx file");

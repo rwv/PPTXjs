@@ -4,7 +4,6 @@ import jqueryMinJs from 'jquery/dist/jquery.min.js?url'
 import jqueryFullscreenJs from 'jquery-fullscreen-plugin/jquery.fullscreen-min.js?url'
 import jszipMinJs from 'jszip/dist/jszip.min.js?url'
 import jszipUtilsJs from 'jszip-utils/dist/jszip-utils.min.js?url'
-import filereaderJs from '../js/filereader.js?url'
 import d3MinJs from 'd3/d3.min.js?url'
 import nvD3MinJs from 'nvd3/build/nv.d3.min.js?url'
 import tinyColorJs from '../node_modules/tinycolor2/dist/tinycolor-min.js?url'
@@ -35,7 +34,6 @@ export async function loadPPTXjs(document: Document) {
     jqueryFullscreenJs,
     jszipMinJs,
     jszipUtilsJs,
-    filereaderJs,
     d3MinJs,
     nvD3MinJs,
     tinyColorJs,
