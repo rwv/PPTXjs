@@ -49,6 +49,7 @@ import {
   setTextByPathList,
   eachElement,
 } from "./utils/object";
+import { extractChartData } from "./utils/chart";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -14535,63 +14536,6 @@ import {
             return color;
         }
 
-        function extractChartData(serNode: any) {
-
-            var dataMat = new Array();
-
-            if (serNode === undefined) {
-                return dataMat;
-            }
-
-            if (serNode["c:xVal"] !== undefined) {
-                var dataRow = new Array();
-                eachElement(serNode["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any, index: any) {
-                    dataRow.push(parseFloat(innerNode["c:v"]));
-                    return "";
-                });
-                dataMat.push(dataRow);
-                dataRow = new Array();
-                eachElement(serNode["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any, index: any) {
-                    dataRow.push(parseFloat(innerNode["c:v"]));
-                    return "";
-                });
-                dataMat.push(dataRow);
-            } else {
-                eachElement(serNode, function (innerNode: any, index: any) {
-                    var dataRow = new Array();
-                    var colName = getTextByPathList(innerNode, ["c:tx", "c:strRef", "c:strCache", "c:pt", "c:v"]) || index;
-
-                    // Category (string or number)
-                    var rowNames = {};
-                    if (getTextByPathList(innerNode, ["c:cat", "c:strRef", "c:strCache", "c:pt"]) !== undefined) {
-                        eachElement(innerNode["c:cat"]["c:strRef"]["c:strCache"]["c:pt"], function (innerNode: any, index: any) {
-                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-                            rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
-                            return "";
-                        });
-                    } else if (getTextByPathList(innerNode, ["c:cat", "c:numRef", "c:numCache", "c:pt"]) !== undefined) {
-                        eachElement(innerNode["c:cat"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any, index: any) {
-                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-                            rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
-                            return "";
-                        });
-                    }
-
-                    // Value
-                    if (getTextByPathList(innerNode, ["c:val", "c:numRef", "c:numCache", "c:pt"]) !== undefined) {
-                        eachElement(innerNode["c:val"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any, index: any) {
-                            dataRow.push({ x: innerNode["attrs"]["idx"], y: parseFloat(innerNode["c:v"]) });
-                            return "";
-                        });
-                    }
-
-                    dataMat.push({ key: colName, values: dataRow, xlabels: rowNames });
-                    return "";
-                });
-            }
-
-            return dataMat;
-        }
 
         // ===== Other utility functions =====
         ///////////////////////Amir////////////////
