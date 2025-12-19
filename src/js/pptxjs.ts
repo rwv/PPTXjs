@@ -12,6 +12,20 @@ import { shapePie } from "./utils/shape/shape-pie";
 import { shapeArc } from "./utils/shape/shape-arc";
 import { shapeSnipRoundRect } from "./utils/shape/shape-snip-round-rect";
 import { shapeGear } from "./utils/shape/shape-gear";
+import {
+  toHex,
+  hslToRgb,
+  hueToRgb,
+  getColorName2Hex,
+  applyShade,
+  applyTint,
+  applyLumOff,
+  applyLumMod,
+  applyHueMod,
+  applySatMod,
+  rgba2hex,
+  angleToDegrees,
+} from "./utils/color";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -14485,43 +14499,6 @@ import { shapeGear } from "./utils/shape/shape-gear";
 
             return color;
         }
-        function toHex(n: any) {
-            var hex = n.toString(16);
-            while (hex.length < 2) { hex = "0" + hex; }
-            return hex;
-        }
-        function hslToRgb(hue: any, sat: any, light: any) {
-            var t1, t2, r, g, b;
-            hue = hue / 60;
-            if (light <= 0.5) {
-                t2 = light * (sat + 1);
-            } else {
-                t2 = light + sat - (light * sat);
-            }
-            t1 = light * 2 - t2;
-            r = hueToRgb(t1, t2, hue + 2) * 255;
-            g = hueToRgb(t1, t2, hue) * 255;
-            b = hueToRgb(t1, t2, hue - 2) * 255;
-            return { r: r, g: g, b: b };
-        }
-        function hueToRgb(t1: any, t2: any, hue: any) {
-            if (hue < 0) hue += 6;
-            if (hue >= 6) hue -= 6;
-            if (hue < 1) return (t2 - t1) * hue + t1;
-            else if (hue < 3) return t2;
-            else if (hue < 4) return (t2 - t1) * (4 - hue) + t1;
-            else return t1;
-        }
-        function getColorName2Hex(name: any) {
-            var hex;
-            var colorName = ['white', 'AliceBlue', 'AntiqueWhite', 'Aqua', 'Aquamarine', 'Azure', 'Beige', 'Bisque', 'black', 'BlanchedAlmond', 'Blue', 'BlueViolet', 'Brown', 'BurlyWood', 'CadetBlue', 'Chartreuse', 'Chocolate', 'Coral', 'CornflowerBlue', 'Cornsilk', 'Crimson', 'Cyan', 'DarkBlue', 'DarkCyan', 'DarkGoldenRod', 'DarkGray', 'DarkGrey', 'DarkGreen', 'DarkKhaki', 'DarkMagenta', 'DarkOliveGreen', 'DarkOrange', 'DarkOrchid', 'DarkRed', 'DarkSalmon', 'DarkSeaGreen', 'DarkSlateBlue', 'DarkSlateGray', 'DarkSlateGrey', 'DarkTurquoise', 'DarkViolet', 'DeepPink', 'DeepSkyBlue', 'DimGray', 'DimGrey', 'DodgerBlue', 'FireBrick', 'FloralWhite', 'ForestGreen', 'Fuchsia', 'Gainsboro', 'GhostWhite', 'Gold', 'GoldenRod', 'Gray', 'Grey', 'Green', 'GreenYellow', 'HoneyDew', 'HotPink', 'IndianRed', 'Indigo', 'Ivory', 'Khaki', 'Lavender', 'LavenderBlush', 'LawnGreen', 'LemonChiffon', 'LightBlue', 'LightCoral', 'LightCyan', 'LightGoldenRodYellow', 'LightGray', 'LightGrey', 'LightGreen', 'LightPink', 'LightSalmon', 'LightSeaGreen', 'LightSkyBlue', 'LightSlateGray', 'LightSlateGrey', 'LightSteelBlue', 'LightYellow', 'Lime', 'LimeGreen', 'Linen', 'Magenta', 'Maroon', 'MediumAquaMarine', 'MediumBlue', 'MediumOrchid', 'MediumPurple', 'MediumSeaGreen', 'MediumSlateBlue', 'MediumSpringGreen', 'MediumTurquoise', 'MediumVioletRed', 'MidnightBlue', 'MintCream', 'MistyRose', 'Moccasin', 'NavajoWhite', 'Navy', 'OldLace', 'Olive', 'OliveDrab', 'Orange', 'OrangeRed', 'Orchid', 'PaleGoldenRod', 'PaleGreen', 'PaleTurquoise', 'PaleVioletRed', 'PapayaWhip', 'PeachPuff', 'Peru', 'Pink', 'Plum', 'PowderBlue', 'Purple', 'RebeccaPurple', 'Red', 'RosyBrown', 'RoyalBlue', 'SaddleBrown', 'Salmon', 'SandyBrown', 'SeaGreen', 'SeaShell', 'Sienna', 'Silver', 'SkyBlue', 'SlateBlue', 'SlateGray', 'SlateGrey', 'Snow', 'SpringGreen', 'SteelBlue', 'Tan', 'Teal', 'Thistle', 'Tomato', 'Turquoise', 'Violet', 'Wheat', 'White', 'WhiteSmoke', 'Yellow', 'YellowGreen'];
-            var colorHex = ['ffffff', 'f0f8ff', 'faebd7', '00ffff', '7fffd4', 'f0ffff', 'f5f5dc', 'ffe4c4', '000000', 'ffebcd', '0000ff', '8a2be2', 'a52a2a', 'deb887', '5f9ea0', '7fff00', 'd2691e', 'ff7f50', '6495ed', 'fff8dc', 'dc143c', '00ffff', '00008b', '008b8b', 'b8860b', 'a9a9a9', 'a9a9a9', '006400', 'bdb76b', '8b008b', '556b2f', 'ff8c00', '9932cc', '8b0000', 'e9967a', '8fbc8f', '483d8b', '2f4f4f', '2f4f4f', '00ced1', '9400d3', 'ff1493', '00bfff', '696969', '696969', '1e90ff', 'b22222', 'fffaf0', '228b22', 'ff00ff', 'dcdcdc', 'f8f8ff', 'ffd700', 'daa520', '808080', '808080', '008000', 'adff2f', 'f0fff0', 'ff69b4', 'cd5c5c', '4b0082', 'fffff0', 'f0e68c', 'e6e6fa', 'fff0f5', '7cfc00', 'fffacd', 'add8e6', 'f08080', 'e0ffff', 'fafad2', 'd3d3d3', 'd3d3d3', '90ee90', 'ffb6c1', 'ffa07a', '20b2aa', '87cefa', '778899', '778899', 'b0c4de', 'ffffe0', '00ff00', '32cd32', 'faf0e6', 'ff00ff', '800000', '66cdaa', '0000cd', 'ba55d3', '9370db', '3cb371', '7b68ee', '00fa9a', '48d1cc', 'c71585', '191970', 'f5fffa', 'ffe4e1', 'ffe4b5', 'ffdead', '000080', 'fdf5e6', '808000', '6b8e23', 'ffa500', 'ff4500', 'da70d6', 'eee8aa', '98fb98', 'afeeee', 'db7093', 'ffefd5', 'ffdab9', 'cd853f', 'ffc0cb', 'dda0dd', 'b0e0e6', '800080', '663399', 'ff0000', 'bc8f8f', '4169e1', '8b4513', 'fa8072', 'f4a460', '2e8b57', 'fff5ee', 'a0522d', 'c0c0c0', '87ceeb', '6a5acd', '708090', '708090', 'fffafa', '00ff7f', '4682b4', 'd2b48c', '008080', 'd8bfd8', 'ff6347', '40e0d0', 'ee82ee', 'f5deb3', 'ffffff', 'f5f5f5', 'ffff00', '9acd32'];
-            var findIndx = colorName.indexOf(name);
-            if (findIndx != -1) {
-                hex = colorHex[findIndx];
-            }
-            return hex;
-        }
         function getSchemeColorFromTheme(schemeClr: any, clrMap: any, phClr: any, warpObj: any) {
             //<p:clrMap ...> in slide master
             // e.g. tx2="dk2" bg2="lt2" tx1="dk1" bg1="lt1" slideLayoutClrOvride
@@ -14737,200 +14714,8 @@ import { shapeGear } from "./utils/shape/shape-gear";
             return result;
         }
 
-        // ===== Color functions =====
-        /**
-         * applyShade
-         * @param {string} rgbStr
-         * @param {number} shadeValue
-         */
-        function applyShade(rgbStr: any, shadeValue: any, isAlpha: any) {
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            var color = tinycolor(rgbStr).toHsl();
-            //console.log("applyShade  color: ", color, ", shadeValue: ", shadeValue)
-            if (shadeValue >= 1) {
-                shadeValue = 1;
-            }
-            var cacl_l = Math.min(color.l * shadeValue, 1);//;color.l * shadeValue + (1 - shadeValue);
-            // if (isAlpha)
-            //     return color.lighten(tintValue).toHex8();
-            // return color.lighten(tintValue).toHex();
-            if (isAlpha)
-                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-                return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex8();
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex();
-        }
-
-        /**
-         * applyTint
-         * @param {string} rgbStr
-         * @param {number} tintValue
-         */
-        function applyTint(rgbStr: any, tintValue: any, isAlpha: any) {
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            var color = tinycolor(rgbStr).toHsl();
-            //console.log("applyTint  color: ", color, ", tintValue: ", tintValue)
-            if (tintValue >= 1) {
-                tintValue = 1;
-            }
-            var cacl_l = color.l * tintValue + (1 - tintValue);
-            // if (isAlpha)
-            //     return color.lighten(tintValue).toHex8();
-            // return color.lighten(tintValue).toHex();
-            if (isAlpha)
-                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-                return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex8();
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex();
-        }
-
-        /**
-         * applyLumOff
-         * @param {string} rgbStr
-         * @param {number} offset
-         */
-        function applyLumOff(rgbStr: any, offset: any, isAlpha: any) {
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            var color = tinycolor(rgbStr).toHsl();
-            //console.log("applyLumOff  color.l: ", color.l, ", offset: ", offset, ", color.l + offset : ", color.l + offset)
-            var lum = offset + color.l;
-            if (lum >= 1) {
-                if (isAlpha)
-                    // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-                    return tinycolor({ h: color.h, s: color.s, l: 1, a: color.a }).toHex8();
-                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-                return tinycolor({ h: color.h, s: color.s, l: 1, a: color.a }).toHex();
-            }
-            if (isAlpha)
-                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-                return tinycolor({ h: color.h, s: color.s, l: lum, a: color.a }).toHex8();
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            return tinycolor({ h: color.h, s: color.s, l: lum, a: color.a }).toHex();
-        }
-
-        /**
-         * applyLumMod
-         * @param {string} rgbStr
-         * @param {number} multiplier
-         */
-        function applyLumMod(rgbStr: any, multiplier: any, isAlpha: any) {
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            var color = tinycolor(rgbStr).toHsl();
-            //console.log("applyLumMod  color.l: ", color.l, ", multiplier: ", multiplier, ", color.l * multiplier : ", color.l * multiplier)
-            var cacl_l = color.l * multiplier;
-            if (cacl_l >= 1) {
-                cacl_l = 1;
-            }
-            if (isAlpha)
-                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-                return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex8();
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex();
-        }
-
-
-        // /**
-        //  * applyHueMod
-        //  * @param {string} rgbStr
-        //  * @param {number} multiplier
-        //  */
-        function applyHueMod(rgbStr: any, multiplier: any, isAlpha: any) {
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            var color = tinycolor(rgbStr).toHsl();
-            //console.log("applyLumMod  color.h: ", color.h, ", multiplier: ", multiplier, ", color.h * multiplier : ", color.h * multiplier)
-
-            var cacl_h = color.h * multiplier;
-            if (cacl_h >= 360) {
-                cacl_h = cacl_h - 360;
-            }
-            if (isAlpha)
-                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-                return tinycolor({ h: cocacl_h, s: color.s, l: color.l, a: color.a }).toHex8();
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            return tinycolor({ h: cacl_h, s: color.s, l: color.l, a: color.a }).toHex();
-        }
-
-
-        // /**
-        //  * applyHueOff
-        //  * @param {string} rgbStr
-        //  * @param {number} offset
-        //  */
-        // function applyHueOff(rgbStr, offset, isAlpha) {
-        //     var color = tinycolor(rgbStr).toHsl();
-        //     //console.log("applyLumMod  color.h: ", color.h, ", offset: ", offset, ", color.h * offset : ", color.h * offset)
-
-        //     var cacl_h = color.h * offset;
-        //     if (cacl_h >= 360) {
-        //         cacl_h = cacl_h - 360;
-        //     }
-        //     if (isAlpha)
-        //         return tinycolor({ h: cocacl_h, s: color.s, l: color.l, a: color.a }).toHex8();
-        //     return tinycolor({ h: cacl_h, s: color.s, l: color.l, a: color.a }).toHex();
-        // }
-        // /**
-        //  * applySatMod
-        //  * @param {string} rgbStr
-        //  * @param {number} multiplier
-        //  */
-        function applySatMod(rgbStr: any, multiplier: any, isAlpha: any) {
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            var color = tinycolor(rgbStr).toHsl();
-            //console.log("applySatMod  color.s: ", color.s, ", multiplier: ", multiplier, ", color.s * multiplier : ", color.s * multiplier)
-            var cacl_s = color.s * multiplier;
-            if (cacl_s >= 1) {
-                cacl_s = 1;
-            }
-            //return;
-            // if (isAlpha)
-            //     return tinycolor(rgbStr).saturate(multiplier * 100).toHex8();
-            // return tinycolor(rgbStr).saturate(multiplier * 100).toHex();
-            if (isAlpha)
-                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-                return tinycolor({ h: color.h, s: cacl_s, l: color.l, a: color.a }).toHex8();
-            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-            return tinycolor({ h: color.h, s: cacl_s, l: color.l, a: color.a }).toHex();
-        }
-
-        /**
-         * rgba2hex
-         * @param {string} rgbaStr
-         */
-        function rgba2hex(rgbaStr: any) {
-            var a,
-                rgb = rgbaStr.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
-                alpha = (rgb && rgb[4] || "").trim(),
-                hex = rgb ?
-                    (rgb[1] | 1 << 8).toString(16).slice(1) +
-                    (rgb[2] | 1 << 8).toString(16).slice(1) +
-                    (rgb[3] | 1 << 8).toString(16).slice(1) : rgbaStr;
-
-            if (alpha !== "") {
-                a = alpha;
-            } else {
-                a = 1;
-            }
-            // multiply before convert to HEX
-            a = ((a * 255) | 1 << 8).toString(16).slice(1)
-            hex = hex + a;
-
-            return hex;
-        }
-
+        // ===== Other utility functions =====
         ///////////////////////Amir////////////////
-        function angleToDegrees(angle: any) {
-            if (angle == "" || angle == null) {
-                return 0;
-            }
-            return Math.round(angle / 60000);
-        }
-        // function degreesToRadians(degrees) {
-        //     //Math.PI
-        //     if (degrees == "" || degrees == null || degrees == undefined) {
-        //         return 0;
-        //     }
-        //     return degrees * (Math.PI / 180);
-        // }
         function getMimeType(imgFileExt: any) {
             var mimeType = "";
             //console.log(imgFileExt)
