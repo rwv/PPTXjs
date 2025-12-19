@@ -27,6 +27,13 @@ import {
   angleToDegrees,
 } from "./utils/color";
 import { getHtmlBullet } from "./utils/bullet";
+import {
+  getMimeType,
+  getBase64ImageDimensions,
+  isVideoLink,
+  extractFileExtension,
+  base64ArrayBuffer,
+} from "./utils/media";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -9714,7 +9721,7 @@ import { getHtmlBullet } from "./utils/bullet";
             if (vdoNode !== undefined & mediaProcess) {
                 vdoRid = vdoNode["attrs"]["r:link"];
                 vdoFile = resObj[vdoRid]["target"];
-                var checkIfLink = IsVideoLink(vdoFile);
+                var checkIfLink = isVideoLink(vdoFile);
                 if (checkIfLink) {
                     vdoFile = escapeHtml(vdoFile);
                     //vdoBlob = vdoFile;
@@ -14667,65 +14674,6 @@ import { getHtmlBullet } from "./utils/bullet";
 
         // ===== Other utility functions =====
         ///////////////////////Amir////////////////
-        function getMimeType(imgFileExt: any) {
-            var mimeType = "";
-            //console.log(imgFileExt)
-            switch (imgFileExt.toLowerCase()) {
-                case "jpg":
-                case "jpeg":
-                    mimeType = "image/jpeg";
-                    break;
-                case "png":
-                    mimeType = "image/png";
-                    break;
-                case "gif":
-                    mimeType = "image/gif";
-                    break;
-                case "emf": // Not native support
-                    mimeType = "image/x-emf";
-                    break;
-                case "wmf": // Not native support
-                    mimeType = "image/x-wmf";
-                    break;
-                case "svg":
-                    mimeType = "image/svg+xml";
-                    break;
-                case "mp4":
-                    mimeType = "video/mp4";
-                    break;
-                case "webm":
-                    mimeType = "video/webm";
-                    break;
-                case "ogg":
-                    mimeType = "video/ogg";
-                    break;
-                case "avi":
-                    mimeType = "video/avi";
-                    break;
-                case "mpg":
-                    mimeType = "video/mpg";
-                    break;
-                case "wmv":
-                    mimeType = "video/wmv";
-                    break;
-                case "mp3":
-                    mimeType = "audio/mpeg";
-                    break;
-                case "wav":
-                    mimeType = "audio/wav";
-                    break;
-                case "emf":
-                    mimeType = "image/emf";
-                    break;
-                case "wmf":
-                    mimeType = "image/wmf";
-                case "tif":
-                case "tiff":
-                    mimeType = "image/tiff";
-                    break;
-            }
-            return mimeType;
-        }
         function getSvgGradient(w: any, h: any, angl: any, color_arry: any, shpId: any) {
             var stopsArray = getMiddleStops(color_arry - 2);
 
@@ -14927,24 +14875,6 @@ import { getHtmlBullet } from "./utils/bullet";
             //console.log("getSvgImagePattern(...) pic_dim:", pic_dim, ", fillColor: ", fill, ", blipNode: ", blipNode, ",sx: ", sx, ", sy: ", sy, ", clr_ary: ", clr_ary, ", ptrn: ", ptrn)
 
             return ptrn;
-        }
-
-        function getBase64ImageDimensions(imgSrc: any) {
-            var image = new Image();
-            var w, h;
-            image.onload = function () {
-                w = image.width;
-                h = image.height;
-            };
-            image.src = imgSrc;
-
-            do {
-                if (image.width !== undefined) {
-                    return [image.width, image.height];
-                }
-            } while (image.width === undefined);
-
-            //return [w, h];
         }
 
         function processMsgQueue(queue: any) {
@@ -15197,65 +15127,6 @@ import { getHtmlBullet } from "./utils/bullet";
                 aNum = (((num / 26 >= 1) ? String.fromCharCode(num / 26 + 64) : '') + String.fromCharCode(num % 26 + 65)).toLowerCase();
             }
             return aNum;
-        }
-        function base64ArrayBuffer(arrayBuffer: any) {
-            var base64 = '';
-            var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-            var bytes = new Uint8Array(arrayBuffer);
-            var byteLength = bytes.byteLength;
-            var byteRemainder = byteLength % 3;
-            var mainLength = byteLength - byteRemainder;
-
-            var a, b, c, d;
-            var chunk;
-
-            for (var i = 0; i < mainLength; i = i + 3) {
-                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
-                a = (chunk & 16515072) >> 18;
-                b = (chunk & 258048) >> 12;
-                c = (chunk & 4032) >> 6;
-                d = chunk & 63;
-                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d];
-            }
-
-            if (byteRemainder == 1) {
-                chunk = bytes[mainLength];
-                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                a = (chunk & 252) >> 2;
-                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                b = (chunk & 3) << 4;
-                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                base64 += encodings[a] + encodings[b] + '==';
-            } else if (byteRemainder == 2) {
-                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1];
-                a = (chunk & 64512) >> 10;
-                b = (chunk & 1008) >> 4;
-                c = (chunk & 15) << 2;
-                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                base64 += encodings[a] + encodings[b] + encodings[c] + '=';
-            }
-
-            return base64;
-        }
-
-        function IsVideoLink(vdoFile: any) {
-            /*
-            var ext = extractFileExtension(vdoFile);
-            if (ext.length == 3){
-                return false;
-            }else{
-                return true;
-            }
-            */
-            var urlregex = /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/;
-            return urlregex.test(vdoFile);
-        }
-
-        function extractFileExtension(filename: any) {
-            return filename.substr((~-filename.lastIndexOf(".") >>> 0) + 2);
         }
 
         function escapeHtml(text: any) {
