@@ -45,8 +45,10 @@ import {
   getPregraphDir,
   getContentDir,
   getLayoutAndMasterNode,
+  getTextHorizontalAlign,
+  getTextVerticalAlign,
 } from "./utils/layout";
-import { getFontSize } from "./utils/font";
+import { getFontSize, getFontType, getFontBold, getFontItalic, getFontDecoration } from "./utils/font";
 import {
   getTextByPathList,
   getTextByPathStr,
@@ -11654,29 +11656,6 @@ import type { JsZip } from "./types/jszip";
 
 
 
-        function getFontType(node: any, type: any, warpObj: any, pFontStyle: any) {
-            var typeface = getTextByPathList(node, ["a:rPr", "a:latin", "attrs", "typeface"]);
-
-            if (typeface === undefined) {
-                var fontIdx = "";
-                var fontGrup = "";
-                if (pFontStyle !== undefined) {
-                    fontIdx = getTextByPathList(pFontStyle, ["attrs", "idx"]);
-                }
-                var fontSchemeNode = getTextByPathList(warpObj["themeContent"], ["a:theme", "a:themeElements", "a:fontScheme"]);
-                if (fontIdx == "") {
-                    if (type == "title" || type == "subTitle" || type == "ctrTitle") {
-                        fontIdx = "major";
-                    } else {
-                        fontIdx = "minor";
-                    }
-                }
-                fontGrup = "a:" + fontIdx + "Font";
-                typeface = getTextByPathList(fontSchemeNode, [fontGrup, "a:latin", "attrs", "typeface"]);
-            }
-
-            return (typeface === undefined) ? "inherit" : typeface;
-        }
 
         function getFontColorPr(node: any, pNode: any, lstStyle: any, pFontStyle: any, lvl: any, idx: any, type: any, warpObj: any) {
             //text border using: text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
@@ -11939,98 +11918,6 @@ import type { JsZip } from "./types/jszip";
             return [color, txt_effects, colorType, highlightColor];
         }
 
-        function getFontBold(node: any, type: any, slideMasterTextStyles: any) {
-            return (node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["b"] === "1") ? "bold" : "inherit";
-        }
-
-        function getFontItalic(node: any, type: any, slideMasterTextStyles: any) {
-            return (node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["i"] === "1") ? "italic" : "inherit";
-        }
-
-        function getFontDecoration(node: any, type: any, slideMasterTextStyles: any) {
-            ///////////////////////////////Amir///////////////////////////////
-            if (node["a:rPr"] !== undefined) {
-                var underLine = node["a:rPr"]["attrs"]["u"] !== undefined ? node["a:rPr"]["attrs"]["u"] : "none";
-                var strikethrough = node["a:rPr"]["attrs"]["strike"] !== undefined ? node["a:rPr"]["attrs"]["strike"] : 'noStrike';
-                //console.log("strikethrough: "+strikethrough);
-
-                if (underLine != "none" && strikethrough == "noStrike") {
-                    return "underline";
-                } else if (underLine == "none" && strikethrough != "noStrike") {
-                    return "line-through";
-                } else if (underLine != "none" && strikethrough != "noStrike") {
-                    return "underline line-through";
-                } else {
-                    return "inherit";
-                }
-            } else {
-                return "inherit";
-            }
-            /////////////////////////////////////////////////////////////////
-            //return (node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["u"] === "sng") ? "underline" : "inherit";
-        }
-        ////////////////////////////////////Amir/////////////////////////////////////
-        function getTextHorizontalAlign(node: any, pNode: any, type: any, warpObj: any) {
-            //console.log("getTextHorizontalAlign: type: ", type, ", node: ", node)
-            var getAlgn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
-            if (getAlgn === undefined) {
-                getAlgn = getTextByPathList(pNode, ["a:pPr", "attrs", "algn"]);
-            }
-            if (getAlgn === undefined) {
-                if (type == "title" || type == "ctrTitle" || type == "subTitle") {
-                    var lvlIdx = 1;
-                    var lvlNode = getTextByPathList(pNode, ["a:pPr", "attrs", "lvl"]);
-                    if (lvlNode !== undefined) {
-                        lvlIdx = parseInt(lvlNode) + 1;
-                    }
-                    var lvlStr = "a:lvl" + lvlIdx + "pPr";
-                    getAlgn = getTextByPathList(warpObj, ["slideLayoutTables", "typeTable", type, "p:txBody", "a:lstStyle", lvlStr, "attrs", "algn"]);
-                    if (getAlgn === undefined) {
-                        getAlgn = getTextByPathList(warpObj, ["slideMasterTables", "typeTable", type, "p:txBody", "a:lstStyle", lvlStr, "attrs", "algn"]);
-                        if (getAlgn === undefined) {
-                            getAlgn = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:titleStyle", lvlStr, "attrs", "algn"]);
-                            if (getAlgn === undefined && type === "subTitle") {
-                                getAlgn = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:bodyStyle", lvlStr, "attrs", "algn"]);
-                            }
-                        }
-                    }
-                } else if (type == "body") {
-                    getAlgn = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:bodyStyle", "a:lvl1pPr", "attrs", "algn"]);
-                } else {
-                    getAlgn = getTextByPathList(warpObj, ["slideMasterTables", "typeTable", type, "p:txBody", "a:lstStyle", "a:lvl1pPr", "attrs", "algn"]);
-                }
-
-            }
-
-            var align = "inherit";
-            if (getAlgn !== undefined) {
-                switch (getAlgn) {
-                    case "l":
-                        align = "left";
-                        break;
-                    case "r":
-                        align = "right";
-                        break;
-                    case "ctr":
-                        align = "center";
-                        break;
-                    case "just":
-                        align = "justify";
-                        break;
-                    case "dist":
-                        align = "justify";
-                        break;
-                    default:
-                        align = "inherit";
-                }
-            }
-            return align;
-        }
-        /////////////////////////////////////////////////////////////////////
-        function getTextVerticalAlign(node: any, type: any, slideMasterTextStyles: any) {
-            var baseline = getTextByPathList(node, ["a:rPr", "attrs", "baseline"]);
-            return baseline === undefined ? "baseline" : (parseInt(baseline) / 1000) + "%";
-        }
 
         function getTableBorders(node: any, warpObj: any) {
             var borderStyle = "";

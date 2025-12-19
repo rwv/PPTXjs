@@ -39,22 +39,19 @@ export function getFontSize(
   //console.log("getFontSize node:", node, "lstStyle", lstStyle, "lvl:", lvl, 'type:', type, "warpObj:", warpObj)
   var lstStyle = (textBodyNode !== undefined)? textBodyNode["a:lstStyle"] : undefined;
   var lvlpPr = "a:lvl" + lvl + "pPr";
-  var fontSize = undefined;
+  var fontSize: number | undefined = undefined;
   var sz, kern;
   if (node["a:rPr"] !== undefined) {
     fontSize = parseInt(node["a:rPr"]["attrs"]["sz"]) / 100;
   }
-  // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
   if (isNaN(fontSize) || fontSize === undefined && node["a:fld"] !== undefined) {
     sz = getTextByPathList(node["a:fld"], ["a:rPr", "attrs", "sz"]);
     fontSize = parseInt(sz) / 100;
   }
-  // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
   if ((isNaN(fontSize) || fontSize === undefined) && node["a:t"] === undefined) {
     sz = getTextByPathList(node["a:endParaRPr"], [ "attrs", "sz"]);
     fontSize = parseInt(sz) / 100;
   }
-  // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
   if ((isNaN(fontSize) || fontSize === undefined) && lstStyle !== undefined) {
     sz = getTextByPathList(lstStyle, [lvlpPr, "a:defRPr", "attrs", "sz"]);
     fontSize = parseInt(sz) / 100;
@@ -72,7 +69,6 @@ export function getFontSize(
       isKerning = true;
     }
   }
-  // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
   if (isNaN(fontSize) || fontSize === undefined) {
     // if (type == "shape" || type == "textBox") {
     //     type = "body";

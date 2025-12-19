@@ -7,3 +7,5 @@ export { getHorizontalAlign } from "./get-horizontal-align";
 export { getPregraphDir } from "./get-pregraph-dir";
 export { getContentDir } from "./get-content-dir";
 export { getLayoutAndMasterNode } from "./get-layout-and-master-node";
+export { getTextHorizontalAlign } from "./get-text-horizontal-align";
+export { getTextVerticalAlign } from "./get-text-vertical-align";
