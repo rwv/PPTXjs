@@ -11,6 +11,7 @@
 import { shapePie } from "./utils/shape/shape-pie";
 import { shapeArc } from "./utils/shape/shape-arc";
 import { shapeSnipRoundRect } from "./utils/shape/shape-snip-round-rect";
+import { shapeGear } from "./utils/shape/shape-gear";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -9638,66 +9639,6 @@ import { shapeSnipRoundRect } from "./utils/shape/shape-snip-round-rect";
             return result;
         }
 
-        function shapeGear(w: any, h: any, points: any) {
-            var innerRadius = h;//gear.innerRadius;
-            var outerRadius = 1.5 * innerRadius;
-            var cx = outerRadius;//Math.max(innerRadius, outerRadius),                   // center x
-            // @ts-expect-error TS(2304): Cannot find name 'cy'.
-            cy = outerRadius;//Math.max(innerRadius, outerRadius),                    // center y
-            // @ts-expect-error TS(2304): Cannot find name 'notches'.
-            notches = points,//gear.points,                      // num. of notches
-                // @ts-expect-error TS(2304): Cannot find name 'radiusO'.
-                radiusO = outerRadius,                    // outer radius
-                // @ts-expect-error TS(2304): Cannot find name 'radiusI'.
-                radiusI = innerRadius,                    // inner radius
-                // @ts-expect-error TS(2304): Cannot find name 'taperO'.
-                taperO = 50,                     // outer taper %
-                // @ts-expect-error TS(2304): Cannot find name 'taperI'.
-                taperI = 35,                     // inner taper %
-
-                // pre-calculate values for loop
-
-                // @ts-expect-error TS(2304): Cannot find name 'pi2'.
-                pi2 = 2 * Math.PI,            // cache 2xPI (360deg)
-                // @ts-expect-error TS(2304): Cannot find name 'angle'.
-                angle = pi2 / (notches * 2),    // angle between notches
-                // @ts-expect-error TS(2304): Cannot find name 'taperAI'.
-                taperAI = angle * taperI * 0.005, // inner taper offset (100% = half notch)
-                // @ts-expect-error TS(2304): Cannot find name 'taperAO'.
-                taperAO = angle * taperO * 0.005, // outer taper offset
-                // @ts-expect-error TS(2304): Cannot find name 'a'.
-                a = angle,                  // iterator (angle)
-                // @ts-expect-error TS(2304): Cannot find name 'toggle'.
-                toggle = false;
-            // move to starting point
-            // @ts-expect-error TS(2304): Cannot find name 'radiusO'.
-            var d = " M" + (cx + radiusO * Math.cos(taperAO)) + " " + (cy + radiusO * Math.sin(taperAO));
-
-            // loop
-            // @ts-expect-error TS(2304): Cannot find name 'a'.
-            for (; a <= pi2 + angle; a += angle) {
-                // draw inner to outer line
-                // @ts-expect-error TS(2304): Cannot find name 'toggle'.
-                if (toggle) {
-                    // @ts-expect-error TS(2304): Cannot find name 'radiusI'.
-                    d += " L" + (cx + radiusI * Math.cos(a - taperAI)) + "," + (cy + radiusI * Math.sin(a - taperAI));
-                    // @ts-expect-error TS(2304): Cannot find name 'radiusO'.
-                    d += " L" + (cx + radiusO * Math.cos(a + taperAO)) + "," + (cy + radiusO * Math.sin(a + taperAO));
-                } else { // draw outer to inner line
-                    // @ts-expect-error TS(2304): Cannot find name 'radiusO'.
-                    d += " L" + (cx + radiusO * Math.cos(a - taperAO)) + "," + (cy + radiusO * Math.sin(a - taperAO)); // outer line
-                    // @ts-expect-error TS(2304): Cannot find name 'radiusI'.
-                    d += " L" + (cx + radiusI * Math.cos(a + taperAI)) + "," + (cy + radiusI * Math.sin(a + taperAI));// inner line
-
-                }
-                // switch level
-                // @ts-expect-error TS(2304): Cannot find name 'toggle'.
-                toggle = !toggle;
-            }
-            // close the final line
-            d += " ";
-            return d;
-        }
         /*
         function shapePolygon(sidesNum) {
             var sides  = sidesNum;
