@@ -34,6 +34,13 @@ import {
   extractFileExtension,
   base64ArrayBuffer,
 } from "./utils/media";
+import {
+  romanize,
+  alphaNumeric,
+  archaicNumbers,
+  hebrew2Minus,
+  getNumTypeNum,
+} from "./utils/text";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -15019,114 +15026,6 @@ import {
                     }
                 }
             }
-        }
-        function getNumTypeNum(numTyp: any, num: any) {
-            var rtrnNum = "";
-            switch (numTyp) {
-                case "arabicPeriod":
-                    rtrnNum = num + ". ";
-                    break;
-                case "arabicParenR":
-                    rtrnNum = num + ") ";
-                    break;
-                case "alphaLcParenR":
-                    rtrnNum = alphaNumeric(num, "lowerCase") + ") ";
-                    break;
-                case "alphaLcPeriod":
-                    rtrnNum = alphaNumeric(num, "lowerCase") + ". ";
-                    break;
-
-                case "alphaUcParenR":
-                    rtrnNum = alphaNumeric(num, "upperCase") + ") ";
-                    break;
-                case "alphaUcPeriod":
-                    rtrnNum = alphaNumeric(num, "upperCase") + ". ";
-                    break;
-
-                case "romanUcPeriod":
-                    rtrnNum = romanize(num) + ". ";
-                    break;
-                case "romanLcParenR":
-                    rtrnNum = romanize(num) + ") ";
-                    break;
-                case "hebrew2Minus":
-                    rtrnNum = hebrew2Minus.format(num) + "-";
-                    break;
-                default:
-                    rtrnNum = num;
-            }
-            return rtrnNum;
-        }
-        function romanize(num: any) {
-            if (!+num)
-                return false;
-            var digits = String(+num).split(""),
-                key = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM",
-                    "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC",
-                    "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"],
-                roman = "",
-                i = 3;
-            while (i--)
-                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                roman = (key[+digits.pop() + (i * 10)] || "") + roman;
-            return Array(+digits.join("") + 1).join("M") + roman;
-        }
-        var hebrew2Minus = archaicNumbers([
-            [1000, ''],
-            [400, 'ת'],
-            [300, 'ש'],
-            [200, 'ר'],
-            [100, 'ק'],
-            [90, 'צ'],
-            [80, 'פ'],
-            [70, 'ע'],
-            [60, 'ס'],
-            [50, 'נ'],
-            [40, 'מ'],
-            [30, 'ל'],
-            [20, 'כ'],
-            [10, 'י'],
-            [9, 'ט'],
-            [8, 'ח'],
-            [7, 'ז'],
-            [6, 'ו'],
-            [5, 'ה'],
-            [4, 'ד'],
-            [3, 'ג'],
-            [2, 'ב'],
-            [1, 'א'],
-            [/יה/, 'ט״ו'],
-            [/יו/, 'ט״ז'],
-            [/([א-ת])([א-ת])$/, '$1״$2'],
-            [/^([א-ת])$/, "$1׳"]
-        ]);
-        function archaicNumbers(arr: any) {
-            var arrParse = arr.slice().sort(function (a: any, b: any) { return b[1].length - a[1].length });
-            return {
-                format: function (n: any) {
-                    var ret = '';
-                    
-                    jQuery.each(arr, function(this: any) {
-                        var num = this[0];
-                        if (parseInt(num) > 0) {
-                            for (; n >= num; n -= num) ret += this[1];
-                        } else {
-                            ret = ret.replace(num, this[1]);
-                        }
-                    });
-                    return ret;
-                }
-            };
-        }
-        function alphaNumeric(num: any, upperLower: any) {
-            num = Number(num) - 1;
-            var aNum = "";
-            if (upperLower == "upperCase") {
-                aNum = (((num / 26 >= 1) ? String.fromCharCode(num / 26 + 64) : '') + String.fromCharCode(num % 26 + 65)).toUpperCase();
-            } else if (upperLower == "lowerCase") {
-                aNum = (((num / 26 >= 1) ? String.fromCharCode(num / 26 + 64) : '') + String.fromCharCode(num % 26 + 65)).toLowerCase();
-            }
-            return aNum;
         }
 
         function escapeHtml(text: any) {
