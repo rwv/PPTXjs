@@ -871,4 +871,6 @@ const dingbat_unicode: { f: string; code: string; unicode: string }[] = [
   { f: "Wingdings 3", code: "240", unicode: "129175" },
 ];
 
+export { dingbat_unicode };
+
 (window as any).dingbat_unicode = dingbat_unicode;

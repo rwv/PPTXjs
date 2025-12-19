@@ -26,6 +26,7 @@ import {
   rgba2hex,
   angleToDegrees,
 } from "./utils/color";
+import { getHtmlBullet } from "./utils/bullet";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -10494,56 +10495,6 @@ import {
             // }
             //console.log("genBuChar: width: ", $(bullet).outerWidth())
             return [bullet, margin_val, font_val];//$(bullet).outerWidth()];
-        }
-        function getHtmlBullet(typefaceNode: any, buChar: any) {
-            //http://www.alanwood.net/demos/wingdings.html
-            //not work for IE11
-            //console.log("genBuChar typefaceNode:", typefaceNode, " buChar:", buChar, "charCodeAt:", buChar.charCodeAt(0))
-            switch (buChar) {
-                case "§":
-                    return "&#9632;";//"■"; //9632 | U+25A0 | Black square
-                    break;
-                case "q":
-                    return "&#10065;";//"❑"; // 10065 | U+2751 | Lower right shadowed white square
-                    break;
-                case "v":
-                    return "&#10070;";//"❖"; //10070 | U+2756 | Black diamond minus white X
-                    break;
-                case "Ø":
-                    return "&#11162;";//"⮚"; //11162 | U+2B9A | Three-D top-lighted rightwards equilateral arrowhead
-                    break;
-                case "ü":
-                    return "&#10004;";//"✔";  //10004 | U+2714 | Heavy check mark
-                    break;
-                default:
-                    if (/*typefaceNode == "Wingdings" ||*/ typefaceNode == "Wingdings 2" || typefaceNode == "Wingdings 3"){
-                        var wingCharCode =  getDingbatToUnicode(typefaceNode, buChar);
-                        if (wingCharCode !== null){
-                            return "&#" + wingCharCode + ";";
-                        }
-                    }
-                    return "&#" + (buChar.charCodeAt(0)) + ";";
-            }
-        }
-        function getDingbatToUnicode(typefaceNode: any, buChar: any){
-            if (dingbat_unicode){
-                var dingbat_code = buChar.codePointAt(0) & 0xFFF;
-                var char_unicode = null;
-                var len = dingbat_unicode.length;
-                var i = 0;
-                while (len--) {
-                    // blah blah
-                    var item = dingbat_unicode[i];
-                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                    if (item.f == typefaceNode && item.code == dingbat_code) {
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        char_unicode = item.unicode;
-                        break;
-                    }
-                    i++;
-                }
-                return char_unicode
-            }
         }
 
         function getLayoutAndMasterNode(node: any, idx: any, type: any, warpObj: any) {
