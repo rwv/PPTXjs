@@ -10,6 +10,7 @@
  */
 import { shapePie } from "./utils/shape/shape-pie";
 import { shapeArc } from "./utils/shape/shape-arc";
+import { shapeSnipRoundRect } from "./utils/shape/shape-snip-round-rect";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -9695,47 +9696,6 @@ import { shapeArc } from "./utils/shape/shape-arc";
             }
             // close the final line
             d += " ";
-            return d;
-        }
-        function shapeSnipRoundRect(w: any, h: any, adj1: any, adj2: any, shapeType: any, adjType: any) {
-            /* 
-            shapeType: snip,round
-            adjType: cornr1,cornr2,cornrAll,diag
-            */
-            var adjA, adjB, adjC, adjD;
-            if (adjType == "cornr1") {
-                adjA = 0;
-                adjB = 0;
-                adjC = 0;
-                adjD = adj1;
-            } else if (adjType == "cornr2") {
-                adjA = adj1;
-                adjB = adj2;
-                adjC = adj2;
-                adjD = adj1;
-            } else if (adjType == "cornrAll") {
-                adjA = adj1;
-                adjB = adj1;
-                adjC = adj1;
-                adjD = adj1;
-            } else if (adjType == "diag") {
-                adjA = adj1;
-                adjB = adj2;
-                adjC = adj1;
-                adjD = adj2;
-            }
-            //d is a string that describes the path of the slice.
-            var d;
-            if (shapeType == "round") {
-                d = "M0" + "," + (h / 2 + (1 - adjB) * (h / 2)) + " Q" + 0 + "," + h + " " + adjB * (w / 2) + "," + h + " L" + (w / 2 + (1 - adjC) * (w / 2)) + "," + h +
-                    " Q" + w + "," + h + " " + w + "," + (h / 2 + (h / 2) * (1 - adjC)) + "L" + w + "," + (h / 2) * adjD +
-                    " Q" + w + "," + 0 + " " + (w / 2 + (w / 2) * (1 - adjD)) + ",0 L" + (w / 2) * adjA + ",0" +
-                    " Q" + 0 + "," + 0 + " 0," + (h / 2) * (adjA) + " z";
-            } else if (shapeType == "snip") {
-                d = "M0" + "," + adjA * (h / 2) + " L0" + "," + (h / 2 + (h / 2) * (1 - adjB)) + "L" + adjB * (w / 2) + "," + h +
-                    " L" + (w / 2 + (w / 2) * (1 - adjC)) + "," + h + "L" + w + "," + (h / 2 + (h / 2) * (1 - adjC)) +
-                    " L" + w + "," + adjD * (h / 2) + "L" + (w / 2 + (w / 2) * (1 - adjD)) + ",0 L" + ((w / 2) * adjA) + ",0 z";
-            }
             return d;
         }
         /*
