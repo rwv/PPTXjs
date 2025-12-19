@@ -9,6 +9,7 @@
  * [#16](https://github.com/meshesha/PPTXjs/issues/16)
  */
 import { shapePie } from "./utils/shape/shape-pie";
+import { shapeArc } from "./utils/shape/shape-arc";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -9695,35 +9696,6 @@ import { shapePie } from "./utils/shape/shape-pie";
             // close the final line
             d += " ";
             return d;
-        }
-        function shapeArc(cX: any, cY: any, rX: any, rY: any, stAng: any, endAng: any, isClose: any) {
-            var dData;
-            var angle = stAng;
-            if (endAng >= stAng) {
-                while (angle <= endAng) {
-                    var radians = angle * (Math.PI / 180);  // convert degree to radians
-                    var x = cX + Math.cos(radians) * rX;
-                    var y = cY + Math.sin(radians) * rY;
-                    if (angle == stAng) {
-                        dData = " M" + x + " " + y;
-                    }
-                    dData += " L" + x + " " + y;
-                    angle++;
-                }
-            } else {
-                while (angle > endAng) {
-                    var radians = angle * (Math.PI / 180);  // convert degree to radians
-                    var x = cX + Math.cos(radians) * rX;
-                    var y = cY + Math.sin(radians) * rY;
-                    if (angle == stAng) {
-                        dData = " M " + x + " " + y;
-                    }
-                    dData += " L " + x + " " + y;
-                    angle--;
-                }
-            }
-            dData += (isClose ? " z" : "");
-            return dData;
         }
         function shapeSnipRoundRect(w: any, h: any, adj1: any, adj2: any, shapeType: any, adjType: any) {
             /* 
