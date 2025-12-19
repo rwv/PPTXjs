@@ -36,6 +36,7 @@ import {
 } from "./utils/text";
 import { escapeHtml } from "./utils/string";
 import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
+import { getPosition } from "./utils/layout";
 import {
   getTextByPathList,
   getTextByPathStr,
@@ -11684,58 +11685,6 @@ import type { JsZip } from "./types/jszip";
                 getPosition(xfrmNode, node, undefined, undefined, sType) +
                 getSize(xfrmNode, undefined, undefined) +
                 "'>" + rslt + "</div>";
-        }
-
-        function getPosition(slideSpNode: any, pNode: any, slideLayoutSpNode: any, slideMasterSpNode: any, sType: any) {
-            var off;
-            var x = -1, y = -1;
-
-            if (slideSpNode !== undefined) {
-                off = slideSpNode["a:off"]["attrs"];
-            }
-
-            if (off === undefined && slideLayoutSpNode !== undefined) {
-                off = slideLayoutSpNode["a:off"]["attrs"];
-            } else if (off === undefined && slideMasterSpNode !== undefined) {
-                off = slideMasterSpNode["a:off"]["attrs"];
-            }
-            var offX = 0, offY = 0;
-            var grpX = 0, grpY = 0;
-            if (sType == "group") {
-
-                var grpXfrmNode = getTextByPathList(pNode, ["p:grpSpPr", "a:xfrm"]);
-                if (xfrmNode !== undefined) {
-                    grpX = parseInt(grpXfrmNode["a:off"]["attrs"]["x"]) * slideFactor;
-                    grpY = parseInt(grpXfrmNode["a:off"]["attrs"]["y"]) * slideFactor;
-                    // var chx = parseInt(grpXfrmNode["a:chOff"]["attrs"]["x"]) * slideFactor;
-                    // var chy = parseInt(grpXfrmNode["a:chOff"]["attrs"]["y"]) * slideFactor;
-                    // var cx = parseInt(grpXfrmNode["a:ext"]["attrs"]["cx"]) * slideFactor;
-                    // var cy = parseInt(grpXfrmNode["a:ext"]["attrs"]["cy"]) * slideFactor;
-                    // var chcx = parseInt(grpXfrmNode["a:chExt"]["attrs"]["cx"]) * slideFactor;
-                    // var chcy = parseInt(grpXfrmNode["a:chExt"]["attrs"]["cy"]) * slideFactor;
-                    // var rotate = parseInt(grpXfrmNode["attrs"]["rot"])
-                }
-            }
-            if (sType == "group-rotate" && pNode["p:grpSpPr"] !== undefined) {
-                var xfrmNode = pNode["p:grpSpPr"]["a:xfrm"];
-                // var ox = parseInt(xfrmNode["a:off"]["attrs"]["x"]) * slideFactor;
-                // var oy = parseInt(xfrmNode["a:off"]["attrs"]["y"]) * slideFactor;
-                var chx = parseInt(xfrmNode["a:chOff"]["attrs"]["x"]) * slideFactor;
-                var chy = parseInt(xfrmNode["a:chOff"]["attrs"]["y"]) * slideFactor;
-
-                offX = chx;
-                offY = chy;
-            }
-            if (off === undefined) {
-                return "";
-            } else {
-                x = parseInt(off["x"]) * slideFactor;
-                y = parseInt(off["y"]) * slideFactor;
-                // if (type = "body")
-                //     console.log("getPosition: slideSpNode: ", slideSpNode, ", type: ", type, "x: ", x, "offX:", offX, "y:", y, "offY:", offY)
-                return (isNaN(x) || isNaN(y)) ? "" : "top:" + (y - offY + grpY) + "px; left:" + (x - offX + grpX) + "px;";
-            }
-
         }
 
         function getSize(slideSpNode: any, slideLayoutSpNode: any, slideMasterSpNode: any) {
