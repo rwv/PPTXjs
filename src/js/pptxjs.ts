@@ -53,6 +53,7 @@ import {
 import { extractChartData } from "./utils/chart";
 import tinycolor from "tinycolor2";
 import { tXml } from "./utils/vendors/txml";
+import { readXmlFile } from "./utils/xml/read-xml-file";
 import type { JsZip } from "./types/jszip";
 
 (function ($) {
@@ -438,26 +439,6 @@ import type { JsZip } from "./types/jszip";
             return post_ary;
         }
 
-        function readXmlFile(zip: JsZip, filename: any, isSlideContent: any) {
-            try {
-                var fileContent = zip.file(filename).asText();
-                if (isSlideContent && app_verssion <= 12) {
-                    //< office2007
-                    //remove "<![CDATA[ ... ]]>" tag
-                    fileContent = fileContent.replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1');
-                }
-                var xmlData = tXml(fileContent, { simplify: 1 });
-                if (xmlData["?xml"] !== undefined) {
-                    return xmlData["?xml"];
-                } else {
-                    return xmlData;
-                }
-            } catch (e) {
-                //console.log("error readXmlFile: the file '", filename, "' not exit")
-                return null;
-            }
-
-        }
         function getContentTypes(zip: JsZip) {
             // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var ContentTypesJson = readXmlFile(zip, "[Content_Types].xml");
@@ -738,7 +719,7 @@ import type { JsZip } from "./types/jszip";
             }
             //console.log("diagramResObj: " , diagramResObj)
             // =====< Step 3 >=====
-            var slideContent = readXmlFile(zip, sldFileName , true);
+            var slideContent = readXmlFile(zip, sldFileName, true, app_verssion);
             var nodes = slideContent["p:sld"]["p:cSld"]["p:spTree"];
             var warpObj = {
                 "zip": zip,
