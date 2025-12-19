@@ -43,6 +43,12 @@ import {
 } from "./utils/text";
 import { escapeHtml } from "./utils/string";
 import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
+import {
+  getTextByPathList,
+  getTextByPathStr,
+  setTextByPathList,
+  eachElement,
+} from "./utils/object";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -14585,100 +14591,6 @@ import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
             }
 
             return dataMat;
-        }
-
-        // ===== Node functions =====
-        /**
-         * getTextByPathStr
-         * @param {Object} node
-         * @param {string} pathStr
-         */
-        function getTextByPathStr(node: any, pathStr: any) {
-            return getTextByPathList(node, pathStr.trim().split(/\s+/));
-        }
-
-        /**
-         * getTextByPathList
-         * @param {Object} node
-         * @param {string Array} path
-         */
-        function getTextByPathList(node: any, path: any) {
-
-            if (path.constructor !== Array) {
-                throw Error("Error of path type! path is not array.");
-            }
-
-            if (node === undefined) {
-                return undefined;
-            }
-
-            var l = path.length;
-            for (var i = 0; i < l; i++) {
-                node = node[path[i]];
-                if (node === undefined) {
-                    return undefined;
-                }
-            }
-
-            return node;
-        }
-        /**
-         * setTextByPathList
-         * @param {Object} node
-         * @param {string Array} path
-         * @param {string} value
-         */
-        function setTextByPathList(node: any, path: any, value: any) {
-
-            if (path.constructor !== Array) {
-                throw Error("Error of path type! path is not array.");
-            }
-
-            if (node === undefined) {
-                return undefined;
-            }
-
-            Reflect.defineProperty(node, 'set', {
-                value: function (parts: any, value: any) {
-                  var obj = this
-                  let len = parts.length
-                  for (var i = 0; i < len; i++) {
-                    var p = parts[i]
-                    if (obj[p] == null) {
-                      if (i === len - 1) {
-                        obj[p] = value
-                      } else {
-                        obj[p] = {}
-                      }
-                    }
-                    obj = obj[p]
-                  }
-                  return obj
-                }
-              })        
-
-            node.set(path, value)
-        }
-
-        /**
-         * eachElement
-         * @param {Object} node
-         * @param {function} doFunction
-         */
-        function eachElement(node: any, doFunction: any) {
-            if (node === undefined) {
-                return;
-            }
-            var result = "";
-            if (node.constructor === Array) {
-                var l = node.length;
-                for (var i = 0; i < l; i++) {
-                    result += doFunction(node[i], i);
-                }
-            } else {
-                result += doFunction(node, 0);
-            }
-            return result;
         }
 
         // ===== Other utility functions =====
