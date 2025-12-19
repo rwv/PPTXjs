@@ -1,24 +1,13 @@
-/*
-Required scripts and styles:
-<link rel="stylesheet" href="./css/pptxjs.css">
-<link rel="stylesheet" href="./css/nv.d3.min.css">
-<script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="./js/jszip.min.js"></script>
-<script type="text/javascript" src="./js/filereader.js"></script>
-<script type="text/javascript" src="./js/d3.min.js"></script>
-<script type="text/javascript" src="./js/nv.d3.min.js"></script>
-<script type="text/javascript" src="./js/dingbat.js"></script>
-<script type="text/javascript" src="./js/pptxjs.js"></script>
-<script type="text/javascript" src="./js/divs2slides.js"></script>
-*/
-
 import pptxjsCss from '../css/pptxjs.css?url'
-import nvD3MinCss from '../css/nv.d3.min.css?url'
-import jqueryMinJs from '../js/jquery-1.11.3.min.js?url'
-import jszipMinJs from '../js/jszip.min.js?url'
+import nvD3MinCss from 'nvd3/build/nv.d3.min.css?url'
+import jqueryMinJs from 'jquery/dist/jquery.min.js?url'
+import jqueryFullscreenJs from 'jquery-fullscreen-plugin/jquery.fullscreen-min.js?url'
+import jszipMinJs from 'jszip/dist/jszip.min.js?url'
+import jszipUtilsJs from 'jszip-utils/dist/jszip-utils.min.js?url'
 import filereaderJs from '../js/filereader.js?url'
-import d3MinJs from '../js/d3.min.js?url'
-import nvD3MinJs from '../js/nv.d3.min.js?url'
+import d3MinJs from 'd3/d3.min.js?url'
+import nvD3MinJs from 'nvd3/build/nv.d3.min.js?url'
+import tinyColorJs from '../node_modules/tinycolor2/dist/tinycolor-min.js?url'
 import dingbatJs from '../js/dingbat.js?url'
 import pptxjsJs from '../js/pptxjs.js?url'
 import divs2slidesJs from '../js/divs2slides.js?url'
@@ -43,10 +32,13 @@ export async function loadPPTXjs(document: Document) {
   // Load JavaScript files in sequential order (important for dependencies)
   const scripts = [
     jqueryMinJs,
+    jqueryFullscreenJs,
     jszipMinJs,
+    jszipUtilsJs,
     filereaderJs,
     d3MinJs,
     nvD3MinJs,
+    tinyColorJs,
     dingbatJs,
     pptxjsJs,
     divs2slidesJs
