@@ -42,6 +42,7 @@ import {
   getNumTypeNum,
 } from "./utils/text";
 import { escapeHtml } from "./utils/string";
+import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -14682,115 +14683,6 @@ import { escapeHtml } from "./utils/string";
 
         // ===== Other utility functions =====
         ///////////////////////Amir////////////////
-        function getSvgGradient(w: any, h: any, angl: any, color_arry: any, shpId: any) {
-            var stopsArray = getMiddleStops(color_arry - 2);
-
-            var svgAngle = '',
-                svgHeight = h,
-                svgWidth = w,
-                svg = '',
-                xy_ary = SVGangle(angl, svgHeight, svgWidth),
-                x1 = xy_ary[0],
-                y1 = xy_ary[1],
-                x2 = xy_ary[2],
-                y2 = xy_ary[3];
-
-            var sal = stopsArray.length,
-                sr = sal < 20 ? 100 : 1000;
-            svgAngle = ' gradientUnits="userSpaceOnUse" x1="' + x1 + '%" y1="' + y1 + '%" x2="' + x2 + '%" y2="' + y2 + '%"';
-            svgAngle = '<linearGradient id="linGrd_' + shpId + '"' + svgAngle + '>\n';
-            svg += svgAngle;
-
-            for (var i = 0; i < sal; i++) {
-                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
-                var tinClr = tinycolor("#" + color_arry[i]);
-                var alpha = tinClr.getAlpha();
-                //console.log("color: ", color_arry[i], ", rgba: ", tinClr.toHexString(), ", alpha: ", alpha)
-                // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-                svg += '<stop offset="' + Math.round(parseFloat(stopsArray[i]) / 100 * sr) / sr + '" style="stop-color:' + tinClr.toHexString() + '; stop-opacity:' + (alpha) + ';"';
-                svg += '/>\n'
-            }
-
-            svg += '</linearGradient>\n' + '';
-
-            return svg
-        }
-        function getMiddleStops(s: any) {
-            var sArry = ['0%', '100%'];
-            if (s == 0) {
-                return sArry;
-            } else {
-                var i = s;
-                while (i--) {
-                    var middleStop = 100 - ((100 / (s + 1)) * (i + 1)), // AM: Ex - For 3 middle stops, progression will be 25%, 50%, and 75%, plus 0% and 100% at the ends.
-                        middleStopString = middleStop + "%";
-                    sArry.splice(-1, 0, middleStopString);
-                } // AM: add into stopsArray before 100%
-            }
-            return sArry
-        }
-        function SVGangle(deg: any, svgHeight: any, svgWidth: any) {
-            var w = parseFloat(svgWidth),
-                h = parseFloat(svgHeight),
-                ang = parseFloat(deg),
-                o = 2,
-                n = 2,
-                wc = w / 2,
-                hc = h / 2,
-                tx1 = 2,
-                ty1 = 2,
-                tx2 = 2,
-                ty2 = 2,
-                k = (((ang % 360) + 360) % 360),
-                j = (360 - k) * Math.PI / 180,
-                i = Math.tan(j),
-                l = hc - i * wc;
-
-            if (k == 0) {
-                tx1 = w,
-                    ty1 = hc,
-                    tx2 = 0,
-                    ty2 = hc
-            } else if (k < 90) {
-                n = w,
-                    o = 0
-            } else if (k == 90) {
-                tx1 = wc,
-                    ty1 = 0,
-                    tx2 = wc,
-                    ty2 = h
-            } else if (k < 180) {
-                n = 0,
-                    o = 0
-            } else if (k == 180) {
-                tx1 = 0,
-                    ty1 = hc,
-                    tx2 = w,
-                    ty2 = hc
-            } else if (k < 270) {
-                n = 0,
-                    o = h
-            } else if (k == 270) {
-                tx1 = wc,
-                    ty1 = h,
-                    tx2 = wc,
-                    ty2 = 0
-            } else {
-                n = w,
-                    o = h;
-            }
-            // AM: I could not quite figure out what m, n, and o are supposed to represent from the original code on visualcsstools.com.
-            var m = o + (n / i),
-                tx1 = tx1 == 2 ? i * (m - l) / (Math.pow(i, 2) + 1) : tx1,
-                ty1 = ty1 == 2 ? i * tx1 + l : ty1,
-                tx2 = tx2 == 2 ? w - tx1 : tx2,
-                ty2 = ty2 == 2 ? h - ty1 : ty2,
-                x1 = Math.round(tx2 / w * 100 * 100) / 100,
-                y1 = Math.round(ty2 / h * 100 * 100) / 100,
-                x2 = Math.round(tx1 / w * 100 * 100) / 100,
-                y2 = Math.round(ty1 / h * 100 * 100) / 100;
-            return [x1, y1, x2, y2];
-        }
         function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: any) {
             var pic_dim = getBase64ImageDimensions(fill);
             // @ts-expect-error TS(2532): Object is possibly 'undefined'.
