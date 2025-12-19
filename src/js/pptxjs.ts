@@ -40,6 +40,7 @@ import {
   archaicNumbers,
   hebrew2Minus,
   getNumTypeNum,
+  setNumericBullets,
 } from "./utils/text";
 import { escapeHtml } from "./utils/string";
 import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
@@ -14719,63 +14720,6 @@ import { extractChartData } from "./utils/chart";
 
         }
 
-        function setNumericBullets(elem: any) {
-            var prgrphs_arry = elem;
-            for (var i = 0; i < prgrphs_arry.length; i++) {
-                var buSpan = $(prgrphs_arry[i]).find('.numeric-bullet-style');
-                if (buSpan.length > 0) {
-                    //console.log("DIV-"+i+":");
-                    var prevBultTyp = "";
-                    var prevBultLvl = "";
-                    var buletIndex = 0;
-                    var tmpArry = new Array();
-                    var tmpArryIndx = 0;
-                    var buletTypSrry = new Array();
-                    for (var j = 0; j < buSpan.length; j++) {
-                        var bult_typ = $(buSpan[j]).data("bulltname");
-                        var bult_lvl = $(buSpan[j]).data("bulltlvl");
-                        //console.log(j+" - "+bult_typ+" lvl: "+bult_lvl );
-                        if (buletIndex == 0) {
-                            prevBultTyp = bult_typ;
-                            prevBultLvl = bult_lvl;
-                            tmpArry[tmpArryIndx] = buletIndex;
-                            buletTypSrry[tmpArryIndx] = bult_typ;
-                            buletIndex++;
-                        } else {
-                            if (bult_typ == prevBultTyp && bult_lvl == prevBultLvl) {
-                                prevBultTyp = bult_typ;
-                                prevBultLvl = bult_lvl;
-                                buletIndex++;
-                                tmpArry[tmpArryIndx] = buletIndex;
-                                buletTypSrry[tmpArryIndx] = bult_typ;
-                            } else if (bult_typ != prevBultTyp && bult_lvl == prevBultLvl) {
-                                prevBultTyp = bult_typ;
-                                prevBultLvl = bult_lvl;
-                                tmpArryIndx++;
-                                tmpArry[tmpArryIndx] = buletIndex;
-                                buletTypSrry[tmpArryIndx] = bult_typ;
-                                buletIndex = 1;
-                            } else if (bult_typ != prevBultTyp && Number(bult_lvl) > Number(prevBultLvl)) {
-                                prevBultTyp = bult_typ;
-                                prevBultLvl = bult_lvl;
-                                tmpArryIndx++;
-                                tmpArry[tmpArryIndx] = buletIndex;
-                                buletTypSrry[tmpArryIndx] = bult_typ;
-                                buletIndex = 1;
-                            } else if (bult_typ != prevBultTyp && Number(bult_lvl) < Number(prevBultLvl)) {
-                                prevBultTyp = bult_typ;
-                                prevBultLvl = bult_lvl;
-                                tmpArryIndx--;
-                                buletIndex = tmpArry[tmpArryIndx] + 1;
-                            }
-                        }
-                        //console.log(buletTypSrry[tmpArryIndx]+" - "+buletIndex);
-                        var numIdx = getNumTypeNum(buletTypSrry[tmpArryIndx], buletIndex);
-                        $(buSpan[j]).html(numIdx);
-                    }
-                }
-            }
-        }
 
         /////////////////////////////////////tXml///////////////////////////
         /*
