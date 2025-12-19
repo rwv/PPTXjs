@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "pnpm build:dingbat",
-    "build:dingbat": "esbuild src/js/dingbat.js --bundle --format=iife --outfile=js/dingbat.js --platform=browser --target=es2020 --sourcemap --external:jquery",
+    "build:dingbat": "esbuild src/js/dingbat.ts --bundle --format=iife --outfile=js/dingbat.js --platform=browser --target=es2020 --sourcemap --external:jquery",
     "build:divs2slides": "esbuild src/js/divs2slides.js --bundle --format=iife --outfile=js/divs2slides.js --platform=browser --target=es2020 --sourcemap --external:jquery",
     "build:pptxjs": "esbuild src/js/pptxjs.js --bundle --format=iife --outfile=js/pptxjs.js --platform=browser --target=es2020 --sourcemap --external:jquery --external:fs",
     "test": "vitest --run --browser.headless",
