@@ -19,30 +19,46 @@ describe('PPTXjs Loading', () => {
     const response = await fetch(SamplePptx)
     const blob = await response.blob()
 
-    try {
-      const { pages, element } = await getPageElementsFromPPTX(blob)
+    const { pages, element } = await getPageElementsFromPPTX(blob)
 
-      // Use native assertions to avoid vitest expect issues
-      if (!pages || pages.length === 0) {
-        throw new Error('No pages found')
+    // Check slide count
+    expect(pages.length).toBeGreaterThan(0)
+    expect(pages.length).toMatchInlineSnapshot(`12`)
+
+    // Verify slides are in the DOM
+    const allSlidesWrapper = document.getElementById('all_slides_warpper')
+    expect(allSlidesWrapper).not.toBeNull()
+
+    // Check that we have actual slide elements
+    const slideElements = document.querySelectorAll('.slide')
+    expect(slideElements.length).toBeGreaterThan(0)
+    expect(slideElements.length).toMatchInlineSnapshot(`12`)
+
+    // Snapshot test: Verify slide structure (extract stable parts)
+    const slideStructure = Array.from(slideElements).map((slide, index) => {
+      // Extract stable structure without dynamic IDs or base64 data
+      const getElementInfo = (el: Element) => ({
+        tag: el.tagName,
+        className: el.className,
+        childCount: el.children.length,
+        hasStyle: el.hasAttribute('style'),
+        children: Array.from(el.children).map(child => ({
+          tag: child.tagName,
+          className: child.className,
+          hasContent: child.children.length > 0 || (child.textContent?.trim().length ?? 0) > 0
+        }))
+      })
+
+      return {
+        index,
+        ...getElementInfo(slide)
       }
+    })
+    expect(slideStructure).toMatchSnapshot()
 
-      // Verify slides are in the DOM
-      const allSlidesWrapper = document.getElementById('all_slides_warpper')
-      if (!allSlidesWrapper) {
-        throw new Error('all_slides_warpper not found')
-      }
+    console.log(`✓ Successfully loaded ${pages.length} slides`)
 
-      // Check that we have actual slide elements
-      const slideElements = document.querySelectorAll('.slide')
-      if (slideElements.length === 0) {
-        throw new Error('No slide elements found')
-      }
-
-      console.log(`✓ Successfully loaded ${pages.length} slides`)
-    } catch (error) {
-      console.error('Test failed:', error)
-      throw error
-    }
+    // Clean up
+    element.remove()
   }, 60000) // 60 second timeout
 })

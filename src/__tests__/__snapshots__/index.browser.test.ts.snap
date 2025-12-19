@@ -1,0 +1,174 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PPTXjs Loading > should parse pptx and get slides 3`] = `
+[
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-0",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 0,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-1",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 1,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-2",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 2,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-3",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 3,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-4",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 4,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-5",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 5,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-6",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 6,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-7",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 7,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-8",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 8,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-9",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 9,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-10",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 10,
+    "tag": "DIV",
+  },
+  {
+    "childCount": 1,
+    "children": [
+      {
+        "className": "slide-background-11",
+        "hasContent": true,
+        "tag": "DIV",
+      },
+    ],
+    "className": "slide",
+    "hasStyle": true,
+    "index": 11,
+    "tag": "DIV",
+  },
+]
+`;
