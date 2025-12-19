@@ -10565,8 +10565,8 @@ import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
             var text = node["a:t"];
             //var text_count = text.length;
 
-            var openElemnt = "<sapn";//"<bdi";
-            var closeElemnt = "</sapn>";// "</bdi>";
+            var openElemnt = "<span";//"<bdi";
+            var closeElemnt = "</span>";// "</bdi>";
             var styleText = "";
             if (text === undefined && node["type"] !== undefined) {
                 if (is_first_br) {
@@ -10574,16 +10574,16 @@ import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
                     //closeElemnt = "";
                     //return "<br style='font-size: initial'>"
                     is_first_br = false;
-                    return "<sapn class='line-break-br' ></sapn>";
+                    return "<span class='line-break-br' ></span>";
                 } else {
                     // styleText += "display: block;";
-                    // openElemnt = "<sapn";
-                    // closeElemnt = "</sapn>";
+                    // openElemnt = "<span";
+                    // closeElemnt = "</span>";
                 }
 
                 styleText += "display: block;";
-                //openElemnt = "<sapn";
-                //closeElemnt = "</sapn>";
+                //openElemnt = "<span";
+                //closeElemnt = "</span>";
             } else {
 
                 is_first_br = true;
@@ -11385,10 +11385,10 @@ import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
                 lin_bottom_left_to_top_right = "",
                 lin_top_left_to_bottom_right = "";
             
-            var colSapnInt = parseInt(colSpan);
+            var colSpanInt = parseInt(colSpan);
             var total_col_width = 0;
-            if (!isNaN(colSapnInt) && colSapnInt > 1){
-                for (var k = 0; k < colSapnInt ; k++) {
+            if (!isNaN(colSpanInt) && colSpanInt > 1){
+                for (var k = 0; k < colSpanInt ; k++) {
                     total_col_width += parseInt(getTextByPathList(getColsGrid[col_idx + k], ["attrs", "w"]));
                 }
             }else{
