@@ -13296,23 +13296,24 @@
                 return undefined;
             }
 
-            Object.prototype.set = function (parts, value) {
-                //var parts = prop.split('.');
-                var obj = this;
-                var lent = parts.length;
-                for (var i = 0; i < lent; i++) {
-                    var p = parts[i];
-                    if (obj[p] === undefined) {
-                        if (i == lent - 1) {
-                            obj[p] = value;
-                        } else {
-                            obj[p] = {};
-                        }
+            Reflect.defineProperty(node, 'set', {
+                value: function (parts, value) {
+                  var obj = this
+                  let len = parts.length
+                  for (var i = 0; i < len; i++) {
+                    var p = parts[i]
+                    if (obj[p] == null) {
+                      if (i === len - 1) {
+                        obj[p] = value
+                      } else {
+                        obj[p] = {}
+                      }
                     }
-                    obj = obj[p];
+                    obj = obj[p]
+                  }
+                  return obj
                 }
-                return obj;
-            }
+              })        
 
             node.set(path, value)
         }

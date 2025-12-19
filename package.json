@@ -1,0 +1,26 @@
+{
+  "name": "PPTXjs",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest --run",
+    "test:ui": "vitest --ui",
+    "test:browser": "vitest --browser"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.26.0",
+  "devDependencies": {
+    "@types/jquery": "^3.5.33",
+    "@vitest/browser": "^4.0.16",
+    "@vitest/browser-playwright": "^4.0.16",
+    "playwright": "^1.57.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-node-polyfills": "^0.24.0",
+    "vitest": "^4.0.16"
+  }
+}
