@@ -22,7 +22,10 @@ export async function getPageElementsFromPPTX(file: Blob) {
   // Wait until slides are loaded
   await new Promise<void>((resolve) => {
     const check = () => {
-      if (document.getElementById('all_slides_warpper')) {
+      const slidesWrapper = document.getElementById('all_slides_warpper')
+      if (slidesWrapper) {
+        // Add test-id for easier testing
+        slidesWrapper.setAttribute('data-testid', 'pptx-slides')
         resolve()
       } else {
         requestAnimationFrame(check)

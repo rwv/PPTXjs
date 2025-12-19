@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+import { page } from 'vitest/browser'
 
 import { getPageElementsFromPPTX } from '../index'
 import SamplePptx from './example.pptx?url'
@@ -55,6 +56,18 @@ describe('PPTXjs Loading', () => {
       }
     })
     expect(slideStructure).toMatchSnapshot()
+
+
+    for (let i = 0; i < slideElements.length; i++) {
+      slideElements[i]!.setAttribute('data-testid', `test-slide-${i}`)
+      const slide = page.getByTestId(`test-slide-${i}`)
+      await expect(slide).toMatchScreenshot(`test-slide-${i}`, {
+        comparatorName: 'pixelmatch',
+        comparatorOptions: {
+          allowedMismatchedPixelRatio: 0.01,
+        },
+      })
+    }
 
     console.log(`✓ Successfully loaded ${pages.length} slides`)
 

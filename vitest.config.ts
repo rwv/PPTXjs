@@ -13,8 +13,13 @@ export default defineConfig({
     retry: 0,
     browser: {
       enabled: true,
+      screenshotFailures: false,
       provider: playwright(),
-      instances: [{ browser: 'chromium' }]
+      instances: [{ browser: 'chromium' }],
+      viewport: {
+        width: 1024,
+        height: 1000
+      }
     },
     exclude: [
       '**/node_modules/**',
