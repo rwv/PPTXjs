@@ -9,6 +9,5 @@ export { applyLumMod } from "./apply-lum-mod";
 export { applyHueMod } from "./apply-hue-mod";
 export { applySatMod } from "./apply-sat-mod";
 export { rgba2hex } from "./rgba-2-hex";
-export { angleToDegrees } from "./angle-to-degrees";
 export { getSchemeColorFromTheme } from "./get-scheme-color-from-theme";
 export { getSolidFill } from "./get-solid-fill";
