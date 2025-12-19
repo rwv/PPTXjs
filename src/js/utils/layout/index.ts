@@ -2,3 +2,8 @@
 export { getPosition } from "./get-position";
 export { getSize } from "./get-size";
 export { getVerticalAlign } from "./get-vertical-align";
+export { getVerticalMargins } from "./get-vertical-margins";
+export { getHorizontalAlign } from "./get-horizontal-align";
+export { getPregraphDir } from "./get-pregraph-dir";
+export { getContentDir } from "./get-content-dir";
+export { getLayoutAndMasterNode } from "./get-layout-and-master-node";
