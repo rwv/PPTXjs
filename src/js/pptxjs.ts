@@ -8,6 +8,7 @@
  * fix issues:
  * [#16](https://github.com/meshesha/PPTXjs/issues/16)
  */
+import { shapePie } from "./utils/shape/shape-pie";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
@@ -9635,39 +9636,6 @@
             return result;
         }
 
-        function shapePie(H: any, w: any, adj1: any, adj2: any, isClose: any) {
-            var pieVal = parseInt(adj2);
-            var piAngle = parseInt(adj1);
-            var size = parseInt(H),
-                radius = (size / 2),
-                value = pieVal - piAngle;
-            if (value < 0) {
-                value = 360 + value;
-            }
-            //console.log("value: ",value)      
-            value = Math.min(Math.max(value, 0), 360);
-
-            //calculate x,y coordinates of the point on the circle to draw the arc to. 
-            var x = Math.cos((2 * Math.PI) / (360 / value));
-            var y = Math.sin((2 * Math.PI) / (360 / value));
-
-
-            //d is a string that describes the path of the slice.
-            var longArc, d, rot;
-            if (isClose) {
-                longArc = (value <= 180) ? 0 : 1;
-                d = "M" + radius + "," + radius + " L" + radius + "," + 0 + " A" + radius + "," + radius + " 0 " + longArc + ",1 " + (radius + y * radius) + "," + (radius - x * radius) + " z";
-                rot = "rotate(" + (piAngle - 270) + ", " + radius + ", " + radius + ")";
-            } else {
-                longArc = (value <= 180) ? 0 : 1;
-                var radius1 = radius;
-                var radius2 = w / 2;
-                d = "M" + radius1 + "," + 0 + " A" + radius2 + "," + radius1 + " 0 " + longArc + ",1 " + (radius2 + y * radius2) + "," + (radius1 - x * radius1);
-                rot = "rotate(" + (piAngle + 90) + ", " + radius + ", " + radius + ")";
-            }
-
-            return [d, rot];
-        }
         function shapeGear(w: any, h: any, points: any) {
             var innerRadius = h;//gear.innerRadius;
             var outerRadius = 1.5 * innerRadius;
