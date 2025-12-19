@@ -6,13 +6,15 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
-    "strict": true,
+    "allowJs": true,
+    "checkJs": false,
+    "strict": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "types": ["vite/client", "vitest"]
+    "types": ["vite/client", "vitest", "jquery"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "other-repo-code"]

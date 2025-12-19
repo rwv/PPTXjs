@@ -9,7 +9,7 @@ import nvD3MinJs from 'nvd3/build/nv.d3.min.js?url'
 import tinyColorJs from '../node_modules/tinycolor2/dist/tinycolor-min.js?url'
 import dingbatJs from '../js/dingbat.js?url'
 import pptxjsJs from '../js-original/pptxjs.js?url'
-import divs2slidesJs from '../js-original/divs2slides.js?url'
+import divs2slidesJs from '../js/divs2slides.js?url'
 
 export async function loadPPTXjs(document: Document) {
   // Load CSS files

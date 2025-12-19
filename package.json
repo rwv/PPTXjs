@@ -7,6 +7,7 @@
   "scripts": {
     "build": "rollup -c",
     "build:dingbat": "rollup -c",
+    "type-check": "tsc --noEmit",
     "test": "pnpm build && vitest --run --browser.headless",
     "test:ui": "vitest --ui",
     "test:watch": "vitest"
