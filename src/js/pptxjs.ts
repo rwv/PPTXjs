@@ -10,7 +10,7 @@
  */
 
 (function ($) {
-    $.fn.pptxToHtml = function (options) {
+    $.fn.pptxToHtml = function (options: any) {
         //var worker;
         var $result = $(this);
         var divId = $result.attr("id");
@@ -21,13 +21,13 @@
 
         //var slideLayoutClrOvride = "";
 
-        var defaultTextStyle = null;
+        var defaultTextStyle: any = null;
 
         var chartID = 0;
 
         var _order = 1;
 
-        var app_verssion ;
+        var app_verssion: any ;
 
         var rtl_langs_array = ["he-IL", "ar-AE", "ar-SA", "dv-MV", "fa-IR","ur-PK"]
 
@@ -85,11 +85,14 @@
                 }).html("<span style='text-align: center;'>Loading... (1%)</span>"))
         );
         if (settings.slideMode) {
+            // @ts-expect-error TS(2304): Cannot find name 'jQuery'.
             if (!jQuery().divs2slides) {
+                // @ts-expect-error TS(2304): Cannot find name 'jQuery'.
                 jQuery.getScript('./js/divs2slides.js');
             }
         }
         if (settings.jsZipV2 !== false) {
+            // @ts-expect-error TS(2304): Cannot find name 'jQuery'.
             jQuery.getScript(settings.jsZipV2);
             if (localStorage.getItem('isPPTXjsReLoaded') !== 'yes') {
                 localStorage.setItem('isPPTXjsReLoaded', 'yes');
@@ -98,7 +101,7 @@
         }
 
         if (settings.keyBoardShortCut) {
-            $(document).bind("keydown", function (event) {
+            $(document).bind("keydown", function (event: any) {
                 event.preventDefault();
                 var key = event.keyCode;
                 console.log(key, isDone)
@@ -113,7 +116,8 @@
         }
         if (settings.pptxFileUrl != "") {
             try{
-                JSZipUtils.getBinaryContent(settings.pptxFileUrl, function (err, content) {
+                // @ts-expect-error TS(2304): Cannot find name 'JSZipUtils'.
+                JSZipUtils.getBinaryContent(settings.pptxFileUrl, function (err: any, content: any) {
                     var blob = new Blob([content]);
                     blob.arrayBuffer().then(function(arrayBuffer) {
                         convertToHtml(arrayBuffer);
@@ -127,14 +131,14 @@
             $(".slides-loadnig-msg").remove()
         }
         if (settings.fileInputId != "") {
-            $("#" + settings.fileInputId).on("change", function (evt) {
+            $("#" + settings.fileInputId).on("change", function (evt: any) {
                 $result.html("");
                 var file = evt.target.files[0];
                 // var fileName = file[0].name;
                 //var fileSize = file[0].size;
                 var fileType = file.type;
                 if (fileType == "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
-                    file.arrayBuffer().then(function(arrayBuffer) {
+                    file.arrayBuffer().then(function(arrayBuffer: any) {
                         convertToHtml(arrayBuffer);
                     });
                 } else {
@@ -143,14 +147,14 @@
             });
         }
 
-        function updateProgressBar(percent) {
+        function updateProgressBar(percent: any) {
             //console.log("percent: ", percent)
             var progressBarElemtnt = $(".slides-loading-progress-bar")
             progressBarElemtnt.width(percent + "%")
             progressBarElemtnt.html("<span style='text-align: center;'>Loading...(" + percent + "%)</span>");
         }
 
-        function convertToHtml(file) {
+        function convertToHtml(file: any) {
             //'use strict';
             //console.log("file", file, "size:", file.byteLength);
             if (file.byteLength < 10){
@@ -158,6 +162,7 @@
                 $(".slides-loadnig-msg").remove();
                 return;
             }
+            // @ts-expect-error TS(2304): Cannot find name 'JSZip'.
             var zip = new JSZip(), s;
             //if (typeof file === 'string') { // Load
             zip = zip.load(file);  //zip.load(file, { base64: true });
@@ -165,15 +170,19 @@
             //s = readXmlFile(zip, 'ppt/tableStyles.xml');
             //var slidesHeight = $("#" + divId + " .slide").height();
             for (var i = 0; i < rslt_ary.length; i++) {
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 switch (rslt_ary[i]["type"]) {
                     case "slide":
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         $result.append(rslt_ary[i]["data"]);
                         break;
                     case "pptx-thumb":
                         //$("#pptx-thumb").attr("src", "data:image/jpeg;base64," +rslt_ary[i]["data"]);
                         break;
                     case "slideSize":
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         slideWidth = rslt_ary[i]["data"].width;
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         slideHeight = rslt_ary[i]["data"].height;
                         /*
                         $("#"+divId).css({
@@ -184,6 +193,7 @@
                         break;
                     case "globalCSS":
                         //console.log(rslt_ary[i]["data"])
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         $result.append("<style>" + rslt_ary[i]["data"] + "</style>");
                         break;
                     case "ExecutionTime":
@@ -202,6 +212,7 @@
                         break;
                     case "progress-update":
                         //console.log(rslt_ary[i]["data"]); //update progress bar - TODO
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         updateProgressBar(rslt_ary[i]["data"])
                         break;
                     default:
@@ -231,6 +242,7 @@
 
             var slidesHeight = $("#" + divId + " .slide").height();
             var numOfSlides = $("#" + divId + " .slide").length;
+            // @ts-expect-error TS(2454): Variable 'scaleVal' is used before being assigned.
             var sScaleVal = (sScale != "") ? scaleVal : 1;
             //console.log("slidesHeight: " + slidesHeight + "\nnumOfSlides: " + numOfSlides + "\nScale: " + sScaleVal)
 
@@ -241,7 +253,7 @@
             //}
         }
 
-        function initSlideMode(divId, settings) {
+        function initSlideMode(divId: any, settings: any) {
             //console.log(settings.slideType)
             if (settings.slideType == "" || settings.slideType == "divs2slidesjs") {
                 var slidesHeight = $("#" + divId + " .slide").height();
@@ -274,6 +286,7 @@
                     }
 
                     var numOfSlides = 1;
+                    // @ts-expect-error TS(2454): Variable 'scaleVal' is used before being assigned.
                     var sScaleVal = (sScale != "") ? scaleVal : 1;
                     //console.log(slidesHeight);
                     $("#all_slides_warpper").attr({
@@ -289,9 +302,10 @@
                 } else {
                     revealjsPath = "./revealjs/reveal.js";
                 }
-                $.getScript(revealjsPath, function (response, status) {
+                $.getScript(revealjsPath, function (response: any, status: any) {
                     if (status == "success") {
                         // $("section").removeClass("slide");
+                        // @ts-expect-error TS(2304): Cannot find name 'Reveal'.
                         Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
                     }
                 });
@@ -301,7 +315,7 @@
 
         }
 
-        function processPPTX(zip) {
+        function processPPTX(zip: any) {
             var post_ary = [];
             var dateBefore = new Date();
 
@@ -316,6 +330,7 @@
 
             var filesInfo = getContentTypes(zip);
             var slideSize = getSlideSizeAndSetDefaultTextStyle(zip);
+            // @ts-expect-error TS(2304): Cannot find name 'tableStyles'.
             tableStyles = readXmlFile(zip, "ppt/tableStyles.xml");
             //console.log("slideSize: ", slideSize)
             post_ary.push({
@@ -371,12 +386,13 @@
             var dateAfter = new Date();
             post_ary.push({
                 "type": "ExecutionTime",
+                // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
                 "data": dateAfter - dateBefore
             });
             return post_ary;
         }
 
-        function readXmlFile(zip, filename, isSlideContent) {
+        function readXmlFile(zip: any, filename: any, isSlideContent: any) {
             try {
                 var fileContent = zip.file(filename).asText();
                 if (isSlideContent && app_verssion <= 12) {
@@ -396,7 +412,8 @@
             }
 
         }
-        function getContentTypes(zip) {
+        function getContentTypes(zip: any) {
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var ContentTypesJson = readXmlFile(zip, "[Content_Types].xml");
 
             var subObj = ContentTypesJson["Types"]["Override"];
@@ -419,8 +436,9 @@
             };
         }
 
-        function getSlideSizeAndSetDefaultTextStyle(zip) {
+        function getSlideSizeAndSetDefaultTextStyle(zip: any) {
             //get app version
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var app = readXmlFile(zip, "docProps/app.xml");
             var app_verssion_str = app["Properties"]["AppVersion"]
             app_verssion = parseInt(app_verssion_str);
@@ -428,6 +446,7 @@
 
             //get slide dimensions
             var rtenObj = {};
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var content = readXmlFile(zip, "ppt/presentation.xml");
             var sldSzAttrs = content["p:presentation"]["p:sldSz"]["attrs"];
             var sldSzWidth = parseInt(sldSzAttrs["cx"]);
@@ -479,7 +498,7 @@
             };
             return rtenObj;
         }
-        function processSingleSlide(zip, sldFileName, index, slideSize) {
+        function processSingleSlide(zip: any, sldFileName: any, index: any, slideSize: any) {
             /*
             self.postMessage({
                 "type": "INFO",
@@ -491,6 +510,7 @@
             // @sldFileName: ppt/slides/slide1.xml
             // @resName: ppt/slides/_rels/slide1.xml.rels
             var resName = sldFileName.replace("slides/slide", "slides/_rels/slide") + ".rels";
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var resContent = readXmlFile(zip, resName);
             var RelationshipArray = resContent["Relationships"]["Relationship"];
             //console.log("RelationshipArray: " , RelationshipArray)
@@ -505,6 +525,7 @@
                             break;
                         case "http://schemas.microsoft.com/office/2007/relationships/diagramDrawing":
                             diagramFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             slideResObj[RelationshipArray[i]["attrs"]["Id"]] = {
                                 "type": RelationshipArray[i]["attrs"]["Type"].replace("http://schemas.openxmlformats.org/officeDocument/2006/relationships/", ""),
                                 "target": RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/")
@@ -515,6 +536,7 @@
                         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart":
                         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink":
                         default:
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             slideResObj[RelationshipArray[i]["attrs"]["Id"]] = {
                                 "type": RelationshipArray[i]["attrs"]["Type"].replace("http://schemas.openxmlformats.org/officeDocument/2006/relationships/", ""),
                                 "target": RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/")
@@ -526,12 +548,14 @@
             }
             //console.log(slideResObj);
             // Open slideLayoutXX.xml
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var slideLayoutContent = readXmlFile(zip, layoutFilename);
             var slideLayoutTables = indexNodes(slideLayoutContent);
             var sldLayoutClrOvr = getTextByPathList(slideLayoutContent, ["p:sldLayout", "p:clrMapOvr", "a:overrideClrMapping"]);
 
             //console.log(slideLayoutClrOvride);
             if (sldLayoutClrOvr !== undefined) {
+                // @ts-expect-error TS(2304): Cannot find name 'slideLayoutClrOvride'.
                 slideLayoutClrOvride = sldLayoutClrOvr["attrs"];
             }
             // =====< Step 2 >=====
@@ -539,6 +563,7 @@
             // @resName: ppt/slideLayouts/slideLayout1.xml
             // @masterName: ppt/slideLayouts/_rels/slideLayout1.xml.rels
             var slideLayoutResFilename = layoutFilename.replace("slideLayouts/slideLayout", "slideLayouts/_rels/slideLayout") + ".rels";
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var slideLayoutResContent = readXmlFile(zip, slideLayoutResFilename);
             RelationshipArray = slideLayoutResContent["Relationships"]["Relationship"];
             var masterFilename = "";
@@ -550,6 +575,7 @@
                             masterFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
                             break;
                         default:
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             layoutResObj[RelationshipArray[i]["attrs"]["Id"]] = {
                                 "type": RelationshipArray[i]["attrs"]["Type"].replace("http://schemas.openxmlformats.org/officeDocument/2006/relationships/", ""),
                                 "target": RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/")
@@ -560,6 +586,7 @@
                 masterFilename = RelationshipArray["attrs"]["Target"].replace("../", "ppt/");
             }
             // Open slideMasterXX.xml
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var slideMasterContent = readXmlFile(zip, masterFilename);
             var slideMasterTextStyles = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:txStyles"]);
             var slideMasterTables = indexNodes(slideMasterContent);
@@ -567,6 +594,7 @@
             /////////////////Amir/////////////
             //Open slideMasterXX.xml.rels
             var slideMasterResFilename = masterFilename.replace("slideMasters/slideMaster", "slideMasters/_rels/slideMaster") + ".rels";
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var slideMasterResContent = readXmlFile(zip, slideMasterResFilename);
             RelationshipArray = slideMasterResContent["Relationships"]["Relationship"];
             var themeFilename = "";
@@ -578,6 +606,7 @@
                             themeFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
                             break;
                         default:
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             masterResObj[RelationshipArray[i]["attrs"]["Id"]] = {
                                 "type": RelationshipArray[i]["attrs"]["Type"].replace("http://schemas.openxmlformats.org/officeDocument/2006/relationships/", ""),
                                 "target": RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/")
@@ -592,9 +621,12 @@
             var themeResObj = {};
             if (themeFilename !== undefined) {
                 var themeName = themeFilename.split("/").pop();
+                // @ts-expect-error TS(2769): No overload matches this call.
                 var themeResFileName = themeFilename.replace(themeName, "_rels/" + themeName) + ".rels";
                 //console.log("themeFilename: ", themeFilename, ", themeName: ", themeName, ", themeResFileName: ", themeResFileName)
+                // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
                 var themeContent = readXmlFile(zip, themeFilename);
+                // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
                 var themeResContent = readXmlFile(zip, themeResFileName);
                 if (themeResContent !== null) {
                     var relationshipArray = themeResContent["Relationships"]["Relationship"];
@@ -602,6 +634,7 @@
                         var themeFilename = "";
                         if (relationshipArray.constructor === Array) {
                             for (var i = 0; i < relationshipArray.length; i++) {
+                                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                 themeResObj[relationshipArray[i]["attrs"]["Id"]] = {
                                     "type": relationshipArray[i]["attrs"]["Type"].replace("http://schemas.openxmlformats.org/officeDocument/2006/relationships/", ""),
                                     "target": relationshipArray[i]["attrs"]["Target"].replace("../", "ppt/")
@@ -609,6 +642,7 @@
                             }
                         } else {
                             //console.log("theme relationshipArray : ", relationshipArray)
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             themeResObj[relationshipArray["attrs"]["Id"]] = {
                                 "type": relationshipArray["attrs"]["Type"].replace("http://schemas.openxmlformats.org/officeDocument/2006/relationships/", ""),
                                 "target": relationshipArray["attrs"]["Target"].replace("../", "ppt/")
@@ -622,8 +656,10 @@
             var digramFileContent = {};
             if (diagramFilename !== undefined) {
                 var diagName = diagramFilename.split("/").pop();
+                // @ts-expect-error TS(2769): No overload matches this call.
                 var diagramResFileName = diagramFilename.replace(diagName, "_rels/" + diagName) + ".rels";
                 //console.log("diagramFilename: ", diagramFilename, ", themeName: ", themeName, ", diagramResFileName: ", diagramResFileName)
+                // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
                 digramFileContent = readXmlFile(zip, diagramFilename);
                 if (digramFileContent !== null && digramFileContent !== undefined && digramFileContent != "") {
                     var digramFileContentObjToStr = JSON.stringify(digramFileContent);
@@ -631,12 +667,14 @@
                     digramFileContent = JSON.parse(digramFileContentObjToStr);
                 }
 
+                // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
                 var digramResContent = readXmlFile(zip, diagramResFileName);
                 if (digramResContent !== null) {
                     var relationshipArray = digramResContent["Relationships"]["Relationship"];
                     var themeFilename = "";
                     if (relationshipArray.constructor === Array) {
                         for (var i = 0; i < relationshipArray.length; i++) {
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             diagramResObj[relationshipArray[i]["attrs"]["Id"]] = {
                                 "type": relationshipArray[i]["attrs"]["Type"].replace("http://schemas.openxmlformats.org/officeDocument/2006/relationships/", ""),
                                 "target": relationshipArray[i]["attrs"]["Target"].replace("../", "ppt/")
@@ -644,6 +682,7 @@
                         }
                     } else {
                         //console.log("theme relationshipArray : ", relationshipArray)
+                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                         diagramResObj[relationshipArray["attrs"]["Id"]] = {
                             "type": relationshipArray["attrs"]["Type"].replace("http://schemas.openxmlformats.org/officeDocument/2006/relationships/", ""),
                             "target": relationshipArray["attrs"]["Target"].replace("../", "ppt/")
@@ -678,7 +717,9 @@
             }
 
             var bgColor = "";
+            // @ts-expect-error TS(2367): This condition will always return 'false' since th... Remove this comment to see the full error message
             if (processFullTheme == "colorsAndImageOnly") {
+                // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                 bgColor = getSlideBackgroundFill(warpObj, index);
             }
 
@@ -691,9 +732,11 @@
             for (var nodeKey in nodes) {
                 if (nodes[nodeKey].constructor === Array) {
                     for (var i = 0; i < nodes[nodeKey].length; i++) {
+                        // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
                         result += processNodesInSlide(nodeKey, nodes[nodeKey][i], nodes, warpObj, "slide");
                     }
                 } else {
+                    // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
                     result += processNodesInSlide(nodeKey, nodes[nodeKey], nodes, warpObj, "slide");
                 }
             }
@@ -705,9 +748,10 @@
 
         }
 
-        function indexNodes(content) {
+        function indexNodes(content: any) {
 
             var keys = Object.keys(content);
+            // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
             var spTreeNode = content[keys[0]]["p:cSld"]["p:spTree"];
 
             var idTable = {};
@@ -730,12 +774,15 @@
                         var type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
 
                         if (id !== undefined) {
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             idTable[id] = targetNode[i];
                         }
                         if (idx !== undefined) {
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             idxTable[idx] = targetNode[i];
                         }
                         if (type !== undefined) {
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             typeTable[type] = targetNode[i];
                         }
                     }
@@ -746,12 +793,15 @@
                     var type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
 
                     if (id !== undefined) {
+                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                         idTable[id] = targetNode;
                     }
                     if (idx !== undefined) {
+                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                         idxTable[idx] = targetNode;
                     }
                     if (type !== undefined) {
+                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                         typeTable[type] = targetNode;
                     }
                 }
@@ -761,7 +811,7 @@
             return { "idTable": idTable, "idxTable": idxTable, "typeTable": typeTable };
         }
 
-        function processNodesInSlide(nodeKey, nodeValue, nodes, warpObj, source, sType) {
+        function processNodesInSlide(nodeKey: any, nodeValue: any, nodes: any, warpObj: any, source: any, sType: any) {
             var result = "";
 
             switch (nodeKey) {
@@ -793,7 +843,7 @@
 
         }
 
-        function processGroupSpNode(node, warpObj, source) {
+        function processGroupSpNode(node: any, warpObj: any, source: any) {
             //console.log("processGroupSpNode: node: ", node)
             var xfrmNode = getTextByPathList(node, ["p:grpSpPr", "a:xfrm"]);
             if (xfrmNode !== undefined) {
@@ -835,19 +885,24 @@
             }
             var grpStyle = "";
 
+            // @ts-expect-error TS(2454): Variable 'rotStr' is used before being assigned.
             if (rotStr !== undefined && rotStr != "") {
                 grpStyle += rotStr;
             }
 
+            // @ts-expect-error TS(2454): Variable 'top' is used before being assigned.
             if (top !== undefined) {
                 grpStyle += "top: " + top + "px;";
             }
+            // @ts-expect-error TS(2454): Variable 'left' is used before being assigned.
             if (left !== undefined) {
                 grpStyle += "left: " + left + "px;";
             }
+            // @ts-expect-error TS(2454): Variable 'width' is used before being assigned.
             if (width !== undefined) {
                 grpStyle += "width:" + width + "px;";
             }
+            // @ts-expect-error TS(2454): Variable 'height' is used before being assigned.
             if (height !== undefined) {
                 grpStyle += "height: " + height + "px;";
             }
@@ -859,9 +914,11 @@
             for (var nodeKey in node) {
                 if (node[nodeKey].constructor === Array) {
                     for (var i = 0; i < node[nodeKey].length; i++) {
+                        // @ts-expect-error TS(2454): Variable 'sType' is used before being assigned.
                         result += processNodesInSlide(nodeKey, node[nodeKey][i], node, warpObj, source, sType);
                     }
                 } else {
+                    // @ts-expect-error TS(2454): Variable 'sType' is used before being assigned.
                     result += processNodesInSlide(nodeKey, node[nodeKey], node, warpObj, source, sType);
                 }
             }
@@ -871,7 +928,7 @@
             return result;
         }
 
-        function processSpNode(node, pNode, warpObj, source, sType) {
+        function processSpNode(node: any, pNode: any, warpObj: any, source: any, sType: any) {
 
             /*
             *  958    <xsd:complexType name="CT_GvmlShape">
@@ -917,7 +974,9 @@
             }
 
             if (type === undefined) {
+                // @ts-expect-error TS(2304): Cannot find name 'txBoxVal'.
                 txBoxVal = getTextByPathList(node, ["p:nvSpPr", "p:cNvSpPr", "attrs", "txBox"]);
+                // @ts-expect-error TS(2304): Cannot find name 'txBoxVal'.
                 if (txBoxVal == "1") {
                     type = "textBox";
                 }
@@ -938,7 +997,7 @@
             return genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, name, idx, type, order, warpObj, isUserDrawnBg, sType, source);
         }
 
-        function processCxnSpNode(node, pNode, warpObj, source, sType) {
+        function processCxnSpNode(node: any, pNode: any, warpObj: any, source: any, sType: any) {
 
             var id = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["id"];
             var name = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["name"];
@@ -950,7 +1009,7 @@
             return genShape(node, pNode, undefined, undefined, id, name, idx, type, order, warpObj, undefined, sType, source);
         }
 
-        function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, name, idx, type, order, warpObj, isUserDrawnBg, sType, source) {
+        function genShape(node: any, pNode: any, slideLayoutSpNode: any, slideMasterSpNode: any, id: any, name: any, idx: any, type: any, order: any, warpObj: any, isUserDrawnBg: any, sType: any, source: any) {
             //var dltX = 0;
             //var dltY = 0;
             var xfrmList = ["p:spPr", "a:xfrm"];
@@ -1052,6 +1111,7 @@
                     if (styleText in styleTable) {
                         styleText += "do-nothing: " + svgCssName +";";
                     }
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     styleTable[styleText] = {
                         "name": svgCssName,
                         "text": styleText
@@ -1137,6 +1197,7 @@
                         svg_css_shadow += "do-nothing: " + svgCssName + ";";
                     }
 
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     styleTable[svg_css_shadow] = {
                         "name": effectsClassName,
                         "text": svg_css_shadow
@@ -1146,6 +1207,7 @@
                 ////////////////////////////////////////////////////////////////////////////////////////
                 if ((headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) ||
                     (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow"))) {
+                    // @ts-expect-error TS(2339): Property 'color' does not exist on type 'string | ... Remove this comment to see the full error message
                     var triangleMarker = "<marker id='markerTriangle_" + shpId + "' viewBox='0 0 10 10' refX='1' refY='5' markerWidth='5' markerHeight='5' stroke='" + border.color + "' fill='" + border.color +
                         "' orient='auto-start-reverse' markerUnits='strokeWidth'><path d='M 0 0 L 10 5 L 0 10 z' /></marker>";
                     result += triangleMarker;
@@ -1160,57 +1222,91 @@
                     case "flowChartPredefinedProcess":
                     case "flowChartInternalStorage":
                     case "actionButtonBlank":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += "<rect x='0' y='0' width='" + w + "' height='" + h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' " + oShadowSvgUrlStr + "  />";
 
                         if (shapType == "flowChartPredefinedProcess") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             result += "<rect x='" + w * (1 / 8) + "' y='0' width='" + w * (6 / 8) + "' height='" + h + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         } else if (shapType == "flowChartInternalStorage") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             result += " <polyline points='" + w * (1 / 8) + " 0," + w * (1 / 8) + " " + h + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             result += " <polyline points='0 " + h * (1 / 8) + "," + w + " " + h * (1 / 8) + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         }
                         break;
                     case "flowChartCollate":
                         var d = "M 0,0" +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "flowChartDocument":
                         var y1, y2, y3, x1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * 10800 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * 17322 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h * 20172 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y3 = h * 23922 / 21600;
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y1 +
                             " C" + x1 + "," + y1 + " " + x1 + "," + y3 + " " + 0 + "," + y2 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "flowChartMultidocument":
                         var y1, y2, y3, y4, y5, y6, y7, y8, y9, x1, x2, x3, x4, x5, x6, x7;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * 18022 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h * 3675 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y3 = h * 23542 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y4 = h * 1815 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y5 = h * 16252 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y6 = h * 16352 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y7 = h * 14392 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y8 = h * 20782 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y9 = h * 14467 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * 1532 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w * 20000 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x3 = w * 9298 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w * 19298 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x5 = w * 18595 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x6 = w * 2972 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x7 = w * 20800 / 21600;
                         var d = "M" + 0 + "," + y2 +
                             " L" + x5 + "," + y2 +
@@ -1224,14 +1320,19 @@
                             " C" + x4 + "," + y5 + " " + x5 + "," + y6 + " " + x5 + "," + y6 +
                             "M" + x6 + "," + y4 +
                             " L" + x6 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y7 +
                             " C" + x7 + "," + y7 + " " + x2 + "," + y9 + " " + x2 + "," + y9;
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "actionButtonBackPrevious":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g10, g11, g12;
 
@@ -1241,8 +1342,11 @@
                         g11 = hc - dx2;
                         g12 = hc + dx2;
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             "M" + g11 + "," + vc +
@@ -1250,11 +1354,14 @@
                             " L" + g12 + "," + g10 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonBeginning":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g10, g11, g12, g13, g14, g15, g16, g17;
 
@@ -1269,8 +1376,11 @@
                         g16 = g11 + g14;
                         g17 = g11 + g15;
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             "M" + g17 + "," + vc +
@@ -1283,11 +1393,14 @@
                             " L" + g16 + "," + g10 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonDocument":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g10, dx1, g11, g12, g13, g14, g15;
 
@@ -1301,8 +1414,11 @@
                         g14 = g12 - g13;
                         g15 = g9 + g13;
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             "M" + g11 + "," + g9 +
@@ -1316,11 +1432,14 @@
                             " L" + g12 + "," + g15 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonEnd":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g10, g11, g12, g13, g14, g15, g16, g17;
 
@@ -1334,8 +1453,11 @@
                         g15 = g13 * 7 / 8;
                         g16 = g11 + g14;
                         g17 = g11 + g15;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var d = "M" + 0 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
                             " L" + 0 + "," + 0 +
                             " z" +
@@ -1349,11 +1471,14 @@
                             " L" + g11 + "," + g10 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonForwardNext":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g10, g11, g12;
 
@@ -1363,8 +1488,11 @@
                         g11 = hc - dx2;
                         g12 = hc + dx2;
 
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var d = "M" + 0 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
                             " L" + 0 + "," + 0 +
                             " z" +
@@ -1373,11 +1501,14 @@
                             " L" + g11 + "," + g10 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonHelp":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g11, g13, g14, g15, g16, g19, g20, g21, g23, g24, g27, g29, g30, g31, g33, g36, g37, g41, g42;
 
@@ -1408,30 +1539,43 @@
                         var cX4 = (g37 + g36 + g16) / 2;
 
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             "M" + g33 + "," + g27 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(cX1, g27, g16, g16, 180, 360, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(cX4, g27, g14, g15, 0, 90, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(cX4, g29, g41, g42, 270, 180, false).replace("M", "L") +
                             " L" + g37 + "," + g30 +
                             " L" + g36 + "," + g30 +
                             " L" + g36 + "," + g29 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(cX2, g29, g14, g15, 180, 270, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(g37, g27, g41, g42, 90, 0, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(cX1, g27, g14, g14, 0, -180, false).replace("M", "L") +
                             " z" +
                             "M" + hc + "," + g31 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(hc, cY3, g42, g42, 270, 630, false).replace("M", "L") +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonHome":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18, g19, g20, g21, g22, g23, g24, g25, g26, g27, g28, g29, g30, g31, g32, g33;
 
@@ -1463,8 +1607,11 @@
                         g33 = g11 + g23;
 
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             " M" + hc + "," + g9 +
@@ -1485,11 +1632,14 @@
                             " L" + g29 + "," + g10 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonInformation":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g11, g13, g14, g17, g18, g19, g20, g22, g23, g24, g25, g28, g29, g30, g31, g32, g34, g35, g37, g38;
 
@@ -1519,14 +1669,19 @@
                         var cY2 = g25 + g38;
 
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             "M" + hc + "," + g9 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(hc, cY1, dx2, dx2, 270, 630, false).replace("M", "L") +
                             " z" +
                             "M" + hc + "," + g25 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(hc, cY2, g38, g38, 270, 630, false).replace("M", "L") +
                             "M" + g32 + "," + g28 +
                             " L" + g35 + "," + g28 +
@@ -1540,11 +1695,14 @@
                             " L" + g32 + "," + g29 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonMovie":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18, g19, g20, g21, g22, g23, g24, g25, g26, g27,
                             g28, g29, g30, g31, g32, g33, g34, g35, g36, g37, g38, g39, g40, g41, g42, g43, g44, g45, g46, g47, g48;
@@ -1591,8 +1749,11 @@
                         g47 = g9 + g30;
                         g48 = g9 + g31;
 
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var d = "M" + 0 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
                             " L" + 0 + "," + 0 +
                             " z" +
@@ -1617,11 +1778,14 @@
                             " L" + g31 + "," + g39 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonReturn":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18, g19, g20, g21, g22, g23, g24, g25, g26, g27;
 
@@ -1650,8 +1814,11 @@
                         var cX3 = g11 + g17;
                         var cY4 = g10 - g17;
 
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var d = "M" + 0 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
                             " L" + 0 + "," + 0 +
                             " z" +
@@ -1660,23 +1827,30 @@
                             " L" + hc + "," + g21 +
                             " L" + g24 + "," + g21 +
                             " L" + g24 + "," + g20 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(cX1, g20, g27, g27, 0, 90, false).replace("M", "L") +
                             " L" + g25 + "," + g19 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(g25, cY2, g27, g27, 90, 180, false).replace("M", "L") +
                             " L" + g26 + "," + g21 +
                             " L" + g11 + "," + g21 +
                             " L" + g11 + "," + g20 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(cX3, g20, g17, g17, 180, 90, false).replace("M", "L") +
                             " L" + hc + "," + g10 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(hc, cY4, g17, g17, 90, 0, false).replace("M", "L") +
                             " L" + g22 + "," + g21 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "actionButtonSound":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, ss = Math.min(w, h);
                         var dx2, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18, g19, g20, g21, g22, g23, g24, g25, g26;
 
@@ -1701,8 +1875,11 @@
                         g26 = g11 + g18;
 
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             " M" + g11 + "," + g21 +
@@ -1719,168 +1896,278 @@
                             " M" + g26 + "," + g22 +
                             " L" + g12 + "," + g23;
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "irregularSeal1":
                     case "irregularSeal2":
                         if (shapType == "irregularSeal1") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             var d = "M" + w * 10800 / 21600 + "," + h * 5800 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 14522 / 21600 + "," + 0 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 14155 / 21600 + "," + h * 5325 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 18380 / 21600 + "," + h * 4457 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 16702 / 21600 + "," + h * 7315 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 21097 / 21600 + "," + h * 8137 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 17607 / 21600 + "," + h * 10475 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w + "," + h * 13290 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 16837 / 21600 + "," + h * 12942 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 18145 / 21600 + "," + h * 18095 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 14020 / 21600 + "," + h * 14457 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 13247 / 21600 + "," + h * 19737 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 10532 / 21600 + "," + h * 14935 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 8485 / 21600 + "," + h +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 7715 / 21600 + "," + h * 15627 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 4762 / 21600 + "," + h * 17617 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 5667 / 21600 + "," + h * 13937 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 135 / 21600 + "," + h * 14587 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 3722 / 21600 + "," + h * 11775 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 " L" + 0 + "," + h * 8615 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 4627 / 21600 + "," + h * 7617 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 370 / 21600 + "," + h * 2295 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 7312 / 21600 + "," + h * 6320 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 8352 / 21600 + "," + h * 2295 / 21600 +
                                 " z";
                         } else if (shapType == "irregularSeal2") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             var d = "M" + w * 11462 / 21600 + "," + h * 4342 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 14790 / 21600 + "," + 0 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 14525 / 21600 + "," + h * 5777 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 18007 / 21600 + "," + h * 3172 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 16380 / 21600 + "," + h * 6532 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w + "," + h * 6645 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 16985 / 21600 + "," + h * 9402 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 18270 / 21600 + "," + h * 11290 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 16380 / 21600 + "," + h * 12310 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 18877 / 21600 + "," + h * 15632 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 14640 / 21600 + "," + h * 14350 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 14942 / 21600 + "," + h * 17370 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 12180 / 21600 + "," + h * 15935 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 11612 / 21600 + "," + h * 18842 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 9872 / 21600 + "," + h * 17370 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 8700 / 21600 + "," + h * 19712 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 7527 / 21600 + "," + h * 18125 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 4917 / 21600 + "," + h +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 4805 / 21600 + "," + h * 18240 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 1285 / 21600 + "," + h * 17825 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 3330 / 21600 + "," + h * 15370 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 " L" + 0 + "," + h * 12877 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 3935 / 21600 + "," + h * 11592 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 1172 / 21600 + "," + h * 8270 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 5372 / 21600 + "," + h * 7817 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 4502 / 21600 + "," + h * 3625 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 8550 / 21600 + "," + h * 6382 / 21600 +
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 " L" + w * 9722 / 21600 + "," + h * 1887 / 21600 +
                                 " z";
                         }
+                        // @ts-expect-error TS(2454): Variable 'd' is used before being assigned.
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "flowChartTerminator":
                         var x1, x2, y1, cd2 = 180, cd4 = 90, c3d4 = 270;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * 3475 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w * 18125 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * 10800 / 21600;
                         //path attrs: w = 21600; h = 21600; 
                         var d = "M" + x1 + "," + 0 +
                             " L" + x2 + "," + 0 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x2, h / 2, x1, y1, c3d4, c3d4 + cd2, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x1, h / 2, x1, y1, cd4, cd4 + cd2, false).replace("M", "L") +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "flowChartPunchedTape":
                         var x1, x1, y1, y2, cd2 = 180;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * 5 / 20;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * 2 / 20;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h * 18 / 20;
                         var d = "M" + 0 + "," + y1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x1, y1, x1, y1, cd2, 0, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w * (3 / 4), y1, x1, y1, cd2, 360, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w * (3 / 4), y2, x1, y1, 0, -cd2, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x1, y2, x1, y1, 0, cd2, false).replace("M", "L") +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "flowChartOnlineStorage":
                         var x1, y1, c3d4 = 270, cd4 = 90;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * 1 / 6;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * 3 / 6;
                         var d = "M" + x1 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, h / 2, x1, y1, c3d4, 90, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x1, h / 2, x1, y1, cd4, 270, false).replace("M", "L") +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "flowChartDisplay":
                         var x1, x2, y1, c3d4 = 270, cd2 = 180;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * 1 / 6;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w * 5 / 6;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * 3 / 6;
                         //path attrs: w = 6; h = 6; 
                         var d = "M" + 0 + "," + y1 +
                             " L" + x1 + "," + 0 +
                             " L" + x2 + "," + 0 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, h / 2, x1, y1, c3d4, c3d4 + cd2, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "flowChartDelay":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var wd2 = w / 2, hd2 = h / 2, cd2 = 180, c3d4 = 270, cd4 = 90;
                         var d = "M" + 0 + "," + 0 +
                             " L" + wd2 + "," + 0 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, wd2, hd2, c3d4, c3d4 + cd2, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "flowChartMagneticTape":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var wd2 = w / 2, hd2 = h / 2, cd2 = 180, c3d4 = 270, cd4 = 90;
                         var idy, ib, ang1;
                         idy = hd2 * Math.sin(Math.PI / 4);
                         ib = hd2 + idy;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         ang1 = Math.atan(h / w);
                         var ang1Dg = ang1 * 180 / Math.PI;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var d = "M" + wd2 + "," + h +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, wd2, hd2, cd4, cd2, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, wd2, hd2, cd2, c3d4, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, wd2, hd2, c3d4, 360, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, wd2, hd2, 0, ang1Dg, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + ib +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "ellipse":
                     case "flowChartConnector":
                     case "flowChartSummingJunction":
                     case "flowChartOr":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += "<ellipse cx='" + (w / 2) + "' cy='" + (h / 2) + "' rx='" + (w / 2) + "' ry='" + (h / 2) + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         if (shapType == "flowChartOr") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             result += " <polyline points='" + w / 2 + " " + 0 + "," + w / 2 + " " + h + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             result += " <polyline points='" + 0 + " " + h / 2 + "," + w + " " + h / 2 + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         } else if (shapType == "flowChartSummingJunction") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             var iDx, idy, il, ir, it, ib, hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2;
                             var angVal = Math.PI / 4;
                             iDx = wd2 * Math.cos(angVal);
@@ -1889,7 +2176,9 @@
                             ir = hc + iDx;
                             it = vc - idy;
                             ib = vc + idy;
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             result += " <polyline points='" + il + " " + it + "," + ir + " " + ib + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             result += " <polyline points='" + ir + " " + it + "," + il + " " + ib + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         }
                         break;
@@ -1957,6 +2246,7 @@
                                 if (sAdj1_val === undefined) sAdj1_val = 0.33334;
                                 sAdj2_val = 0;
                                 if (shapType == "flowChartPunchedCard") {
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     tranglRott = "transform='translate(" + w + ",0) scale(-1,1)'";
                                 }
                                 break;
@@ -1973,13 +2263,18 @@
                                 if (sAdj2_val === undefined) sAdj2_val = 0;
                                 break;
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var d_val = shapeSnipRoundRect(w, h, sAdj1_val, sAdj2_val, shpTyp, adjTyp);
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path " + tranglRott + "  d='" + d_val + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "snipRoundRect":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 0.33334;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 0.33334;
                         if (shapAdjst_ary !== undefined) {
                             for (var i = 0; i < shapAdjst_ary.length; i++) {
@@ -1993,10 +2288,14 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M0," + h + " L" + w + "," + h + " L" + w + "," + (h / 2) * sAdj2_val +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + (w / 2 + (w / 2) * (1 - sAdj2_val)) + ",0 L" + (w / 2) * sAdj1_val + ",0 Q0,0 0," + (h / 2) * sAdj1_val + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d_val + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "bentConnector2":
@@ -2004,9 +2303,12 @@
                         // if (isFlipV) {
                         //     d = "M 0 " + w + " L " + h + " " + w + " L " + h + " 0";
                         // } else {
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         d = "M " + w + " 0 L " + w + " " + h + " L 0 " + h;
                         //}
+                        // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                         result += "<path d='" + d + "' stroke='" + border.color +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' fill='none' ";
                         if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
                             result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
@@ -2017,7 +2319,9 @@
                         result += "/>";
                         break;
                     case "rtTriangle":
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         result += " <polygon points='0 0,0 " + h + "," + w + " " + h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "triangle":
@@ -2031,17 +2335,23 @@
                         }
                         var tranglRott = "";
                         if (shapType == "flowChartMerge") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             tranglRott = "transform='rotate(180 " + w / 2 + "," + h / 2 + ")'";
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon " + tranglRott + " points='" + (w * shapAdjst_val) + " 0,0 " + h + "," + w + " " + h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "diamond":
                     case "flowChartDecision":
                     case "flowChartSort":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + (w / 2) + " 0,0 " + (h / 2) + "," + (w / 2) + " " + h + "," + w + " " + (h / 2) + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         if (shapType == "flowChartSort") {
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             result += " <polyline points='0 " + h / 2 + "," + w + " " + h / 2 + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         }
                         break;
@@ -2059,23 +2369,31 @@
                         var cnstVal = 0;
                         var tranglRott = "";
                         if (shapType == "flowChartManualOperation") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             tranglRott = "transform='rotate(180 " + w / 2 + "," + h / 2 + ")'";
                         }
                         if (shapType == "flowChartManualInput") {
                             adjst_val = 0;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             cnstVal = h / 5;
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon " + tranglRott + " points='" + (w * adjst_val) + " " + cnstVal + ",0 " + h + "," + w + " " + h + "," + (1 - adjst_val) * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "parallelogram":
                     case "flowChartInputOutput":
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
                         var adjst_val = 0.25;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var max_adj_const;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         if (w > h) {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             max_adj_const = w / h;
                         } else {
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             max_adj_const = h / w;
                         }
                         if (shapAdjst !== undefined) {
@@ -2083,13 +2401,17 @@
                             adjst_val = adjst / max_adj_const;
                             //console.log("w: "+w+"\nh: "+h+"\nadjst: "+adjst_val+"\nmax_adj_const: "+max_adj_const);
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + adjst_val * w + " 0,0 " + h + "," + (1 - adjst_val) * w + " " + h + "," + w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
 
                         break;
                     case "pentagon":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + (0.5 * w) + " 0,0 " + (0.375 * h) + "," + (0.15 * w) + " " + h + "," + 0.85 * w + " " + h + "," + w + " " + 0.375 * h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "hexagon":
@@ -2103,12 +2425,16 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * slideFactor;
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var maxAdj, a, shd2, x1, x2, dy1, y1, y2, vc = h / 2, hd2 = h / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj = cnstVal1 * w / ss;
                         a = (adj < 0) ? 0 : (adj > maxAdj) ? maxAdj : adj;
                         shd2 = hd2 * vf / cnstVal2;
                         x1 = ss * a / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w - x1;
                         dy1 = shd2 * Math.sin(angVal1);
                         y1 = vc - dy1;
@@ -2117,17 +2443,23 @@
                         var d = "M" + 0 + "," + vc +
                             " L" + x1 + "," + y1 +
                             " L" + x2 + "," + y1 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
                             " L" + x2 + "," + y2 +
                             " L" + x1 + "," + y2 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "heptagon":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + (0.5 * w) + " 0," + w / 8 + " " + h / 4 + ",0 " + (5 / 8) * h + "," + w / 4 + " " + h + "," + (3 / 4) * w + " " + h + "," +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             w + " " + (5 / 8) * h + "," + (7 / 8) * w + " " + h / 4 + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "octagon":
@@ -2139,23 +2471,33 @@
                         }
                         var adj2 = (1 - adj1);
                         //console.log("adj1: "+adj1+"\nadj2: "+adj2);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + adj1 * w + " 0,0 " + adj1 * h + ",0 " + adj2 * h + "," + adj1 * w + " " + h + "," + adj2 * w + " " + h + "," +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             w + " " + adj2 * h + "," + w + " " + adj1 * h + "," + adj2 * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "decagon":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + (3 / 8) * w + " 0," + w / 8 + " " + h / 8 + ",0 " + h / 2 + "," + w / 8 + " " + (7 / 8) * h + "," + (3 / 8) * w + " " + h + "," +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             (5 / 8) * w + " " + h + "," + (7 / 8) * w + " " + (7 / 8) * h + "," + w + " " + h / 2 + "," + (7 / 8) * w + " " + h / 8 + "," + (5 / 8) * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "dodecagon":
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + (3 / 8) * w + " 0," + w / 8 + " " + h / 8 + ",0 " + (3 / 8) * h + ",0 " + (5 / 8) * h + "," + w / 8 + " " + (7 / 8) * h + "," + (3 / 8) * w + " " + h + "," +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             (5 / 8) * w + " " + h + "," + (7 / 8) * w + " " + (7 / 8) * h + "," + w + " " + (5 / 8) * h + "," + w + " " + (3 / 8) * h + "," + (7 / 8) * w + " " + h / 8 + "," + (5 / 8) * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "star4":
                         var a, iwd2, ihd2, sdx, sdy, sx1, sx2, sy1, sy2, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2;
                         var adj = 19098 * slideFactor;
                         var cnstVal1 = 50000 * slideFactor;
@@ -2184,21 +2526,27 @@
                             " L" + sx1 + "," + sy1 +
                             " L" + hc + ",0" +
                             " L" + sx2 + "," + sy1 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
                             " L" + sx2 + "," + sy2 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + hc + "," + h +
                             " L" + sx1 + "," + sy2 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "star5":
                         var a, swd2, shd2, svc, dx1, dx2, dy1, dy2, x1, x2, x3, x4, y1, y2, iwd2, ihd2, sdx1, sdx2, sdy1, sdy2, sx1, sx2, sx3, sx4, sy1, sy2, sy3, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2;
                         var adj = 19098 * slideFactor;
                         var hf = 105146 * slideFactor;
                         var vf = 110557 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = 50000 * slideFactor;
                         var cnstVal1 = 100000 * slideFactor;
                         //var radians = angle * (Math.PI / 180);
@@ -2260,14 +2608,18 @@
                             " z";
 
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "star6":
                         var a, swd2, dx1, x1, x2, y2, iwd2, ihd2, sdx2, sx1, sx2, sx3, sx4, sdy1, sy1, sy2, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2, hd4 = h / 4;
                         var adj = 28868 * slideFactor;
                         var hf = 115470 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = 50000 * slideFactor;
                         var cnstVal1 = 100000 * slideFactor;
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);//[0]["attrs"]["fmla"];
@@ -2310,6 +2662,7 @@
                             " L" + sx4 + "," + vc +
                             " L" + x2 + "," + y2 +
                             " L" + sx3 + "," + sy2 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + hc + "," + h +
                             " L" + sx2 + "," + sy2 +
                             " L" + x1 + "," + y2 +
@@ -2317,16 +2670,20 @@
                             " z";
 
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "star7":
                         var a, swd2, shd2, svc, dx1, dx2, dx3, dy1, dy2, dy3, x1, x2, x3, x4, x5, x6, y1, y2, y3,
                             iwd2, ihd2, sdx1, sdx2, sdx3, sx1, sx2, sx3, sx4, sx5, sx6, sdy1, sdy2, sdy3, sy1, sy2, sy3, sy4, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2;
                         var adj = 34601 * slideFactor;
                         var hf = 102572 * slideFactor;
                         var vf = 105210 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = 50000 * slideFactor;
                         var cnstVal1 = 100000 * slideFactor;
 
@@ -2402,13 +2759,17 @@
                             " z";
 
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "star8":
                         var a, dx1, x1, x2, dy1, y1, y2, iwd2, ihd2, sdx1, sdx2, sdy1, sdy2, sx1, sx2, sx3, sx4, sy1, sy2, sy3, sy4, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2;
                         var adj = 37500 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = 50000 * slideFactor;
                         var cnstVal1 = 100000 * slideFactor;
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);//[0]["attrs"]["fmla"];
@@ -2451,25 +2812,31 @@
                             " L" + sx3 + "," + sy1 +
                             " L" + x2 + "," + y1 +
                             " L" + sx4 + "," + sy2 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
                             " L" + sx4 + "," + sy3 +
                             " L" + x2 + "," + y2 +
                             " L" + sx3 + "," + sy4 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + hc + "," + h +
                             " L" + sx2 + "," + sy4 +
                             " L" + x1 + "," + y2 +
                             " L" + sx1 + "," + sy3 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
 
                     case "star10":
                         var a, swd2, dx1, dx2, x1, x2, x3, x4, dy1, dy2, y1, y2, y3, y4, iwd2, ihd2,
                             sdx1, sdx2, sdy1, sdy2, sx1, sx2, sx3, sx4, sx5, sx6, sy1, sy2, sy3, sy4, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2;
                         var adj = 42533 * slideFactor;
                         var hf = 105146 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = 50000 * slideFactor;
                         var cnstVal1 = 100000 * slideFactor;
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);//[0]["attrs"]["fmla"];
@@ -2531,6 +2898,7 @@
                             " L" + sx5 + "," + sy3 +
                             " L" + x3 + "," + y4 +
                             " L" + sx4 + "," + sy4 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + hc + "," + h +
                             " L" + sx3 + "," + sy4 +
                             " L" + x2 + "," + y4 +
@@ -2538,14 +2906,18 @@
                             " L" + x1 + "," + y3 +
                             " L" + sx1 + "," + vc +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "star12":
                         var a, dx1, dy1, x1, x3, x4, y1, y3, y4, iwd2, ihd2, sdx1, sdx2, sdx3, sdy1,
                             sdy2, sdy3, sx1, sx2, sx3, sx4, sx5, sx6, sy1, sy2, sy3, sy4, sy5, sy6, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2, hd4 = h / 4, wd4 = w / 4;
                         var adj = 37500 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = 50000 * slideFactor;
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);//[0]["attrs"]["fmla"];
                         //console.log("star4 node: ", node, "shapAdjst:", shapAdjst)
@@ -2561,9 +2933,11 @@
                         dx1 = wd2 * Math.cos(0.5235987756);
                         dy1 = hd2 * Math.sin(1.0471975512);
                         x1 = hc - dx1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x3 = w * 3 / 4;
                         x4 = hc + dx1;
                         y1 = vc - dy1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y3 = h * 3 / 4;
                         y4 = vc + dy1;
                         iwd2 = wd2 * a / maxAdj;
@@ -2599,12 +2973,14 @@
                             " L" + sx5 + "," + sy2 +
                             " L" + x4 + "," + hd4 +
                             " L" + sx6 + "," + sy3 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
                             " L" + sx6 + "," + sy4 +
                             " L" + x4 + "," + y3 +
                             " L" + sx5 + "," + sy5 +
                             " L" + x3 + "," + y4 +
                             " L" + sx4 + "," + sy6 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + hc + "," + h +
                             " L" + sx3 + "," + sy6 +
                             " L" + wd4 + "," + y4 +
@@ -2612,15 +2988,19 @@
                             " L" + x1 + "," + y3 +
                             " L" + sx1 + "," + sy4 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "star16":
                         var a, dx1, dx2, dx3, dy1, dy2, dy3, x1, x2, x3, x4, x5, x6, y1, y2, y3, y4, y5, y6,
                             iwd2, ihd2, sdx1, sdx2, sdx3, sdx4, sdy1, sdy2, sdy3, sdy4, sx1, sx2, sx3, sx4,
                             sx5, sx6, sx7, sx8, sy1, sy2, sy3, sy4, sy5, sy6, sy7, sy8, iDx, idy, il, it, ir, ib, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2;
                         var adj = 37500 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = 50000 * slideFactor;
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);//[0]["attrs"]["fmla"];
                         //console.log("star4 node: ", node, "shapAdjst:", shapAdjst)
@@ -2700,6 +3080,7 @@
                             " L" + sx7 + "," + sy3 +
                             " L" + x6 + "," + y3 +
                             " L" + sx8 + "," + sy4 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
                             " L" + sx8 + "," + sy5 +
                             " L" + x6 + "," + y4 +
@@ -2708,6 +3089,7 @@
                             " L" + sx6 + "," + sy7 +
                             " L" + x4 + "," + y6 +
                             " L" + sx5 + "," + sy8 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + hc + "," + h +
                             " L" + sx4 + "," + sy8 +
                             " L" + x3 + "," + y6 +
@@ -2717,7 +3099,9 @@
                             " L" + x1 + "," + y4 +
                             " L" + sx1 + "," + sy5 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "star24":
@@ -2725,8 +3109,10 @@
                             y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, iwd2, ihd2, sdx1, sdx2, sdx3, sdx4, sdx5, sdx6, sdy1,
                             sdy2, sdy3, sdy4, sdy5, sdy6, sx1, sx2, sx3, sx4, sx5, sx6, sx7, sx8, sx9, sx10, sx11, sx12,
                             sy1, sy2, sy3, sy4, sy5, sy6, sy7, sy8, sy9, sy10, sy11, sy12, iDx, idy, il, it, ir, ib, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2, hd4 = h / 4, wd4 = w / 4;
                         var adj = 37500 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = 50000 * slideFactor;
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);//[0]["attrs"]["fmla"];
                         //console.log("star4 node: ", node, "shapAdjst:", shapAdjst)
@@ -2836,6 +3222,7 @@
                             " L" + sx11 + "," + sy5 +
                             " L" + x10 + "," + y5 +
                             " L" + sx12 + "," + sy6 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
                             " L" + sx12 + "," + sy7 +
                             " L" + x10 + "," + y6 +
@@ -2848,6 +3235,7 @@
                             " L" + sx8 + "," + sy11 +
                             " L" + x6 + "," + y10 +
                             " L" + sx7 + "," + sy12 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + hc + "," + h +
                             " L" + sx6 + "," + sy12 +
                             " L" + x5 + "," + y10 +
@@ -2861,7 +3249,9 @@
                             " L" + x1 + "," + y6 +
                             " L" + sx1 + "," + sy7 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "star32":
@@ -2870,8 +3260,10 @@
                             iwd2, ihd2, sdx1, sdx2, sdx3, sdx4, sdx5, sdx6, sdx7, sdx8, sdy1, sdy2, sdy3, sdy4, sdy5, sdy6, sdy7,
                             sdy8, sx1, sx2, sx3, sx4, sx5, sx6, sx7, sx8, sx9, sx10, sx11, sx12, sx13, sx14, sx15, sx16, sy1, sy2,
                             sy3, sy4, sy5, sy6, sy7, sy8, sy9, sy10, sy11, sy12, sy13, sy14, sy15, sy16, iDx, idy, il, it, ir, ib, yAdj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, wd2 = w / 2, hd2 = h / 2, hd4 = h / 4, wd4 = w / 4;
                         var adj = 37500 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = 50000 * slideFactor;
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);//[0]["attrs"]["fmla"];
                         //console.log("star4 node: ", node, "shapAdjst:", shapAdjst)
@@ -3013,6 +3405,7 @@
                             " L" + sx15 + "," + sy7 +
                             " L" + x14 + "," + y7 +
                             " L" + sx16 + "," + sy8 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
                             " L" + sx16 + "," + sy9 +
                             " L" + x14 + "," + y8 +
@@ -3029,6 +3422,7 @@
                             " L" + sx10 + "," + sy15 +
                             " L" + x8 + "," + y14 +
                             " L" + sx9 + "," + sy16 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + hc + "," + h +
                             " L" + sx8 + "," + sy16 +
                             " L" + x7 + "," + y14 +
@@ -3046,7 +3440,9 @@
                             " L" + x1 + "," + y8 +
                             " L" + sx1 + "," + sy9 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
 
@@ -3054,20 +3450,24 @@
                     case "pieWedge":
                     case "arc":
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var adj1, adj2, H, shapAdjst1, shapAdjst2, isClose;
                         if (shapType == "pie") {
                             adj1 = 0;
                             adj2 = 270;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             H = h;
                             isClose = true;
                         } else if (shapType == "pieWedge") {
                             adj1 = 180;
                             adj2 = 270;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             H = 2 * h;
                             isClose = true;
                         } else if (shapType == "arc") {
                             adj1 = 270;
                             adj2 = 0;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             H = h;
                             isClose = false;
                         }
@@ -3085,14 +3485,19 @@
                                 adj2 = parseInt(shapAdjst2.substr(4)) / 60000;
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var pieVals = shapePie(H, w, adj1, adj2, isClose);
                         //console.log("shapType: ",shapType,"\nimgFillFlg: ",imgFillFlg,"\ngrndFillFlg: ",grndFillFlg,"\nshpId: ",shpId,"\nfillColor: ",fillColor);
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + pieVals[0] + "' transform='" + pieVals[1] + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "chord":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 45;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 270;
                         if (shapAdjst_ary !== undefined) {
                             for (var i = 0; i < shapAdjst_ary.length; i++) {
@@ -3106,11 +3511,15 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var hR = h / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var wR = w / 2;
                         var d_val = shapeArc(wR, hR, wR, hR, sAdj1_val, sAdj2_val, true);
                         //console.log("shapType: ",shapType,", sAdj1_val: ",sAdj1_val,", sAdj2_val: ",sAdj2_val)
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "frame":
@@ -3125,12 +3534,18 @@
                         if (adj1 < 0) a1 = 0
                         else if (adj1 > cnstVal1) a1 = cnstVal1
                         else a1 = adj1
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = Math.min(w, h) * a1 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w - x1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y4 = h - x1;
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             "M" + x1 + "," + x1 +
@@ -3138,7 +3553,9 @@
                             " L" + x4 + "," + y4 +
                             " L" + x4 + "," + x1 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "donut":
@@ -3153,22 +3570,37 @@
                         if (adj < 0) a = 0
                         else if (adj > cnstVal1) a = cnstVal1
                         else a = adj
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dr = Math.min(w, h) * a / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         iwd2 = w / 2 - dr;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         ihd2 = h / 2 - dr;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var d = "M" + 0 + "," + h / 2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 180, 270, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 270, 360, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 0, 90, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 90, 180, false).replace("M", "L") +
                             " z" +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             "M" + dr + "," + h / 2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, iwd2, ihd2, 180, 90, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, iwd2, ihd2, 90, 0, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, iwd2, ihd2, 0, -90, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, iwd2, ihd2, 270, 180, false).replace("M", "L") +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "noSmoking":
@@ -3183,9 +3615,13 @@
                         if (adj < 0) a = 0
                         else if (adj > cnstVal1) a = cnstVal1
                         else a = adj
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dr = Math.min(w, h) * a / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         iwd2 = w / 2 - dr;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         ihd2 = h / 2 - dr;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         ang = Math.atan(h / w);
                         //ang2rad = ang*Math.PI/180;
                         ct = ihd2 * Math.cos(ang);
@@ -3206,33 +3642,48 @@
                         n1 = iwd2 * ihd2 / m1;
                         dx1 = n1 * Math.cos(stAng1);
                         dy1 = n1 * Math.sin(stAng1);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w / 2 + dx1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h / 2 + dy1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w / 2 - dx1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h / 2 - dy1;
                         var stAng1deg = stAng1 * 180 / Math.PI;
                         var stAng2deg = stAng2 * 180 / Math.PI;
                         var swAng2deg = swAng * 180 / Math.PI;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var d = "M" + 0 + "," + h / 2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 180, 270, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 270, 360, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 0, 90, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 90, 180, false).replace("M", "L") +
                             " z" +
                             "M" + x1 + "," + y1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, iwd2, ihd2, stAng1deg, (stAng1deg + swAng2deg), false).replace("M", "L") +
                             " z" +
                             "M" + x2 + "," + y2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, iwd2, ihd2, stAng2deg, (stAng2deg + swAng2deg), false).replace("M", "L") +
                             " z";
                         //console.log("adj: ",adj,"x1:",x1,",y1:",y1," x2:",x2,",y2:",y2,",stAng1:",stAng1,",stAng1deg:",stAng1deg,",stAng2:",stAng2,",stAng2deg:",stAng2deg,",swAng:",swAng,",swAng2deg:",swAng2deg)
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "halfFrame":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 3.5;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 3.5;
                         var cnsVal = 100000 * slideFactor;
                         if (shapAdjst_ary !== undefined) {
@@ -3247,32 +3698,46 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var maxAdj2 = (cnsVal * w) / minWH;
                         var a1, a2;
                         if (sAdj2_val < 0) a2 = 0
                         else if (sAdj2_val > maxAdj2) a2 = maxAdj2
                         else a2 = sAdj2_val
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var x1 = (minWH * a2) / cnsVal;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var g1 = h * x1 / w;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var g2 = h - g1;
                         var maxAdj1 = (cnsVal * g2) / minWH;
                         if (sAdj1_val < 0) a1 = 0
                         else if (sAdj1_val > maxAdj1) a1 = maxAdj1
                         else a1 = sAdj1_val
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var y1 = minWH * a1 / cnsVal;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var dx2 = y1 * w / h;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var x2 = w - dx2;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var dy2 = x1 * h / w;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var y2 = h - dy2;
                         var d = "M0,0" +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
                             " L" + x2 + "," + y1 +
                             " L" + x1 + "," + y1 +
                             " L" + x1 + "," + y2 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L0," + h + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         //console.log("w: ",w,", h: ",h,", sAdj1_val: ",sAdj1_val,", sAdj2_val: ",sAdj2_val,",maxAdj1: ",maxAdj1,",maxAdj2: ",maxAdj2)
                         break;
@@ -3321,12 +3786,17 @@
                         var endAng = stAng + swAng;
                         var iendAng = istAng + iswAng;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var wt1, ht1, dx1, dy1, x1, y1, stRd, istRd, wd2, hd2, hc, vc;
                         stRd = stAng * (Math.PI) / 180;
                         istRd = istAng * (Math.PI) / 180;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         wd2 = w / 2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         hd2 = h / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         hc = w / 2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         vc = h / 2;
                         if (stAng > 90 && stAng < 270) {
                             wt1 = wd2 * (Math.sin((Math.PI) / 2 - stRd));
@@ -3348,6 +3818,7 @@
                             y1 = vc + dy1;
                         }
                         var dr, iwd2, ihd2, wt2, ht2, dx2, dy2, x2, y2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dr = Math.min(w, h) * a3 / cnstVal2;
                         iwd2 = wd2 - dr;
                         ihd2 = hd2 - dr;
@@ -3369,11 +3840,15 @@
                             y2 = vc - dy2;
                         }
                         var d = "M" + x1 + "," + y1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, wd2, hd2, stAng, endAng, false).replace("M", "L") +
                             " L" + x2 + "," + y2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, iwd2, ihd2, istAng, iendAng, false).replace("M", "L") +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "bracePair":
@@ -3385,35 +3860,51 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * slideFactor;
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, cd = 360, cd2 = 180, cd4 = 90, c3d4 = 270, a, x1, x2, x3, x4, y2, y3, y4;
                         if (adj < 0) a = 0
                         else if (adj > cnstVal1) a = cnstVal1
                         else a = adj
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
                         x1 = minWH * a / cnstVal3;
                         x2 = minWH * a / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x3 = w - x2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w - x1;
                         y2 = vc - x1;
                         y3 = vc + x1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y4 = h - x1;
                         //console.log("w:",w," h:",h," x1:",x1," x2:",x2," x3:",x3," x4:",x4," y2:",y2," y3:",y3," y4:",y4)
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var d = "M" + x2 + "," + h +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x2, y4, x1, x1, cd4, cd2, false).replace("M", "L") +
                             " L" + x1 + "," + y3 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(0, y3, x1, x1, 0, (-cd4), false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(0, y2, x1, x1, cd4, 0, false).replace("M", "L") +
                             " L" + x1 + "," + x1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x2, x1, x1, x1, cd2, c3d4, false).replace("M", "L") +
                             " M" + x3 + "," + 0 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x3, x1, x1, x1, c3d4, cd, false).replace("M", "L") +
                             " L" + x4 + "," + y2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, y2, x1, x1, cd2, cd4, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, y3, x1, x1, c3d4, cd2, false).replace("M", "L") +
                             " L" + x4 + "," + y4 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x3, y4, x1, x1, 0, cd4, false).replace("M", "L");
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "leftBrace":
@@ -3433,33 +3924,46 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, cd2 = 180, cd4 = 90, c3d4 = 270, a1, a2, q1, q2, q3, y1, y2, y3, y4;
                         if (adj2 < 0) a2 = 0
                         else if (adj2 > cnstVal2) a2 = cnstVal2
                         else a2 = adj2
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
                         q1 = cnstVal2 - a2;
                         if (q1 < a2) q2 = q1
                         else q2 = a2
                         q3 = q2 / 2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var maxAdj1 = q3 * h / minWH;
                         if (adj1 < 0) a1 = 0
                         else if (adj1 > maxAdj1) a1 = maxAdj1
                         else a1 = adj1
                         y1 = minWH * a1 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y3 = h * a2 / cnstVal2;
                         y2 = y3 - y1;
                         y4 = y3 + y1;
                         //console.log("w:",w," h:",h," q1:",q1," q2:",q2," q3:",q3," y1:",y1," y3:",y3," y4:",y4," maxAdj1:",maxAdj1)
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var d = "M" + w + "," + h +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, h - y1, w / 2, y1, cd4, cd2, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w / 2 + "," + y4 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(0, y4, w / 2, y1, 0, (-cd4), false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(0, y2, w / 2, y1, cd4, 0, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w / 2 + "," + y1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, y1, w / 2, y1, cd2, c3d4, false).replace("M", "L");
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "rightBrace":
@@ -3479,33 +3983,46 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, cd = 360, cd2 = 180, cd4 = 90, c3d4 = 270, a1, a2, q1, q2, q3, y1, y2, y3, y4;
                         if (adj2 < 0) a2 = 0
                         else if (adj2 > cnstVal2) a2 = cnstVal2
                         else a2 = adj2
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
                         q1 = cnstVal2 - a2;
                         if (q1 < a2) q2 = q1
                         else q2 = a2
                         q3 = q2 / 2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var maxAdj1 = q3 * h / minWH;
                         if (adj1 < 0) a1 = 0
                         else if (adj1 > maxAdj1) a1 = maxAdj1
                         else a1 = adj1
                         y1 = minWH * a1 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y3 = h * a2 / cnstVal2;
                         y2 = y3 - y1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y4 = h - y1;
                         //console.log("w:",w," h:",h," q1:",q1," q2:",q2," q3:",q3," y1:",y1," y2:",y2," y3:",y3," y4:",y4," maxAdj1:",maxAdj1)
                         var d = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(0, y1, w / 2, y1, c3d4, cd, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w / 2 + "," + y2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, y2, w / 2, y1, cd2, cd4, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, y3 + y1, w / 2, y1, c3d4, cd2, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w / 2 + "," + y4 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(0, y4, w / 2, y1, 0, cd4, false).replace("M", "L");
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "bracketPair":
@@ -3516,19 +4033,25 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * slideFactor;
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var r = w, b = h, cd2 = 180, cd4 = 90, c3d4 = 270, a, x1, x2, y2;
                         if (adj < 0) a = 0
                         else if (adj > cnstVal1) a = cnstVal1
                         else a = adj
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = Math.min(w, h) * a / cnstVal2;
                         x2 = r - x1;
                         y2 = b - x1;
                         //console.log("w:",w," h:",h," x1:",x1," x2:",x2," y2:",y2)
                         var d = shapeArc(x1, x1, x1, x1, c3d4, cd2, false) +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x1, y2, x1, x1, cd2, cd4, false).replace("M", "L") +
                             shapeArc(x2, x1, x1, x1, c3d4, (c3d4 + cd4), false) +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x2, y2, x1, x1, 0, cd4, false).replace("M", "L");
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "leftBracket":
@@ -3536,23 +4059,31 @@
                         var adj = 8333 * slideFactor;
                         var cnstVal1 = 50000 * slideFactor;
                         var cnstVal2 = 100000 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = cnstVal1 * h / Math.min(w, h);
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * slideFactor;
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var r = w, b = h, cd2 = 180, cd4 = 90, c3d4 = 270, a, y1, y2;
                         if (adj < 0) a = 0
                         else if (adj > maxAdj) a = maxAdj
                         else a = adj
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         y1 = Math.min(w, h) * a / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         if (y1 > w) y1 = w;
                         y2 = b - y1;
                         var d = "M" + r + "," + b +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(y1, y2, y1, y1, cd4, cd2, false).replace("M", "L") +
                             " L" + 0 + "," + y1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(y1, y1, y1, y1, cd2, c3d4, false).replace("M", "L") +
                             " L" + r + "," + 0
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "rightBracket":
@@ -3560,6 +4091,7 @@
                         var adj = 8333 * slideFactor;
                         var cnstVal1 = 50000 * slideFactor;
                         var cnstVal2 = 100000 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj = cnstVal1 * h / Math.min(w, h);
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * slideFactor;
@@ -3568,17 +4100,26 @@
                         if (adj < 0) a = 0
                         else if (adj > maxAdj) a = maxAdj
                         else a = adj
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         y1 = Math.min(w, h) * a / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h - y1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         y3 = w - y1;
                         //console.log("w:",w," h:",h," y1:",y1," y2:",y2," y3:",y3)
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var d = "M" + 0 + "," + h +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(y3, y2, y1, y1, cd4, 0, false).replace("M", "L") +
                             //" L"+ r + "," + y2 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h / 2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(y3, y1, y1, y1, cd, c3d4, false).replace("M", "L") +
                             " L" + 0 + "," + 0
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "moon":
@@ -3587,23 +4128,33 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) / 100000;//*96/914400;;
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var hd2, cd2, cd4;
 
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         hd2 = h / 2;
                         cd2 = 180;
                         cd4 = 90;
 
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var adj2 = (1 - adj) * w;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var d = "M" + w + "," + h +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, hd2, w, hd2, cd4, (cd4 + cd2), false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, hd2, adj2, hd2, (cd4 + cd2), cd4, false).replace("M", "L") +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "corner":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 50000 * slideFactor;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 50000 * slideFactor;
                         var cnsVal = 100000 * slideFactor;
                         if (shapAdjst_ary !== undefined) {
@@ -3618,8 +4169,11 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var maxAdj1 = cnsVal * h / minWH;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var maxAdj2 = cnsVal * w / minWH;
                         var a1, a2, x1, dy1, y1;
                         if (sAdj1_val < 0) a1 = 0
@@ -3631,20 +4185,27 @@
                         else a2 = sAdj2_val
                         x1 = minWH * a2 / cnsVal;
                         dy1 = minWH * a1 / cnsVal;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h - dy1;
 
                         var d = "M0,0" +
                             " L" + x1 + "," + 0 +
                             " L" + x1 + "," + y1 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y1 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L0," + h + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "diagStripe":
                         var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1_val = 50000 * slideFactor;
                         var cnsVal = 100000 * slideFactor;
                         if (shapAdjst !== undefined) {
@@ -3654,26 +4215,37 @@
                         if (sAdj1_val < 0) a1 = 0
                         else if (sAdj1_val > cnsVal) a1 = cnsVal
                         else a1 = sAdj1_val
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w * a1 / cnsVal;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h * a1 / cnsVal;
                         var d = "M" + 0 + "," + y2 +
                             " L" + x2 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "gear6":
                     case "gear9":
                         txtRotate = 0;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var gearNum = shapType.substr(4), d;
                         if (gearNum == "6") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             d = shapeGear(w, h / 3.5, parseInt(gearNum));
                         } else { //gearNum=="9"
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             d = shapeGear(w, h / 3.5, parseInt(gearNum));
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         result += "<path   d='" + d + "' transform='rotate(20," + (3 / 7) * h + "," + (3 / 7) * h + ")' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "bentConnector3":
@@ -3685,7 +4257,9 @@
                             //     result += " <polyline points='" + w + " 0," + ((1 - shapAdjst_val) * w) + " 0," + ((1 - shapAdjst_val) * w) + " " + h + ",0 " + h + "' fill='transparent'" +
                             //         "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
                             // } else {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             result += " <polyline points='0 0," + (shapAdjst_val) * w + " 0," + (shapAdjst_val) * w + " " + h + "," + w + " " + h + "' fill='transparent'" +
+                                // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                                 "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
                             //}
                             if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
@@ -3705,9 +4279,13 @@
 
                         }
                         var adj2 = (1 - adj1);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + adj1 * w + " 0," + adj1 * w + " " + adj1 * h + ",0 " + adj1 * h + ",0 " + adj2 * h + "," +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             adj1 * w + " " + adj2 * h + "," + adj1 * w + " " + h + "," + adj2 * w + " " + h + "," + adj2 * w + " " + adj2 * h + "," + w + " " + adj2 * h + "," +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             +w + " " + adj1 * h + "," + adj2 * w + " " + adj1 * h + "," + adj2 * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "teardrop":
@@ -3723,24 +4301,36 @@
                         else if (adj1 > cnsVal2) a1 = cnsVal2
                         else a1 = adj1
                         r2 = Math.sqrt(2);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         tw = r2 * (w / 2);
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         th = r2 * (h / 2);
                         sw = (tw * a1) / cnsVal1;
                         sh = (th * a1) / cnsVal1;
                         rd45 = (45 * (Math.PI) / 180);
                         dx1 = sw * (Math.cos(rd45));
                         dy1 = sh * (Math.cos(rd45));
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = (w / 2) + dx1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = (h / 2) - dy1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = ((w / 2) + x1) / 2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = ((h / 2) + y1) / 2;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = shapeArc(w / 2, h / 2, w / 2, h / 2, 180, 270, false) +
                             "Q " + x2 + ",0 " + x1 + "," + y1 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             "Q " + w + "," + y2 + " " + w + "," + h / 2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 0, 90, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, w / 2, h / 2, 90, 180, false).replace("M", "L") + " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         // console.log("shapAdjst: ",shapAdjst,", adj1: ",adj1);
@@ -3757,19 +4347,31 @@
                         if (adj1 < 0) a1 = 0
                         else if (adj1 > cnsVal1) a1 = cnsVal1
                         else a1 = adj1
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = a1 * (Math.min(w, h)) / cnsVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w - x1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h - x1;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M0," + x1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(0, 0, x1, x1, 90, 0, false).replace("M", "L") +
                             " L" + x2 + "," + 0 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, 0, x1, x1, 180, 90, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, h, x1, x1, 270, 180, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(0, h, x1, x1, 0, -90, false).replace("M", "L") + " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -3798,44 +4400,82 @@
                             g6 = cnstVa3 - g2,
                             g7 = g0 * (23170 * refr) / (32768 * refr),
                             g8 = cnstVa3 + g7,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g9 = cnstVa3 - g7,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g10 = g5 * 3 / 4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g11 = g6 * 3 / 4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g12 = g10 + 3662 * refr,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g13 = g11 + 36620 * refr,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g14 = g11 + 12500 * refr,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g15 = cnstVa4 - g10,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g16 = cnstVa4 - g12,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g17 = cnstVa4 - g13,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             g18 = cnstVa4 - g14,
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             ox1 = w * (18436 * refr) / (21600 * refr),
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             oy1 = h * (3163 * refr) / (21600 * refr),
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             ox2 = w * (3163 * refr) / (21600 * refr),
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             oy2 = h * (18436 * refr) / (21600 * refr),
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x8 = w * g8 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x9 = w * g9 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x10 = w * g10 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x12 = w * g12 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x13 = w * g13 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x14 = w * g14 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             x15 = w * g15 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             x16 = w * g16 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             x17 = w * g17 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             x18 = w * g18 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             x19 = w * a1 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             wR = w * g0 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             hR = h * g0 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y8 = h * g8 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y9 = h * g9 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y10 = h * g10 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y12 = h * g12 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y13 = h * g13 / cnstVa4,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y14 = h * g14 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             y15 = h * g15 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             y16 = h * g16 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             y17 = h * g17 / cnstVa4,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             y18 = h * g18 / cnstVa4;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + w + "," + h / 2 +
                             " L" + x15 + "," + y18 +
                             " L" + x15 + "," + y14 +
@@ -3844,6 +4484,7 @@
                             " L" + x16 + "," + y17 +
                             " L" + x13 + "," + y12 +
                             "z" +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " M" + w / 2 + "," + 0 +
                             " L" + x18 + "," + y10 +
                             " L" + x14 + "," + y10 +
@@ -3852,6 +4493,7 @@
                             " L" + x17 + "," + y12 +
                             " L" + x12 + "," + y17 +
                             "z" +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " M" + 0 + "," + h / 2 +
                             " L" + x10 + "," + y14 +
                             " L" + x10 + "," + y18 +
@@ -3860,6 +4502,7 @@
                             " L" + x12 + "," + y13 +
                             " L" + x17 + "," + y16 +
                             "z" +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " M" + w / 2 + "," + h +
                             " L" + x14 + "," + y15 +
                             " L" + x18 + "," + y15 +
@@ -3868,61 +4511,101 @@
                             " L" + x13 + "," + y16 +
                             " L" + x16 + "," + y13 +
                             " z" +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " M" + x19 + "," + h / 2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, wR, hR, 180, 540, false).replace("M", "L") +
                             " z";
                         //console.log("adj1: ",adj1,d_val);
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
 
                         break;
                     case "heart":
                         var dx1, dx2, x1, x2, x3, x4, y1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dx1 = w * 49 / 48;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dx2 = w * 10 / 48
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w / 2 - dx1
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w / 2 - dx2
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x3 = w / 2 + dx2
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w / 2 + dx1
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = -h / 3;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + w / 2 + "," + h / 4 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             "C" + x3 + "," + y1 + " " + x4 + "," + h / 4 + " " + w / 2 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             "C" + x1 + "," + h / 4 + " " + x2 + "," + y1 + " " + w / 2 + "," + h / 4 + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
                     case "lightningBolt":
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var x1 = w * 5022 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x2 = w * 11050 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x3 = w * 8472 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x4 = w * 8757 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x5 = w * 10012 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x6 = w * 14767 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x7 = w * 12222 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x8 = w * 12860 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x9 = w * 13917 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x10 = w * 7602 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             x11 = w * 16577 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y1 = h * 3890 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y2 = h * 6080 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y3 = h * 6797 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y4 = h * 7437 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y5 = h * 12877 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y6 = h * 9705 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y7 = h * 12007 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y8 = h * 13987 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y9 = h * 8382 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y10 = h * 14277 / 21600,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             y11 = h * 14915 / 21600;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + x3 + "," + 0 +
                             " L" + x8 + "," + y2 +
                             " L" + x2 + "," + y3 +
                             " L" + x11 + "," + y7 +
                             " L" + x6 + "," + y5 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
                             " L" + x5 + "," + y11 +
                             " L" + x7 + "," + y8 +
@@ -3930,7 +4613,9 @@
                             " L" + x10 + "," + y9 +
                             " L" + 0 + "," + y1 + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -3941,29 +4626,41 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * refr;
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal2 = 100000 * refr;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
                         var a, y1, y4, x4;
                         a = (adj < 0) ? 0 : (adj > cnstVal2) ? cnstVal2 : adj;
                         y1 = ss * a / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y4 = h - y1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w - y1;
                         d_val = "M" + 0 + "," + y1 +
                             " L" + y1 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y4 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x4 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             "M" + 0 + "," + y1 +
                             " L" + x4 + "," + y1 +
                             " M" + x4 + "," + y1 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
                             "M" + x4 + "," + y1 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x4 + "," + h;
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -3974,18 +4671,25 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * refr;
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 50000 * refr;
                         var cnstVal2 = 100000 * refr;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
                         var a, x1, x2, y2;
                         a = (adj < 0) ? 0 : (adj > cnstVal1) ? cnstVal1 : adj;
                         x1 = ss * a / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w - x1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h - x1;
                         d_val = "M" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " z" +
                             " M" + x1 + "," + x1 +
@@ -3995,14 +4699,19 @@
                             " z" +
                             " M" + 0 + "," + 0 +
                             " L" + x1 + "," + x1 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " M" + 0 + "," + h +
                             " L" + x1 + "," + y2 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " M" + w + "," + 0 +
                             " L" + x2 + "," + x1 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " M" + w + "," + h +
                             " L" + x2 + "," + y2;
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -4013,28 +4722,40 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * refr;
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 50000 * refr;
                         var cnstVal2 = 100000 * refr;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
                         var a, dy2, dy1, x1, x2, y2, y1;
                         a = (adj < 0) ? 0 : (adj > cnstVal1) ? cnstVal1 : adj;
                         dy2 = ss * a / cnstVal2;
                         dy1 = dy2 / 5;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w - dy2;
                         x2 = x1 + dy1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h - dy2;
                         y1 = y2 + dy1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         d_val = "M" + x1 + "," + h +
                             " L" + x2 + "," + y1 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y2 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " L" + 0 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y2;
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -4042,35 +4763,63 @@
                     case "cloudCallout":
                         var x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, y0, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11,
                             rx1, rx2, rx3, rx4, rx5, rx6, rx7, rx8, rx9, rx10, rx11, ry1, ry2, ry3, ry4, ry5, ry6, ry7, ry8, ry9, ry10, ry11;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x0 = w * 3900 / 43200;;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * 4693 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w * 6928 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x3 = w * 16478 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w * 28827 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x5 = w * 34129 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x6 = w * 41798 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x7 = w * 38324 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x8 = w * 29078 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x9 = w * 22141 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x10 = w * 14000 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x11 = w * 4127 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y0 = h * 14370 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * 26177 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h * 34899 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y3 = h * 39090 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y4 = h * 34751 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y5 = h * 22954 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y6 = h * 15354 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y7 = h * 5426 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y8 = h * 3952 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y9 = h * 4720 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y10 = h * 5192 / 43200;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y11 = h * 15789 / 43200;
                         //Path:
                         //(path attrs: w = 43200; h = 43200; )
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var rX1 = w * 6753 / 43200, rY1 = h * 9190 / 43200, rX2 = w * 5333 / 43200, rY2 = h * 7267 / 43200, rX3 = w * 4365 / 43200,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             rY3 = h * 5945 / 43200, rX4 = w * 4857 / 43200, rY4 = h * 6595 / 43200, rY5 = h * 7273 / 43200, rX6 = w * 6775 / 43200,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             rY6 = h * 9220 / 43200, rX7 = w * 5785 / 43200, rY7 = h * 7867 / 43200, rX8 = w * 6752 / 43200, rY8 = h * 9215 / 43200,
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             rX9 = w * 7720 / 43200, rY9 = h * 10543 / 43200, rX10 = w * 4360 / 43200, rY10 = h * 5918 / 43200, rX11 = w * 4345 / 43200;
                         var sA1 = -11429249 / 60000, wA1 = 7426832 / 60000, sA2 = -8646143 / 60000, wA2 = 5396714 / 60000, sA3 = -8748475 / 60000,
                             wA3 = 5983381 / 60000, sA4 = -7859164 / 60000, wA4 = 7034504 / 60000, sA5 = -4722533 / 60000, wA5 = 6541615 / 60000,
@@ -4078,52 +4827,84 @@
                             wA8 = 6910353 / 60000, sA9 = 3974558 / 60000, wA9 = 4542661 / 60000, sA10 = -16496525 / 60000, wA10 = 8804134 / 60000,
                             sA11 = -14809710 / 60000, wA11 = 9151131 / 60000;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var cX0, cX1, cX2, cX3, cX4, cX5, cX6, cX7, cX8, cX9, cX10, cY0, cY1, cY2, cY3, cY4, cY5, cY6, cY7, cY8, cY9, cY10;
                         var arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10, arc11;
                         var lxy1, lxy2, lxy3, lxy4, lxy5, lxy6, lxy7, lxy8, lxy9, lxy10;
 
                         cX0 = x0 - rX1 * Math.cos(sA1 * Math.PI / 180);
                         cY0 = y0 - rY1 * Math.sin(sA1 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc1 = shapeArc(cX0, cY0, rX1, rY1, sA1, sA1 + wA1, false).replace("M", "L");
                         lxy1 = arc1.substr(arc1.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX1 = parseInt(lxy1[0]) - rX2 * Math.cos(sA2 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY1 = parseInt(lxy1[1]) - rY2 * Math.sin(sA2 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc2 = shapeArc(cX1, cY1, rX2, rY2, sA2, sA2 + wA2, false).replace("M", "L");
                         lxy2 = arc2.substr(arc2.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX2 = parseInt(lxy2[0]) - rX3 * Math.cos(sA3 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY2 = parseInt(lxy2[1]) - rY3 * Math.sin(sA3 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc3 = shapeArc(cX2, cY2, rX3, rY3, sA3, sA3 + wA3, false).replace("M", "L");
                         lxy3 = arc3.substr(arc3.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX3 = parseInt(lxy3[0]) - rX4 * Math.cos(sA4 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY3 = parseInt(lxy3[1]) - rY4 * Math.sin(sA4 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc4 = shapeArc(cX3, cY3, rX4, rY4, sA4, sA4 + wA4, false).replace("M", "L");
                         lxy4 = arc4.substr(arc4.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX4 = parseInt(lxy4[0]) - rX2 * Math.cos(sA5 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY4 = parseInt(lxy4[1]) - rY5 * Math.sin(sA5 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc5 = shapeArc(cX4, cY4, rX2, rY5, sA5, sA5 + wA5, false).replace("M", "L");
                         lxy5 = arc5.substr(arc5.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX5 = parseInt(lxy5[0]) - rX6 * Math.cos(sA6 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY5 = parseInt(lxy5[1]) - rY6 * Math.sin(sA6 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc6 = shapeArc(cX5, cY5, rX6, rY6, sA6, sA6 + wA6, false).replace("M", "L");
                         lxy6 = arc6.substr(arc6.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX6 = parseInt(lxy6[0]) - rX7 * Math.cos(sA7 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY6 = parseInt(lxy6[1]) - rY7 * Math.sin(sA7 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc7 = shapeArc(cX6, cY6, rX7, rY7, sA7, sA7 + wA7, false).replace("M", "L");
                         lxy7 = arc7.substr(arc7.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX7 = parseInt(lxy7[0]) - rX8 * Math.cos(sA8 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY7 = parseInt(lxy7[1]) - rY8 * Math.sin(sA8 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc8 = shapeArc(cX7, cY7, rX8, rY8, sA8, sA8 + wA8, false).replace("M", "L");
                         lxy8 = arc8.substr(arc8.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX8 = parseInt(lxy8[0]) - rX9 * Math.cos(sA9 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY8 = parseInt(lxy8[1]) - rY9 * Math.sin(sA9 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc9 = shapeArc(cX8, cY8, rX9, rY9, sA9, sA9 + wA9, false).replace("M", "L");
                         lxy9 = arc9.substr(arc9.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX9 = parseInt(lxy9[0]) - rX10 * Math.cos(sA10 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY9 = parseInt(lxy9[1]) - rY10 * Math.sin(sA10 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc10 = shapeArc(cX9, cY9, rX10, rY10, sA10, sA10 + wA10, false).replace("M", "L");
                         lxy10 = arc10.substr(arc10.lastIndexOf("L") + 1).split(" ");
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cX10 = parseInt(lxy10[0]) - rX11 * Math.cos(sA11 * Math.PI / 180);
+                        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                         cY10 = parseInt(lxy10[1]) - rY3 * Math.sin(sA11 * Math.PI / 180);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         arc11 = shapeArc(cX10, cY10, rX11, rY3, sA11, sA11 + wA11, false).replace("M", "L");
 
                         var d1 = "M" + x0 + "," + y0 +
@@ -4156,15 +4937,21 @@
                                     }
                                 }
                             }
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             var d_val;
                             var cnstVal2 = 100000 * refr;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             var ss = Math.min(w, h);
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             var wd2 = w / 2, hd2 = h / 2;
 
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             var dxPos, dyPos, xPos, yPos, ht, wt, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16,
                                 g17, g18, g19, g20, g21, g22, g23, g24, g25, g26, x23, x24, x25;
 
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             dxPos = w * adj1 / cnstVal2;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dyPos = h * adj2 / cnstVal2;
                             xPos = wd2 + dxPos;
                             yPos = hd2 + dyPos;
@@ -4209,14 +4996,18 @@
                                 shapeArc(x23 - g26, yPos, g26, g26, 0, 360, false) + //.replace("M","L") +
                                 " z" +
                                 " M" + x24 + "," + g17 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x24 - g25, g17, g25, g25, 0, 360, false).replace("M", "L") +
                                 " z" +
                                 " M" + x25 + "," + g24 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x25 - g12, g24, g12, g12, 0, 360, false).replace("M", "L") +
                                 " z";
                             d1 += d_val;
                         }
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d1 + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -4227,33 +5018,50 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * refr;
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 50000 * refr;
                         var cnstVal2 = 100000 * refr;
                         var cnstVal3 = 4653 * refr;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a, x1, x2, x3, x4, y1, y3, dy2, y2, y4, dy3, y5, wR, hR, wd2, hd2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         wd2 = w / 2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         hd2 = h / 2;
                         a = (adj < -cnstVal3) ? -cnstVal3 : (adj > cnstVal3) ? cnstVal3 : adj;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * 4969 / 21699;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w * 6215 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x3 = w * 13135 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w * 16640 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * 7570 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y3 = h * 16515 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy2 = h * a / cnstVal2;
                         y2 = y3 - dy2;
                         y4 = y3 + dy2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy3 = h * a / cnstVal1;
                         y5 = y4 + dy3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         wR = w * 1125 / 21600;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         hR = h * 1125 / 21600;
                         var cX1 = x2 - wR * Math.cos(Math.PI);
                         var cY1 = y1 - hR * Math.sin(Math.PI);
                         var cX2 = x3 - wR * Math.cos(Math.PI);
                         d_val = //eyes
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(cX1, cY1, wR, hR, 180, 540, false) +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(cX2, cY1, wR, hR, 180, 540, false) +
                             //mouth
                             " M" + x1 + "," + y2 +
@@ -4261,9 +5069,12 @@
                             " Q" + wd2 + "," + y5 + " " + x1 + "," + y2 +
                             //head
                             " M" + 0 + "," + hd2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, wd2, hd2, 180, 540, false).replace("M", "L") +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -4275,10 +5086,13 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * refr;
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 25000 * refr;
                         var cnstVal2 = 100000 * refr;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var t = 0, l = 0, b = h, r = w;
                         var a, ch, ch2, ch4;
                         a = (adj < 0) ? 0 : (adj > cnstVal1) ? cnstVal1 : adj;
@@ -4297,23 +5111,31 @@
 
                             d_val = "M" + ch + "," + y3 +
                                 " L" + ch + "," + ch2 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x3, ch2, ch2, ch2, 180, 270, false).replace("M", "L") +
                                 " L" + x7 + "," + t +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x7, ch2, ch2, ch2, 270, 450, false).replace("M", "L") +
                                 " L" + x6 + "," + ch +
                                 " L" + x6 + "," + y4 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x5, y4, ch2, ch2, 0, 90, false).replace("M", "L") +
                                 " L" + ch2 + "," + b +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(ch2, y4, ch2, ch2, 90, 270, false).replace("M", "L") +
                                 " z" +
                                 " M" + x3 + "," + t +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x3, ch2, ch2, ch2, 270, 450, false).replace("M", "L") +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x3, x3 / 2, ch4, ch4, 90, 270, false).replace("M", "L") +
                                 " L" + x4 + "," + ch2 +
                                 " M" + x6 + "," + ch +
                                 " L" + x3 + "," + ch +
                                 " M" + ch + "," + y4 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(ch2, y4, ch2, ch2, 0, 270, false).replace("M", "L") +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(ch2, (y4 + y3) / 2, ch4, ch4, 270, 450, false).replace("M", "L") +
                                 " z" +
                                 " M" + ch + "," + y4 +
@@ -4329,31 +5151,41 @@
                             x4 = r - ch2;
 
                             d_val = "M" + l + "," + y3 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(ch2, y3, ch2, ch2, 180, 270, false).replace("M", "L") +
                                 " L" + x3 + "," + ch +
                                 " L" + x3 + "," + ch2 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x4, ch2, ch2, ch2, 180, 360, false).replace("M", "L") +
                                 " L" + r + "," + y5 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x4, y5, ch2, ch2, 0, 90, false).replace("M", "L") +
                                 " L" + ch + "," + y6 +
                                 " L" + ch + "," + y7 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(ch2, y7, ch2, ch2, 0, 180, false).replace("M", "L") +
                                 " z" +
                                 "M" + x4 + "," + ch +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x4, ch2, ch2, ch2, 90, -180, false).replace("M", "L") +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc((x3 + x4) / 2, ch2, ch4, ch4, 180, 0, false).replace("M", "L") +
                                 " z" +
                                 " M" + x4 + "," + ch +
                                 " L" + x3 + "," + ch +
                                 " M" + ch2 + "," + y4 +
                                 " L" + ch2 + "," + y3 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(y3 / 2, y3, ch4, ch4, 180, 360, false).replace("M", "L") +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(ch2, y3, ch2, ch2, 0, 180, false).replace("M", "L") +
                                 " M" + ch + "," + y3 +
                                 " L" + ch + "," + y6;
                         }
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -4374,18 +5206,25 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 100000 * slideFactor;
                         var angVal1 = 11 * Math.PI / 180;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
                         var dxPos, dyPos, xPos, yPos, sdx, sdy, pang, stAng, enAng, dx1, dy1, x1, y1, dx2, dy2,
                             x2, y2, stAng1, enAng1, swAng1, swAng2, swAng,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             vc = h / 2, hc = w / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dxPos = w * adj1 / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dyPos = h * adj2 / cnstVal1;
                         xPos = hc + dxPos;
                         yPos = vc + dyPos;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         sdx = dxPos * h;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         sdy = dyPos * w;
                         pang = Math.atan(sdy / sdx);
                         stAng = pang + angVal1;
@@ -4433,7 +5272,9 @@
                             shapeArc(hc, vc, hc, vc, 0, 360, true);// +
                         //shapeArc(hc,vc,hc,vc,stAng1Dg,stAng1Dg+swAngDg,false).replace("M","L") +
                         //" z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -4454,34 +5295,45 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 100000 * slideFactor;
                         var dxPos, dyPos, xPos, yPos, dx, dy, dq, ady, adq, dz, xg1, xg2, x1, x2,
                             yg1, yg2, y1, y2, t1, xl, t2, xt, t3, xr, t4, xb, t5, yl, t6, yt, t7, yr, t8, yb,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             vc = h / 2, hc = w / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dxPos = w * adj1 / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dyPos = h * adj2 / cnstVal1;
                         xPos = hc + dxPos;
                         yPos = vc + dyPos;
                         dx = xPos - hc;
                         dy = yPos - vc;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dq = dxPos * h / w;
                         ady = Math.abs(dyPos);
                         adq = Math.abs(dq);
                         dz = ady - adq;
                         xg1 = (dxPos > 0) ? 7 : 2;
                         xg2 = (dxPos > 0) ? 10 : 5;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * xg1 / 12;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w * xg2 / 12;
                         yg1 = (dyPos > 0) ? 7 : 2;
                         yg2 = (dyPos > 0) ? 10 : 5;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * yg1 / 12;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h * yg2 / 12;
                         t1 = (dxPos > 0) ? 0 : xPos;
                         xl = (dz > 0) ? 0 : t1;
                         t2 = (dyPos > 0) ? x1 : xPos;
                         xt = (dz > 0) ? t2 : x1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         t3 = (dxPos > 0) ? xPos : w;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         xr = (dz > 0) ? w : t3;
                         t4 = (dyPos > 0) ? xPos : x1;
                         xb = (dz > 0) ? t4 : x1;
@@ -4491,28 +5343,39 @@
                         yt = (dz > 0) ? t6 : 0;
                         t7 = (dxPos > 0) ? yPos : y1;
                         yr = (dz > 0) ? y1 : t7;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         t8 = (dyPos > 0) ? yPos : h;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         yb = (dz > 0) ? t8 : h;
 
                         d_val = "M" + 0 + "," + 0 +
                             " L" + x1 + "," + 0 +
                             " L" + xt + "," + yt +
                             " L" + x2 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y1 +
                             " L" + xr + "," + yr +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y2 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x2 + "," + h +
                             " L" + xb + "," + yb +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " L" + 0 + "," + y2 +
                             " L" + xl + "," + yl +
                             " L" + 0 + "," + y1 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -4537,33 +5400,45 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 100000 * slideFactor;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
                         var dxPos, dyPos, xPos, yPos, dq, ady, adq, dz, xg1, xg2, x1, x2, yg1, yg2, y1, y2,
                             t1, xl, t2, xt, t3, xr, t4, xb, t5, yl, t6, yt, t7, yr, t8, yb, u1, u2, v2,
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             vc = h / 2, hc = w / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dxPos = w * adj1 / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dyPos = h * adj2 / cnstVal1;
                         xPos = hc + dxPos;
                         yPos = vc + dyPos;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dq = dxPos * h / w;
                         ady = Math.abs(dyPos);
                         adq = Math.abs(dq);
                         dz = ady - adq;
                         xg1 = (dxPos > 0) ? 7 : 2;
                         xg2 = (dxPos > 0) ? 10 : 5;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w * xg1 / 12;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w * xg2 / 12;
                         yg1 = (dyPos > 0) ? 7 : 2;
                         yg2 = (dyPos > 0) ? 10 : 5;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y1 = h * yg1 / 12;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h * yg2 / 12;
                         t1 = (dxPos > 0) ? 0 : xPos;
                         xl = (dz > 0) ? 0 : t1;
                         t2 = (dyPos > 0) ? x1 : xPos;
                         xt = (dz > 0) ? t2 : x1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         t3 = (dxPos > 0) ? xPos : w;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         xr = (dz > 0) ? w : t3;
                         t4 = (dyPos > 0) ? xPos : x1;
                         xb = (dz > 0) ? t4 : x1;
@@ -4573,33 +5448,49 @@
                         yt = (dz > 0) ? t6 : 0;
                         t7 = (dxPos > 0) ? yPos : y1;
                         yr = (dz > 0) ? y1 : t7;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         t8 = (dyPos > 0) ? yPos : h;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         yb = (dz > 0) ? t8 : h;
                         u1 = ss * adj3 / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         u2 = w - u1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         v2 = h - u1;
                         d_val = "M" + 0 + "," + u1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(u1, u1, u1, u1, 180, 270, false).replace("M", "L") +
                             " L" + x1 + "," + 0 +
                             " L" + xt + "," + yt +
                             " L" + x2 + "," + 0 +
                             " L" + u2 + "," + 0 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(u2, u1, u1, u1, 270, 360, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y1 +
                             " L" + xr + "," + yr +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y2 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + v2 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(u2, v2, u1, u1, 0, 90, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x2 + "," + h +
                             " L" + xb + "," + yb +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + u1 + "," + h +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(u1, v2, u1, u1, 90, 180, false).replace("M", "L") +
                             " L" + 0 + "," + y2 +
                             " L" + xl + "," + yl +
                             " L" + 0 + "," + y1 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -4655,6 +5546,7 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 100000 * refr;
                         var isBorder = true;
@@ -4673,13 +5565,20 @@
                                     adj4 = -38333 * refr;
                                 }
                                 var y1, x1, y2, x2;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y1 = h * adj1 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x1 = w * adj2 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y2 = h * adj3 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x2 = w * adj4 / cnstVal1;
                                 d_val = "M" + 0 + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + h +
+                                    // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                     " L" + 0 + "," + h +
                                     " z" +
                                     " M" + x1 + "," + y1 +
@@ -4703,16 +5602,25 @@
                                 }
                                 var y1, x1, y2, x2, y3, x3;
 
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y1 = h * adj1 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x1 = w * adj2 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y2 = h * adj3 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x2 = w * adj4 / cnstVal1;
 
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y3 = h * adj5 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x3 = w * adj6 / cnstVal1;
                                 d_val = "M" + 0 + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + h +
+                                    // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                     " L" + 0 + "," + h +
                                     " z" +
 
@@ -4744,19 +5652,30 @@
                                 }
                                 var y1, x1, y2, x2, y3, x3, y4, x4;
 
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y1 = h * adj1 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x1 = w * adj2 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y2 = h * adj3 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x2 = w * adj4 / cnstVal1;
 
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y3 = h * adj5 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x3 = w * adj6 / cnstVal1;
 
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y4 = h * adj7 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x4 = w * adj8 / cnstVal1;
                                 d_val = "M" + 0 + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + h +
+                                    // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                     " L" + 0 + "," + h +
                                     " z" +
 
@@ -4784,13 +5703,20 @@
                                     adj4 = -38333 * refr;
                                 }
                                 var y1, x1, y2, x2;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y1 = h * adj1 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x1 = w * adj2 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y2 = h * adj3 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x2 = w * adj4 / cnstVal1;
                                 d_val = "M" + 0 + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + h +
+                                    // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                     " L" + 0 + "," + h +
                                     " z" +
 
@@ -4798,6 +5724,7 @@
                                     " L" + x2 + "," + y2 +
 
                                     " M" + x1 + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                     " L" + x1 + "," + h;
                                 break;
                             case "accentBorderCallout2":
@@ -4817,15 +5744,24 @@
                                 }
                                 var y1, x1, y2, x2, y3, x3;
 
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y1 = h * adj1 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x1 = w * adj2 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y2 = h * adj3 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x2 = w * adj4 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y3 = h * adj5 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x3 = w * adj6 / cnstVal1;
                                 d_val = "M" + 0 + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + h +
+                                    // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                     " L" + 0 + "," + h +
                                     " z" +
 
@@ -4835,6 +5771,7 @@
                                     " L" + x2 + "," + y2 +
 
                                     " M" + x1 + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                     " L" + x1 + "," + h;
 
                                 break;
@@ -4858,17 +5795,28 @@
                                 }
                                 var y1, x1, y2, x2, y3, x3, y4, x4;
 
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y1 = h * adj1 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x1 = w * adj2 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y2 = h * adj3 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x2 = w * adj4 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y3 = h * adj5 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x3 = w * adj6 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                 y4 = h * adj7 / cnstVal1;
+                                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                 x4 = w * adj8 / cnstVal1;
                                 d_val = "M" + 0 + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                                     " L" + w + "," + h +
+                                    // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                     " L" + 0 + "," + h +
                                     " z" +
 
@@ -4880,13 +5828,16 @@
                                     " L" + x2 + "," + y2 +
 
                                     " M" + x1 + "," + 0 +
+                                    // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                                     " L" + x1 + "," + h;
                                 break;
                         }
 
                         //console.log("shapType: ", shapType, ",isBorder:", isBorder)
                         //if(isBorder){
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         //}else{
@@ -4916,13 +5867,17 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 33333 * refr;
                         var cnstVal2 = 100000 * refr;
                         var cnstVal3 = 200000 * refr;
                         var cnstVal4 = 400000 * refr;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a3, maxAdj1, a1, w1, maxAdj2, a2, x1, x4, dy1, dy2, ly1, ry4, ly2, ry3, ly4, ry1,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             ly3, ry2, hR, x2, x3, y1, y2, wd32 = w / 32, vc = h / 2, hc = w / 2;
 
                         a3 = (adj3 < 0) ? 0 : (adj3 > cnstVal1) ? cnstVal1 : adj3;
@@ -4932,16 +5887,22 @@
                         maxAdj2 = cnstVal2 * w1 / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         x1 = ss * a2 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w - x1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy1 = h * a1 / cnstVal3;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy2 = h * a3 / -cnstVal3;
                         ly1 = vc + dy2 - dy1;
                         ry4 = vc + dy1 - dy2;
                         ly2 = ly1 + dy1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         ry3 = h - ly2;
                         ly4 = ly2 * 2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         ry1 = h - ly4;
                         ly3 = ly4 - ly1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         ry2 = h - ly3;
                         hR = a3 * ss / cnstVal4;
                         x2 = hc - wd32;
@@ -4953,14 +5914,19 @@
                             "L" + x1 + "," + 0 +
                             "L" + x1 + "," + ly1 +
                             "L" + hc + "," + ly1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(hc, y1, wd32, hR, 270, 450, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(hc, y2, wd32, hR, 270, 90, false).replace("M", "L") +
                             "L" + x4 + "," + ry2 +
                             "L" + x4 + "," + ry1 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             "L" + w + "," + ry3 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             "L" + x4 + "," + h +
                             "L" + x4 + "," + ry4 +
                             "L" + hc + "," + ry4 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(hc, ry4 - hR, wd32, hR, 90, 180, false).replace("M", "L") +
                             "L" + x2 + "," + ly3 +
                             "L" + x1 + "," + ly3 +
@@ -4971,7 +5937,9 @@
                             "M" + x2 + "," + y2 +
                             "L" + x2 + "," + ly3;
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -4992,6 +5960,7 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 25000 * slideFactor;
                         var cnstVal2 = 33333 * slideFactor;
@@ -4999,11 +5968,14 @@
                         var cnstVal4 = 100000 * slideFactor;
                         var cnstVal5 = 200000 * slideFactor;
                         var cnstVal6 = 400000 * slideFactor;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, t = 0, l = 0, b = h, r = w, wd8 = w / 8, wd32 = w / 32;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a1, a2, x10, dx2, x2, x9, x3, x8, x5, x6, x4, x7, y1, y2, y4, y3, hR, y6;
                         a1 = (adj1 < 0) ? 0 : (adj1 > cnstVal2) ? cnstVal2 : adj1;
                         a2 = (adj2 < cnstVal1) ? cnstVal1 : (adj2 > cnstVal3) ? cnstVal3 : adj2;
                         x10 = r - wd8;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dx2 = w * a2 / cnstVal5;
                         x2 = hc - dx2;
                         x9 = hc + dx2;
@@ -5013,11 +5985,14 @@
                         x6 = x9 - wd8;
                         x4 = x5 - wd32;
                         x7 = x6 + wd32;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         hR = h * a1 / cnstVal6;
                         if (shapType == "ribbon2") {
                             var dy1, dy2, y7;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dy1 = h * a1 / cnstVal5;
                             y1 = b - dy1;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dy2 = h * a1 / cnstVal4;
                             y2 = b - dy2;
                             y4 = t + dy2;
@@ -5030,8 +6005,10 @@
                                 " L" + l + "," + y4 +
                                 " L" + x2 + "," + y4 +
                                 " L" + x2 + "," + hR +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x3, hR, wd32, hR, 180, 270, false).replace("M", "L") +
                                 " L" + x8 + "," + t +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x8, hR, wd32, hR, 270, 360, false).replace("M", "L") +
                                 " L" + x9 + "," + y4 +
                                 " L" + x9 + "," + y4 +
@@ -5039,12 +6016,16 @@
                                 " L" + x10 + "," + y3 +
                                 " L" + r + "," + b +
                                 " L" + x7 + "," + b +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x7, y6, wd32, hR, 90, 270, false).replace("M", "L") +
                                 " L" + x8 + "," + y1 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x8, y7, wd32, hR, 90, -90, false).replace("M", "L") +
                                 " L" + x3 + "," + y2 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x3, y7, wd32, hR, 270, 90, false).replace("M", "L") +
                                 " L" + x4 + "," + y1 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x4, y6, wd32, hR, 270, 450, false).replace("M", "L") +
                                 " z" +
                                 " M" + x5 + "," + y2 +
@@ -5057,7 +6038,9 @@
                                 " L" + x9 + "," + y7;
                         } else if (shapType == "ribbon") {
                             var y5;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             y1 = h * a1 / cnstVal5;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             y2 = h * a1 / cnstVal4;
                             y4 = b - y2;
                             y3 = y4 / 2;
@@ -5065,20 +6048,26 @@
                             y6 = y2 - hR;
                             d_val = "M" + l + "," + t +
                                 " L" + x4 + "," + t +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x4, hR, wd32, hR, 270, 450, false).replace("M", "L") +
                                 " L" + x3 + "," + y1 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x3, y6, wd32, hR, 270, 90, false).replace("M", "L") +
                                 " L" + x8 + "," + y2 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x8, y6, wd32, hR, 90, -90, false).replace("M", "L") +
                                 " L" + x7 + "," + y1 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x7, hR, wd32, hR, 90, 270, false).replace("M", "L") +
                                 " L" + r + "," + t +
                                 " L" + x10 + "," + y3 +
                                 " L" + r + "," + y4 +
                                 " L" + x9 + "," + y4 +
                                 " L" + x9 + "," + y5 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x8, y5, wd32, hR, 0, 90, false).replace("M", "L") +
                                 " L" + x3 + "," + b +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(x3, y5, wd32, hR, 90, 180, false).replace("M", "L") +
                                 " L" + x2 + "," + y4 +
                                 " L" + l + "," + y4 +
@@ -5093,7 +6082,9 @@
                                 "M" + x9 + "," + y6 +
                                 " L" + x9 + "," + y4;
                         }
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -5114,16 +6105,20 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal2 = -10000 * slideFactor;
                         var cnstVal3 = 50000 * slideFactor;
                         var cnstVal4 = 100000 * slideFactor;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, t = 0, l = 0, b = h, r = w, wd8 = w / 8, wd32 = w / 32;
                         if (shapType == "doubleWave") {
                             var cnstVal1 = 12500 * slideFactor;
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             var a1, a2, y1, dy2, y2, y3, y4, y5, y6, of2, dx2, x2, dx8, x8, dx3, x3, dx4, x4, x5, x6, x7, x9, x15, x10, x11, x12, x13, x14;
                             a1 = (adj1 < 0) ? 0 : (adj1 > cnstVal1) ? cnstVal1 : adj1;
                             a2 = (adj2 < cnstVal2) ? cnstVal2 : (adj2 > cnstVal4) ? cnstVal4 : adj2;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             y1 = h * a1 / cnstVal4;
                             dy2 = y1 * 10 / 3;
                             y2 = y1 - dy2;
@@ -5131,6 +6126,7 @@
                             y4 = b - y1;
                             y5 = y4 - dy2;
                             y6 = y4 + dy2;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             of2 = w * a2 / cnstVal3;
                             dx2 = (of2 > 0) ? 0 : of2;
                             x2 = l - dx2;
@@ -5163,6 +6159,7 @@
                             var a1, a2, y1, dy2, y2, y3, y4, y5, y6, of2, dx2, x2, dx5, x5, dx3, x3, x4, x6, x10, x7, x8;
                             a1 = (adj1 < 0) ? 0 : (adj1 > cnstVal5) ? cnstVal5 : adj1;
                             a2 = (adj2 < cnstVal2) ? cnstVal2 : (adj2 > cnstVal4) ? cnstVal4 : adj2;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             y1 = h * a1 / cnstVal4;
                             dy2 = y1 * 10 / 3;
                             y2 = y1 - dy2;
@@ -5170,6 +6167,7 @@
                             y4 = b - y1;
                             y5 = y4 - dy2;
                             y6 = y4 + dy2;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             of2 = w * a2 / cnstVal3;
                             dx2 = (of2 > 0) ? 0 : of2;
                             x2 = l - dx2;
@@ -5189,7 +6187,9 @@
                                 " C" + x8 + "," + y6 + " " + x7 + "," + y5 + " " + x6 + "," + y4 +
                                 " z";
                         }
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -5214,11 +6214,13 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val;
                         var cnstVal1 = 25000 * slideFactor;
                         var cnstVal3 = 75000 * slideFactor;
                         var cnstVal4 = 100000 * slideFactor;
                         var cnstVal5 = 200000 * slideFactor;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, t = 0, l = 0, b = h, r = w, wd8 = w / 8;
                         var a1, a2, q10, q11, q12, minAdj3, a3, dx2, x2, x3, x4, x5, x6, dy1, f1, q1, q2,
                             cx1, cx2, q1, dy3, q3, q4, q5, rh, q8, cx4, q9, cx5;
@@ -5229,20 +6231,26 @@
                         q12 = a1 - q11;
                         minAdj3 = (0 > q12) ? 0 : q12;
                         a3 = (adj3 < minAdj3) ? minAdj3 : (adj3 > a1) ? a1 : adj3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dx2 = w * a2 / cnstVal5;
                         x2 = hc - dx2;
                         x3 = x2 + wd8;
                         x4 = r - x3;
                         x5 = r - x2;
                         x6 = r - wd8;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy1 = h * a3 / cnstVal4;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         f1 = 4 * dy1 / w;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         q1 = x3 * x3 / w;
                         q2 = x3 - q1;
                         cx1 = x3 / 2;
                         cx2 = r - cx1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         q1 = h * a1 / cnstVal4;
                         dy3 = q1 - dy1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         q3 = x2 * x2 / w;
                         q4 = x2 - q3;
                         q5 = f1 * q4;
@@ -5345,7 +6353,9 @@
                                 "M" + x4 + "," + y1 +
                                 " L" + x4 + "," + y7;
                         }
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -5361,7 +6371,9 @@
                         //     result += "<line x1='" + w + "' y1='0' x2='0' y2='" + h + "' stroke='" + border.color +
                         //         "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
                         // } else {
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += "<line x1='0' y1='0' x2='" + w + "' y2='" + h + "' stroke='" + border.color +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
                         //}
                         if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
@@ -5374,8 +6386,11 @@
                         break;
                     case "rightArrow":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 0.25;//0.5;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 0.5;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var max_sAdj2_const = w / h;
                         if (shapAdjst_ary !== undefined) {
                             for (var i = 0; i < shapAdjst_ary.length; i++) {
@@ -5392,14 +6407,20 @@
                         }
                         //console.log("w: "+w+"\nh: "+h+"\nsAdj1: "+sAdj1_val+"\nsAdj2: "+sAdj2_val);
 
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + w + " " + h / 2 + "," + sAdj2_val * w + " 0," + sAdj2_val * w + " " + sAdj1_val * h + ",0 " + sAdj1_val * h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             ",0 " + (1 - sAdj1_val) * h + "," + sAdj2_val * w + " " + (1 - sAdj1_val) * h + ", " + sAdj2_val * w + " " + h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "leftArrow":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 0.25;//0.5;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 0.5;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var max_sAdj2_const = w / h;
                         if (shapAdjst_ary !== undefined) {
                             for (var i = 0; i < shapAdjst_ary.length; i++) {
@@ -5416,15 +6437,21 @@
                         }
                         //console.log("w: "+w+"\nh: "+h+"\nsAdj1: "+sAdj1_val+"\nsAdj2: "+sAdj2_val);
 
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         result += " <polygon points='0 " + h / 2 + "," + sAdj2_val * w + " " + h + "," + sAdj2_val * w + " " + (1 - sAdj1_val) * h + "," + w + " " + (1 - sAdj1_val) * h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             "," + w + " " + sAdj1_val * h + "," + sAdj2_val * w + " " + sAdj1_val * h + ", " + sAdj2_val * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "downArrow":
                     case "flowChartOffpageConnector":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 0.25;//0.5;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 0.5;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var max_sAdj2_const = h / w;
                         if (shapAdjst_ary !== undefined) {
                             for (var i = 0; i < shapAdjst_ary.length; i++) {
@@ -5444,14 +6471,20 @@
                             sAdj1_val = 0.5;
                             sAdj2_val = 0.212;
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + (0.5 - sAdj1_val) * w + " 0," + (0.5 - sAdj1_val) * w + " " + (1 - sAdj2_val) * h + ",0 " + (1 - sAdj2_val) * h + "," + (w / 2) + " " + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             "," + w + " " + (1 - sAdj2_val) * h + "," + (0.5 + sAdj1_val) * w + " " + (1 - sAdj2_val) * h + ", " + (0.5 + sAdj1_val) * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "upArrow":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 0.25;//0.5;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 0.5;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var max_sAdj2_const = h / w;
                         if (shapAdjst_ary !== undefined) {
                             for (var i = 0; i < shapAdjst_ary.length; i++) {
@@ -5466,14 +6499,20 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + (w / 2) + " 0,0 " + sAdj2_val * h + "," + (0.5 - sAdj1_val) * w + " " + sAdj2_val * h + "," + (0.5 - sAdj1_val) * w + " " + h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             "," + (0.5 + sAdj1_val) * w + " " + h + "," + (0.5 + sAdj1_val) * w + " " + sAdj2_val * h + ", " + w + " " + sAdj2_val * h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "leftRightArrow":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 0.25;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 0.25;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var max_sAdj2_const = w / h;
                         if (shapAdjst_ary !== undefined) {
                             for (var i = 0; i < shapAdjst_ary.length; i++) {
@@ -5490,15 +6529,22 @@
                         }
                         //console.log("w: "+w+"\nh: "+h+"\nsAdj1: "+sAdj1_val+"\nsAdj2: "+sAdj2_val);
 
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         result += " <polygon points='0 " + h / 2 + "," + sAdj2_val * w + " " + h + "," + sAdj2_val * w + " " + (1 - sAdj1_val) * h + "," + (1 - sAdj2_val) * w + " " + (1 - sAdj1_val) * h +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             "," + (1 - sAdj2_val) * w + " " + h + "," + w + " " + h / 2 + ", " + (1 - sAdj2_val) * w + " 0," + (1 - sAdj2_val) * w + " " + sAdj1_val * h + "," +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             sAdj2_val * w + " " + sAdj1_val * h + "," + sAdj2_val * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "upDownArrow":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, sAdj1_val = 0.25;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, sAdj2_val = 0.25;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var max_sAdj2_const = h / w;
                         if (shapAdjst_ary !== undefined) {
                             for (var i = 0; i < shapAdjst_ary.length; i++) {
@@ -5515,9 +6561,13 @@
                         }
                         //console.log("w: "+w+"\nh: "+h+"\nsAdj1: "+sAdj1_val+"\nsAdj2: "+sAdj2_val);
 
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         result += " <polygon points='" + w / 2 + " 0,0 " + sAdj2_val * h + "," + sAdj1_val * w + " " + sAdj2_val * h + "," + sAdj1_val * w + " " + (1 - sAdj2_val) * h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             ",0 " + (1 - sAdj2_val) * h + "," + w / 2 + " " + h + ", " + w + " " + (1 - sAdj2_val) * h + "," + (1 - sAdj1_val) * w + " " + (1 - sAdj2_val) * h + "," +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             (1 - sAdj1_val) * w + " " + sAdj2_val * h + "," + w + " " + sAdj2_val * h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "quadArrow":
@@ -5543,7 +6593,9 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, a1, a2, a3, q1, x1, x2, dx2, x3, dx3, x4, x5, x6, y2, y3, y4, y5, y6, maxAdj1, maxAdj3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
                         if (adj2 < 0) a2 = 0
                         else if (adj2 > cnstVal1) a2 = cnstVal1
@@ -5564,12 +6616,15 @@
                         dx3 = minWH * a1 / cnstVal3;
                         x3 = hc - dx3;
                         x4 = hc + dx3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x6 = w - x1;
                         y2 = vc - dx2;
                         y5 = vc + dx2;
                         y3 = vc - dx3;
                         y4 = vc + dx3;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y6 = h - x1;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + vc +
                             " L" + x1 + "," + y2 +
                             " L" + x1 + "," + y3 +
@@ -5582,12 +6637,14 @@
                             " L" + x4 + "," + y3 +
                             " L" + x6 + "," + y3 +
                             " L" + x6 + "," + y2 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
                             " L" + x6 + "," + y5 +
                             " L" + x6 + "," + y4 +
                             " L" + x4 + "," + y4 +
                             " L" + x4 + "," + y6 +
                             " L" + x5 + "," + y6 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + hc + "," + h +
                             " L" + x2 + "," + y6 +
                             " L" + x3 + "," + y6 +
@@ -5595,7 +6652,9 @@
                             " L" + x1 + "," + y4 +
                             " L" + x1 + "," + y5 + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -5622,7 +6681,9 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, a1, a2, a3, q1, x1, x2, dx2, x3, dx3, x4, x5, x6, y2, dy2, y3, y4, y5, maxAdj1, maxAdj3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
                         if (adj2 < 0) a2 = 0
                         else if (adj2 > cnstVal1) a2 = cnstVal1
@@ -5643,12 +6704,16 @@
                         dx3 = minWH * a1 / cnstVal3;
                         x3 = hc - dx3;
                         x4 = hc + dx3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x6 = w - x1;
                         dy2 = minWH * a2 / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h - dy2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y4 = h - dx2;
                         y3 = y4 - dx3;
                         y5 = y4 + dx3;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + y4 +
                             " L" + x1 + "," + y2 +
                             " L" + x1 + "," + y3 +
@@ -5661,13 +6726,18 @@
                             " L" + x4 + "," + y3 +
                             " L" + x6 + "," + y3 +
                             " L" + x6 + "," + y2 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y4 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x6 + "," + h +
                             " L" + x6 + "," + y5 +
                             " L" + x1 + "," + y5 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -5694,7 +6764,9 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, a1, a2, a3, x1, x2, dx4, dx3, x3, x4, x5, y2, y3, y4, y5, maxAdj1, maxAdj3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
                         if (adj2 < 0) a2 = 0
                         else if (adj2 > cnstVal1) a2 = cnstVal1
@@ -5709,16 +6781,21 @@
                         else a3 = adj3
                         x1 = minWH * a3 / cnstVal2;
                         dx2 = minWH * a2 / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w - dx2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h - dx2;
                         dx4 = minWH * a2 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w - dx4;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y4 = h - dx4;
                         dx3 = minWH * a1 / cnstVal3;
                         x3 = x4 - dx3;
                         x5 = x4 + dx3;
                         y3 = y4 - dx3;
                         y5 = y4 + dx3;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + y4 +
                             " L" + x1 + "," + y2 +
                             " L" + x1 + "," + y3 +
@@ -5726,13 +6803,17 @@
                             " L" + x3 + "," + x1 +
                             " L" + x2 + "," + x1 +
                             " L" + x4 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + x1 +
                             " L" + x5 + "," + x1 +
                             " L" + x5 + "," + y5 +
                             " L" + x1 + "," + y5 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -5759,7 +6840,9 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, a1, a2, a3, dx1, x1, dx2, x2, dx3, x3, x4, y1, y2, dy2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
                         if (adj1 < 0) a1 = 0
                         else if (adj1 > cnstVal1) a1 = cnstVal1
@@ -5768,29 +6851,40 @@
                         else if (adj2 > cnstVal1) a2 = cnstVal1
                         else a2 = adj2
                         if (adj3 < 0) a3 = 0
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         else if (adj3 > maxAdj3) a3 = maxAdj3
                         else a3 = adj3
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         y1 = minWH * a3 / cnstVal2;
                         dx1 = minWH * a2 / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w - dx1;
                         dx3 = minWH * a2 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x3 = w - dx3;
                         dx2 = minWH * a1 / cnstVal3;
                         x2 = x3 - dx2;
                         x4 = x3 + dx2;
                         dy2 = minWH * a1 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h - dy2;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + y2 +
                             " L" + x2 + "," + y2 +
                             " L" + x2 + "," + y1 +
                             " L" + x1 + "," + y1 +
                             " L" + x3 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y1 +
                             " L" + x4 + "," + y1 +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x4 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -5820,7 +6914,9 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a1, a2, a3, a4, x3, x4, y3, y4, y5, y6, maxAdj1, maxAdj4;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
                         if (adj2 < 0) a2 = 0
                         else if (adj2 > cnstVal1) a2 = cnstVal1
@@ -5833,12 +6929,15 @@
                         else if (adj3 > cnstVal1) a3 = cnstVal1
                         else a3 = adj3
                         var th, aw2, th2, dh2, ah, bw, bh, bs, bd, bd3, bd2,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             th = minWH * a1 / cnstVal2;
                         aw2 = minWH * a2 / cnstVal2;
                         th2 = th / 2;
                         dh2 = aw2 - th2;
                         ah = minWH * a3 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         bw = w - ah;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         bh = h - dh2;
                         bs = (bw < bh) ? bw : bh;
                         maxAdj4 = cnstVal2 * bs / minWH;
@@ -5849,25 +6948,33 @@
                         bd3 = bd - th;
                         bd2 = (bd3 > 0) ? bd3 : 0;
                         x3 = th + bd2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x4 = w - ah;
                         y3 = dh2 + th;
                         y4 = y3 + dh2;
                         y5 = dh2 + bd;
                         y6 = y3 + bd2;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + h +
                             " L" + 0 + "," + y5 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(bd, y5, bd, bd, 180, 270, false).replace("M", "L") +
                             " L" + x4 + "," + dh2 +
                             " L" + x4 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + aw2 +
                             " L" + x4 + "," + y4 +
                             " L" + x4 + "," + y3 +
                             " L" + x3 + "," + y3 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x3, y6, bd2, bd2, 270, 180, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + th + "," + h + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -5901,7 +7008,9 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a1, a2, a3, a4, a5, q1, q2, q3, x3, x4, x5, x6, x7, x8, x9, y4, y5, minAdj5, maxAdj1, maxAdj3, maxAdj4;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
                         if (adj2 < 0) a2 = 0
                         else if (adj2 > cnstVal1) a2 = cnstVal1
@@ -5910,26 +7019,32 @@
                         if (adj1 < 0) a1 = 0
                         else if (adj1 > maxAdj1) a1 = maxAdj1
                         else a1 = adj1
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         q2 = a1 * minWH / h;
                         q3 = cnstVal2 - q2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         maxAdj3 = q3 * h / minWH;
                         if (adj3 < 0) a3 = 0
                         else if (adj3 > maxAdj3) a3 = maxAdj3
                         else a3 = adj3
                         q1 = a3 + a1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         minAdj5 = q1 * minWH / h;
                         if (adj5 < minAdj5) a5 = minAdj5
                         else if (adj5 > cnstVal2) a5 = cnstVal2
                         else a5 = adj5
 
                         var th, aw2, th2, dh2, ah, bw, bs, bd, bd3, bd2,
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             th = minWH * a1 / cnstVal2;
                         aw2 = minWH * a2 / cnstVal2;
                         th2 = th / 2;
                         dh2 = aw2 - th2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y5 = h * a5 / cnstVal2;
                         ah = minWH * a3 / cnstVal2;
                         y4 = y5 - ah;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x9 = w - dh2;
                         bw = x9 / 2;
                         bs = (bw < y4) ? bw : y4;
@@ -5941,30 +7056,41 @@
                         bd3 = bd - th;
                         bd2 = (bd3 > 0) ? bd3 : 0;
                         x3 = th + bd2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x8 = w - aw2;
                         x6 = x8 - aw2;
                         x7 = x6 + dh2;
                         x4 = x9 - bd;
                         x5 = x7 - bd2;
+                        // @ts-expect-error TS(2552): Cannot find name 'cx'. Did you mean 'cX'?
                         cx = (th + x7) / 2
                         var cy = (y4 + th) / 2
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + h +
                             " L" + 0 + "," + bd +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(bd, bd, bd, bd, 180, 270, false).replace("M", "L") +
                             " L" + x4 + "," + 0 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x4, bd, bd, bd, 270, 360, false).replace("M", "L") +
                             " L" + x9 + "," + y4 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y4 +
                             " L" + x8 + "," + y5 +
                             " L" + x6 + "," + y4 +
                             " L" + x7 + "," + y4 +
                             " L" + x7 + "," + x3 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x5, x3, bd2, bd2, 0, -90, false).replace("M", "L") +
                             " L" + x3 + "," + th +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x3, x3, bd2, bd2, 270, 180, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + th + "," + h + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -5987,8 +7113,11 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a1, a2, x4, x5, dx5, x6, dx6, y1, dy1, y2, maxAdj2, vc = h / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj2 = cnstVal3 * w / minWH;
                         if (adj1 < 0) a1 = 0
                         else if (adj1 > cnstVal1) a1 = cnstVal1
@@ -5998,7 +7127,9 @@
                         else a2 = adj2
                         x4 = minWH * 5 / 32;
                         dx5 = minWH * a2 / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x5 = w - dx5;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy1 = h * a1 / cnstVal2;
                         y1 = vc - dy1;
                         y2 = vc + dy1;
@@ -6007,6 +7138,7 @@
                         var ssd8 = minWH / 8,
                             ssd16 = minWH / 16,
                             ssd32 = minWH / 32;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + y1 +
                             " L" + ssd32 + "," + y1 +
                             " L" + ssd32 + "," + y2 +
@@ -6018,12 +7150,16 @@
                             " M" + x4 + "," + y1 +
                             " L" + x5 + "," + y1 +
                             " L" + x5 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x5 + "," + h +
                             " L" + x5 + "," + y2 +
                             " L" + x4 + "," + y2 + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6045,8 +7181,11 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a1, a2, x1, x2, dx2, y1, dy1, y2, maxAdj2, vc = h / 2, hd2 = vc;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj2 = cnstVal1 * w / minWH;
                         if (adj1 < 0) a1 = 0
                         else if (adj1 > cnstVal1) a1 = cnstVal1
@@ -6055,21 +7194,28 @@
                         else if (adj2 > maxAdj2) a2 = maxAdj2
                         else a2 = adj2
                         dx2 = minWH * a2 / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w - dx2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy1 = h * a1 / cnstVal2;
                         y1 = vc - dy1;
                         y2 = vc + dy1;
                         x1 = dy1 * dx2 / hd2;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + y1 +
                             " L" + x2 + "," + y1 +
                             " L" + x2 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x2 + "," + h +
                             " L" + x2 + "," + y2 +
                             " L" + 0 + "," + y2 +
                             " L" + x1 + "," + vc + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6080,21 +7226,31 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * slideFactor;
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var a, x1, dx1, maxAdj, vc = h / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj = cnstVal1 * w / minWH;
                         if (adj < 0) a = 0
                         else if (adj > maxAdj) a = maxAdj
                         else a = adj
                         dx1 = minWH * a / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x1 = w - dx1;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + 0 +
                             " L" + x1 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x1 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path  d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6105,22 +7261,32 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * slideFactor;
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var a, x1, dx1, x2, maxAdj, vc = h / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var minWH = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj = cnstVal1 * w / minWH;
                         if (adj < 0) a = 0
                         else if (adj > maxAdj) a = maxAdj
                         else a = adj
                         x1 = minWH * a / cnstVal1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w - x1;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + 0 + "," + 0 +
                             " L" + x2 + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + vc +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + x2 + "," + h +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " L" + 0 + "," + h +
                             " L" + x1 + "," + vc + " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
 
@@ -6152,16 +7318,23 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj2, a2, maxAdj1, a1, maxAdj3, a3, q2, maxAdj4, a4, dy1, dy2, y1, y2, y3, y4, dx3, x3, x2, x1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, r = w, b = h, l = 0, t = 0;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         maxAdj2 = cnstVal1 * h / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         maxAdj1 = a2 * 2;
                         a1 = (adj1 < 0) ? 0 : (adj1 > maxAdj1) ? maxAdj1 : adj1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj3 = cnstVal2 * w / ss;
                         a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         q2 = a3 * ss / w;
+                        // @ts-expect-error TS(2454): Variable 'cnstVal' is used before being assigned.
                         maxAdj4 = cnstVal - q2;
                         a4 = (adj4 < 0) ? 0 : (adj4 > maxAdj4) ? maxAdj4 : adj4;
                         dy1 = ss * a2 / cnstVal2;
@@ -6172,8 +7345,10 @@
                         y4 = vc + dy1;
                         dx3 = ss * a3 / cnstVal2;
                         x3 = r - dx3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         x2 = w * a4 / cnstVal2;
                         x1 = x2 / 2;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + l + "," + t +
                             " L" + x2 + "," + t +
                             " L" + x2 + "," + y2 +
@@ -6186,7 +7361,9 @@
                             " L" + x2 + "," + b +
                             " L" + l + "," + b +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6217,16 +7394,22 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj2, a2, maxAdj1, a1, maxAdj3, a3, q2, maxAdj4, a4, dx1, dx2, x1, x2, x3, x4, dy3, y3, y2, y1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, r = w, b = h, l = 0, t = 0;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
 
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj2 = cnstVal1 * w / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         maxAdj1 = a2 * 2;
                         a1 = (adj1 < 0) ? 0 : (adj1 > maxAdj1) ? maxAdj1 : adj1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         maxAdj3 = cnstVal2 * h / ss;
                         a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         q2 = a3 * ss / h;
                         maxAdj4 = cnstVal2 - q2;
                         a4 = (adj4 < 0) ? 0 : (adj4 > maxAdj4) ? maxAdj4 : adj4;
@@ -6238,8 +7421,10 @@
                         x4 = hc + dx1;
                         dy3 = ss * a3 / cnstVal2;
                         y3 = b - dy3;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y2 = h * a4 / cnstVal2;
                         y1 = y2 / 2;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + l + "," + t +
                             " L" + r + "," + t +
                             " L" + r + "," + y2 +
@@ -6252,7 +7437,9 @@
                             " L" + x2 + "," + y2 +
                             " L" + l + "," + y2 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6283,16 +7470,22 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj2, a2, maxAdj1, a1, maxAdj3, a3, q2, maxAdj4, a4, dy1, dy2, y1, y2, y3, y4, x1, dx2, x2, x3;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, r = w, b = h, l = 0, t = 0;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
 
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         maxAdj2 = cnstVal1 * h / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         maxAdj1 = a2 * 2;
                         a1 = (adj1 < 0) ? 0 : (adj1 > maxAdj1) ? maxAdj1 : adj1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj3 = cnstVal2 * w / ss;
                         a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         q2 = a3 * ss / w;
                         maxAdj4 = cnstVal2 - q2;
                         a4 = (adj4 < 0) ? 0 : (adj4 > maxAdj4) ? maxAdj4 : adj4;
@@ -6303,9 +7496,11 @@
                         y3 = vc + dy2;
                         y4 = vc + dy1;
                         x1 = ss * a3 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dx2 = w * a4 / cnstVal2;
                         x2 = r - dx2;
                         x3 = (x2 + r) / 2;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + l + "," + vc +
                             " L" + x1 + "," + y1 +
                             " L" + x1 + "," + y2 +
@@ -6318,7 +7513,9 @@
                             " L" + x1 + "," + y3 +
                             " L" + x1 + "," + y4 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6349,15 +7546,21 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj2, a2, maxAdj1, a1, maxAdj3, a3, q2, maxAdj4, a4, dx1, dx2, x1, x2, x3, x4, y1, dy2, y2, y3;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, r = w, b = h, l = 0, t = 0;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj2 = cnstVal1 * w / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         maxAdj1 = a2 * 2;
                         a1 = (adj1 < 0) ? 0 : (adj1 > maxAdj1) ? maxAdj1 : adj1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         maxAdj3 = cnstVal2 * h / ss;
                         a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         q2 = a3 * ss / h;
                         maxAdj4 = cnstVal2 - q2;
                         a4 = (adj4 < 0) ? 0 : (adj4 > maxAdj4) ? maxAdj4 : adj4;
@@ -6368,10 +7571,12 @@
                         x3 = hc + dx2;
                         x4 = hc + dx1;
                         y1 = ss * a3 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy2 = h * a4 / cnstVal2;
                         y2 = b - dy2;
                         y3 = (y2 + b) / 2;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + l + "," + y2 +
                             " L" + x2 + "," + y2 +
                             " L" + x2 + "," + y1 +
@@ -6384,7 +7589,9 @@
                             " L" + r + "," + b +
                             " L" + l + "," + b +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6415,15 +7622,21 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj2, a2, maxAdj1, a1, maxAdj3, a3, q2, maxAdj4, a4, dy1, dy2, y1, y2, y3, y4, x1, x4, dx2, x2, x3;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, r = w, b = h, l = 0, t = 0;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         maxAdj2 = cnstVal1 * h / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         maxAdj1 = a2 * 2;
                         a1 = (adj1 < 0) ? 0 : (adj1 > maxAdj1) ? maxAdj1 : adj1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj3 = cnstVal1 * w / ss;
                         a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
+                        // @ts-expect-error TS(2454): Variable 'wd2' is used before being assigned.
                         q2 = a3 * ss / wd2;
                         maxAdj4 = cnstVal2 - q2;
                         a4 = (adj4 < 0) ? 0 : (adj4 > maxAdj4) ? maxAdj4 : adj4;
@@ -6435,9 +7648,11 @@
                         y4 = vc + dy1;
                         x1 = ss * a3 / cnstVal2;
                         x4 = r - x1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dx2 = w * a4 / cnstVal3;
                         x2 = hc - dx2;
                         x3 = hc + dx2;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + l + "," + vc +
                             " L" + x1 + "," + y1 +
                             " L" + x1 + "," + y2 +
@@ -6457,7 +7672,9 @@
                             " L" + x1 + "," + y3 +
                             " L" + x1 + "," + y4 +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6488,8 +7705,11 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, r = w, b = h, l = 0, t = 0;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a2, maxAdj1, a1, maxAdj3, a3, q2, maxAdj4, a4, dx2, dx3, ah, dx1, dy1, x8, x2, x7, x3, x6, x4, x5, y8, y2, y7, y3, y6, y4, y5;
                         a2 = (adj2 < 0) ? 0 : (adj2 > cnstVal1) ? cnstVal1 : adj2;
                         maxAdj1 = a2 * 2;
@@ -6502,7 +7722,9 @@
                         dx2 = ss * a2 / cnstVal2;
                         dx3 = ss * a1 / cnstVal3;
                         ah = ss * a3 / cnstVal2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dx1 = w * a4 / cnstVal3;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy1 = h * a4 / cnstVal3;
                         x8 = r - ah;
                         x2 = hc - dx1;
@@ -6518,6 +7740,7 @@
                         y6 = vc + dx2;
                         y4 = vc - dx3;
                         y5 = vc + dx3;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + l + "," + vc +
                             " L" + ah + "," + y3 +
                             " L" + ah + "," + y4 +
@@ -6552,7 +7775,9 @@
                             " L" + ah + "," + y6 +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6578,10 +7803,14 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, wd2 = w / 2, r = w, b = h, l = 0, t = 0, c3d4 = 270, cd2 = 180, cd4 = 90;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj2, a2, a1, th, aw, q1, wR, q7, q8, q9, q10, q11, idy, maxAdj3, a3, ah, x3, q2, q3, q4, q5, dx, x5, x7, q6, dh, x4, x8, aw2, x6, y1, swAng, mswAng, iy, ix, q12, dang2, stAng, stAng2, swAng2, swAng3;
 
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj2 = cnstVal1 * w / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         a1 = (adj1 < 0) ? 0 : (adj1 > cnstVal2) ? cnstVal2 : adj1;
@@ -6594,15 +7823,18 @@
                         q9 = th * th;
                         q10 = q8 - q9;
                         q11 = Math.sqrt(q10);
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         idy = q11 * h / q7;
                         maxAdj3 = cnstVal2 * idy / ss;
                         a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
                         ah = ss * adj3 / cnstVal2;
                         x3 = wR + th;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         q2 = h * h;
                         q3 = ah * ah;
                         q4 = q2 - q3;
                         q5 = Math.sqrt(q4);
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dx = q5 * wR / h;
                         x5 = wR + dx;
                         x7 = x3 + dx;
@@ -6628,20 +7860,27 @@
                         //var cX = x5 - Math.cos(stAng*Math.PI/180) * wR;
                         //var cY = y1 - Math.sin(stAng*Math.PI/180) * h;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + x6 + "," + b +
                             " L" + x4 + "," + y1 +
                             " L" + x5 + "," + y1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wR, h, wR, h, stAng, (stAng + mswAng), false).replace("M", "L") +
                             " L" + x3 + "," + t +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x3, h, wR, h, c3d4, (c3d4 + swAngDeg), false).replace("M", "L") +
                             " L" + (x5 + th) + "," + y1 +
                             " L" + x8 + "," + y1 +
                             " z" +
                             "M" + x3 + "," + t +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x3, h, wR, h, stAng2, (stAng2 + swAng2), false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wR, h, wR, h, cd2, (cd2 + swAng3), false).replace("M", "L");
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6667,10 +7906,14 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, hd2 = h / 2, r = w, b = h, l = 0, t = 0, c3d4 = 270, cd2 = 180, cd4 = 90;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj2, a2, a1, th, aw, q1, hR, q7, q8, q9, q10, q11, iDx, maxAdj3, a3, ah, y3, q2, q3, q4, q5, dy, y5, y7, q6, dh, y4, y8, aw2, y6, x1, swAng, mswAng, ix, iy, q12, dang2, swAng2, swAng3, stAng3;
 
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         maxAdj2 = cnstVal1 * h / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         a1 = (adj1 < 0) ? 0 : (adj1 > a2) ? a2 : adj1;
@@ -6683,15 +7926,18 @@
                         q9 = th * th;
                         q10 = q8 - q9;
                         q11 = Math.sqrt(q10);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         iDx = q11 * w / q7;
                         maxAdj3 = cnstVal2 * iDx / ss;
                         a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
                         ah = ss * a3 / cnstVal2;
                         y3 = hR + th;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         q2 = w * w;
                         q3 = ah * ah;
                         q4 = q2 - q3;
                         q5 = Math.sqrt(q4);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dy = q5 * hR / w;
                         y5 = hR + dy;
                         y7 = y3 + dy;
@@ -6717,22 +7963,31 @@
                         swAng3Dg = swAng3 * 180 / Math.PI;
                         stAng3dg = stAng3 * 180 / Math.PI;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + r + "," + y3 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(l, hR, w, hR, 0, -cd4, false).replace("M", "L") +
                             " L" + l + "," + t +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(l, y3, w, hR, c3d4, (c3d4 + cd4), false).replace("M", "L") +
                             " L" + r + "," + y3 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(l, y3, w, hR, 0, swAngDg, false).replace("M", "L") +
                             " L" + x1 + "," + y7 +
                             " L" + x1 + "," + y8 +
                             " L" + l + "," + y6 +
                             " L" + x1 + "," + y4 +
                             " L" + x1 + "," + y5 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(l, hR, w, hR, swAngDg, (swAngDg + swAng2Dg), false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(l, hR, w, hR, 0, -cd4, false).replace("M", "L") +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(l, y3, w, hR, c3d4, (c3d4 + cd4), false).replace("M", "L");
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6758,11 +8013,15 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, hd2 = h / 2, r = w, b = h, l = 0, t = 0, c3d4 = 270, cd2 = 180, cd4 = 90;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj2, a2, a1, th, aw, q1, hR, q7, q8, q9, q10, q11, iDx, maxAdj3, a3, ah, y3, q2, q3, q4, q5, dy,
                             y5, y7, q6, dh, y4, y8, aw2, y6, x1, swAng, stAng, mswAng, ix, iy, q12, dang2, swAng2, swAng3, stAng3;
 
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         maxAdj2 = cnstVal1 * h / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         a1 = (adj1 < 0) ? 0 : (adj1 > a2) ? a2 : adj1;
@@ -6775,15 +8034,18 @@
                         q9 = th * th;
                         q10 = q8 - q9;
                         q11 = Math.sqrt(q10);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         iDx = q11 * w / q7;
                         maxAdj3 = cnstVal2 * iDx / ss;
                         a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
                         ah = ss * a3 / cnstVal2;
                         y3 = hR + th;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         q2 = w * w;
                         q3 = ah * ah;
                         q4 = q2 - q3;
                         q5 = Math.sqrt(q4);
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         dy = q5 * hR / w;
                         y5 = hR + dy;
                         y7 = y3 + dy;
@@ -6811,20 +8073,27 @@
                         swAngDg = swAng * 180 / Math.PI;
                         swAng2dg = swAng2 * 180 / Math.PI;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + l + "," + hR +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, hR, w, hR, cd2, cd2 + mswAngDg, false).replace("M", "L") +
                             " L" + x1 + "," + y5 +
                             " L" + x1 + "," + y4 +
                             " L" + r + "," + y6 +
                             " L" + x1 + "," + y8 +
                             " L" + x1 + "," + y7 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, y3, w, hR, stAngDg, stAngDg + swAngDg, false).replace("M", "L") +
                             " L" + l + "," + hR +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, hR, w, hR, cd2, cd2 + cd4, false).replace("M", "L") +
                             " L" + r + "," + th +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w, y3, w, hR, c3d4, c3d4 + swAng2dg, false).replace("M", "L")
                         "";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6850,10 +8119,14 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, wd2 = w / 2, r = w, b = h, l = 0, t = 0, c3d4 = 270, cd2 = 180, cd4 = 90;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var maxAdj2, a2, a1, th, aw, q1, wR, q7, q8, q9, q10, q11, idy, maxAdj3, a3, ah, x3, q2, q3, q4, q5, dx, x5, x7, q6, dh, x4, x8, aw2, x6, y1, swAng, mswAng, iy, ix, q12, dang2, swAng2, mswAng2, stAng3, swAng3, stAng2;
 
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj2 = cnstVal1 * w / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
                         a1 = (adj1 < 0) ? 0 : (adj1 > cnstVal2) ? cnstVal2 : adj1;
@@ -6866,15 +8139,18 @@
                         q9 = th * th;
                         q10 = q8 - q9;
                         q11 = Math.sqrt(q10);
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         idy = q11 * h / q7;
                         maxAdj3 = cnstVal2 * idy / ss;
                         a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
                         ah = ss * adj3 / cnstVal2;
                         x3 = wR + th;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         q2 = h * h;
                         q3 = ah * ah;
                         q4 = q2 - q3;
                         q5 = Math.sqrt(q4);
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dx = q5 * wR / h;
                         x5 = wR + dx;
                         x7 = x3 + dx;
@@ -6903,20 +8179,27 @@
                         stAng3dg = stAng3 * 180 / Math.PI;
                         swAngDg = swAng * 180 / Math.PI;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = //"M" + ix + "," +iy + 
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             shapeArc(wR, 0, wR, h, stAng2dg, stAng2dg + swAng2dg, false) + //.replace("M","L") +
                             " L" + x5 + "," + y1 +
                             " L" + x4 + "," + y1 +
                             " L" + x6 + "," + t +
                             " L" + x8 + "," + y1 +
                             " L" + x7 + "," + y1 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x3, 0, wR, h, stAng3dg, stAng3dg + swAngDg, false).replace("M", "L") +
                             " L" + wR + "," + b +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wR, 0, wR, h, cd4, cd2, false).replace("M", "L") +
                             " L" + th + "," + t +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(x3, 0, wR, h, cd2, cd4, false).replace("M", "L") +
                             "";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -6927,8 +8210,11 @@
                     case "mathNotEqual":
                     case "mathPlus":
                         var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj1, adj1;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj2, adj2;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sAdj3, adj3;
                         if (shapAdjst_ary !== undefined) {
                             if (shapAdjst_ary.constructor === Array) {
@@ -6954,6 +8240,7 @@
                         var cnstVal2 = 100000 * slideFactor;
                         var cnstVal3 = 200000 * slideFactor;
                         var dVal;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var hc = w / 2, vc = h / 2, hd2 = h / 2;
                         if (shapType == "mathNotEqual") {
                             if (shapAdjst_ary === undefined) {
@@ -6961,8 +8248,11 @@
                                 adj2 = 110 * Math.PI / 180;
                                 adj3 = 11760 * slideFactor;
                             } else {
+                                // @ts-expect-error TS(2454): Variable 'adj1' is used before being assigned.
                                 adj1 = adj1 * slideFactor;
+                                // @ts-expect-error TS(2454): Variable 'adj2' is used before being assigned.
                                 adj2 = (adj2 / 60000) * Math.PI / 180;
+                                // @ts-expect-error TS(2454): Variable 'adj3' is used before being assigned.
                                 adj3 = adj3 * slideFactor;
                             }
                             var a1, crAng, a2a1, maxAdj3, a3, dy1, dy2, dx1, x1, x8, y2, y3, y1, y4,
@@ -6977,8 +8267,11 @@
                             a2a1 = a1 * 2;
                             maxAdj3 = cnstVal2 - a2a1;
                             a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dy1 = h * a1 / cnstVal2;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dy2 = h * a3 / cnstVal3;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             dx1 = w * cnstVal4 / cnstVal3;
                             x1 = hc - dx1;
                             x8 = hc + dx1;
@@ -7017,9 +8310,13 @@
                             dy4 = -dy3;
                             ry = (cadj2 > 0) ? dy3 : 0;
                             ly = (cadj2 > 0) ? 0 : dy4;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             dlx = w - rx;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             drx = w - lx;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dly = h - ry;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dry = h - ly;
                             xC1 = (rx + lx) / 2;
                             xC2 = (drx + dlx) / 2;
@@ -7055,10 +8352,14 @@
                                 adj2 = 5880 * slideFactor;
                                 adj3 = 11760 * slideFactor;
                             } else {
+                                // @ts-expect-error TS(2454): Variable 'adj1' is used before being assigned.
                                 adj1 = adj1 * slideFactor;
+                                // @ts-expect-error TS(2454): Variable 'adj2' is used before being assigned.
                                 adj2 = adj2 * slideFactor;
+                                // @ts-expect-error TS(2454): Variable 'adj3' is used before being assigned.
                                 adj3 = adj3 * slideFactor;
                             }
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             var a1, ma1, ma3h, ma3w, maxAdj3, a3, m4a3, maxAdj2, a2, dy1, yg, rad, dx1,
                                 y3, y4, a, y2, y1, y5, x1, x3, x2;
                             var cnstVal4 = 1000 * slideFactor;
@@ -7067,21 +8368,27 @@
                             a1 = (adj1 < cnstVal4) ? cnstVal4 : (adj1 > cnstVal5) ? cnstVal5 : adj1;
                             ma1 = -a1;
                             ma3h = (cnstVal6 + ma1) / 4;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             ma3w = cnstVal5 * w / h;
                             maxAdj3 = (ma3h < ma3w) ? ma3h : ma3w;
                             a3 = (adj3 < cnstVal4) ? cnstVal4 : (adj3 > maxAdj3) ? maxAdj3 : adj3;
                             m4a3 = -4 * a3;
                             maxAdj2 = cnstVal6 + m4a3 - a1;
                             a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dy1 = h * a1 / cnstVal3;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             yg = h * a2 / cnstVal2;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             rad = h * a3 / cnstVal2;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             dx1 = w * cnstVal6 / cnstVal3;
                             y3 = vc - dy1;
                             y4 = vc + dy1;
                             a = yg + rad;
                             y2 = y3 - a;
                             y1 = y2 - rad;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             y5 = h - y1;
                             x1 = hc - dx1;
                             x3 = hc + dx1;
@@ -7092,9 +8399,11 @@
                             var cX2 = hc - Math.cos(Math.PI / 2) * rad;
                             var cY2 = y5 - Math.sin(Math.PI / 2) * rad;
                             dVal = "M" + hc + "," + y1 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(cX1, cY1, rad, rad, c3d4, c3d4 + 360, false).replace("M", "L") +
                                 " z" +
                                 " M" + hc + "," + y5 +
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                                 shapeArc(cX2, cY2, rad, rad, cd4, cd4 + 360, false).replace("M", "L") +
                                 " z" +
                                 " M" + x1 + "," + y3 +
@@ -7107,7 +8416,9 @@
                                 adj1 = 23520 * slideFactor;
                                 adj2 = 11760 * slideFactor;
                             } else {
+                                // @ts-expect-error TS(2454): Variable 'adj1' is used before being assigned.
                                 adj1 = adj1 * slideFactor;
+                                // @ts-expect-error TS(2454): Variable 'adj2' is used before being assigned.
                                 adj2 = adj2 * slideFactor;
                             }
                             var cnstVal5 = 36745 * slideFactor;
@@ -7118,8 +8429,11 @@
                             a2a1 = a1 * 2;
                             mAdj2 = cnstVal2 - a2a1;
                             a2 = (adj2 < 0) ? 0 : (adj2 > mAdj2) ? mAdj2 : adj2;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dy1 = h * a1 / cnstVal2;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dy2 = h * a2 / cnstVal3;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             dx1 = w * cnstVal6 / cnstVal3;
                             y2 = vc - dy2;
                             y3 = vc + dy2;
@@ -7143,12 +8457,15 @@
                             if (shapAdjst_ary === undefined) {
                                 adj1 = 23520 * slideFactor;
                             } else {
+                                // @ts-expect-error TS(2454): Variable 'adj1' is used before being assigned.
                                 adj1 = adj1 * slideFactor;
                             }
                             var cnstVal6 = 73490 * slideFactor;
                             var a1, dy1, dx1, y1, y2, x1, x2;
                             a1 = (adj1 < 0) ? 0 : (adj1 > cnstVal2) ? cnstVal2 : adj1;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dy1 = h * a1 / cnstVal3;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             dx1 = w * cnstVal6 / cnstVal3;
                             y1 = vc - dy1;
                             y2 = vc + dy1;
@@ -7164,18 +8481,22 @@
                             if (shapAdjst_ary === undefined) {
                                 adj1 = 23520 * slideFactor;
                             } else {
+                                // @ts-expect-error TS(2454): Variable 'adj1' is used before being assigned.
                                 adj1 = adj1 * slideFactor;
                             }
                             var cnstVal6 = 51965 * slideFactor;
                             var a1, th, a, sa, ca, ta, dl, rw, lM, xM, yM, dxAM, dyAM,
                                 xA, yA, xB, yB, xBC, yBC, yC, xD, xE, yFE, xFE, xF, xL, yG, yH, yI, xC2, yC3;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             var ss = Math.min(w, h);
                             a1 = (adj1 < 0) ? 0 : (adj1 > cnstVal6) ? cnstVal6 : adj1;
                             th = ss * a1 / cnstVal2;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             a = Math.atan(h / w);
                             sa = 1 * Math.sin(a);
                             ca = 1 * Math.cos(a);
                             ta = 1 * Math.tan(a);
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             dl = Math.sqrt(w * w + h * h);
                             rw = dl * cnstVal6 / cnstVal2;
                             lM = dl - rw;
@@ -7190,16 +8511,23 @@
                             xBC = hc - xB;
                             yBC = xBC * ta;
                             yC = yBC + yB;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             xD = w - xB;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             xE = w - xA;
                             yFE = vc - yA;
                             xFE = yFE / ta;
                             xF = xE - xFE;
                             xL = xA + xFE;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             yG = h - yA;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             yH = h - yB;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             yI = h - yC;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             xC2 = w - xM;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             yC3 = h - yM;
 
                             dVal = "M" + xA + "," + yA +
@@ -7219,14 +8547,18 @@
                             if (shapAdjst_ary === undefined) {
                                 adj1 = 23520 * slideFactor;
                             } else {
+                                // @ts-expect-error TS(2454): Variable 'adj1' is used before being assigned.
                                 adj1 = adj1 * slideFactor;
                             }
                             var cnstVal6 = 73490 * slideFactor;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             var ss = Math.min(w, h);
                             var a1, dx1, dy1, dx2, x1, x2, x3, x4, y1, y2, y3, y4;
 
                             a1 = (adj1 < 0) ? 0 : (adj1 > cnstVal6) ? cnstVal6 : adj1;
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             dx1 = w * cnstVal6 / cnstVal3;
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             dy1 = h * cnstVal6 / cnstVal3;
                             dx2 = ss * a1 / cnstVal3;
                             x1 = hc - dx1;
@@ -7252,7 +8584,9 @@
                                 " L" + x1 + "," + y3 +
                                 " z";
                         }
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + dVal + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         //console.log(shapType);
@@ -7267,29 +8601,39 @@
                         if (shapAdjst !== undefined) {
                             adj = parseInt(shapAdjst.substr(4)) * slideFactor;
                         }
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
                         var maxAdj, a, y1, y2, y3, dVal;
                         if (shapType == "flowChartMagneticDisk" || shapType == "flowChartMagneticDrum") {
                             adj = 50000 * slideFactor;
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         maxAdj = cnstVal1 * h / ss;
                         a = (adj < 0) ? 0 : (adj > maxAdj) ? maxAdj : adj;
                         y1 = ss * a / cnstVal2;
                         y2 = y1 + y1;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         y3 = h - y1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var cd2 = 180, wd2 = w / 2;
 
                         var tranglRott = "";
                         if (shapType == "flowChartMagneticDrum") {
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             tranglRott = "transform='rotate(90 " + w / 2 + "," + h / 2 + ")'";
                         }
                         dVal = shapeArc(wd2, y1, wd2, y1, 0, cd2, false) +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, y1, wd2, y1, cd2, cd2 + cd2, false).replace("M", "L") +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + y3 +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, y3, wd2, y1, 0, cd2, false).replace("M", "L") +
                             " L" + 0 + "," + y1;
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path " + tranglRott + " d='" + dVal + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -7314,17 +8658,23 @@
                         var cnstVal2 = 70000 * refr;
                         var cnstVal3 = 75000 * refr;
                         var cnstVal4 = 100000 * refr;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
                         var ssd8 = ss / 8;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var hd6 = h / 6;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a1, maxAdj2, a2, ad1, ad2, xB, yB, alfa, dx0, xC, dx1, yF, xF, xE, yE, dy2, dy22, dy3, yD, dy4, yP1, xP1, dy5, yP2, xP2;
 
                         a1 = (adj1 < cnstVal1) ? cnstVal1 : (adj1 > cnstVal3) ? cnstVal3 : adj1;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         maxAdj2 = cnstVal2 * w / ss;
                         a2 = (adj2 < 0) ? 0 : (adj2 > maxAdj2) ? maxAdj2 : adj2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         ad1 = h * a1 / cnstVal4;
                         ad2 = ss * a2 / cnstVal4;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         xB = w - ad2;
                         yB = ssd8;
                         alfa = (Math.PI / 2) / 14;
@@ -7337,25 +8687,33 @@
                         yE = yF + ssd8;
                         dy2 = yE - 0;
                         dy22 = dy2 / 2;
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         dy3 = h / 20;
                         yD = dy22 - dy3;
                         dy4 = hd6;
                         yP1 = hd6 + dy4;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         xP1 = w / 6;
                         dy5 = hd6 / 2;
                         yP2 = yF + dy5;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         xP2 = w / 4;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var dVal = "M" + 0 + "," + h +
                             " Q" + xP1 + "," + yP1 + " " + xB + "," + yB +
                             " L" + xC + "," + 0 +
+                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                             " L" + w + "," + yD +
                             " L" + xE + "," + yE +
                             " L" + xF + "," + yF +
+                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             " Q" + xP2 + "," + yP2 + " " + 0 + "," + h +
                             " z";
 
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + dVal + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -7387,8 +8745,11 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, r = w, b = h, l = 0, t = 0, wd2 = w / 2, hd2 = h / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a5, maxAdj1, a1, enAng, stAng, th, thh, th2, rw1, rh1, rw2, rh2, rw3, rh3, wtH, htH, dxH,
                             dyH, xH, yH, rI, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15, u16, u17,
                             u18, u19, u20, u21, maxAng, aAng, ptAng, wtA, htA, dxA, dyA, xA, yA, wtE, htE, dxE, dyE, xE, yE,
@@ -7451,6 +8812,7 @@
                         u16 = u15 - enAng;
                         u17 = u16 + rdAngVal3;
                         u18 = (u16 > 0) ? u16 : u17;
+                        // @ts-expect-error TS(2454): Variable 'cd2' is used before being assigned.
                         u19 = u18 - cd2;
                         u20 = u18 - rdAngVal3;
                         u21 = (u19 > 0) ? u20 : u18;
@@ -7609,14 +8971,18 @@
                         var swiAng = iswAng * 180 / Math.PI;
                         var ediAng = stiAng + swiAng;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = shapeArc(w / 2, h / 2, rw1, rh1, strtAng, endAng, false) +
                             " L" + xGp + "," + yGp +
                             " L" + xA + "," + yA +
                             " L" + xBp + "," + yBp +
                             " L" + xC + "," + yC +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, rw2, rh2, stiAng, ediAng, false).replace("M", "L") +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -7648,13 +9014,16 @@
                                 }
                             }
                         }
+                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                         var vc = h / 2, hc = w / 2, r = w, b = h, l = 0, t = 0, wd2 = w / 2, hd2 = h / 2;
+                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                         var ss = Math.min(w, h);
                         var cnstVal1 = 25000 * slideFactor;
                         var cnstVal2 = 100000 * slideFactor;
                         var rdAngVal1 = (1 / 60000) * Math.PI / 180;
                         var rdAngVal2 = (21599999 / 60000) * Math.PI / 180;
                         var rdAngVal3 = 2 * Math.PI;
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var a5, maxAdj1, a1, enAng, stAng, th, thh, th2, rw1, rh1, rw2, rh2, rw3, rh3, wtH, htH, dxH, dyH, xH, yH, rI,
                             u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15, u16, u17, u18, u19, u20, u21, u22,
                             minAng, u23, a2, aAng, ptAng, wtA, htA, dxA, dyA, xA, yA, wtE, htE, dxE, dyE, xE, yE, wtD, htD, dxD, dyD,
@@ -7704,6 +9073,7 @@
                         u16 = u15 - enAng;
                         u17 = u16 + rdAngVal3;
                         u18 = (u16 > 0) ? u16 : u17;
+                        // @ts-expect-error TS(2454): Variable 'cd2' is used before being assigned.
                         u19 = u18 - cd2;
                         u20 = u18 - rdAngVal3;
                         u21 = (u19 > 0) ? u20 : u18;
@@ -7861,16 +9231,21 @@
                         var swiAng = iswAng * 180 / Math.PI;
                         var ediAng = stiAng + swiAng;
 
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var d_val = "M" + xE + "," + yE +
                             " L" + xD + "," + yD +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, rw2, rh2, stiAng, ediAng, false).replace("M", "L") +
                             " L" + xBp + "," + yBp +
                             " L" + xA + "," + yA +
                             " L" + xGp + "," + yGp +
                             " L" + xF + "," + yF +
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(w / 2, h / 2, rw1, rh1, strtAng, endAng, false).replace("M", "L") +
                             " z";
+                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
 
                         break;
@@ -7911,6 +9286,7 @@
                     if (type != "diagram" && type != "textBox") {
                         type = "shape";
                     }
+                    // @ts-expect-error TS(2554): Expected 8 arguments, but got 7.
                     result += genTextBody(node["p:txBody"], node, slideLayoutSpNode, slideMasterSpNode, type, idx, warpObj); //type='shape'
                 }
                 result += "</div>";
@@ -7922,7 +9298,9 @@
                 //var pathNode = getTextByPathList(pathLstNode, ["a:path", "attrs"]);
                 var maxX = parseInt(pathNodes["attrs"]["w"]);// * slideFactor;
                 var maxY = parseInt(pathNodes["attrs"]["h"]);// * slideFactor;
+                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
                 var cX = (1 / maxX) * w;
+                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                 var cY = (1 / maxY) * h;
                 //console.log("w = "+w+"\nh = "+h+"\nmaxX = "+maxX +"\nmaxY = " + maxY);
                 //cheke if it is close shape
@@ -7952,12 +9330,19 @@
                             Object.keys(moveToPtNode).forEach(function (key2) {
                                 var ptObj = {};
                                 var moveToNoPt = moveToPtNode[key2];
-                                var spX = moveToNoPt["attrs", "x"];//parseInt(moveToNoPt["attrs", "x"]) * slideFactor;
-                                var spY = moveToNoPt["attrs", "y"];//parseInt(moveToNoPt["attrs", "y"]) * slideFactor;
-                                var ptOrdr = moveToNoPt["attrs", "order"];
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                var spX = moveToNoPt[("attrs", "x")];//parseInt(moveToNoPt["attrs", "x"]) * slideFactor;
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                var spY = moveToNoPt[("attrs", "y")];//parseInt(moveToNoPt["attrs", "y"]) * slideFactor;
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                var ptOrdr = moveToNoPt[("attrs", "order")];
+                                // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
                                 ptObj.type = "movto";
+                                // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
                                 ptObj.order = ptOrdr;
+                                // @ts-expect-error TS(2339): Property 'x' does not exist on type '{}'.
                                 ptObj.x = spX;
+                                // @ts-expect-error TS(2339): Property 'y' does not exist on type '{}'.
                                 ptObj.y = spY;
                                 multiSapeAry.push(ptObj);
                                 //console.log(key2, lnToNoPt);
@@ -7973,12 +9358,19 @@
                                 Object.keys(lnToPtNode).forEach(function (key2) {
                                     var ptObj = {};
                                     var lnToNoPt = lnToPtNode[key2];
-                                    var ptX = lnToNoPt["attrs", "x"];
-                                    var ptY = lnToNoPt["attrs", "y"];
-                                    var ptOrdr = lnToNoPt["attrs", "order"];
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    var ptX = lnToNoPt[("attrs", "x")];
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    var ptY = lnToNoPt[("attrs", "y")];
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    var ptOrdr = lnToNoPt[("attrs", "order")];
+                                    // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
                                     ptObj.type = "lnto";
+                                    // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
                                     ptObj.order = ptOrdr;
+                                    // @ts-expect-error TS(2339): Property 'x' does not exist on type '{}'.
                                     ptObj.x = ptX;
+                                    // @ts-expect-error TS(2339): Property 'y' does not exist on type '{}'.
                                     ptObj.y = ptY;
                                     multiSapeAry.push(ptObj);
                                     //console.log(key2, lnToNoPt);
@@ -7989,7 +9381,7 @@
                     //a:cubicBezTo
                     if (cubicBezToNodes !== undefined) {
 
-                        var cubicBezToPtNodesAry = [];
+                        var cubicBezToPtNodesAry: any = [];
                         //console.log("cubicBezToNodes: ", cubicBezToNodes, ", is arry: ", Array.isArray(cubicBezToNodes))
                         if (!Array.isArray(cubicBezToNodes)) {
                             cubicBezToNodes = [cubicBezToNodes];
@@ -8000,19 +9392,23 @@
                         });
 
                         //console.log("cubicBezToNodes: ", cubicBezToPtNodesAry)
+                        // @ts-expect-error TS(7006): Parameter 'key2' implicitly has an 'any' type.
                         cubicBezToPtNodesAry.forEach(function (key2) {
                             //console.log("cubicBezToPtNodesAry: key2 : ", key2)
                             var nodeObj = {};
+                            // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
                             nodeObj.type = "cubicBezTo";
+                            // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
                             nodeObj.order = key2[0]["attrs"]["order"];
-                            var pts_ary = [];
-                            key2.forEach(function (pt) {
+                            var pts_ary: any = [];
+                            key2.forEach(function (pt: any) {
                                 var pt_obj = {
                                     x: pt["attrs"]["x"],
                                     y: pt["attrs"]["y"]
                                 }
                                 pts_ary.push(pt_obj)
                             })
+                            // @ts-expect-error TS(2339): Property 'cubBzPt' does not exist on type '{}'.
                             nodeObj.cubBzPt = pts_ary;//key2;
                             multiSapeAry.push(nodeObj);
                         });
@@ -8021,7 +9417,9 @@
                     if (arcToNodes !== undefined) {
                         var arcToNodesAttrs = arcToNodes["attrs"];
                         var arcOrder = arcToNodesAttrs["order"];
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var hR = arcToNodesAttrs["hR"];
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var wR = arcToNodesAttrs["wR"];
                         var stAng = arcToNodesAttrs["stAng"];
                         var swAng = arcToNodesAttrs["swAng"];
@@ -8034,13 +9432,21 @@
                             //console.log("shftX: ",shftX," shftY: ",shftY)
                         }
                         var ptObj = {};
+                        // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
                         ptObj.type = "arcTo";
+                        // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
                         ptObj.order = arcOrder;
+                        // @ts-expect-error TS(2339): Property 'hR' does not exist on type '{}'.
                         ptObj.hR = hR;
+                        // @ts-expect-error TS(2339): Property 'wR' does not exist on type '{}'.
                         ptObj.wR = wR;
+                        // @ts-expect-error TS(2339): Property 'stAng' does not exist on type '{}'.
                         ptObj.stAng = stAng;
+                        // @ts-expect-error TS(2339): Property 'swAng' does not exist on type '{}'.
                         ptObj.swAng = swAng;
+                        // @ts-expect-error TS(2339): Property 'shftX' does not exist on type '{}'.
                         ptObj.shftX = shftX;
+                        // @ts-expect-error TS(2339): Property 'shftY' does not exist on type '{}'.
                         ptObj.shftY = shftY;
                         multiSapeAry.push(ptObj);
 
@@ -8063,7 +9469,9 @@
                             //var clsAttrs = closeNode["attrs"];
                             var clsOrder = clsAttrs["order"];
                             var ptObj = {};
+                            // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
                             ptObj.type = "close";
+                            // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
                             ptObj.order = clsOrder;
                             multiSapeAry.push(ptObj);
 
@@ -8074,19 +9482,24 @@
                     // console.log("custShapType >> multiSapeAry: ", multiSapeAry);
 
                     multiSapeAry.sort(function (a, b) {
+                        // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
                         return a.order - b.order;
                     });
 
                     //console.log("custShapType >>sorted  multiSapeAry: ");
                     //console.log(multiSapeAry);
                     var k = 0;
+                    // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                     var isClose = false;
                     var d = "";
                     while (k < multiSapeAry.length) {
 
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         if (multiSapeAry[k].type == "movto") {
                             //start point
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var spX = parseInt(multiSapeAry[k].x) * cX;//slideFactor;
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var spY = parseInt(multiSapeAry[k].y) * cY;//slideFactor;
                             // if (d == "") {
                             //     d = "M" + spX + "," + spY;
@@ -8110,32 +9523,49 @@
 
                             d += " M" + spX + "," + spY;
 
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         } else if (multiSapeAry[k].type == "lnto") {
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var Lx = parseInt(multiSapeAry[k].x) * cX;//slideFactor;
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var Ly = parseInt(multiSapeAry[k].y) * cY;//slideFactor;
                             d += " L" + Lx + "," + Ly;
 
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         } else if (multiSapeAry[k].type == "cubicBezTo") {
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX;//slideFactor;
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY;//slideFactor;
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX;//slideFactor;
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var Cy2 = parseInt(multiSapeAry[k].cubBzPt[1].y) * cY;//slideFactor;
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX;//slideFactor;
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY;//slideFactor;
                             d += " C" + Cx1 + "," + Cy1 + " " + Cx2 + "," + Cy2 + " " + Cx3 + "," + Cy3;
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         } else if (multiSapeAry[k].type == "arcTo") {
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var hR = parseInt(multiSapeAry[k].hR) * cX;//slideFactor;
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             var wR = parseInt(multiSapeAry[k].wR) * cY;//slideFactor;
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             var stAng = parseInt(multiSapeAry[k].stAng) / 60000;
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             var swAng = parseInt(multiSapeAry[k].swAng) / 60000;
                             //var shftX = parseInt(multiSapeAry[k].shftX) * slideFactor;
                             //var shftY = parseInt(multiSapeAry[k].shftY) * slideFactor;
                             var endAng = stAng + swAng;
 
                             d += shapeArc(wR, hR, wR, hR, stAng, endAng, false);
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         } else if (multiSapeAry[k].type == "quadBezTo") {
                             console.log("custShapType: quadBezTo - TODO")
 
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         } else if (multiSapeAry[k].type == "close") {
                             // result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
                             //     "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
@@ -8149,7 +9579,9 @@
                     }
                     //if (!isClose) {
                     //only one "moveTo" and no "close"
+                    // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                     result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+                        // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                         "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
                     result += "/>";
                     //console.log(result);
@@ -8171,6 +9603,7 @@
                     if (type != "diagram" && type != "textBox") {
                         type = "shape";
                     }
+                    // @ts-expect-error TS(2554): Expected 8 arguments, but got 7.
                     result += genTextBody(node["p:txBody"], node, slideLayoutSpNode, slideMasterSpNode, type, idx, warpObj); //type=shape
                 }
                 result += "</div>";
@@ -8192,6 +9625,7 @@
 
                 // TextBody
                 if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
+                    // @ts-expect-error TS(2554): Expected 8 arguments, but got 7.
                     result += genTextBody(node["p:txBody"], node, slideLayoutSpNode, slideMasterSpNode, type, idx, warpObj);
                 }
                 result += "</div>";
@@ -8201,7 +9635,7 @@
             return result;
         }
 
-        function shapePie(H, w, adj1, adj2, isClose) {
+        function shapePie(H: any, w: any, adj1: any, adj2: any, isClose: any) {
             var pieVal = parseInt(adj2);
             var piAngle = parseInt(adj1);
             var size = parseInt(H),
@@ -8234,47 +9668,67 @@
 
             return [d, rot];
         }
-        function shapeGear(w, h, points) {
+        function shapeGear(w: any, h: any, points: any) {
             var innerRadius = h;//gear.innerRadius;
             var outerRadius = 1.5 * innerRadius;
             var cx = outerRadius;//Math.max(innerRadius, outerRadius),                   // center x
+            // @ts-expect-error TS(2304): Cannot find name 'cy'.
             cy = outerRadius;//Math.max(innerRadius, outerRadius),                    // center y
+            // @ts-expect-error TS(2304): Cannot find name 'notches'.
             notches = points,//gear.points,                      // num. of notches
+                // @ts-expect-error TS(2304): Cannot find name 'radiusO'.
                 radiusO = outerRadius,                    // outer radius
+                // @ts-expect-error TS(2304): Cannot find name 'radiusI'.
                 radiusI = innerRadius,                    // inner radius
+                // @ts-expect-error TS(2304): Cannot find name 'taperO'.
                 taperO = 50,                     // outer taper %
+                // @ts-expect-error TS(2304): Cannot find name 'taperI'.
                 taperI = 35,                     // inner taper %
 
                 // pre-calculate values for loop
 
+                // @ts-expect-error TS(2304): Cannot find name 'pi2'.
                 pi2 = 2 * Math.PI,            // cache 2xPI (360deg)
+                // @ts-expect-error TS(2304): Cannot find name 'angle'.
                 angle = pi2 / (notches * 2),    // angle between notches
+                // @ts-expect-error TS(2304): Cannot find name 'taperAI'.
                 taperAI = angle * taperI * 0.005, // inner taper offset (100% = half notch)
+                // @ts-expect-error TS(2304): Cannot find name 'taperAO'.
                 taperAO = angle * taperO * 0.005, // outer taper offset
+                // @ts-expect-error TS(2304): Cannot find name 'a'.
                 a = angle,                  // iterator (angle)
+                // @ts-expect-error TS(2304): Cannot find name 'toggle'.
                 toggle = false;
             // move to starting point
+            // @ts-expect-error TS(2304): Cannot find name 'radiusO'.
             var d = " M" + (cx + radiusO * Math.cos(taperAO)) + " " + (cy + radiusO * Math.sin(taperAO));
 
             // loop
+            // @ts-expect-error TS(2304): Cannot find name 'a'.
             for (; a <= pi2 + angle; a += angle) {
                 // draw inner to outer line
+                // @ts-expect-error TS(2304): Cannot find name 'toggle'.
                 if (toggle) {
+                    // @ts-expect-error TS(2304): Cannot find name 'radiusI'.
                     d += " L" + (cx + radiusI * Math.cos(a - taperAI)) + "," + (cy + radiusI * Math.sin(a - taperAI));
+                    // @ts-expect-error TS(2304): Cannot find name 'radiusO'.
                     d += " L" + (cx + radiusO * Math.cos(a + taperAO)) + "," + (cy + radiusO * Math.sin(a + taperAO));
                 } else { // draw outer to inner line
+                    // @ts-expect-error TS(2304): Cannot find name 'radiusO'.
                     d += " L" + (cx + radiusO * Math.cos(a - taperAO)) + "," + (cy + radiusO * Math.sin(a - taperAO)); // outer line
+                    // @ts-expect-error TS(2304): Cannot find name 'radiusI'.
                     d += " L" + (cx + radiusI * Math.cos(a + taperAI)) + "," + (cy + radiusI * Math.sin(a + taperAI));// inner line
 
                 }
                 // switch level
+                // @ts-expect-error TS(2304): Cannot find name 'toggle'.
                 toggle = !toggle;
             }
             // close the final line
             d += " ";
             return d;
         }
-        function shapeArc(cX, cY, rX, rY, stAng, endAng, isClose) {
+        function shapeArc(cX: any, cY: any, rX: any, rY: any, stAng: any, endAng: any, isClose: any) {
             var dData;
             var angle = stAng;
             if (endAng >= stAng) {
@@ -8303,7 +9757,7 @@
             dData += (isClose ? " z" : "");
             return dData;
         }
-        function shapeSnipRoundRect(w, h, adj1, adj2, shapeType, adjType) {
+        function shapeSnipRoundRect(w: any, h: any, adj1: any, adj2: any, shapeType: any, adjType: any) {
             /* 
             shapeType: snip,round
             adjType: cornr1,cornr2,cornrAll,diag
@@ -8359,7 +9813,7 @@
             return points;
         }
         */
-        function processPicNode(node, warpObj, source, sType) {
+        function processPicNode(node: any, warpObj: any, source: any, sType: any) {
             //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
             var rtrnData = "";
             var mediaPicFlag = false;
@@ -8400,6 +9854,7 @@
             var vdoNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:videoFile"]);
             var vdoRid, vdoFile, vdoFileExt, vdoMimeType, uInt8Array, blob, vdoBlob, mediaSupportFlag = false, isVdeoLink = false;
             var mediaProcess = settings.mediaProcess;
+            // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
             if (vdoNode !== undefined & mediaProcess) {
                 vdoRid = vdoNode["attrs"]["r:link"];
                 vdoFile = resObj[vdoRid]["target"];
@@ -8429,6 +9884,7 @@
             var audioRid, audioFile, audioFileExt, audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
             var audioPlayerFlag = false;
             var audioObjc;
+            // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
             if (audioNode !== undefined & mediaProcess) {
                 audioRid = audioNode["attrs"]["r:link"];
                 audioFile = resObj[audioRid]["target"];
@@ -8465,6 +9921,7 @@
             //////////////////////////////////////////////////////////////////////////
             mimeType = getMimeType(imgFileExt);
             rtrnData = "<div class='block content' style='" +
+                // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
                 ((mediaProcess && audioPlayerFlag) ? getPosition(audioObjc, node, undefined, undefined) : getPosition(xfrmNode, node, undefined, undefined)) +
                 ((mediaProcess && audioPlayerFlag) ? getSize(audioObjc, undefined, undefined) : getSize(xfrmNode, undefined, undefined)) +
                 " z-index: " + order + ";" +
@@ -8494,7 +9951,7 @@
             return rtrnData;
         }
 
-        function processGraphicFrameNode(node, warpObj, source, sType) {
+        function processGraphicFrameNode(node: any, warpObj: any, source: any, sType: any) {
 
             var result = "";
             var graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
@@ -8527,7 +9984,7 @@
             return result;
         }
 
-        function processSpPrNode(node, warpObj) {
+        function processSpPrNode(node: any, warpObj: any) {
 
             /*
             * 2241 <xsd:complexType name="CT_ShapeProperties">
@@ -8549,7 +10006,7 @@
         }
 
         var is_first_br = false;
-        function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterSpNode, type, idx, warpObj, tbl_col_width) {
+        function genTextBody(textBodyNode: any, spNode: any, slideLayoutSpNode: any, slideMasterSpNode: any, type: any, idx: any, warpObj: any, tbl_col_width: any) {
             var text = "";
             var slideMasterTextStyles = warpObj["slideMasterTextStyles"];
 
@@ -8584,7 +10041,7 @@
                 if (rNode !== undefined && brNode !== undefined) {
                     is_first_br = true;
                     brNode = (brNode.constructor === Array) ? brNode : [brNode];
-                    brNode.forEach(function (item, indx) {
+                    brNode.forEach(function (item: any, indx: any) {
                         item.type = "br";
                     });
                     if (brNode.length > 1) {
@@ -8592,7 +10049,7 @@
                     }
                     rNode = rNode.concat(brNode)
                     //console.log("single a:p  rNode:", rNode, "brNode:", brNode )
-                    rNode.sort(function (a, b) {
+                    rNode.sort(function (a: any, b: any) {
                         return a.attrs.order - b.attrs.order;
                     });
                     //console.log("sorted rNode:",rNode)
@@ -8612,9 +10069,11 @@
                 var cssName = "";
 
                 if (styleText in styleTable) {
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     cssName = styleTable[styleText]["name"];
                 } else {
                     cssName = "_css_" + (Object.keys(styleTable).length + 1);
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     styleTable[styleText] = {
                         "name": cssName,
                         "text": styleText
@@ -8630,6 +10089,7 @@
                     prg_dir + " " + cssName + "' >";
                 var buText_ary = genBuChar(pNode, i, spNode, textBodyNode, pFontStyle, idx, type, warpObj);
                 var isBullate = (buText_ary[0] !== undefined && buText_ary[0] !== null && buText_ary[0] != "" ) ? true : false;
+                // @ts-expect-error TS(2365): Operator '+' cannot be applied to types 'string | ... Remove this comment to see the full error message
                 var bu_width = (buText_ary[1] !== undefined && buText_ary[1] !== null && isBullate) ? buText_ary[1] + buText_ary[2] : 0;
                 text += (buText_ary[0] !== undefined) ? buText_ary[0]:"";
                 //get text margin 
@@ -8670,6 +10130,7 @@
                     }
                 }
 
+                // @ts-expect-error TS(2363): The right-hand side of an arithmetic operation mus... Remove this comment to see the full error message
                 prg_width_node = parseInt(prg_width_node) * slideFactor - bu_width - mrgin_val;
                 if (isBullate) {
                     //get prg_width_node if there is a bulltes
@@ -8689,7 +10150,7 @@
             return text;
         }
         
-        function genBuChar(node, i, spNode, textBodyNode, pFontStyle, idx, type, warpObj) {
+        function genBuChar(node: any, i: any, spNode: any, textBodyNode: any, pFontStyle: any, idx: any, type: any, warpObj: any) {
             //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
             ///////////////////////////////////////Amir///////////////////////////////
             var sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
@@ -8751,7 +10212,9 @@
                     var prcnt = parseInt(buFontSize) / 100000;
                     //dfltBultSize = XXpt
                     //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
+                    // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
                     var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
+                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     bultSize = prcnt * (parseInt(dfltBultSizeNoPt)) + "px";// + "pt";
                 }
             } else {
@@ -8948,7 +10411,9 @@
                     if (buFontSize !== undefined) {
                         var prcnt = parseInt(buFontSize) / 100000;
                         //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
+                        // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
                         var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
+                        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                         bultSize = prcnt * (parseInt(dfltBultSizeNoPt)) + "px";// + "pt";
                     }
                 }else{
@@ -8963,7 +10428,9 @@
                         var prcnt = parseInt(buFontSize) / 100000;
                         //dfltBultSize = XXpt
                         //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
+                        // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
                         var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
+                        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                         bultSize = prcnt * (parseInt(dfltBultSizeNoPt)) + "px";// + "pt";
                     }
                 } else {
@@ -8973,6 +10440,7 @@
             if (buFontSize === undefined) {
                 bultSize = dfltBultSize;
             }
+            // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
             font_val = parseInt(bultSize, "px");
             ////////////////////////////////////////////////////////////////////////
             if (buType == "TYPE_BULLET") {
@@ -9009,11 +10477,16 @@
                     // }
                 } else if (color_tye == "pattern" || color_tye == "pic" || color_tye == "gradient") {
                     if (color_tye == "pattern") {
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         bullet += "background:" + bultColor[0][0] + ";";
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         if (bultColor[0][1] !== null && bultColor[0][1] !== undefined && bultColor[0][1] != "") {
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             bullet += "background-size:" + bultColor[0][1] + ";";//" 2px 2px;" +
                         }
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         if (bultColor[0][2] !== null && bultColor[0][2] !== undefined && bultColor[0][2] != "") {
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             bullet += "background-position:" + bultColor[0][2] + ";";//" 2px 2px;" +
                         }
                         // bullet += "-webkit-background-clip: text;" +
@@ -9030,10 +10503,13 @@
 
                     } else if (color_tye == "gradient") {
 
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         var colorAry = bultColor[0].color;
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         var rot = bultColor[0].rot;
 
                         bullet += "background: linear-gradient(" + rot + "deg,";
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         for (var i = 0; i < colorAry.length; i++) {
                             if (i == colorAry.length - 1) {
                                 bullet += "#" + colorAry[i] + ");";
@@ -9049,10 +10525,14 @@
                     bullet += "-webkit-background-clip: text;" +
                         "background-clip: text;" +
                         "color: transparent;";
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     if (bultColor[1].border !== undefined && bultColor[1].border !== "") {
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         bullet += "-webkit-text-stroke: " + bultColor[1].border + ";";
                     }
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     if (bultColor[1].effcts !== undefined && bultColor[1].effcts !== "") {
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         bullet += "filter: " + bultColor[1].effcts + ";";
                     }
                 }
@@ -9061,6 +10541,7 @@
                     //bullet += "display: inline-block;white-space: nowrap ;direction:rtl"; // float: right;  
                     bullet += "white-space: nowrap ;direction:rtl"; // display: table-cell;;
                 }
+                // @ts-expect-error TS(2339): Property 'MSInputMethodContext' does not exist on ... Remove this comment to see the full error message
                 var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
                 var htmlBu = buChar;
 
@@ -9159,7 +10640,7 @@
             //console.log("genBuChar: width: ", $(bullet).outerWidth())
             return [bullet, margin_val, font_val];//$(bullet).outerWidth()];
         }
-        function getHtmlBullet(typefaceNode, buChar) {
+        function getHtmlBullet(typefaceNode: any, buChar: any) {
             //http://www.alanwood.net/demos/wingdings.html
             //not work for IE11
             //console.log("genBuChar typefaceNode:", typefaceNode, " buChar:", buChar, "charCodeAt:", buChar.charCodeAt(0))
@@ -9189,7 +10670,7 @@
                     return "&#" + (buChar.charCodeAt(0)) + ";";
             }
         }
-        function getDingbatToUnicode(typefaceNode, buChar){
+        function getDingbatToUnicode(typefaceNode: any, buChar: any){
             if (dingbat_unicode){
                 var dingbat_code = buChar.codePointAt(0) & 0xFFF;
                 var char_unicode = null;
@@ -9198,7 +10679,9 @@
                 while (len--) {
                     // blah blah
                     var item = dingbat_unicode[i];
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     if (item.f == typefaceNode && item.code == dingbat_code) {
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         char_unicode = item.unicode;
                         break;
                     }
@@ -9208,7 +10691,7 @@
             }
         }
 
-        function getLayoutAndMasterNode(node, idx, type, warpObj) {
+        function getLayoutAndMasterNode(node: any, idx: any, type: any, warpObj: any) {
             var pPrNodeLaout, pPrNodeMaster;
             var pPrNode = node["a:pPr"];
             //lvl
@@ -9251,7 +10734,7 @@
                 "nodeMaster": pPrNodeMaster
             };
         }
-        function genSpanElement(node, rIndex, pNode, textBodyNode, pFontStyle, slideLayoutSpNode, idx, type, rNodeLength, warpObj, isBullate) {
+        function genSpanElement(node: any, rIndex: any, pNode: any, textBodyNode: any, pFontStyle: any, slideLayoutSpNode: any, idx: any, type: any, rNodeLength: any, warpObj: any, isBullate: any) {
             //https://codepen.io/imdunn/pen/GRgwaye ?
             var text_style = "";
             var lstStyle = textBodyNode["a:lstStyle"];
@@ -9365,11 +10848,16 @@
                 }
             } else if (fontClrType == "pattern" || fontClrType == "pic" || fontClrType == "gradient") {
                 if (fontClrType == "pattern") {
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     styleText += "background:" + fontClrPr[0][0] + ";";
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     if (fontClrPr[0][1] !== null && fontClrPr[0][1] !== undefined && fontClrPr[0][1] != "") {
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         styleText += "background-size:" + fontClrPr[0][1] + ";";//" 2px 2px;" +
                     }
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     if (fontClrPr[0][2] !== null && fontClrPr[0][2] !== undefined && fontClrPr[0][2] != "") {
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         styleText += "background-position:" + fontClrPr[0][2] + ";";//" 2px 2px;" +
                     }
                     // styleText += "-webkit-background-clip: text;" +
@@ -9385,7 +10873,9 @@
                     //     "-webkit-text-stroke: " + fontClrPr[1].border + ";";
                 } else if (fontClrType == "gradient") {
 
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     var colorAry = fontClrPr[0].color;
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     var rot = fontClrPr[0].rot;
 
                     styleText += "background: linear-gradient(" + rot + "deg,";
@@ -9405,10 +10895,14 @@
                 styleText += "-webkit-background-clip: text;" +
                     "background-clip: text;" +
                     "color: transparent;";
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 if (fontClrPr[1].border !== undefined && fontClrPr[1].border !== "") {
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     styleText += "-webkit-text-stroke: " + fontClrPr[1].border + ";";
                 }
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 if (fontClrPr[1].effcts !== undefined && fontClrPr[1].effcts !== "") {
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     styleText += "filter: " + fontClrPr[1].effcts + ";";
                 }
             }
@@ -9493,9 +10987,11 @@
             var cssName = "";
 
             if (styleText in styleTable) {
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 cssName = styleTable[styleText]["name"];
             } else {
                 cssName = "_css_" + (Object.keys(styleTable).length + 1);
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 styleTable[styleText] = {
                     "name": cssName,
                     "text": styleText
@@ -9517,7 +11013,7 @@
 
         }
 
-        function getPregraphMargn(pNode, idx, type, isBullate, warpObj){
+        function getPregraphMargn(pNode: any, idx: any, type: any, isBullate: any, warpObj: any){
             if (!isBullate){
                 return ["",0];
             }
@@ -9632,8 +11128,11 @@
                 //     tagname = "div";
                 // }
                 //ADD suffix
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 cssText += tagname + " ." + styleTable[key]["name"] +
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     ((styleTable[key]["suffix"]) ? styleTable[key]["suffix"] : "") +
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     "{" + styleTable[key]["text"] + "}\n"; //section > div
             }
             //cssText += " .slide{margin-bottom: 5px;}\n"; // TODO
@@ -9646,7 +11145,7 @@
             return cssText;
         }
 
-        function genTable(node, warpObj) {
+        function genTable(node: any, warpObj: any) {
             var order = node["attrs"]["order"];
             var tableNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl"]);
             var xfrmNode = getTextByPathList(node, ["p:xfrm"]);
@@ -9677,6 +11176,7 @@
             var thisTblStyle;
             var tbleStyleId = getTblPr["a:tableStyleId"];
             if (tbleStyleId !== undefined) {
+                // @ts-expect-error TS(2304): Cannot find name 'tableStyles'.
                 var tbleStylList = tableStyles["a:tblStyleLst"]["a:tblStyle"];
                 if (tbleStylList !== undefined) {
                     if (tbleStylList.constructor === Array) {
@@ -9707,10 +11207,12 @@
             var tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:tblBg", "a:fillRef"]);
             //console.log( "thisTblStyle:", thisTblStyle, "warpObj:", warpObj)
             if (tbl_bgFillschemeClr !== undefined) {
+                // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                 tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpObj);
             }
             if (tbl_bgFillschemeClr === undefined) {
                 tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:wholeTbl", "a:tcStyle", "a:fill", "a:solidFill"]);
+                // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                 tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpObj);
             }
             if (tbl_bgcolor !== "") {
@@ -9718,6 +11220,7 @@
             }
             ////////////////////////////////////////////////////////////////////////////////////////////
             var tableHtml = "<table " + tblDir + " style='border-collapse: collapse;" +
+                // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
                 getPosition(xfrmNode, node, undefined, undefined) +
                 getSize(xfrmNode, undefined, undefined) +
                 " z-index: " + order + ";" +
@@ -9731,7 +11234,7 @@
             //if (trNodes.constructor === Array) {
                 //multi rows
                 var totalrowSpan = 0;
-                var rowSpanAry = [];
+                var rowSpanAry: any = [];
                 for (var i = 0; i < trNodes.length; i++) {
                     //////////////rows Style ////////////Amir
                     var rowHeightParam = trNodes[i]["attrs"]["h"];
@@ -9800,6 +11303,7 @@
 
                     } else if (i > 0 && tblStylAttrObj["isBandRowAttr"] == 1 && thisTblStyle !== undefined) {
                         fillColor = "";
+                        // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
                         row_borders = undefined;
                         if ((i % 2) == 0 && thisTblStyle["a:band2H"] !== undefined) {
                             // console.log("i: ", i, 'thisTblStyle["a:band2H"]:', thisTblStyle["a:band2H"])
@@ -9808,6 +11312,7 @@
                             if (bgFillschemeClr !== undefined) {
                                 var local_fillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpObj);
                                 if (local_fillColor !== "") {
+                                    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                                     fillColor = local_fillColor;
                                     band_2H_fillColor = local_fillColor;
                                 }
@@ -10037,7 +11542,7 @@
             return tableHtml;
         }
         
-        function getTableCellParams(tcNodes, getColsGrid , row_idx , col_idx , thisTblStyle, cellSource, warpObj) {
+        function getTableCellParams(tcNodes: any, getColsGrid: any , row_idx: any , col_idx: any , thisTblStyle: any, cellSource: any, warpObj: any) {
             //thisTblStyle["a:band1V"] => thisTblStyle[cellSource]
             //text, cell-width, cell-borders, 
             //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpObj);//tableStyles
@@ -10072,6 +11577,7 @@
             var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpObj, total_col_width);//tableStyles
 
             if (total_col_width != 0 /*&& row_idx == 0*/) {
+                // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                 colWidth = parseInt(total_col_width) * slideFactor;
                 colStyl += "width:" + colWidth + "px;";
             }
@@ -10161,9 +11667,11 @@
             var cssName = "";
             if (celFillColor !== undefined && celFillColor != "") {
                 if (celFillColor in styleTable) {
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     cssName = styleTable[celFillColor]["name"];
                 } else {
                     cssName = "_tbl_cell_css_" + (Object.keys(styleTable).length + 1);
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     styleTable[celFillColor] = {
                         "name": cssName,
                         "text": celFillColor
@@ -10208,16 +11716,18 @@
             return [text, colStyl, cssName, rowSpan, colSpan];
         }
 
-        function genChart(node, warpObj) {
+        function genChart(node: any, warpObj: any) {
 
             var order = node["attrs"]["order"];
             var xfrmNode = getTextByPathList(node, ["p:xfrm"]);
             var result = "<div id='chart" + chartID + "' class='block content' style='" +
+                // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
                 getPosition(xfrmNode, node, undefined, undefined) + getSize(xfrmNode, undefined, undefined) +
                 " z-index: " + order + ";'></div>";
 
             var rid = node["a:graphic"]["a:graphicData"]["c:chart"]["attrs"]["r:id"];
             var refName = warpObj["slideResObj"][rid]["target"];
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var content = readXmlFile(warpObj["zip"], refName);
             var plotArea = getTextByPathList(content, ["c:chartSpace", "c:chart", "c:plotArea"]);
 
@@ -10300,7 +11810,7 @@
             return result;
         }
 
-        function genDiagram(node, warpObj, source, sType) {
+        function genDiagram(node: any, warpObj: any, source: any, sType: any) {
             //console.log(warpObj)
             //readXmlFile(zip, sldFileName)
             /**files define the diagram:
@@ -10323,11 +11833,16 @@
             var dgmClrFileName = warpObj["slideResObj"][dgmClrFileId].target,
                 dgmDataFileName = warpObj["slideResObj"][dgmDataFileId].target,
                 dgmLayoutFileName = warpObj["slideResObj"][dgmLayoutFileId].target;
+            // @ts-expect-error TS(2304): Cannot find name 'dgmQuickStyleFileName'.
             dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
             //console.log("dgmClrFileName: " , dgmClrFileName,", dgmDataFileName: ",dgmDataFileName,", dgmLayoutFileName: ",dgmLayoutFileName,", dgmQuickStyleFileName: ",dgmQuickStyleFileName);
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var dgmClr = readXmlFile(zip, dgmClrFileName);
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var dgmData = readXmlFile(zip, dgmDataFileName);
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var dgmLayout = readXmlFile(zip, dgmLayoutFileName);
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             var dgmQuickStyle = readXmlFile(zip, dgmQuickStyleFileName);
             //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
             ///get drawing#.xml
@@ -10365,7 +11880,7 @@
                 "'>" + rslt + "</div>";
         }
 
-        function getPosition(slideSpNode, pNode, slideLayoutSpNode, slideMasterSpNode, sType) {
+        function getPosition(slideSpNode: any, pNode: any, slideLayoutSpNode: any, slideMasterSpNode: any, sType: any) {
             var off;
             var x = -1, y = -1;
 
@@ -10417,7 +11932,7 @@
 
         }
 
-        function getSize(slideSpNode, slideLayoutSpNode, slideMasterSpNode) {
+        function getSize(slideSpNode: any, slideLayoutSpNode: any, slideMasterSpNode: any) {
             var ext = undefined;
             var w = -1, h = -1;
 
@@ -10438,7 +11953,7 @@
             }
 
         }
-        function getVerticalMargins(pNode, textBodyNode, type, idx, warpObj) {
+        function getVerticalMargins(pNode: any, textBodyNode: any, type: any, idx: any, warpObj: any) {
             //margin-top ; 
             //a:pPr => a:spcBef => a:spcPts (/100) | a:spcPct (/?)
             //margin-bottom
@@ -10466,6 +11981,7 @@
             if (getTextByPathList(pNode, ["a:r"]) !== undefined) {
                 var fontSizeStr = getFontSize(pNode["a:r"], textBodyNode,undefined, lvl, type, warpObj);
                 if (fontSizeStr != "inherit") {
+                    // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
                     fontSize = parseInt(fontSizeStr, "px"); //pt
                 }
             }
@@ -10549,6 +12065,7 @@
                 //slideMasterTextStyles
                 var slideMasterTextStyles = warpObj["slideMasterTextStyles"];
                 var dirLoc = "";
+                // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                 var lvl = "a:lvl" + lvl + "pPr";
                 switch (type) {
                     case "title":
@@ -10652,7 +12169,7 @@
             //return spcAft + spcBef;
             return marginTopBottomStr;
         }
-        function getHorizontalAlign(node, textBodyNode, idx, type, prg_dir, warpObj) {
+        function getHorizontalAlign(node: any, textBodyNode: any, idx: any, type: any, prg_dir: any, warpObj: any) {
             var algn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
             if (algn === undefined) {
                 //var layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
@@ -10739,7 +12256,7 @@
             }
             //return algn === "ctr" ? "h-mid" : algn === "r" ? "h-right" : "h-left";
         }
-        function getPregraphDir(node, textBodyNode, idx, type, warpObj) {
+        function getPregraphDir(node: any, textBodyNode: any, idx: any, type: any, warpObj: any) {
             var rtl = getTextByPathList(node, ["a:pPr", "attrs", "rtl"]);
             //console.log("getPregraphDir node:", node, "textBodyNode", textBodyNode, "rtl:", rtl, "idx", idx, "type", type, "warpObj", warpObj)
           
@@ -10771,7 +12288,7 @@
             // }
             // return "";
         }
-        function getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) {
+        function getVerticalAlign(node: any, slideLayoutSpNode: any, slideMasterSpNode: any, type: any) {
 
             //X, <a:bodyPr anchor="ctr">, <a:bodyPr anchor="b">
             var anchor = getTextByPathList(node, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
@@ -10791,7 +12308,7 @@
             return (anchor === "ctr")?"v-mid" : ((anchor === "b") ? "v-down" : "v-up");
         }
 
-        function getContentDir(node, type, warpObj) {
+        function getContentDir(node: any, type: any, warpObj: any) {
             return "content";
             var defRtl = getTextByPathList(node, ["p:txBody", "a:lstStyle", "a:defPPr", "attrs", "rtl"]);
             if (defRtl !== undefined) {
@@ -10858,7 +12375,7 @@
             //console.log("getContentDir() type:", type, "slideMasterTextStyles:", slideMasterTextStyles,"dirNode:",dirVal)
         }
 
-        function getFontType(node, type, warpObj, pFontStyle) {
+        function getFontType(node: any, type: any, warpObj: any, pFontStyle: any) {
             var typeface = getTextByPathList(node, ["a:rPr", "a:latin", "attrs", "typeface"]);
 
             if (typeface === undefined) {
@@ -10882,7 +12399,7 @@
             return (typeface === undefined) ? "inherit" : typeface;
         }
 
-        function getFontColorPr(node, pNode, lstStyle, pFontStyle, lvl, idx, type, warpObj) {
+        function getFontColorPr(node: any, pNode: any, lstStyle: any, pFontStyle: any, lvl: any, idx: any, type: any, warpObj: any) {
             //text border using: text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
             //{getFontColor(..) return color} -> getFontColorPr(..) return array[color,textBordr/shadow]
             //https://stackoverflow.com/questions/2570972/css-font-border
@@ -10899,6 +12416,7 @@
                     color = getSolidFill(solidFillNode, undefined, undefined, warpObj);
                     var highlightNode = rPrNode["a:highlight"];
                     if (highlightNode !== undefined) {
+                        // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                         highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj);
                     }
                     colorType = "solid";
@@ -10925,6 +12443,7 @@
                     color = getSolidFill(solidFillNode, undefined, undefined, warpObj);
                     var highlightNode = lstStyledefRPr["a:highlight"];
                     if (highlightNode !== undefined) {
+                        // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                         highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj);
                     }
                     colorType = "solid";
@@ -10952,6 +12471,7 @@
                     }
                     var highlightNode = sPstyle["a:highlight"]; //is "a:highlight" node in 'a:fontRef' ?
                     if (highlightNode !== undefined) {
+                        // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                         highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj);
                     }
                 }
@@ -10978,6 +12498,7 @@
                         color = getSolidFill(defRpRLaout, undefined, undefined, warpObj);
                         var highlightNode = getTextByPathList(pPrNodeLaout, ["a:defRPr", "a:highlight"]);
                         if (highlightNode !== undefined) {
+                            // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                             highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj);
                         }
                         colorType = "solid";
@@ -10991,6 +12512,7 @@
                             color = getSolidFill(defRprMaster, undefined, undefined, warpObj);
                             var highlightNode = getTextByPathList(pPrNodeMaster, ["a:defRPr", "a:highlight"]);
                             if (highlightNode !== undefined) {
+                                // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                                 highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj);
                             }
                             colorType = "solid";
@@ -11002,9 +12524,11 @@
             var txtEffObj = {}
             //textBordr
             var txtBrdrNode = getTextByPathList(node, ["a:rPr", "a:ln"]);
+            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
             var textBordr = "";
             if (txtBrdrNode !== undefined && txtBrdrNode["a:noFill"] === undefined) {
                 var txBrd = getBorder(node, pNode, false, "text", warpObj);
+                // @ts-expect-error TS(2339): Property 'split' does not exist on type 'string | ... Remove this comment to see the full error message
                 var txBrdAry = txBrd.split(" ");
                 //var brdSize = (parseInt(txBrdAry[0].substring(0, txBrdAry[0].indexOf("pt")))) + "px";
                 var brdSize = (parseInt(txBrdAry[0].substring(0, txBrdAry[0].indexOf("px")))) + "px";
@@ -11021,6 +12545,7 @@
                     txtEffects.push(textBordr);
                 } else {
                     //textBordr = brdSize + " " + brdClr;
+                    // @ts-expect-error TS(2339): Property 'border' does not exist on type '{}'.
                     txtEffObj.border = brdSize + " " + brdClr;
                 }
             }
@@ -11125,6 +12650,7 @@
                 if (txtEffects.length > 0) {
                     text_effcts = txtEffects.join(" ");
                 }
+                // @ts-expect-error TS(2339): Property 'effcts' does not exist on type '{}'.
                 txtEffObj.effcts = text_effcts;
                 txt_effects = txtEffObj
             }
@@ -11133,7 +12659,7 @@
             //return [color, textBordr, colorType];
             return [color, txt_effects, colorType, highlightColor];
         }
-        function getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj) {
+        function getFontSize(node: any, textBodyNode: any, pFontStyle: any, lvl: any, type: any, warpObj: any) {
             // if(type == "sldNum")
             //console.log("getFontSize node:", node, "lstStyle", lstStyle, "lvl:", lvl, 'type:', type, "warpObj:", warpObj)
             var lstStyle = (textBodyNode !== undefined)? textBodyNode["a:lstStyle"] : undefined;
@@ -11143,14 +12669,17 @@
             if (node["a:rPr"] !== undefined) {
                 fontSize = parseInt(node["a:rPr"]["attrs"]["sz"]) / 100;
             }
+            // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
             if (isNaN(fontSize) || fontSize === undefined && node["a:fld"] !== undefined) {
                 sz = getTextByPathList(node["a:fld"], ["a:rPr", "attrs", "sz"]);
                 fontSize = parseInt(sz) / 100;
             }
+            // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
             if ((isNaN(fontSize) || fontSize === undefined) && node["a:t"] === undefined) {
                 sz = getTextByPathList(node["a:endParaRPr"], [ "attrs", "sz"]);
                 fontSize = parseInt(sz) / 100;
             }
+            // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
             if ((isNaN(fontSize) || fontSize === undefined) && lstStyle !== undefined) {
                 sz = getTextByPathList(lstStyle, [lvlpPr, "a:defRPr", "attrs", "sz"]);
                 fontSize = parseInt(sz) / 100;
@@ -11168,6 +12697,7 @@
                     isKerning = true;
                 }
             }
+            // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
             if (isNaN(fontSize) || fontSize === undefined) {
                 // if (type == "shape" || type == "textBox") {
                 //     type = "body";
@@ -11243,15 +12773,15 @@
             return isNaN(fontSize) ? ((type == "br") ? "initial" : "inherit") : (fontSize * fontSizeFactor + "px");// + "pt");
         }
 
-        function getFontBold(node, type, slideMasterTextStyles) {
+        function getFontBold(node: any, type: any, slideMasterTextStyles: any) {
             return (node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["b"] === "1") ? "bold" : "inherit";
         }
 
-        function getFontItalic(node, type, slideMasterTextStyles) {
+        function getFontItalic(node: any, type: any, slideMasterTextStyles: any) {
             return (node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["i"] === "1") ? "italic" : "inherit";
         }
 
-        function getFontDecoration(node, type, slideMasterTextStyles) {
+        function getFontDecoration(node: any, type: any, slideMasterTextStyles: any) {
             ///////////////////////////////Amir///////////////////////////////
             if (node["a:rPr"] !== undefined) {
                 var underLine = node["a:rPr"]["attrs"]["u"] !== undefined ? node["a:rPr"]["attrs"]["u"] : "none";
@@ -11274,7 +12804,7 @@
             //return (node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["u"] === "sng") ? "underline" : "inherit";
         }
         ////////////////////////////////////Amir/////////////////////////////////////
-        function getTextHorizontalAlign(node, pNode, type, warpObj) {
+        function getTextHorizontalAlign(node: any, pNode: any, type: any, warpObj: any) {
             //console.log("getTextHorizontalAlign: type: ", type, ", node: ", node)
             var getAlgn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
             if (getAlgn === undefined) {
@@ -11331,12 +12861,12 @@
             return align;
         }
         /////////////////////////////////////////////////////////////////////
-        function getTextVerticalAlign(node, type, slideMasterTextStyles) {
+        function getTextVerticalAlign(node: any, type: any, slideMasterTextStyles: any) {
             var baseline = getTextByPathList(node, ["a:rPr", "attrs", "baseline"]);
             return baseline === undefined ? "baseline" : (parseInt(baseline) / 1000) + "%";
         }
 
-        function getTableBorders(node, warpObj) {
+        function getTableBorders(node: any, warpObj: any) {
             var borderStyle = "";
             if (node["a:bottom"] !== undefined) {
                 var obj = {
@@ -11345,6 +12875,7 @@
                     }
                 }
                 var borders = getBorder(obj, undefined, false, "shape", warpObj);
+                // @ts-expect-error TS(2339): Property 'replace' does not exist on type 'string ... Remove this comment to see the full error message
                 borderStyle += borders.replace("border", "border-bottom");
             }
             if (node["a:top"] !== undefined) {
@@ -11354,6 +12885,7 @@
                     }
                 }
                 var borders = getBorder(obj, undefined, false, "shape", warpObj);
+                // @ts-expect-error TS(2339): Property 'replace' does not exist on type 'string ... Remove this comment to see the full error message
                 borderStyle += borders.replace("border", "border-top");
             }
             if (node["a:right"] !== undefined) {
@@ -11363,6 +12895,7 @@
                     }
                 }
                 var borders = getBorder(obj, undefined, false, "shape", warpObj);
+                // @ts-expect-error TS(2339): Property 'replace' does not exist on type 'string ... Remove this comment to see the full error message
                 borderStyle += borders.replace("border", "border-right");
             }
             if (node["a:left"] !== undefined) {
@@ -11372,13 +12905,14 @@
                     }
                 }
                 var borders = getBorder(obj, undefined, false, "shape", warpObj);
+                // @ts-expect-error TS(2339): Property 'replace' does not exist on type 'string ... Remove this comment to see the full error message
                 borderStyle += borders.replace("border", "border-left");
             }
 
             return borderStyle;
         }
         //////////////////////////////////////////////////////////////////
-        function getBorder(node, pNode, isSvgMode, bType, warpObj) {
+        function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, warpObj: any) {
             //console.log("getBorder", node, pNode, isSvgMode, bType)
             var cssText, lineNode, subNodeTxt;
 
@@ -11535,6 +13069,7 @@
             cssText += " " + borderColor + " ";//wrong if not solid fill - TODO
 
             if (isSvgMode) {
+                // @ts-expect-error TS(2454): Variable 'borderWidth' is used before being assign... Remove this comment to see the full error message
                 return { "color": borderColor, "width": borderWidth, "type": borderType, "strokeDasharray": strokeDasharray };
             } else {
                 return cssText + ";";
@@ -11547,7 +13082,7 @@
             //     }
             // }
         }
-        function getBackground(warpObj, slideSize, index) {
+        function getBackground(warpObj: any, slideSize: any, index: any) {
             //var rslt = "";
             var slideContent = warpObj["slideContent"];
             var slideLayoutContent = warpObj["slideLayoutContent"];
@@ -11573,6 +13108,7 @@
                             //     node_ph_type_ary.push(ph_type);
                             // }
                             if (ph_type != "pic") {
+                                // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
                                 result += processNodesInSlide(nodeKey, nodesSldLayout[nodeKey][i], nodesSldLayout, warpObj, "slideLayoutBg"); //slideLayoutBg , slideMasterBg
                             }
                         }
@@ -11582,6 +13118,7 @@
                         //     node_ph_type_ary.push(ph_type);
                         // }
                         if (ph_type != "pic") {
+                            // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
                             result += processNodesInSlide(nodeKey, nodesSldLayout[nodeKey], nodesSldLayout, warpObj, "slideLayoutBg"); //slideLayoutBg, slideMasterBg
                         }
                     }
@@ -11593,12 +13130,14 @@
                         for (var i = 0; i < nodesSldMaster[nodeKey].length; i++) {
                             var ph_type = getTextByPathList(nodesSldMaster[nodeKey][i], ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
                             //if (node_ph_type_ary.indexOf(ph_type) > -1) {
+                            // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
                             result += processNodesInSlide(nodeKey, nodesSldMaster[nodeKey][i], nodesSldMaster, warpObj, "slideMasterBg"); //slideLayoutBg , slideMasterBg
                             //}
                         }
                     } else {
                         var ph_type = getTextByPathList(nodesSldMaster[nodeKey], ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
                         //if (node_ph_type_ary.indexOf(ph_type) > -1) {
+                        // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
                         result += processNodesInSlide(nodeKey, nodesSldMaster[nodeKey], nodesSldMaster, warpObj, "slideMasterBg"); //slideLayoutBg, slideMasterBg
                         //}
                     }
@@ -11607,7 +13146,7 @@
             return result;
 
         }
-        function getSlideBackgroundFill(warpObj, index) {
+        function getSlideBackgroundFill(warpObj: any, index: any) {
             var slideContent = warpObj["slideContent"];
             var slideLayoutContent = warpObj["slideLayoutContent"];
             var slideMasterContent = warpObj["slideMasterContent"];
@@ -11691,15 +13230,18 @@
                     var trueIdx = idx - 1000;
                     // themeContent["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
                     var bgFillLst = warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
-                    var sortblAry = [];
+                    var sortblAry: any = [];
                     Object.keys(bgFillLst).forEach(function (key) {
                         var bgFillLstTyp = bgFillLst[key];
                         if (key != "attrs") {
                             if (bgFillLstTyp.constructor === Array) {
                                 for (var i = 0; i < bgFillLstTyp.length; i++) {
                                     var obj = {};
+                                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                     obj[key] = bgFillLstTyp[i];
+                                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                     obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
+                                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                     obj["attrs"] = {
                                         "order": bgFillLstTyp[i]["attrs"]["order"]
                                     }
@@ -11707,8 +13249,11 @@
                                 }
                             } else {
                                 var obj = {};
+                                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                 obj[key] = bgFillLstTyp;
+                                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                 obj["idex"] = bgFillLstTyp["attrs"]["order"];
+                                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                 obj["attrs"] = {
                                     "order": bgFillLstTyp["attrs"]["order"]
                                 }
@@ -11717,6 +13262,7 @@
                         }
                     });
                     var sortByOrder = sortblAry.slice(0);
+                    // @ts-expect-error TS(7006): Parameter 'a' implicitly has an 'any' type.
                     sortByOrder.sort(function (a, b) {
                         return a.idex - b.idex;
                     });
@@ -11782,6 +13328,7 @@
                         //themeContent["a:fmtScheme"]["a:bgFillStyleLst"]
                         var trueIdx = idx - 1000;
                         var bgFillLst = warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
+                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                         var sortblAry = [];
                         Object.keys(bgFillLst).forEach(function (key) {
                             //console.log("cubicBezTo[" + key + "]:");
@@ -11790,8 +13337,11 @@
                                 if (bgFillLstTyp.constructor === Array) {
                                     for (var i = 0; i < bgFillLstTyp.length; i++) {
                                         var obj = {};
+                                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                         obj[key] = bgFillLstTyp[i];
+                                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                         obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
+                                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                         obj["attrs"] = {
                                             "order": bgFillLstTyp[i]["attrs"]["order"]
                                         }
@@ -11799,8 +13349,11 @@
                                     }
                                 } else {
                                     var obj = {};
+                                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                     obj[key] = bgFillLstTyp;
+                                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                     obj["idex"] = bgFillLstTyp["attrs"]["order"];
+                                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                     obj["attrs"] = {
                                         "order": bgFillLstTyp["attrs"]["order"]
                                     }
@@ -11809,6 +13362,7 @@
                             }
                         });
                         var sortByOrder = sortblAry.slice(0);
+                        // @ts-expect-error TS(7006): Parameter 'a' implicitly has an 'any' type.
                         sortByOrder.sort(function (a, b) {
                             return a.idex - b.idex;
                         });
@@ -11879,6 +13433,7 @@
                             //themeContent["a:fmtScheme"]["a:bgFillStyleLst"]
                             var trueIdx = idx - 1000;
                             var bgFillLst = warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
+                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                             var sortblAry = [];
                             Object.keys(bgFillLst).forEach(function (key) {
                                 //console.log("cubicBezTo[" + key + "]:");
@@ -11887,8 +13442,11 @@
                                     if (bgFillLstTyp.constructor === Array) {
                                         for (var i = 0; i < bgFillLstTyp.length; i++) {
                                             var obj = {};
+                                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                             obj[key] = bgFillLstTyp[i];
+                                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                             obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
+                                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                             obj["attrs"] = {
                                                 "order": bgFillLstTyp[i]["attrs"]["order"]
                                             }
@@ -11896,8 +13454,11 @@
                                         }
                                     } else {
                                         var obj = {};
+                                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                         obj[key] = bgFillLstTyp;
+                                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                         obj["idex"] = bgFillLstTyp["attrs"]["order"];
+                                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                                         obj["attrs"] = {
                                             "order": bgFillLstTyp["attrs"]["order"]
                                         }
@@ -11906,6 +13467,7 @@
                                 }
                             });
                             var sortByOrder = sortblAry.slice(0);
+                            // @ts-expect-error TS(7006): Parameter 'a' implicitly has an 'any' type.
                             sortByOrder.sort(function (a, b) {
                                 return a.idex - b.idex;
                             });
@@ -11938,7 +13500,7 @@
             //console.log("bgcolor: ", bgcolor)
             return bgcolor;
         }
-        function getBgGradientFill(bgPr, phClr, slideMasterContent, warpObj) {
+        function getBgGradientFill(bgPr: any, phClr: any, slideMasterContent: any, warpObj: any) {
             var bgcolor = "";
             if (bgPr !== undefined) {
                 var grdFill = bgPr["a:gradFill"];
@@ -11950,6 +13512,7 @@
                 for (var i = 0; i < gsLst.length; i++) {
                     var lo_tint;
                     var lo_color = "";
+                    // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
                     var lo_color = getSolidFill(gsLst[i], slideMasterContent["p:sldMaster"]["p:clrMap"]["attrs"], phClr, warpObj);
                     var pos = getTextByPathList(gsLst[i], ["attrs", "pos"])
                     //console.log("pos: ", pos)
@@ -11999,7 +13562,7 @@
             }
             return bgcolor;
         }
-        function getBgPicFill(bgPr, sorce, warpObj, phClr, index) {
+        function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, index: any) {
             //console.log("getBgPicFill bgPr", bgPr)
             var bgcolor;
             var picFillBase64 = getPicFill(sorce, bgPr["a:blipFill"], warpObj);
@@ -12017,6 +13580,7 @@
                     //console.log("pic duotone clr: clr_type: ", clr_type, duotone[clr_type])
                     if (clr_type != "attrs") {
                         var obj = {};
+                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                         obj[clr_type] = duotone[clr_type];
                         clr_ary.push(getSolidFill(obj, undefined, phClr, warpObj));
                     }
@@ -12122,7 +13686,8 @@
         //     var arrByte = new Uint8Array(arrBuff);
         //     return arrByte[1] + "," + arrByte[2] + "," + arrByte[3];
         // }
-        function getShapeFill(node, pNode, isSvgMode, warpObj, source) {
+        // @ts-expect-error TS(7023): 'getShapeFill' implicitly has return type 'any' be... Remove this comment to see the full error message
+        function getShapeFill(node: any, pNode: any, isSvgMode: any, warpObj: any, source: any) {
 
             // 1. presentationML
             // p:spPr/ [a:noFill, solidFill, gradFill, blipFill, pattFill, grpFill]
@@ -12228,6 +13793,7 @@
                     //}
                 } else {
                     if (isSvgMode) {
+                        // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                         var color = tinycolor(fillColor);
                         fillColor = color.toRgbString();
 
@@ -12248,7 +13814,7 @@
 
         }
         ///////////////////////Amir//////////////////////////////
-        function getFillType(node) {
+        function getFillType(node: any) {
             //Need to test/////////////////////////////////////////////
             //SOLID_FILL
             //PIC_FILL
@@ -12278,7 +13844,7 @@
 
             return fillType;
         }
-        function getGradientFill(node, warpObj) {
+        function getGradientFill(node: any, warpObj: any) {
             //console.log("getGradientFill: node", node)
             var gsLst = node["a:gsLst"]["a:gs"];
             //get start color
@@ -12301,7 +13867,7 @@
                 "rot": rot
             }
         }
-        function getPicFill(type, node, warpObj) {
+        function getPicFill(type: any, node: any, warpObj: any) {
             //Need to test/////////////////////////////////////////////
             //rId
             //TODO - Image Properties - Tile, Stretch, or Display Portion of Image
@@ -12341,7 +13907,7 @@
             }
             return img;
         }
-        function getPatternFill(node, warpObj) {
+        function getPatternFill(node: any, warpObj: any) {
             //https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Images/Using_CSS_gradients
             //https://cssgradient.io/blog/css-gradient-text/
             //https://css-tricks.com/background-patterns-simplified-by-conic-gradients/
@@ -12353,7 +13919,9 @@
             var bgClr = node["a:bgClr"];
             var fgClr = node["a:fgClr"];
             prst = node["attrs"]["prst"];
+            // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
             fgColor = getSolidFill(fgClr, undefined, undefined, warpObj);
+            // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
             bgColor = getSolidFill(bgClr, undefined, undefined, warpObj);
             //var angl_ary = getAnglefromParst(prst);
             //var ptrClr = "repeating-linear-gradient(" + angl + "deg,  #" + bgColor + ",#" + fgColor + " 2px);"
@@ -12364,7 +13932,7 @@
             return linear_gradient;
         }
 
-        function getLinerGrandient(prst, bgColor, fgColor) {
+        function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
             // dashDnDiag (Dashed Downward Diagonal)-V
             // dashHorz (Dashed Horizontal)-V
             // dashUpDiag(Dashed Upward DIagonal)-V
@@ -12660,7 +14228,9 @@
                             px_pr_ary = ["1px", "100%", "2px 2px"];
                             break
                     }
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                     return ["radial-gradient(#" + fgColor + " " + px_pr_ary[0] + ", transparent " + px_pr_ary[1] + ")," +
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         "#" + bgColor + ";", px_pr_ary[2]];
                     break
                 default:
@@ -12668,7 +14238,7 @@
             }
         }
 
-        function getSolidFill(node, clrMap, phClr, warpObj) {
+        function getSolidFill(node: any, clrMap: any, phClr: any, warpObj: any) {
 
             if (node === undefined) {
                 return undefined;
@@ -12700,6 +14270,7 @@
                 clrNode = node["a:prstClr"];
                 //<a:prstClr val="black"/>  //Need to test/////////////////////////////////////////////
                 var prstClr = getTextByPathList(clrNode, ["attrs", "val"]); //node["a:prstClr"]["attrs"]["val"];
+                // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                 color = getColorName2Hex(prstClr);
                 //console.log("blip prstClr: ", prstClr, " => hexClr: ", color);
             } else if (node["a:hslClr"] !== undefined) {
@@ -12742,6 +14313,7 @@
                 // al_color.setAlpha(alpha);
                 // var ne_color = al_color.rgba.toString();
                 // color = (rgba2hex(ne_color))
+                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                 var al_color = tinycolor(color);
                 al_color.setAlpha(alpha);
                 color = al_color.toHex8()
@@ -13072,12 +14644,12 @@
 
             return color;
         }
-        function toHex(n) {
+        function toHex(n: any) {
             var hex = n.toString(16);
             while (hex.length < 2) { hex = "0" + hex; }
             return hex;
         }
-        function hslToRgb(hue, sat, light) {
+        function hslToRgb(hue: any, sat: any, light: any) {
             var t1, t2, r, g, b;
             hue = hue / 60;
             if (light <= 0.5) {
@@ -13091,7 +14663,7 @@
             b = hueToRgb(t1, t2, hue - 2) * 255;
             return { r: r, g: g, b: b };
         }
-        function hueToRgb(t1, t2, hue) {
+        function hueToRgb(t1: any, t2: any, hue: any) {
             if (hue < 0) hue += 6;
             if (hue >= 6) hue -= 6;
             if (hue < 1) return (t2 - t1) * hue + t1;
@@ -13099,7 +14671,7 @@
             else if (hue < 4) return (t2 - t1) * (4 - hue) + t1;
             else return t1;
         }
-        function getColorName2Hex(name) {
+        function getColorName2Hex(name: any) {
             var hex;
             var colorName = ['white', 'AliceBlue', 'AntiqueWhite', 'Aqua', 'Aquamarine', 'Azure', 'Beige', 'Bisque', 'black', 'BlanchedAlmond', 'Blue', 'BlueViolet', 'Brown', 'BurlyWood', 'CadetBlue', 'Chartreuse', 'Chocolate', 'Coral', 'CornflowerBlue', 'Cornsilk', 'Crimson', 'Cyan', 'DarkBlue', 'DarkCyan', 'DarkGoldenRod', 'DarkGray', 'DarkGrey', 'DarkGreen', 'DarkKhaki', 'DarkMagenta', 'DarkOliveGreen', 'DarkOrange', 'DarkOrchid', 'DarkRed', 'DarkSalmon', 'DarkSeaGreen', 'DarkSlateBlue', 'DarkSlateGray', 'DarkSlateGrey', 'DarkTurquoise', 'DarkViolet', 'DeepPink', 'DeepSkyBlue', 'DimGray', 'DimGrey', 'DodgerBlue', 'FireBrick', 'FloralWhite', 'ForestGreen', 'Fuchsia', 'Gainsboro', 'GhostWhite', 'Gold', 'GoldenRod', 'Gray', 'Grey', 'Green', 'GreenYellow', 'HoneyDew', 'HotPink', 'IndianRed', 'Indigo', 'Ivory', 'Khaki', 'Lavender', 'LavenderBlush', 'LawnGreen', 'LemonChiffon', 'LightBlue', 'LightCoral', 'LightCyan', 'LightGoldenRodYellow', 'LightGray', 'LightGrey', 'LightGreen', 'LightPink', 'LightSalmon', 'LightSeaGreen', 'LightSkyBlue', 'LightSlateGray', 'LightSlateGrey', 'LightSteelBlue', 'LightYellow', 'Lime', 'LimeGreen', 'Linen', 'Magenta', 'Maroon', 'MediumAquaMarine', 'MediumBlue', 'MediumOrchid', 'MediumPurple', 'MediumSeaGreen', 'MediumSlateBlue', 'MediumSpringGreen', 'MediumTurquoise', 'MediumVioletRed', 'MidnightBlue', 'MintCream', 'MistyRose', 'Moccasin', 'NavajoWhite', 'Navy', 'OldLace', 'Olive', 'OliveDrab', 'Orange', 'OrangeRed', 'Orchid', 'PaleGoldenRod', 'PaleGreen', 'PaleTurquoise', 'PaleVioletRed', 'PapayaWhip', 'PeachPuff', 'Peru', 'Pink', 'Plum', 'PowderBlue', 'Purple', 'RebeccaPurple', 'Red', 'RosyBrown', 'RoyalBlue', 'SaddleBrown', 'Salmon', 'SandyBrown', 'SeaGreen', 'SeaShell', 'Sienna', 'Silver', 'SkyBlue', 'SlateBlue', 'SlateGray', 'SlateGrey', 'Snow', 'SpringGreen', 'SteelBlue', 'Tan', 'Teal', 'Thistle', 'Tomato', 'Turquoise', 'Violet', 'Wheat', 'White', 'WhiteSmoke', 'Yellow', 'YellowGreen'];
             var colorHex = ['ffffff', 'f0f8ff', 'faebd7', '00ffff', '7fffd4', 'f0ffff', 'f5f5dc', 'ffe4c4', '000000', 'ffebcd', '0000ff', '8a2be2', 'a52a2a', 'deb887', '5f9ea0', '7fff00', 'd2691e', 'ff7f50', '6495ed', 'fff8dc', 'dc143c', '00ffff', '00008b', '008b8b', 'b8860b', 'a9a9a9', 'a9a9a9', '006400', 'bdb76b', '8b008b', '556b2f', 'ff8c00', '9932cc', '8b0000', 'e9967a', '8fbc8f', '483d8b', '2f4f4f', '2f4f4f', '00ced1', '9400d3', 'ff1493', '00bfff', '696969', '696969', '1e90ff', 'b22222', 'fffaf0', '228b22', 'ff00ff', 'dcdcdc', 'f8f8ff', 'ffd700', 'daa520', '808080', '808080', '008000', 'adff2f', 'f0fff0', 'ff69b4', 'cd5c5c', '4b0082', 'fffff0', 'f0e68c', 'e6e6fa', 'fff0f5', '7cfc00', 'fffacd', 'add8e6', 'f08080', 'e0ffff', 'fafad2', 'd3d3d3', 'd3d3d3', '90ee90', 'ffb6c1', 'ffa07a', '20b2aa', '87cefa', '778899', '778899', 'b0c4de', 'ffffe0', '00ff00', '32cd32', 'faf0e6', 'ff00ff', '800000', '66cdaa', '0000cd', 'ba55d3', '9370db', '3cb371', '7b68ee', '00fa9a', '48d1cc', 'c71585', '191970', 'f5fffa', 'ffe4e1', 'ffe4b5', 'ffdead', '000080', 'fdf5e6', '808000', '6b8e23', 'ffa500', 'ff4500', 'da70d6', 'eee8aa', '98fb98', 'afeeee', 'db7093', 'ffefd5', 'ffdab9', 'cd853f', 'ffc0cb', 'dda0dd', 'b0e0e6', '800080', '663399', 'ff0000', 'bc8f8f', '4169e1', '8b4513', 'fa8072', 'f4a460', '2e8b57', 'fff5ee', 'a0522d', 'c0c0c0', '87ceeb', '6a5acd', '708090', '708090', 'fffafa', '00ff7f', '4682b4', 'd2b48c', '008080', 'd8bfd8', 'ff6347', '40e0d0', 'ee82ee', 'f5deb3', 'ffffff', 'f5f5f5', 'ffff00', '9acd32'];
@@ -13109,7 +14681,7 @@
             }
             return hex;
         }
-        function getSchemeColorFromTheme(schemeClr, clrMap, phClr, warpObj) {
+        function getSchemeColorFromTheme(schemeClr: any, clrMap: any, phClr: any, warpObj: any) {
             //<p:clrMap ...> in slide master
             // e.g. tx2="dk2" bg2="lt2" tx1="dk1" bg1="lt1" slideLayoutClrOvride
             //console.log("getSchemeColorFromTheme: schemeClr: ", schemeClr, ",clrMap: ", clrMap)
@@ -13172,7 +14744,7 @@
             return color;
         }
 
-        function extractChartData(serNode) {
+        function extractChartData(serNode: any) {
 
             var dataMat = new Array();
 
@@ -13182,31 +14754,33 @@
 
             if (serNode["c:xVal"] !== undefined) {
                 var dataRow = new Array();
-                eachElement(serNode["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode, index) {
+                eachElement(serNode["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any, index: any) {
                     dataRow.push(parseFloat(innerNode["c:v"]));
                     return "";
                 });
                 dataMat.push(dataRow);
                 dataRow = new Array();
-                eachElement(serNode["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode, index) {
+                eachElement(serNode["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any, index: any) {
                     dataRow.push(parseFloat(innerNode["c:v"]));
                     return "";
                 });
                 dataMat.push(dataRow);
             } else {
-                eachElement(serNode, function (innerNode, index) {
+                eachElement(serNode, function (innerNode: any, index: any) {
                     var dataRow = new Array();
                     var colName = getTextByPathList(innerNode, ["c:tx", "c:strRef", "c:strCache", "c:pt", "c:v"]) || index;
 
                     // Category (string or number)
                     var rowNames = {};
                     if (getTextByPathList(innerNode, ["c:cat", "c:strRef", "c:strCache", "c:pt"]) !== undefined) {
-                        eachElement(innerNode["c:cat"]["c:strRef"]["c:strCache"]["c:pt"], function (innerNode, index) {
+                        eachElement(innerNode["c:cat"]["c:strRef"]["c:strCache"]["c:pt"], function (innerNode: any, index: any) {
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
                             return "";
                         });
                     } else if (getTextByPathList(innerNode, ["c:cat", "c:numRef", "c:numCache", "c:pt"]) !== undefined) {
-                        eachElement(innerNode["c:cat"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode, index) {
+                        eachElement(innerNode["c:cat"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any, index: any) {
+                            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                             rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
                             return "";
                         });
@@ -13214,7 +14788,7 @@
 
                     // Value
                     if (getTextByPathList(innerNode, ["c:val", "c:numRef", "c:numCache", "c:pt"]) !== undefined) {
-                        eachElement(innerNode["c:val"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode, index) {
+                        eachElement(innerNode["c:val"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any, index: any) {
                             dataRow.push({ x: innerNode["attrs"]["idx"], y: parseFloat(innerNode["c:v"]) });
                             return "";
                         });
@@ -13234,7 +14808,7 @@
          * @param {Object} node
          * @param {string} pathStr
          */
-        function getTextByPathStr(node, pathStr) {
+        function getTextByPathStr(node: any, pathStr: any) {
             return getTextByPathList(node, pathStr.trim().split(/\s+/));
         }
 
@@ -13243,7 +14817,7 @@
          * @param {Object} node
          * @param {string Array} path
          */
-        function getTextByPathList(node, path) {
+        function getTextByPathList(node: any, path: any) {
 
             if (path.constructor !== Array) {
                 throw Error("Error of path type! path is not array.");
@@ -13269,7 +14843,7 @@
          * @param {string Array} path
          * @param {string} value
          */
-        function setTextByPathList(node, path, value) {
+        function setTextByPathList(node: any, path: any, value: any) {
 
             if (path.constructor !== Array) {
                 throw Error("Error of path type! path is not array.");
@@ -13280,7 +14854,7 @@
             }
 
             Reflect.defineProperty(node, 'set', {
-                value: function (parts, value) {
+                value: function (parts: any, value: any) {
                   var obj = this
                   let len = parts.length
                   for (var i = 0; i < len; i++) {
@@ -13306,7 +14880,7 @@
          * @param {Object} node
          * @param {function} doFunction
          */
-        function eachElement(node, doFunction) {
+        function eachElement(node: any, doFunction: any) {
             if (node === undefined) {
                 return;
             }
@@ -13328,7 +14902,8 @@
          * @param {string} rgbStr
          * @param {number} shadeValue
          */
-        function applyShade(rgbStr, shadeValue, isAlpha) {
+        function applyShade(rgbStr: any, shadeValue: any, isAlpha: any) {
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             var color = tinycolor(rgbStr).toHsl();
             //console.log("applyShade  color: ", color, ", shadeValue: ", shadeValue)
             if (shadeValue >= 1) {
@@ -13339,7 +14914,9 @@
             //     return color.lighten(tintValue).toHex8();
             // return color.lighten(tintValue).toHex();
             if (isAlpha)
+                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                 return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex8();
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex();
         }
 
@@ -13348,7 +14925,8 @@
          * @param {string} rgbStr
          * @param {number} tintValue
          */
-        function applyTint(rgbStr, tintValue, isAlpha) {
+        function applyTint(rgbStr: any, tintValue: any, isAlpha: any) {
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             var color = tinycolor(rgbStr).toHsl();
             //console.log("applyTint  color: ", color, ", tintValue: ", tintValue)
             if (tintValue >= 1) {
@@ -13359,7 +14937,9 @@
             //     return color.lighten(tintValue).toHex8();
             // return color.lighten(tintValue).toHex();
             if (isAlpha)
+                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                 return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex8();
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex();
         }
 
@@ -13368,17 +14948,22 @@
          * @param {string} rgbStr
          * @param {number} offset
          */
-        function applyLumOff(rgbStr, offset, isAlpha) {
+        function applyLumOff(rgbStr: any, offset: any, isAlpha: any) {
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             var color = tinycolor(rgbStr).toHsl();
             //console.log("applyLumOff  color.l: ", color.l, ", offset: ", offset, ", color.l + offset : ", color.l + offset)
             var lum = offset + color.l;
             if (lum >= 1) {
                 if (isAlpha)
+                    // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                     return tinycolor({ h: color.h, s: color.s, l: 1, a: color.a }).toHex8();
+                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                 return tinycolor({ h: color.h, s: color.s, l: 1, a: color.a }).toHex();
             }
             if (isAlpha)
+                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                 return tinycolor({ h: color.h, s: color.s, l: lum, a: color.a }).toHex8();
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             return tinycolor({ h: color.h, s: color.s, l: lum, a: color.a }).toHex();
         }
 
@@ -13387,7 +14972,8 @@
          * @param {string} rgbStr
          * @param {number} multiplier
          */
-        function applyLumMod(rgbStr, multiplier, isAlpha) {
+        function applyLumMod(rgbStr: any, multiplier: any, isAlpha: any) {
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             var color = tinycolor(rgbStr).toHsl();
             //console.log("applyLumMod  color.l: ", color.l, ", multiplier: ", multiplier, ", color.l * multiplier : ", color.l * multiplier)
             var cacl_l = color.l * multiplier;
@@ -13395,7 +14981,9 @@
                 cacl_l = 1;
             }
             if (isAlpha)
+                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                 return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex8();
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             return tinycolor({ h: color.h, s: color.s, l: cacl_l, a: color.a }).toHex();
         }
 
@@ -13405,7 +14993,8 @@
         //  * @param {string} rgbStr
         //  * @param {number} multiplier
         //  */
-        function applyHueMod(rgbStr, multiplier, isAlpha) {
+        function applyHueMod(rgbStr: any, multiplier: any, isAlpha: any) {
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             var color = tinycolor(rgbStr).toHsl();
             //console.log("applyLumMod  color.h: ", color.h, ", multiplier: ", multiplier, ", color.h * multiplier : ", color.h * multiplier)
 
@@ -13414,7 +15003,9 @@
                 cacl_h = cacl_h - 360;
             }
             if (isAlpha)
+                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                 return tinycolor({ h: cocacl_h, s: color.s, l: color.l, a: color.a }).toHex8();
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             return tinycolor({ h: cacl_h, s: color.s, l: color.l, a: color.a }).toHex();
         }
 
@@ -13441,7 +15032,8 @@
         //  * @param {string} rgbStr
         //  * @param {number} multiplier
         //  */
-        function applySatMod(rgbStr, multiplier, isAlpha) {
+        function applySatMod(rgbStr: any, multiplier: any, isAlpha: any) {
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             var color = tinycolor(rgbStr).toHsl();
             //console.log("applySatMod  color.s: ", color.s, ", multiplier: ", multiplier, ", color.s * multiplier : ", color.s * multiplier)
             var cacl_s = color.s * multiplier;
@@ -13453,7 +15045,9 @@
             //     return tinycolor(rgbStr).saturate(multiplier * 100).toHex8();
             // return tinycolor(rgbStr).saturate(multiplier * 100).toHex();
             if (isAlpha)
+                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                 return tinycolor({ h: color.h, s: cacl_s, l: color.l, a: color.a }).toHex8();
+            // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
             return tinycolor({ h: color.h, s: cacl_s, l: color.l, a: color.a }).toHex();
         }
 
@@ -13461,7 +15055,7 @@
          * rgba2hex
          * @param {string} rgbaStr
          */
-        function rgba2hex(rgbaStr) {
+        function rgba2hex(rgbaStr: any) {
             var a,
                 rgb = rgbaStr.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
                 alpha = (rgb && rgb[4] || "").trim(),
@@ -13483,7 +15077,7 @@
         }
 
         ///////////////////////Amir////////////////
-        function angleToDegrees(angle) {
+        function angleToDegrees(angle: any) {
             if (angle == "" || angle == null) {
                 return 0;
             }
@@ -13496,7 +15090,7 @@
         //     }
         //     return degrees * (Math.PI / 180);
         // }
-        function getMimeType(imgFileExt) {
+        function getMimeType(imgFileExt: any) {
             var mimeType = "";
             //console.log(imgFileExt)
             switch (imgFileExt.toLowerCase()) {
@@ -13555,7 +15149,7 @@
             }
             return mimeType;
         }
-        function getSvgGradient(w, h, angl, color_arry, shpId) {
+        function getSvgGradient(w: any, h: any, angl: any, color_arry: any, shpId: any) {
             var stopsArray = getMiddleStops(color_arry - 2);
 
             var svgAngle = '',
@@ -13575,9 +15169,11 @@
             svg += svgAngle;
 
             for (var i = 0; i < sal; i++) {
+                // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                 var tinClr = tinycolor("#" + color_arry[i]);
                 var alpha = tinClr.getAlpha();
                 //console.log("color: ", color_arry[i], ", rgba: ", tinClr.toHexString(), ", alpha: ", alpha)
+                // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
                 svg += '<stop offset="' + Math.round(parseFloat(stopsArray[i]) / 100 * sr) / sr + '" style="stop-color:' + tinClr.toHexString() + '; stop-opacity:' + (alpha) + ';"';
                 svg += '/>\n'
             }
@@ -13586,7 +15182,7 @@
 
             return svg
         }
-        function getMiddleStops(s) {
+        function getMiddleStops(s: any) {
             var sArry = ['0%', '100%'];
             if (s == 0) {
                 return sArry;
@@ -13600,7 +15196,7 @@
             }
             return sArry
         }
-        function SVGangle(deg, svgHeight, svgWidth) {
+        function SVGangle(deg: any, svgHeight: any, svgWidth: any) {
             var w = parseFloat(svgWidth),
                 h = parseFloat(svgHeight),
                 ang = parseFloat(deg),
@@ -13662,15 +15258,19 @@
                 y2 = Math.round(ty1 / h * 100 * 100) / 100;
             return [x1, y1, x2, y2];
         }
-        function getSvgImagePattern(node, fill, shpId, warpObj) {
+        function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: any) {
             var pic_dim = getBase64ImageDimensions(fill);
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             var width = pic_dim[0];
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             var height = pic_dim[1];
             //console.log("getSvgImagePattern node:", node);
             var blipFillNode = node["p:spPr"]["a:blipFill"];
             var tileNode = getTextByPathList(blipFillNode, ["a:tile", "attrs"])
             if (tileNode !== undefined && tileNode["sx"] !== undefined) {
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 var sx = (parseInt(tileNode["sx"]) / 100000) * width;
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 var sy = (parseInt(tileNode["sy"]) / 100000) * height;
             }
 
@@ -13683,7 +15283,9 @@
                 var imgOpacity = "opacity='" + opacity + "'";
 
             }
+            // @ts-expect-error TS(2454): Variable 'sx' is used before being assigned.
             if (sx !== undefined && sx != 0) {
+                // @ts-expect-error TS(2454): Variable 'sy' is used before being assigned.
                 var ptrn = '<pattern id="imgPtrn_' + shpId + '" x="0" y="0"  width="' + sx + '" height="' + sy + '" patternUnits="userSpaceOnUse">';
             } else {
                 var ptrn = '<pattern id="imgPtrn_' + shpId + '"  patternContentUnits="objectBoundingBox"  width="1" height="1">';
@@ -13693,17 +15295,19 @@
             var filterUrl = "";
             if (duotoneNode !== undefined) {
                 //console.log("pic duotoneNode: ", duotoneNode)
-                var clr_ary = [];
+                var clr_ary: any = [];
                 Object.keys(duotoneNode).forEach(function (clr_type) {
                     //Object.keys(duotoneNode[clr_type]).forEach(function (clr) {
                     //console.log("blip pic duotone clr: ", duotoneNode[clr_type][clr], clr)
                     if (clr_type != "attrs") {
                         var obj = {};
+                        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                         obj[clr_type] = duotoneNode[clr_type];
                         //console.log("blip pic duotone obj: ", obj)
                         var hexClr = getSolidFill(obj, undefined, undefined, warpObj)
                         //clr_ary.push();
 
+                        // @ts-expect-error TS(2304): Cannot find name 'tinycolor'.
                         var color = tinycolor("#" + hexClr);
                         clr_ary.push(color.toRgb()); // { r: 255, g: 0, b: 0, a: 1 }
                     }
@@ -13734,7 +15338,9 @@
             }
 
             fill = escapeHtml(fill);
+            // @ts-expect-error TS(2454): Variable 'sx' is used before being assigned.
             if (sx !== undefined && sx != 0) {
+                // @ts-expect-error TS(2454): Variable 'sy' is used before being assigned.
                 ptrn += '<image  xlink:href="' + fill + '" x="0" y="0" width="' + sx + '" height="' + sy + '" ' + imgOpacity + ' ' + filterUrl + '></image>';
             } else {
                 ptrn += '<image  xlink:href="' + fill + '" preserveAspectRatio="none" width="1" height="1" ' + imgOpacity + ' ' + filterUrl + '></image>';
@@ -13746,7 +15352,7 @@
             return ptrn;
         }
 
-        function getBase64ImageDimensions(imgSrc) {
+        function getBase64ImageDimensions(imgSrc: any) {
             var image = new Image();
             var w, h;
             image.onload = function () {
@@ -13764,13 +15370,13 @@
             //return [w, h];
         }
 
-        function processMsgQueue(queue) {
+        function processMsgQueue(queue: any) {
             for (var i = 0; i < queue.length; i++) {
                 processSingleMsg(queue[i].data);
             }
         }
 
-        function processSingleMsg(d) {
+        function processSingleMsg(d: any) {
 
             var chartID = d.chartID;
             var chartType = d.chartType;
@@ -13782,28 +15388,32 @@
             switch (chartType) {
                 case "lineChart":
                     data = chartData;
+                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
                     chart = nv.models.lineChart()
                         .useInteractiveGuideline(true);
-                    chart.xAxis.tickFormat(function (d) { return chartData[0].xlabels[d] || d; });
+                    chart.xAxis.tickFormat(function (d: any) { return chartData[0].xlabels[d] || d; });
                     break;
                 case "barChart":
                     data = chartData;
+                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
                     chart = nv.models.multiBarChart();
-                    chart.xAxis.tickFormat(function (d) { return chartData[0].xlabels[d] || d; });
+                    chart.xAxis.tickFormat(function (d: any) { return chartData[0].xlabels[d] || d; });
                     break;
                 case "pieChart":
                 case "pie3DChart":
                     if (chartData.length > 0) {
                         data = chartData[0].values;
                     }
+                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
                     chart = nv.models.pieChart();
                     break;
                 case "areaChart":
                     data = chartData;
+                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
                     chart = nv.models.stackedAreaChart()
                         .clipEdge(true)
                         .useInteractiveGuideline(true);
-                    chart.xAxis.tickFormat(function (d) { return chartData[0].xlabels[d] || d; });
+                    chart.xAxis.tickFormat(function (d: any) { return chartData[0].xlabels[d] || d; });
                     break;
                 case "scatterChart":
 
@@ -13816,11 +15426,15 @@
                     }
 
                     //data = chartData;
+                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
                     chart = nv.models.scatterChart()
                         .showDistX(true)
                         .showDistY(true)
+                        // @ts-expect-error TS(2304): Cannot find name 'd3'.
                         .color(d3.scale.category10().range());
+                    // @ts-expect-error TS(2304): Cannot find name 'd3'.
                     chart.xAxis.axisLabel('X').tickFormat(d3.format('.02f'));
+                    // @ts-expect-error TS(2304): Cannot find name 'd3'.
                     chart.yAxis.axisLabel('Y').tickFormat(d3.format('.02f'));
                     break;
                 default:
@@ -13828,19 +15442,21 @@
 
             if (chart !== null) {
 
+                // @ts-expect-error TS(2304): Cannot find name 'd3'.
                 d3.select("#" + chartID)
                     .append("svg")
                     .datum(data)
                     .transition().duration(500)
                     .call(chart);
 
+                // @ts-expect-error TS(2304): Cannot find name 'nv'.
                 nv.utils.windowResize(chart.update);
                 isDone = true;
             }
 
         }
 
-        function setNumericBullets(elem) {
+        function setNumericBullets(elem: any) {
             var prgrphs_arry = elem;
             for (var i = 0; i < prgrphs_arry.length; i++) {
                 var buSpan = $(prgrphs_arry[i]).find('.numeric-bullet-style');
@@ -13897,7 +15513,7 @@
                 }
             }
         }
-        function getNumTypeNum(numTyp, num) {
+        function getNumTypeNum(numTyp: any, num: any) {
             var rtrnNum = "";
             switch (numTyp) {
                 case "arabicPeriod":
@@ -13934,7 +15550,7 @@
             }
             return rtrnNum;
         }
-        function romanize(num) {
+        function romanize(num: any) {
             if (!+num)
                 return false;
             var digits = String(+num).split(""),
@@ -13944,6 +15560,7 @@
                 roman = "",
                 i = 3;
             while (i--)
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 roman = (key[+digits.pop() + (i * 10)] || "") + roman;
             return Array(+digits.join("") + 1).join("M") + roman;
         }
@@ -13976,12 +15593,13 @@
             [/([א-ת])([א-ת])$/, '$1״$2'],
             [/^([א-ת])$/, "$1׳"]
         ]);
-        function archaicNumbers(arr) {
-            var arrParse = arr.slice().sort(function (a, b) { return b[1].length - a[1].length });
+        function archaicNumbers(arr: any) {
+            var arrParse = arr.slice().sort(function (a: any, b: any) { return b[1].length - a[1].length });
             return {
-                format: function (n) {
+                format: function (n: any) {
                     var ret = '';
-                    jQuery.each(arr, function () {
+                    // @ts-expect-error TS(2304): Cannot find name 'jQuery'.
+                    jQuery.each(arr, function(this: any) {
                         var num = this[0];
                         if (parseInt(num) > 0) {
                             for (; n >= num; n -= num) ret += this[1];
@@ -13991,9 +15609,9 @@
                     });
                     return ret;
                 }
-            }
+            };
         }
-        function alphaNumeric(num, upperLower) {
+        function alphaNumeric(num: any, upperLower: any) {
             num = Number(num) - 1;
             var aNum = "";
             if (upperLower == "upperCase") {
@@ -14003,7 +15621,7 @@
             }
             return aNum;
         }
-        function base64ArrayBuffer(arrayBuffer) {
+        function base64ArrayBuffer(arrayBuffer: any) {
             var base64 = '';
             var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
             var bytes = new Uint8Array(arrayBuffer);
@@ -14015,31 +15633,38 @@
             var chunk;
 
             for (var i = 0; i < mainLength; i = i + 3) {
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
                 a = (chunk & 16515072) >> 18;
                 b = (chunk & 258048) >> 12;
                 c = (chunk & 4032) >> 6;
                 d = chunk & 63;
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d];
             }
 
             if (byteRemainder == 1) {
                 chunk = bytes[mainLength];
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 a = (chunk & 252) >> 2;
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 b = (chunk & 3) << 4;
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 base64 += encodings[a] + encodings[b] + '==';
             } else if (byteRemainder == 2) {
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1];
                 a = (chunk & 64512) >> 10;
                 b = (chunk & 1008) >> 4;
                 c = (chunk & 15) << 2;
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 base64 += encodings[a] + encodings[b] + encodings[c] + '=';
             }
 
             return base64;
         }
 
-        function IsVideoLink(vdoFile) {
+        function IsVideoLink(vdoFile: any) {
             /*
             var ext = extractFileExtension(vdoFile);
             if (ext.length == 3){
@@ -14052,11 +15677,11 @@
             return urlregex.test(vdoFile);
         }
 
-        function extractFileExtension(filename) {
+        function extractFileExtension(filename: any) {
             return filename.substr((~-filename.lastIndexOf(".") >>> 0) + 2);
         }
 
-        function escapeHtml(text) {
+        function escapeHtml(text: any) {
             var map = {
                 '&': '&amp;',
                 '<': '&lt;',
@@ -14064,13 +15689,15 @@
                 '"': '&quot;',
                 "'": '&#039;'
             };
-            return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+            return text.replace(/[&<>"']/g, function (m: any) { return map[m]; });
         }
         /////////////////////////////////////tXml///////////////////////////
         /*
         This is my custom tXml.js file
         */
-        function tXml(t, r) { "use strict"; function e() { for (var r = []; t[l];)if (t.charCodeAt(l) == s) { if (t.charCodeAt(l + 1) === h) return l = t.indexOf(u, l), l + 1 && (l += 1), r; if (t.charCodeAt(l + 1) === v) { if (t.charCodeAt(l + 2) == m) { for (; -1 !== l && (t.charCodeAt(l) !== d || t.charCodeAt(l - 1) != m || t.charCodeAt(l - 2) != m || -1 == l);)l = t.indexOf(u, l + 1); -1 === l && (l = t.length) } else for (l += 2; t.charCodeAt(l) !== d && t[l];)l++; l++; continue } var e = a(); r.push(e) } else { var i = n(); i.trim().length > 0 && r.push(i), l++ } return r } function n() { var r = l; return l = t.indexOf(c, l) - 1, -2 === l && (l = t.length), t.slice(r, l + 1) } function i() { for (var r = l; -1 === A.indexOf(t[l]) && t[l];)l++; return t.slice(r, l) } function a() { var r = {}; l++, r.tagName = i(); for (var n = !1; t.charCodeAt(l) !== d && t[l];) { var a = t.charCodeAt(l); if (a > 64 && 91 > a || a > 96 && 123 > a) { for (var f = i(), c = t.charCodeAt(l); c && c !== p && c !== g && !(c > 64 && 91 > c || c > 96 && 123 > c) && c !== d;)l++, c = t.charCodeAt(l); if (n || (r.attributes = {}, n = !0), c === p || c === g) { var s = o(); if (-1 === l) return r } else s = null, l--; r.attributes[f] = s } l++ } if (t.charCodeAt(l - 1) !== h) if ("script" == r.tagName) { var u = l + 1; l = t.indexOf("</script>", l), r.children = [t.slice(u, l - 1)], l += 8 } else if ("style" == r.tagName) { var u = l + 1; l = t.indexOf("</style>", l), r.children = [t.slice(u, l - 1)], l += 7 } else -1 == C.indexOf(r.tagName) && (l++, r.children = e(f)); else l++; return r } function o() { var r = t[l], e = ++l; return l = t.indexOf(r, e), t.slice(e, l) } function f() { var e = new RegExp("\\s" + r.attrName + "\\s*=['\"]" + r.attrValue + "['\"]").exec(t); return e ? e.index : -1 } r = r || {}; var l = r.pos || 0, c = "<", s = "<".charCodeAt(0), u = ">", d = ">".charCodeAt(0), m = "-".charCodeAt(0), h = "/".charCodeAt(0), v = "!".charCodeAt(0), p = "'".charCodeAt(0), g = '"'.charCodeAt(0), A = "\n	>/= ", C = ["img", "br", "input", "meta", "link"], y = null; if (void 0 !== r.attrValue) { r.attrName = r.attrName || "id"; for (var y = []; -1 !== (l = f());)l = t.lastIndexOf("<", l), -1 !== l && y.push(a()), t = t.substr(l), l = 0 } else y = r.parseNode ? a() : e(); return r.filter && (y = tXml.filter(y, r.filter)), r.simplify && (y = tXml.simplify(y)), y.pos = l, y } var _order = 1; tXml.simplify = function (t) { var r = {}; if (void 0 === t) return {}; if (1 === t.length && "string" == typeof t[0]) return t[0]; t.forEach(function (t) { if ("object" == typeof t) { r[t.tagName] || (r[t.tagName] = []); var e = tXml.simplify(t.children || []); r[t.tagName].push(e), t.attributes && (e.attrs = t.attributes), void 0 === e.attrs ? e.attrs = { order: _order } : e.attrs.order = _order, _order++ } }); for (var e in r) 1 == r[e].length && (r[e] = r[e][0]); return r }, tXml.filter = function (t, r) { var e = []; return t.forEach(function (t) { if ("object" == typeof t && r(t) && e.push(t), t.children) { var n = tXml.filter(t.children, r); e = e.concat(n) } }), e }, tXml.stringify = function (t) { function r(t) { if (t) for (var r = 0; r < t.length; r++)"string" == typeof t[r] ? n += t[r].trim() : e(t[r]) } function e(t) { n += "<" + t.tagName; for (var e in t.attributes) n += null === t.attributes[e] ? " " + e : -1 === t.attributes[e].indexOf('"') ? " " + e + '="' + t.attributes[e].trim() + '"' : " " + e + "='" + t.attributes[e].trim() + "'"; n += ">", r(t.children), n += "</" + t.tagName + ">" } var n = ""; return r(t), n }, tXml.toContentString = function (t) { if (Array.isArray(t)) { var r = ""; return t.forEach(function (t) { r += " " + tXml.toContentString(t), r = r.trim() }), r } return "object" == typeof t ? tXml.toContentString(t.children) : " " + t }, tXml.getElementById = function (t, r, e) { var n = tXml(t, { attrValue: r, simplify: e }); return e ? n : n[0] }, tXml.getElementsByClassName = function (t, r, e) { return tXml(t, { attrName: "class", attrValue: "[a-zA-Z0-9-s ]*" + r + "[a-zA-Z0-9-s ]*", simplify: e }) }, tXml.parseStream = function (t, r) { if ("function" == typeof r && (cb = r, r = 0), "string" == typeof r && (r = r.length + 2), "string" == typeof t) { var e = require("fs"); t = e.createReadStream(t, { start: r }), r = 0 } var n = r, i = "", a = 0; return t.on("data", function (r) { a++, i += r; for (var e = 0; ;) { n = i.indexOf("<", n) + 1; var o = tXml(i, { pos: n, parseNode: !0 }); if (n = o.pos, n > i.length - 1 || e > n) return void (e && (i = i.slice(e), n = 0, e = 0)); t.emit("xml", o), e = n } i = i.slice(n), n = 0 }), t.on("end", function () { console.log("end") }), t }, "object" == typeof module && (module.exports = tXml);
+        // @ts-expect-error TS(2339): Property 'tagName' does not exist on type '{}'.
+        function tXml(t: any, r: any) { "use strict"; function e() { for (var r = []; t[l];)if (t.charCodeAt(l) == s) { if (t.charCodeAt(l + 1) === h) return l = t.indexOf(u, l), l + 1 && (l += 1), r; if (t.charCodeAt(l + 1) === v) { if (t.charCodeAt(l + 2) == m) { for (; -1 !== l && (t.charCodeAt(l) !== d || t.charCodeAt(l - 1) != m || t.charCodeAt(l - 2) != m || -1 == l);)l = t.indexOf(u, l + 1); -1 === l && (l = t.length) } else for (l += 2; t.charCodeAt(l) !== d && t[l];)l++; l++; continue } var e = a(); r.push(e) } else { var i = n(); i.trim().length > 0 && r.push(i), l++ } return r } function n() { var r = l; return l = t.indexOf(c, l) - 1, -2 === l && (l = t.length), t.slice(r, l + 1) } function i() { for (var r = l; -1 === A.indexOf(t[l]) && t[l];)l++; return t.slice(r, l) } function a() { var r = {}; l++, r.tagName = i(); for (var n = !1; t.charCodeAt(l) !== d && t[l];) { var a = t.charCodeAt(l); if (a > 64 && 91 > a || a > 96 && 123 > a) { for (var f = i(), c = t.charCodeAt(l); c && c !== p && c !== g && !(c > 64 && 91 > c || c > 96 && 123 > c) && c !== d;)l++, c = t.charCodeAt(l); if (n || (r.attributes = {}, n = !0), c === p || c === g) { var s = o(); if (-1 === l) return r } else s = null, l--; r.attributes[f] = s } l++ } if (t.charCodeAt(l - 1) !== h) if ("script" == r.tagName) { var u = l + 1; l = t.indexOf("</script>", l), r.children = [t.slice(u, l - 1)], l += 8 } else if ("style" == r.tagName) { var u = l + 1; l = t.indexOf("</style>", l), r.children = [t.slice(u, l - 1)], l += 7 } else -1 == C.indexOf(r.tagName) && (l++, r.children = e(f)); else l++; return r } function o() { var r = t[l], e = ++l; return l = t.indexOf(r, e), t.slice(e, l) } function f() { var e = new RegExp("\\s" + r.attrName + "\\s*=['\"]" + r.attrValue + "['\"]").exec(t); return e ? e.index : -1 } r = r || {}; var l = r.pos || 0, c = "<", s = "<".charCodeAt(0), u = ">", d = ">".charCodeAt(0), m = "-".charCodeAt(0), h = "/".charCodeAt(0), v = "!".charCodeAt(0), p = "'".charCodeAt(0), g = '"'.charCodeAt(0), A = "\n	>/= ", C = ["img", "br", "input", "meta", "link"], y = null; if (void 0 !== r.attrValue) { r.attrName = r.attrName || "id"; for (var y = []; -1 !== (l = f());)l = t.lastIndexOf("<", l), -1 !== l && y.push(a()), t = t.substr(l), l = 0 } else y = r.parseNode ? a() : e(); return r.filter && (y = tXml.filter(y, r.filter)), r.simplify && (y = tXml.simplify(y)), y.pos = l, y } var _order = 1; tXml.simplify = function (t: any) { var r = {}; if (void 0 === t) return {}; if (1 === t.length && "string" == typeof t[0]) return t[0]; t.forEach(function (t: any) { if ("object" == typeof t) { r[t.tagName] || (r[t.tagName] = []); var e = tXml.simplify(t.children || []); r[t.tagName].push(e), t.attributes && (e.attrs = t.attributes), void 0 === e.attrs ? e.attrs = { order: _order } : e.attrs.order = _order, _order++ } }); for (var e in r) 1 == r[e].length && (r[e] = r[e][0]); return r }, tXml.filter = function (t: any, r: any) { var e: any = []; return t.forEach(function (t: any) { if ("object" == typeof t && r(t) && e.push(t), t.children) { var n = tXml.filter(t.children, r); e = e.concat(n) } }), e; }, tXml.stringify = function (t: any) { function r(t: any) { if (t) for (var r = 0; r < t.length; r++)"string" == typeof t[r] ? n += t[r].trim() : e(t[r]) } function e(t: any) { n += "<" + t.tagName; for (var e in t.attributes) n += null === t.attributes[e] ? " " + e : -1 === t.attributes[e].indexOf('"') ? " " + e + '="' + t.attributes[e].trim() + '"' : " " + e + "='" + t.attributes[e].trim() + "'"; n += ">", r(t.children), n += "</" + t.tagName + ">" } var n = ""; return r(t), n }, tXml.toContentString = function (t: any) { if (Array.isArray(t)) { var r = ""; return t.forEach(function (t) { r += " " + tXml.toContentString(t), r = r.trim() }), r } return "object" == typeof t ? tXml.toContentString(t.children) : " " + t }, tXml.getElementById = function (t: any, r: any, e: any) { var n = tXml(t, { attrValue: r, simplify: e }); return e ? n : n[0] }, tXml.getElementsByClassName = function (t: any, r: any, e: any) { return tXml(t, { attrName: "class", attrValue: "[a-zA-Z0-9-s ]*" + r + "[a-zA-Z0-9-s ]*", simplify: e }) }, tXml.parseStream = function (t: any, r: any) { if ("function" == typeof r && (cb = r, r = 0), "string" == typeof r && (r = r.length + 2), "string" == typeof t) { var e = require("fs"); t = e.createReadStream(t, { start: r }), r = 0 } var n = r, i = "", a = 0; return t.on("data", function (r: any) { a++, i += r; for (var e = 0; ;) { n = i.indexOf("<", n) + 1; var o = tXml(i, { pos: n, parseNode: !0 }); if (n = o.pos, n > i.length - 1 || e > n) return void (e && (i = i.slice(e), n = 0, e = 0)); t.emit("xml", o), e = n } i = i.slice(n), n = 0 }), t.on("end", function () { console.log("end") }), t; }, "object" == typeof module && (module.exports = tXml);
     };
 
     /*!
@@ -14079,10 +15706,13 @@
     (c) 2014 Stuart Knightley, David Duponchel
     Dual licenced under the MIT license or GPLv3. See https://raw.github.com/Stuk/jszip-utils/master/LICENSE.markdown.
     */
-    !function (a) { "object" == typeof exports ? module.exports = a() : "function" == typeof define && define.amd ? define(a) : "undefined" != typeof window ? window.JSZipUtils = a() : "undefined" != typeof global ? global.JSZipUtils = a() : "undefined" != typeof self && (self.JSZipUtils = a()) }(function () { return function a(b, c, d) { function e(g, h) { if (!c[g]) { if (!b[g]) { var i = "function" == typeof require && require; if (!h && i) return i(g, !0); if (f) return f(g, !0); throw new Error("Cannot find module '" + g + "'") } var j = c[g] = { exports: {} }; b[g][0].call(j.exports, function (a) { var c = b[g][1][a]; return e(c ? c : a) }, j, j.exports, a, b, c, d) } return c[g].exports } for (var f = "function" == typeof require && require, g = 0; g < d.length; g++)e(d[g]); return e }({ 1: [function (a, b) { "use strict"; function c() { try { return new window.XMLHttpRequest } catch (a) { } } function d() { try { return new window.ActiveXObject("Microsoft.XMLHTTP") } catch (a) { } } var e = {}; e._getBinaryFromXHR = function (a) { return a.response || a.responseText }; var f = window.ActiveXObject ? function () { return c() || d() } : c; e.getBinaryContent = function (a, b) { try { var c = f(); c.open("GET", a, !0), "responseType" in c && (c.responseType = "arraybuffer"), c.overrideMimeType && c.overrideMimeType("text/plain; charset=x-user-defined"), c.onreadystatechange = function () { var d, f; if (4 === c.readyState) if (200 === c.status || 0 === c.status) { d = null, f = null; try { d = e._getBinaryFromXHR(c) } catch (g) { f = new Error(g) } b(f, d) } else b(new Error("Ajax error for " + a + " : " + this.status + " " + this.statusText), null) }, c.send() } catch (d) { b(new Error(d), null) } }, b.exports = e }, {}] }, {}, [1])(1) });
+    // @ts-expect-error TS(1345): An expression of type 'void' cannot be tested for ... Remove this comment to see the full error message
+    !function (a) { "object" == typeof exports ? module.exports = a() : "function" == typeof define && define.amd ? define(a) : "undefined" != typeof window ? window.JSZipUtils = a() : "undefined" != typeof global ? global.JSZipUtils = a() : "undefined" != typeof self && (self.JSZipUtils = a()) }(function () { return function a(b, c, d) { function e(g: any, h: any) { if (!c[g]) { if (!b[g]) { var i = "function" == typeof require && require; if (!h && i) return i(g, !0); if (f) return f(g, !0); throw new Error("Cannot find module '" + g + "'") } var j = c[g] = { exports: {} }; b[g][0].call(j.exports, function (a: any) { var c = b[g][1][a]; return e(c ? c : a) }, j, j.exports, a, b, c, d) } return c[g].exports } for (var f = "function" == typeof require && require, g = 0; g < d.length; g++)e(d[g]); return e }({ 1: [function (a: any, b: any) { "use strict"; function c() { try { return new window.XMLHttpRequest } catch (a) { } } function d() { try { return new window.ActiveXObject("Microsoft.XMLHTTP") } catch (a) { } } var e = {}; e._getBinaryFromXHR = function (a: any) { return a.response || a.responseText }; var f = window.ActiveXObject ? function () { return c() || d() } : c; e.getBinaryContent = function (a: any, b: any) { try { var c = f(); c.open("GET", a, !0), "responseType" in c && (c.responseType = "arraybuffer"), c.overrideMimeType && c.overrideMimeType("text/plain; charset=x-user-defined"), c.onreadystatechange = function () { var d, f; if (4 === c.readyState) if (200 === c.status || 0 === c.status) { d = null, f = null; try { d = e._getBinaryFromXHR(c) } catch (g) { f = new Error(g) } b(f, d) } else b(new Error("Ajax error for " + a + " : " + this.status + " " + this.statusText), null) }, c.send() } catch (d) { b(new Error(d), null) } }, b.exports = e }, {}] }, {}, [1])(1); });
 
     // TinyColor v1.4.2
     // https://github.com/bgrins/TinyColor
     // 2020-09-25, Brian Grinstead, MIT License
-    !function (a) { function b(a, d) { if (a = a ? a : "", d = d || {}, a instanceof b) return a; if (!(this instanceof b)) return new b(a, d); var e = c(a); this._originalInput = a, this._r = e.r, this._g = e.g, this._b = e.b, this._a = e.a, this._roundA = P(100 * this._a) / 100, this._format = d.format || e.format, this._gradientType = d.gradientType, this._r < 1 && (this._r = P(this._r)), this._g < 1 && (this._g = P(this._g)), this._b < 1 && (this._b = P(this._b)), this._ok = e.ok, this._tc_id = O++ } function c(a) { var b = { r: 0, g: 0, b: 0 }, c = 1, e = null, g = null, i = null, j = !1, k = !1; return "string" == typeof a && (a = K(a)), "object" == typeof a && (J(a.r) && J(a.g) && J(a.b) ? (b = d(a.r, a.g, a.b), j = !0, k = "%" === String(a.r).substr(-1) ? "prgb" : "rgb") : J(a.h) && J(a.s) && J(a.v) ? (e = G(a.s), g = G(a.v), b = h(a.h, e, g), j = !0, k = "hsv") : J(a.h) && J(a.s) && J(a.l) && (e = G(a.s), i = G(a.l), b = f(a.h, e, i), j = !0, k = "hsl"), a.hasOwnProperty("a") && (c = a.a)), c = z(c), { ok: j, format: a.format || k, r: Q(255, R(b.r, 0)), g: Q(255, R(b.g, 0)), b: Q(255, R(b.b, 0)), a: c } } function d(a, b, c) { return { r: 255 * A(a, 255), g: 255 * A(b, 255), b: 255 * A(c, 255) } } function e(a, b, c) { a = A(a, 255), b = A(b, 255), c = A(c, 255); var d, e, f = R(a, b, c), g = Q(a, b, c), h = (f + g) / 2; if (f == g) d = e = 0; else { var i = f - g; switch (e = h > .5 ? i / (2 - f - g) : i / (f + g), f) { case a: d = (b - c) / i + (c > b ? 6 : 0); break; case b: d = (c - a) / i + 2; break; case c: d = (a - b) / i + 4 }d /= 6 } return { h: d, s: e, l: h } } function f(a, b, c) { function d(a, b, c) { return 0 > c && (c += 1), c > 1 && (c -= 1), 1 / 6 > c ? a + 6 * (b - a) * c : .5 > c ? b : 2 / 3 > c ? a + (b - a) * (2 / 3 - c) * 6 : a } var e, f, g; if (a = A(a, 360), b = A(b, 100), c = A(c, 100), 0 === b) e = f = g = c; else { var h = .5 > c ? c * (1 + b) : c + b - c * b, i = 2 * c - h; e = d(i, h, a + 1 / 3), f = d(i, h, a), g = d(i, h, a - 1 / 3) } return { r: 255 * e, g: 255 * f, b: 255 * g } } function g(a, b, c) { a = A(a, 255), b = A(b, 255), c = A(c, 255); var d, e, f = R(a, b, c), g = Q(a, b, c), h = f, i = f - g; if (e = 0 === f ? 0 : i / f, f == g) d = 0; else { switch (f) { case a: d = (b - c) / i + (c > b ? 6 : 0); break; case b: d = (c - a) / i + 2; break; case c: d = (a - b) / i + 4 }d /= 6 } return { h: d, s: e, v: h } } function h(b, c, d) { b = 6 * A(b, 360), c = A(c, 100), d = A(d, 100); var e = a.floor(b), f = b - e, g = d * (1 - c), h = d * (1 - f * c), i = d * (1 - (1 - f) * c), j = e % 6, k = [d, h, g, g, i, d][j], l = [i, d, d, h, g, g][j], m = [g, g, i, d, d, h][j]; return { r: 255 * k, g: 255 * l, b: 255 * m } } function i(a, b, c, d) { var e = [F(P(a).toString(16)), F(P(b).toString(16)), F(P(c).toString(16))]; return d && e[0].charAt(0) == e[0].charAt(1) && e[1].charAt(0) == e[1].charAt(1) && e[2].charAt(0) == e[2].charAt(1) ? e[0].charAt(0) + e[1].charAt(0) + e[2].charAt(0) : e.join("") } function j(a, b, c, d, e) { var f = [F(P(a).toString(16)), F(P(b).toString(16)), F(P(c).toString(16)), F(H(d))]; return e && f[0].charAt(0) == f[0].charAt(1) && f[1].charAt(0) == f[1].charAt(1) && f[2].charAt(0) == f[2].charAt(1) && f[3].charAt(0) == f[3].charAt(1) ? f[0].charAt(0) + f[1].charAt(0) + f[2].charAt(0) + f[3].charAt(0) : f.join("") } function k(a, b, c, d) { var e = [F(H(d)), F(P(a).toString(16)), F(P(b).toString(16)), F(P(c).toString(16))]; return e.join("") } function l(a, c) { c = 0 === c ? 0 : c || 10; var d = b(a).toHsl(); return d.s -= c / 100, d.s = B(d.s), b(d) } function m(a, c) { c = 0 === c ? 0 : c || 10; var d = b(a).toHsl(); return d.s += c / 100, d.s = B(d.s), b(d) } function n(a) { return b(a).desaturate(100) } function o(a, c) { c = 0 === c ? 0 : c || 10; var d = b(a).toHsl(); return d.l += c / 100, d.l = B(d.l), b(d) } function p(a, c) { c = 0 === c ? 0 : c || 10; var d = b(a).toRgb(); return d.r = R(0, Q(255, d.r - P(255 * -(c / 100)))), d.g = R(0, Q(255, d.g - P(255 * -(c / 100)))), d.b = R(0, Q(255, d.b - P(255 * -(c / 100)))), b(d) } function q(a, c) { c = 0 === c ? 0 : c || 10; var d = b(a).toHsl(); return d.l -= c / 100, d.l = B(d.l), b(d) } function r(a, c) { var d = b(a).toHsl(), e = (d.h + c) % 360; return d.h = 0 > e ? 360 + e : e, b(d) } function s(a) { var c = b(a).toHsl(); return c.h = (c.h + 180) % 360, b(c) } function t(a) { var c = b(a).toHsl(), d = c.h; return [b(a), b({ h: (d + 120) % 360, s: c.s, l: c.l }), b({ h: (d + 240) % 360, s: c.s, l: c.l })] } function u(a) { var c = b(a).toHsl(), d = c.h; return [b(a), b({ h: (d + 90) % 360, s: c.s, l: c.l }), b({ h: (d + 180) % 360, s: c.s, l: c.l }), b({ h: (d + 270) % 360, s: c.s, l: c.l })] } function v(a) { var c = b(a).toHsl(), d = c.h; return [b(a), b({ h: (d + 72) % 360, s: c.s, l: c.l }), b({ h: (d + 216) % 360, s: c.s, l: c.l })] } function w(a, c, d) { c = c || 6, d = d || 30; var e = b(a).toHsl(), f = 360 / d, g = [b(a)]; for (e.h = (e.h - (f * c >> 1) + 720) % 360; --c;)e.h = (e.h + f) % 360, g.push(b(e)); return g } function x(a, c) { c = c || 6; for (var d = b(a).toHsv(), e = d.h, f = d.s, g = d.v, h = [], i = 1 / c; c--;)h.push(b({ h: e, s: f, v: g })), g = (g + i) % 1; return h } function y(a) { var b = {}; for (var c in a) a.hasOwnProperty(c) && (b[a[c]] = c); return b } function z(a) { return a = parseFloat(a), (isNaN(a) || 0 > a || a > 1) && (a = 1), a } function A(b, c) { D(b) && (b = "100%"); var d = E(b); return b = Q(c, R(0, parseFloat(b))), d && (b = parseInt(b * c, 10) / 100), a.abs(b - c) < 1e-6 ? 1 : b % c / parseFloat(c) } function B(a) { return Q(1, R(0, a)) } function C(a) { return parseInt(a, 16) } function D(a) { return "string" == typeof a && -1 != a.indexOf(".") && 1 === parseFloat(a) } function E(a) { return "string" == typeof a && -1 != a.indexOf("%") } function F(a) { return 1 == a.length ? "0" + a : "" + a } function G(a) { return 1 >= a && (a = 100 * a + "%"), a } function H(b) { return a.round(255 * parseFloat(b)).toString(16) } function I(a) { return C(a) / 255 } function J(a) { return !!V.CSS_UNIT.exec(a) } function K(a) { a = a.replace(M, "").replace(N, "").toLowerCase(); var b = !1; if (T[a]) a = T[a], b = !0; else if ("transparent" == a) return { r: 0, g: 0, b: 0, a: 0, format: "name" }; var c; return (c = V.rgb.exec(a)) ? { r: c[1], g: c[2], b: c[3] } : (c = V.rgba.exec(a)) ? { r: c[1], g: c[2], b: c[3], a: c[4] } : (c = V.hsl.exec(a)) ? { h: c[1], s: c[2], l: c[3] } : (c = V.hsla.exec(a)) ? { h: c[1], s: c[2], l: c[3], a: c[4] } : (c = V.hsv.exec(a)) ? { h: c[1], s: c[2], v: c[3] } : (c = V.hsva.exec(a)) ? { h: c[1], s: c[2], v: c[3], a: c[4] } : (c = V.hex8.exec(a)) ? { r: C(c[1]), g: C(c[2]), b: C(c[3]), a: I(c[4]), format: b ? "name" : "hex8" } : (c = V.hex6.exec(a)) ? { r: C(c[1]), g: C(c[2]), b: C(c[3]), format: b ? "name" : "hex" } : (c = V.hex4.exec(a)) ? { r: C(c[1] + "" + c[1]), g: C(c[2] + "" + c[2]), b: C(c[3] + "" + c[3]), a: I(c[4] + "" + c[4]), format: b ? "name" : "hex8" } : (c = V.hex3.exec(a)) ? { r: C(c[1] + "" + c[1]), g: C(c[2] + "" + c[2]), b: C(c[3] + "" + c[3]), format: b ? "name" : "hex" } : !1 } function L(a) { var b, c; return a = a || { level: "AA", size: "small" }, b = (a.level || "AA").toUpperCase(), c = (a.size || "small").toLowerCase(), "AA" !== b && "AAA" !== b && (b = "AA"), "small" !== c && "large" !== c && (c = "small"), { level: b, size: c } } var M = /^\s+/, N = /\s+$/, O = 0, P = a.round, Q = a.min, R = a.max, S = a.random; b.prototype = { isDark: function () { return this.getBrightness() < 128 }, isLight: function () { return !this.isDark() }, isValid: function () { return this._ok }, getOriginalInput: function () { return this._originalInput }, getFormat: function () { return this._format }, getAlpha: function () { return this._a }, getBrightness: function () { var a = this.toRgb(); return (299 * a.r + 587 * a.g + 114 * a.b) / 1e3 }, getLuminance: function () { var b, c, d, e, f, g, h = this.toRgb(); return b = h.r / 255, c = h.g / 255, d = h.b / 255, e = .03928 >= b ? b / 12.92 : a.pow((b + .055) / 1.055, 2.4), f = .03928 >= c ? c / 12.92 : a.pow((c + .055) / 1.055, 2.4), g = .03928 >= d ? d / 12.92 : a.pow((d + .055) / 1.055, 2.4), .2126 * e + .7152 * f + .0722 * g }, setAlpha: function (a) { return this._a = z(a), this._roundA = P(100 * this._a) / 100, this }, toHsv: function () { var a = g(this._r, this._g, this._b); return { h: 360 * a.h, s: a.s, v: a.v, a: this._a } }, toHsvString: function () { var a = g(this._r, this._g, this._b), b = P(360 * a.h), c = P(100 * a.s), d = P(100 * a.v); return 1 == this._a ? "hsv(" + b + ", " + c + "%, " + d + "%)" : "hsva(" + b + ", " + c + "%, " + d + "%, " + this._roundA + ")" }, toHsl: function () { var a = e(this._r, this._g, this._b); return { h: 360 * a.h, s: a.s, l: a.l, a: this._a } }, toHslString: function () { var a = e(this._r, this._g, this._b), b = P(360 * a.h), c = P(100 * a.s), d = P(100 * a.l); return 1 == this._a ? "hsl(" + b + ", " + c + "%, " + d + "%)" : "hsla(" + b + ", " + c + "%, " + d + "%, " + this._roundA + ")" }, toHex: function (a) { return i(this._r, this._g, this._b, a) }, toHexString: function (a) { return "#" + this.toHex(a) }, toHex8: function (a) { return j(this._r, this._g, this._b, this._a, a) }, toHex8String: function (a) { return "#" + this.toHex8(a) }, toRgb: function () { return { r: P(this._r), g: P(this._g), b: P(this._b), a: this._a } }, toRgbString: function () { return 1 == this._a ? "rgb(" + P(this._r) + ", " + P(this._g) + ", " + P(this._b) + ")" : "rgba(" + P(this._r) + ", " + P(this._g) + ", " + P(this._b) + ", " + this._roundA + ")" }, toPercentageRgb: function () { return { r: P(100 * A(this._r, 255)) + "%", g: P(100 * A(this._g, 255)) + "%", b: P(100 * A(this._b, 255)) + "%", a: this._a } }, toPercentageRgbString: function () { return 1 == this._a ? "rgb(" + P(100 * A(this._r, 255)) + "%, " + P(100 * A(this._g, 255)) + "%, " + P(100 * A(this._b, 255)) + "%)" : "rgba(" + P(100 * A(this._r, 255)) + "%, " + P(100 * A(this._g, 255)) + "%, " + P(100 * A(this._b, 255)) + "%, " + this._roundA + ")" }, toName: function () { return 0 === this._a ? "transparent" : this._a < 1 ? !1 : U[i(this._r, this._g, this._b, !0)] || !1 }, toFilter: function (a) { var c = "#" + k(this._r, this._g, this._b, this._a), d = c, e = this._gradientType ? "GradientType = 1, " : ""; if (a) { var f = b(a); d = "#" + k(f._r, f._g, f._b, f._a) } return "progid:DXImageTransform.Microsoft.gradient(" + e + "startColorstr=" + c + ",endColorstr=" + d + ")" }, toString: function (a) { var b = !!a; a = a || this._format; var c = !1, d = this._a < 1 && this._a >= 0, e = !b && d && ("hex" === a || "hex6" === a || "hex3" === a || "hex4" === a || "hex8" === a || "name" === a); return e ? "name" === a && 0 === this._a ? this.toName() : this.toRgbString() : ("rgb" === a && (c = this.toRgbString()), "prgb" === a && (c = this.toPercentageRgbString()), ("hex" === a || "hex6" === a) && (c = this.toHexString()), "hex3" === a && (c = this.toHexString(!0)), "hex4" === a && (c = this.toHex8String(!0)), "hex8" === a && (c = this.toHex8String()), "name" === a && (c = this.toName()), "hsl" === a && (c = this.toHslString()), "hsv" === a && (c = this.toHsvString()), c || this.toHexString()) }, clone: function () { return b(this.toString()) }, _applyModification: function (a, b) { var c = a.apply(null, [this].concat([].slice.call(b))); return this._r = c._r, this._g = c._g, this._b = c._b, this.setAlpha(c._a), this }, lighten: function () { return this._applyModification(o, arguments) }, brighten: function () { return this._applyModification(p, arguments) }, darken: function () { return this._applyModification(q, arguments) }, desaturate: function () { return this._applyModification(l, arguments) }, saturate: function () { return this._applyModification(m, arguments) }, greyscale: function () { return this._applyModification(n, arguments) }, spin: function () { return this._applyModification(r, arguments) }, _applyCombination: function (a, b) { return a.apply(null, [this].concat([].slice.call(b))) }, analogous: function () { return this._applyCombination(w, arguments) }, complement: function () { return this._applyCombination(s, arguments) }, monochromatic: function () { return this._applyCombination(x, arguments) }, splitcomplement: function () { return this._applyCombination(v, arguments) }, triad: function () { return this._applyCombination(t, arguments) }, tetrad: function () { return this._applyCombination(u, arguments) } }, b.fromRatio = function (a, c) { if ("object" == typeof a) { var d = {}; for (var e in a) a.hasOwnProperty(e) && ("a" === e ? d[e] = a[e] : d[e] = G(a[e])); a = d } return b(a, c) }, b.equals = function (a, c) { return a && c ? b(a).toRgbString() == b(c).toRgbString() : !1 }, b.random = function () { return b.fromRatio({ r: S(), g: S(), b: S() }) }, b.mix = function (a, c, d) { d = 0 === d ? 0 : d || 50; var e = b(a).toRgb(), f = b(c).toRgb(), g = d / 100, h = { r: (f.r - e.r) * g + e.r, g: (f.g - e.g) * g + e.g, b: (f.b - e.b) * g + e.b, a: (f.a - e.a) * g + e.a }; return b(h) }, b.readability = function (c, d) { var e = b(c), f = b(d); return (a.max(e.getLuminance(), f.getLuminance()) + .05) / (a.min(e.getLuminance(), f.getLuminance()) + .05) }, b.isReadable = function (a, c, d) { var e, f, g = b.readability(a, c); switch (f = !1, e = L(d), e.level + e.size) { case "AAsmall": case "AAAlarge": f = g >= 4.5; break; case "AAlarge": f = g >= 3; break; case "AAAsmall": f = g >= 7 }return f }, b.mostReadable = function (a, c, d) { var e, f, g, h, i = null, j = 0; d = d || {}, f = d.includeFallbackColors, g = d.level, h = d.size; for (var k = 0; k < c.length; k++)e = b.readability(a, c[k]), e > j && (j = e, i = b(c[k])); return b.isReadable(a, i, { level: g, size: h }) || !f ? i : (d.includeFallbackColors = !1, b.mostReadable(a, ["#fff", "#000"], d)) }; var T = b.names = { aliceblue: "f0f8ff", antiquewhite: "faebd7", aqua: "0ff", aquamarine: "7fffd4", azure: "f0ffff", beige: "f5f5dc", bisque: "ffe4c4", black: "000", blanchedalmond: "ffebcd", blue: "00f", blueviolet: "8a2be2", brown: "a52a2a", burlywood: "deb887", burntsienna: "ea7e5d", cadetblue: "5f9ea0", chartreuse: "7fff00", chocolate: "d2691e", coral: "ff7f50", cornflowerblue: "6495ed", cornsilk: "fff8dc", crimson: "dc143c", cyan: "0ff", darkblue: "00008b", darkcyan: "008b8b", darkgoldenrod: "b8860b", darkgray: "a9a9a9", darkgreen: "006400", darkgrey: "a9a9a9", darkkhaki: "bdb76b", darkmagenta: "8b008b", darkolivegreen: "556b2f", darkorange: "ff8c00", darkorchid: "9932cc", darkred: "8b0000", darksalmon: "e9967a", darkseagreen: "8fbc8f", darkslateblue: "483d8b", darkslategray: "2f4f4f", darkslategrey: "2f4f4f", darkturquoise: "00ced1", darkviolet: "9400d3", deeppink: "ff1493", deepskyblue: "00bfff", dimgray: "696969", dimgrey: "696969", dodgerblue: "1e90ff", firebrick: "b22222", floralwhite: "fffaf0", forestgreen: "228b22", fuchsia: "f0f", gainsboro: "dcdcdc", ghostwhite: "f8f8ff", gold: "ffd700", goldenrod: "daa520", gray: "808080", green: "008000", greenyellow: "adff2f", grey: "808080", honeydew: "f0fff0", hotpink: "ff69b4", indianred: "cd5c5c", indigo: "4b0082", ivory: "fffff0", khaki: "f0e68c", lavender: "e6e6fa", lavenderblush: "fff0f5", lawngreen: "7cfc00", lemonchiffon: "fffacd", lightblue: "add8e6", lightcoral: "f08080", lightcyan: "e0ffff", lightgoldenrodyellow: "fafad2", lightgray: "d3d3d3", lightgreen: "90ee90", lightgrey: "d3d3d3", lightpink: "ffb6c1", lightsalmon: "ffa07a", lightseagreen: "20b2aa", lightskyblue: "87cefa", lightslategray: "789", lightslategrey: "789", lightsteelblue: "b0c4de", lightyellow: "ffffe0", lime: "0f0", limegreen: "32cd32", linen: "faf0e6", magenta: "f0f", maroon: "800000", mediumaquamarine: "66cdaa", mediumblue: "0000cd", mediumorchid: "ba55d3", mediumpurple: "9370db", mediumseagreen: "3cb371", mediumslateblue: "7b68ee", mediumspringgreen: "00fa9a", mediumturquoise: "48d1cc", mediumvioletred: "c71585", midnightblue: "191970", mintcream: "f5fffa", mistyrose: "ffe4e1", moccasin: "ffe4b5", navajowhite: "ffdead", navy: "000080", oldlace: "fdf5e6", olive: "808000", olivedrab: "6b8e23", orange: "ffa500", orangered: "ff4500", orchid: "da70d6", palegoldenrod: "eee8aa", palegreen: "98fb98", paleturquoise: "afeeee", palevioletred: "db7093", papayawhip: "ffefd5", peachpuff: "ffdab9", peru: "cd853f", pink: "ffc0cb", plum: "dda0dd", powderblue: "b0e0e6", purple: "800080", rebeccapurple: "663399", red: "f00", rosybrown: "bc8f8f", royalblue: "4169e1", saddlebrown: "8b4513", salmon: "fa8072", sandybrown: "f4a460", seagreen: "2e8b57", seashell: "fff5ee", sienna: "a0522d", silver: "c0c0c0", skyblue: "87ceeb", slateblue: "6a5acd", slategray: "708090", slategrey: "708090", snow: "fffafa", springgreen: "00ff7f", steelblue: "4682b4", tan: "d2b48c", teal: "008080", thistle: "d8bfd8", tomato: "ff6347", turquoise: "40e0d0", violet: "ee82ee", wheat: "f5deb3", white: "fff", whitesmoke: "f5f5f5", yellow: "ff0", yellowgreen: "9acd32" }, U = b.hexNames = y(T), V = function () { var a = "[-\\+]?\\d+%?", b = "[-\\+]?\\d*\\.\\d+%?", c = "(?:" + b + ")|(?:" + a + ")", d = "[\\s|\\(]+(" + c + ")[,|\\s]+(" + c + ")[,|\\s]+(" + c + ")\\s*\\)?", e = "[\\s|\\(]+(" + c + ")[,|\\s]+(" + c + ")[,|\\s]+(" + c + ")[,|\\s]+(" + c + ")\\s*\\)?"; return { CSS_UNIT: new RegExp(c), rgb: new RegExp("rgb" + d), rgba: new RegExp("rgba" + e), hsl: new RegExp("hsl" + d), hsla: new RegExp("hsla" + e), hsv: new RegExp("hsv" + d), hsva: new RegExp("hsva" + e), hex3: /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})$/, hex6: /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/, hex4: /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})$/, hex8: /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/ } }(); "undefined" != typeof module && module.exports ? module.exports = b : "function" == typeof define && define.amd ? define(function () { return b }) : window.tinycolor = b }(Math);
+    // @ts-expect-error TS(1345): An expression of type 'void' cannot be tested for ... Remove this comment to see the full error message
+    !function (a) { function b(this: any, a: any, d: any) { if (a = a ? a : "", d = d || {}, a instanceof b) return a; if (!(this instanceof b)) return new b(a, d); var e = c(a); this._originalInput = a, this._r = e.r, this._g = e.g, this._b = e.b, this._a = e.a, this._roundA = P(100 * this._a) / 100, this._format = d.format || e.format, this._gradientType = d.gradientType, this._r < 1 && (this._r = P(this._r)), this._g < 1 && (this._g = P(this._g)), this._b < 1 && (this._b = P(this._b)), this._ok = e.ok, this._tc_id = O++ } function c(a: any) { var b = { r: 0, g: 0, b: 0 }, c = 1, e = null, g = null, i = null, j = !1, k = !1; return "string" == typeof a && (a = K(a)), "object" == typeof a && (J(a.r) && J(a.g) && J(a.b) ? (b = d(a.r, a.g, a.b), j = !0, k = "%" === String(a.r).substr(-1) ? "prgb" : "rgb") : J(a.h) && J(a.s) && J(a.v) ? (e = G(a.s), g = G(a.v), b = h(a.h, e, g), j = !0, k = "hsv") : J(a.h) && J(a.s) && J(a.l) && (e = G(a.s), i = G(a.l), b = f(a.h, e, i), j = !0, k = "hsl"), a.hasOwnProperty("a") && (c = a.a)), c = z(c), { ok: j, format: a.format || k, r: Q(255, R(b.r, 0)), g: Q(255, R(b.g, 0)), b: Q(255, R(b.b, 0)), a: c } } function d(a: any, b: any, c: any) { return { r: 255 * A(a, 255), g: 255 * A(b, 255), b: 255 * A(c, 255) } } function e(a: any, b: any, c: any) { a = A(a, 255), b = A(b, 255), c = A(c, 255); var d, e, f = R(a, b, c), g = Q(a, b, c), h = (f + g) / 2; if (f == g) d = e = 0; else { var i = f - g; switch (e = h > .5 ? i / (2 - f - g) : i / (f + g), f) { case a: d = (b - c) / i + (c > b ? 6 : 0); break; case b: d = (c - a) / i + 2; break; case c: d = (a - b) / i + 4 }d /= 6 } return { h: d, s: e, l: h } } function f(a: any, b: any, c: any) { function d(a: any, b: any, c: any) { return 0 > c && (c += 1), c > 1 && (c -= 1), 1 / 6 > c ? a + 6 * (b - a) * c : .5 > c ? b : 2 / 3 > c ? a + (b - a) * (2 / 3 - c) * 6 : a } var e, f, g; if (a = A(a, 360), b = A(b, 100), c = A(c, 100), 0 === b) e = f = g = c; else { var h = .5 > c ? c * (1 + b) : c + b - c * b, i = 2 * c - h; e = d(i, h, a + 1 / 3), f = d(i, h, a), g = d(i, h, a - 1 / 3) } return { r: 255 * e, g: 255 * f, b: 255 * g } } function g(a: any, b: any, c: any) { a = A(a, 255), b = A(b, 255), c = A(c, 255); var d, e, f = R(a, b, c), g = Q(a, b, c), h = f, i = f - g; if (e = 0 === f ? 0 : i / f, f == g) d = 0; else { switch (f) { case a: d = (b - c) / i + (c > b ? 6 : 0); break; case b: d = (c - a) / i + 2; break; case c: d = (a - b) / i + 4 }d /= 6 } return { h: d, s: e, v: h } } function h(b: any, c: any, d: any) { b = 6 * A(b, 360), c = A(c, 100), d = A(d, 100); var e = a.floor(b), f = b - e, g = d * (1 - c), h = d * (1 - f * c), i = d * (1 - (1 - f) * c), j = e % 6, k = [d, h, g, g, i, d][j], l = [i, d, d, h, g, g][j], m = [g, g, i, d, d, h][j]; return { r: 255 * k, g: 255 * l, b: 255 * m } } function i(a: any, b: any, c: any, d: any) { var e = [F(P(a).toString(16)), F(P(b).toString(16)), F(P(c).toString(16))]; return d && e[0].charAt(0) == e[0].charAt(1) && e[1].charAt(0) == e[1].charAt(1) && e[2].charAt(0) == e[2].charAt(1) ? e[0].charAt(0) + e[1].charAt(0) + e[2].charAt(0) : e.join("") } function j(a: any, b: any, c: any, d: any, e: any) { var f = [F(P(a).toString(16)), F(P(b).toString(16)), F(P(c).toString(16)), F(H(d))]; return e && f[0].charAt(0) == f[0].charAt(1) && f[1].charAt(0) == f[1].charAt(1) && f[2].charAt(0) == f[2].charAt(1) && f[3].charAt(0) == f[3].charAt(1) ? f[0].charAt(0) + f[1].charAt(0) + f[2].charAt(0) + f[3].charAt(0) : f.join("") } function k(a: any, b: any, c: any, d: any) { var e = [F(H(d)), F(P(a).toString(16)), F(P(b).toString(16)), F(P(c).toString(16))]; return e.join("") } function l(a: any, c: any) { c = 0 === c ? 0 : c || 10; var d = b(a).toHsl(); return d.s -= c / 100, d.s = B(d.s), b(d) } function m(a: any, c: any) { c = 0 === c ? 0 : c || 10; var d = b(a).toHsl(); return d.s += c / 100, d.s = B(d.s), b(d) } function n(a: any) { return b(a).desaturate(100) } function o(a: any, c: any) { c = 0 === c ? 0 : c || 10; var d = b(a).toHsl(); return d.l += c / 100, d.l = B(d.l), b(d) } function p(a: any, c: any) { c = 0 === c ? 0 : c || 10; var d = b(a).toRgb(); return d.r = R(0, Q(255, d.r - P(255 * -(c / 100)))), d.g = R(0, Q(255, d.g - P(255 * -(c / 100)))), d.b = R(0, Q(255, d.b - P(255 * -(c / 100)))), b(d) } function q(a: any, c: any) { c = 0 === c ? 0 : c || 10; var d = b(a).toHsl(); return d.l -= c / 100, d.l = B(d.l), b(d) } function r(a: any, c: any) { var d = b(a).toHsl(), e = (d.h + c) % 360; return d.h = 0 > e ? 360 + e : e, b(d) } function s(a: any) { var c = b(a).toHsl(); return c.h = (c.h + 180) % 360, b(c) } function t(a: any) { var c = b(a).toHsl(), d = c.h; return [b(a), b({ h: (d + 120) % 360, s: c.s, l: c.l }), b({ h: (d + 240) % 360, s: c.s, l: c.l })] } function u(a: any) { var c = b(a).toHsl(), d = c.h; return [b(a), b({ h: (d + 90) % 360, s: c.s, l: c.l }), b({ h: (d + 180) % 360, s: c.s, l: c.l }), b({ h: (d + 270) % 360, s: c.s, l: c.l })] } function v(a: any) { var c = b(a).toHsl(), d = c.h; return [b(a), b({ h: (d + 72) % 360, s: c.s, l: c.l }), b({ h: (d + 216) % 360, s: c.s, l: c.l })] } function w(a: any, c: any, d: any) { c = c || 6, d = d || 30; var e = b(a).toHsl(), f = 360 / d, g = [b(a)]; for (e.h = (e.h - (f * c >> 1) + 720) % 360; --c;)e.h = (e.h + f) % 360, g.push(b(e)); return g } function x(a: any, c: any) { c = c || 6; for (var d = b(a).toHsv(), e = d.h, f = d.s, g = d.v, h = [], i = 1 / c; c--;)h.push(b({ h: e, s: f, v: g })), g = (g + i) % 1; return h } function y(a: any) { var b = {}; for (var c in a) a.hasOwnProperty(c) && (b[a[c]] = c); return b } function z(a: any) { return a = parseFloat(a), (isNaN(a) || 0 > a || a > 1) && (a = 1), a } function A(b: any, c: any) { D(b) && (b = "100%"); var d = E(b); return b = Q(c, R(0, parseFloat(b))), d && (b = parseInt(b * c, 10) / 100), a.abs(b - c) < 1e-6 ? 1 : b % c / parseFloat(c) } function B(a: any) { return Q(1, R(0, a)) } function C(a: any) { return parseInt(a, 16) } function D(a: any) { return "string" == typeof a && -1 != a.indexOf(".") && 1 === parseFloat(a) } function E(a: any) { return "string" == typeof a && -1 != a.indexOf("%") } function F(a: any) { return 1 == a.length ? "0" + a : "" + a } function G(a: any) { return 1 >= a && (a = 100 * a + "%"), a } function H(b: any) { return a.round(255 * parseFloat(b)).toString(16) } function I(a: any) { return C(a) / 255 } function J(a: any) { return !!V.CSS_UNIT.exec(a) } function K(a: any) { a = a.replace(M, "").replace(N, "").toLowerCase(); var b = !1; if (T[a]) a = T[a], b = !0; else if ("transparent" == a) return { r: 0, g: 0, b: 0, a: 0, format: "name" }; var c; return (c = V.rgb.exec(a)) ? { r: c[1], g: c[2], b: c[3] } : (c = V.rgba.exec(a)) ? { r: c[1], g: c[2], b: c[3], a: c[4] } : (c = V.hsl.exec(a)) ? { h: c[1], s: c[2], l: c[3] } : (c = V.hsla.exec(a)) ? { h: c[1], s: c[2], l: c[3], a: c[4] } : (c = V.hsv.exec(a)) ? { h: c[1], s: c[2], v: c[3] } : (c = V.hsva.exec(a)) ? { h: c[1], s: c[2], v: c[3], a: c[4] } : (c = V.hex8.exec(a)) ? { r: C(c[1]), g: C(c[2]), b: C(c[3]), a: I(c[4]), format: b ? "name" : "hex8" } : (c = V.hex6.exec(a)) ? { r: C(c[1]), g: C(c[2]), b: C(c[3]), format: b ? "name" : "hex" } : (c = V.hex4.exec(a)) ? { r: C(c[1] + "" + c[1]), g: C(c[2] + "" + c[2]), b: C(c[3] + "" + c[3]), a: I(c[4] + "" + c[4]), format: b ? "name" : "hex8" } : (c = V.hex3.exec(a)) ? { r: C(c[1] + "" + c[1]), g: C(c[2] + "" + c[2]), b: C(c[3] + "" + c[3]), format: b ? "name" : "hex" } : !1 } function L(a: any) { var b, c; return a = a || { level: "AA", size: "small" }, b = (a.level || "AA").toUpperCase(), c = (a.size || "small").toLowerCase(), "AA" !== b && "AAA" !== b && (b = "AA"), "small" !== c && "large" !== c && (c = "small"), { level: b, size: c } } var M = /^\s+/, N = /\s+$/, O = 0, P = a.round, Q = a.min, R = a.max, S = a.random; b.prototype = { isDark: function () { return this.getBrightness() < 128 }, isLight: function () { return !this.isDark() }, isValid: function () { return this._ok }, getOriginalInput: function () { return this._originalInput }, getFormat: function () { return this._format }, getAlpha: function () { return this._a }, getBrightness: function () { var a = this.toRgb(); return (299 * a.r + 587 * a.g + 114 * a.b) / 1e3 }, getLuminance: function () { var b, c, d, e, f, g, h = this.toRgb(); return b = h.r / 255, c = h.g / 255, d = h.b / 255, e = .03928 >= b ? b / 12.92 : a.pow((b + .055) / 1.055, 2.4), f = .03928 >= c ? c / 12.92 : a.pow((c + .055) / 1.055, 2.4), g = .03928 >= d ? d / 12.92 : a.pow((d + .055) / 1.055, 2.4), .2126 * e + .7152 * f + .0722 * g }, setAlpha: function (a: any) { return this._a = z(a), this._roundA = P(100 * this._a) / 100, this }, toHsv: function () { var a = g(this._r, this._g, this._b); return { h: 360 * a.h, s: a.s, v: a.v, a: this._a } }, toHsvString: function () { var a = g(this._r, this._g, this._b), b = P(360 * a.h), c = P(100 * a.s), d = P(100 * a.v); return 1 == this._a ? "hsv(" + b + ", " + c + "%, " + d + "%)" : "hsva(" + b + ", " + c + "%, " + d + "%, " + this._roundA + ")" }, toHsl: function () { var a = e(this._r, this._g, this._b); return { h: 360 * a.h, s: a.s, l: a.l, a: this._a } }, toHslString: function () { var a = e(this._r, this._g, this._b), b = P(360 * a.h), c = P(100 * a.s), d = P(100 * a.l); return 1 == this._a ? "hsl(" + b + ", " + c + "%, " + d + "%)" : "hsla(" + b + ", " + c + "%, " + d + "%, " + this._roundA + ")" }, toHex: function (a: any) { return i(this._r, this._g, this._b, a) }, toHexString: function (a: any) { return "#" + this.toHex(a) }, toHex8: function (a: any) { return j(this._r, this._g, this._b, this._a, a) }, toHex8String: function (a: any) { return "#" + this.toHex8(a) }, toRgb: function () { return { r: P(this._r), g: P(this._g), b: P(this._b), a: this._a } }, toRgbString: function () { return 1 == this._a ? "rgb(" + P(this._r) + ", " + P(this._g) + ", " + P(this._b) + ")" : "rgba(" + P(this._r) + ", " + P(this._g) + ", " + P(this._b) + ", " + this._roundA + ")" }, toPercentageRgb: function () { return { r: P(100 * A(this._r, 255)) + "%", g: P(100 * A(this._g, 255)) + "%", b: P(100 * A(this._b, 255)) + "%", a: this._a } }, toPercentageRgbString: function () { return 1 == this._a ? "rgb(" + P(100 * A(this._r, 255)) + "%, " + P(100 * A(this._g, 255)) + "%, " + P(100 * A(this._b, 255)) + "%)" : "rgba(" + P(100 * A(this._r, 255)) + "%, " + P(100 * A(this._g, 255)) + "%, " + P(100 * A(this._b, 255)) + "%, " + this._roundA + ")" }, toName: function () { return 0 === this._a ? "transparent" : this._a < 1 ? !1 : U[i(this._r, this._g, this._b, !0)] || !1 }, toFilter: function (a: any) { var c = "#" + k(this._r, this._g, this._b, this._a), d = c, e = this._gradientType ? "GradientType = 1, " : ""; if (a) { var f = b(a); d = "#" + k(f._r, f._g, f._b, f._a) } return "progid:DXImageTransform.Microsoft.gradient(" + e + "startColorstr=" + c + ",endColorstr=" + d + ")" }, toString: function (a: any) { var b = !!a; a = a || this._format; var c = !1, d = this._a < 1 && this._a >= 0, e = !b && d && ("hex" === a || "hex6" === a || "hex3" === a || "hex4" === a || "hex8" === a || "name" === a); return e ? "name" === a && 0 === this._a ? this.toName() : this.toRgbString() : ("rgb" === a && (c = this.toRgbString()), "prgb" === a && (c = this.toPercentageRgbString()), ("hex" === a || "hex6" === a) && (c = this.toHexString()), "hex3" === a && (c = this.toHexString(!0)), "hex4" === a && (c = this.toHex8String(!0)), "hex8" === a && (c = this.toHex8String()), "name" === a && (c = this.toName()), "hsl" === a && (c = this.toHslString()), "hsv" === a && (c = this.toHsvString()), c || this.toHexString()) }, clone: function () { return b(this.toString()) }, _applyModification: function (a: any, b: any) { var c = a.apply(null, [this].concat([].slice.call(b))); return this._r = c._r, this._g = c._g, this._b = c._b, this.setAlpha(c._a), this }, lighten: function () { return this._applyModification(o, arguments) }, brighten: function () { return this._applyModification(p, arguments) }, darken: function () { return this._applyModification(q, arguments) }, desaturate: function () { return this._applyModification(l, arguments) }, saturate: function () { return this._applyModification(m, arguments) }, greyscale: function () { return this._applyModification(n, arguments) }, spin: function () { return this._applyModification(r, arguments) }, _applyCombination: function (a: any, b: any) { return a.apply(null, [this].concat([].slice.call(b))) }, analogous: function () { return this._applyCombination(w, arguments) }, complement: function () { return this._applyCombination(s, arguments) }, monochromatic: function () { return this._applyCombination(x, arguments) }, splitcomplement: function () { return this._applyCombination(v, arguments) }, triad: function () { return this._applyCombination(t, arguments) }, tetrad: function () { return this._applyCombination(u, arguments) } }, b.fromRatio = function (a: any, c: any) { if ("object" == typeof a) { var d = {}; for (var e in a) a.hasOwnProperty(e) && ("a" === e ? d[e] = a[e] : d[e] = G(a[e])); a = d } return b(a, c) }, b.equals = function (a: any, c: any) { return a && c ? b(a).toRgbString() == b(c).toRgbString() : !1 }, b.random = function () { return b.fromRatio({ r: S(), g: S(), b: S() }) }, b.mix = function (a: any, c: any, d: any) { d = 0 === d ? 0 : d || 50; var e = b(a).toRgb(), f = b(c).toRgb(), g = d / 100, h = { r: (f.r - e.r) * g + e.r, g: (f.g - e.g) * g + e.g, b: (f.b - e.b) * g + e.b, a: (f.a - e.a) * g + e.a }; return b(h) }, b.readability = function (c: any, d: any) { var e = b(c), f = b(d); return (a.max(e.getLuminance(), f.getLuminance()) + .05) / (a.min(e.getLuminance(), f.getLuminance()) + .05) }, b.isReadable = function (a: any, c: any, d: any) { var e, f, g = b.readability(a, c); switch (f = !1, e = L(d), e.level + e.size) { case "AAsmall": case "AAAlarge": f = g >= 4.5; break; case "AAlarge": f = g >= 3; break; case "AAAsmall": f = g >= 7 }return f }, b.mostReadable = function (a: any, c: any, d: any) { var e, f, g, h, i = null, j = 0; d = d || {}, f = d.includeFallbackColors, g = d.level, h = d.size; for (var k = 0; k < c.length; k++)e = b.readability(a, c[k]), e > j && (j = e, i = b(c[k])); return b.isReadable(a, i, { level: g, size: h }) || !f ? i : (d.includeFallbackColors = !1, b.mostReadable(a, ["#fff", "#000"], d)) }; var T = b.names = { aliceblue: "f0f8ff", antiquewhite: "faebd7", aqua: "0ff", aquamarine: "7fffd4", azure: "f0ffff", beige: "f5f5dc", bisque: "ffe4c4", black: "000", blanchedalmond: "ffebcd", blue: "00f", blueviolet: "8a2be2", brown: "a52a2a", burlywood: "deb887", burntsienna: "ea7e5d", cadetblue: "5f9ea0", chartreuse: "7fff00", chocolate: "d2691e", coral: "ff7f50", cornflowerblue: "6495ed", cornsilk: "fff8dc", crimson: "dc143c", cyan: "0ff", darkblue: "00008b", darkcyan: "008b8b", darkgoldenrod: "b8860b", darkgray: "a9a9a9", darkgreen: "006400", darkgrey: "a9a9a9", darkkhaki: "bdb76b", darkmagenta: "8b008b", darkolivegreen: "556b2f", darkorange: "ff8c00", darkorchid: "9932cc", darkred: "8b0000", darksalmon: "e9967a", darkseagreen: "8fbc8f", darkslateblue: "483d8b", darkslategray: "2f4f4f", darkslategrey: "2f4f4f", darkturquoise: "00ced1", darkviolet: "9400d3", deeppink: "ff1493", deepskyblue: "00bfff", dimgray: "696969", dimgrey: "696969", dodgerblue: "1e90ff", firebrick: "b22222", floralwhite: "fffaf0", forestgreen: "228b22", fuchsia: "f0f", gainsboro: "dcdcdc", ghostwhite: "f8f8ff", gold: "ffd700", goldenrod: "daa520", gray: "808080", green: "008000", greenyellow: "adff2f", grey: "808080", honeydew: "f0fff0", hotpink: "ff69b4", indianred: "cd5c5c", indigo: "4b0082", ivory: "fffff0", khaki: "f0e68c", lavender: "e6e6fa", lavenderblush: "fff0f5", lawngreen: "7cfc00", lemonchiffon: "fffacd", lightblue: "add8e6", lightcoral: "f08080", lightcyan: "e0ffff", lightgoldenrodyellow: "fafad2", lightgray: "d3d3d3", lightgreen: "90ee90", lightgrey: "d3d3d3", lightpink: "ffb6c1", lightsalmon: "ffa07a", lightseagreen: "20b2aa", lightskyblue: "87cefa", lightslategray: "789", lightslategrey: "789", lightsteelblue: "b0c4de", lightyellow: "ffffe0", lime: "0f0", limegreen: "32cd32", linen: "faf0e6", magenta: "f0f", maroon: "800000", mediumaquamarine: "66cdaa", mediumblue: "0000cd", mediumorchid: "ba55d3", mediumpurple: "9370db", mediumseagreen: "3cb371", mediumslateblue: "7b68ee", mediumspringgreen: "00fa9a", mediumturquoise: "48d1cc", mediumvioletred: "c71585", midnightblue: "191970", mintcream: "f5fffa", mistyrose: "ffe4e1", moccasin: "ffe4b5", navajowhite: "ffdead", navy: "000080", oldlace: "fdf5e6", olive: "808000", olivedrab: "6b8e23", orange: "ffa500", orangered: "ff4500", orchid: "da70d6", palegoldenrod: "eee8aa", palegreen: "98fb98", paleturquoise: "afeeee", palevioletred: "db7093", papayawhip: "ffefd5", peachpuff: "ffdab9", peru: "cd853f", pink: "ffc0cb", plum: "dda0dd", powderblue: "b0e0e6", purple: "800080", rebeccapurple: "663399", red: "f00", rosybrown: "bc8f8f", royalblue: "4169e1", saddlebrown: "8b4513", salmon: "fa8072", sandybrown: "f4a460", seagreen: "2e8b57", seashell: "fff5ee", sienna: "a0522d", silver: "c0c0c0", skyblue: "87ceeb", slateblue: "6a5acd", slategray: "708090", slategrey: "708090", snow: "fffafa", springgreen: "00ff7f", steelblue: "4682b4", tan: "d2b48c", teal: "008080", thistle: "d8bfd8", tomato: "ff6347", turquoise: "40e0d0", violet: "ee82ee", wheat: "f5deb3", white: "fff", whitesmoke: "f5f5f5", yellow: "ff0", yellowgreen: "9acd32" }, U = b.hexNames = y(T), V = function () { var a = "[-\\+]?\\d+%?", b = "[-\\+]?\\d*\\.\\d+%?", c = "(?:" + b + ")|(?:" + a + ")", d = "[\\s|\\(]+(" + c + ")[,|\\s]+(" + c + ")[,|\\s]+(" + c + ")\\s*\\)?", e = "[\\s|\\(]+(" + c + ")[,|\\s]+(" + c + ")[,|\\s]+(" + c + ")[,|\\s]+(" + c + ")\\s*\\)?"; return { CSS_UNIT: new RegExp(c), rgb: new RegExp("rgb" + d), rgba: new RegExp("rgba" + e), hsl: new RegExp("hsl" + d), hsla: new RegExp("hsla" + e), hsv: new RegExp("hsv" + d), hsva: new RegExp("hsva" + e), hex3: /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})$/, hex6: /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/, hex4: /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})$/, hex8: /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/ }; }(); "undefined" != typeof module && module.exports ? module.exports = b : "function" == typeof define && define.amd ? define(function () { return b }) : window.tinycolor = b }(Math);
+// @ts-expect-error TS(2304): Cannot find name 'jQuery'.
 }(jQuery));
