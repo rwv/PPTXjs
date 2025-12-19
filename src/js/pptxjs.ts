@@ -36,7 +36,7 @@ import {
 } from "./utils/text";
 import { escapeHtml } from "./utils/string";
 import { getSvgGradient, svgAngle, getMiddleStops } from "./utils/svg";
-import { getPosition } from "./utils/layout";
+import { getPosition, getSize } from "./utils/layout";
 import {
   getTextByPathList,
   getTextByPathStr,
@@ -1091,8 +1091,8 @@ import type { JsZip } from "./types/jszip";
                 var effectsClassName = svgCssName + "_effects";
                 result += "<svg class='drawing " + svgCssName + " " + effectsClassName + " ' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name + "'" +
                     "' style='" +
-                    getPosition(slideXfrmNode, pNode, undefined, undefined, sType) +
-                    getSize(slideXfrmNode, undefined, undefined) +
+                    getPosition(slideXfrmNode, pNode, undefined, undefined, sType, slideFactor) +
+                    getSize(slideXfrmNode, undefined, undefined, slideFactor) +
                     " z-index: " + order + ";" +
                     "transform: rotate(" + ((rotate !== undefined) ? rotate : 0) + "deg)" + flip + ";" +
                     "'>";
@@ -9295,8 +9295,8 @@ import type { JsZip } from "./types/jszip";
                     " " + getContentDir(node, type, warpObj) +
                     "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
                     "' style='" +
-                    getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType) +
-                    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode) +
+                    getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, slideFactor) +
+                    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, slideFactor) +
                     " z-index: " + order + ";" +
                     "transform: rotate(" + ((txtRotate !== undefined) ? txtRotate : 0) + "deg);" +
                     "'>";
@@ -9612,8 +9612,8 @@ import type { JsZip } from "./types/jszip";
                     " " + getContentDir(node, type, warpObj) +
                     "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
                     "' style='" +
-                    getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType) +
-                    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode) +
+                    getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, slideFactor) +
+                    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, slideFactor) +
                     " z-index: " + order + ";" +
                     "transform: rotate(" + ((txtRotate !== undefined) ? txtRotate : 0) + "deg);" +
                     "'>";
@@ -9635,8 +9635,8 @@ import type { JsZip } from "./types/jszip";
                     " " + getContentDir(node, type, warpObj) +
                     "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
                     "' style='" +
-                    getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType) +
-                    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode) +
+                    getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, slideFactor) +
+                    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, slideFactor) +
                     getBorder(node, pNode, false, "shape", warpObj) +
                     getShapeFill(node, pNode, false, warpObj, source) +
                     " z-index: " + order + ";" +
@@ -9778,9 +9778,8 @@ import type { JsZip } from "./types/jszip";
             //////////////////////////////////////////////////////////////////////////
             mimeType = getMimeType(imgFileExt);
             rtrnData = "<div class='block content' style='" +
-                // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
-                ((mediaProcess && audioPlayerFlag) ? getPosition(audioObjc, node, undefined, undefined) : getPosition(xfrmNode, node, undefined, undefined)) +
-                ((mediaProcess && audioPlayerFlag) ? getSize(audioObjc, undefined, undefined) : getSize(xfrmNode, undefined, undefined)) +
+                ((mediaProcess && audioPlayerFlag) ? getPosition(audioObjc, node, undefined, undefined, undefined, slideFactor) : getPosition(xfrmNode, node, undefined, undefined, undefined, slideFactor)) +
+                ((mediaProcess && audioPlayerFlag) ? getSize(audioObjc, undefined, undefined, slideFactor) : getSize(xfrmNode, undefined, undefined, slideFactor)) +
                 " z-index: " + order + ";" +
                 "transform: rotate(" + rotate + "deg);'>";
             if ((vdoNode === undefined && audioNode === undefined) || !mediaProcess || !mediaSupportFlag) {
@@ -11027,9 +11026,8 @@ import type { JsZip } from "./types/jszip";
             }
             ////////////////////////////////////////////////////////////////////////////////////////////
             var tableHtml = "<table " + tblDir + " style='border-collapse: collapse;" +
-                // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
-                getPosition(xfrmNode, node, undefined, undefined) +
-                getSize(xfrmNode, undefined, undefined) +
+                getPosition(xfrmNode, node, undefined, undefined, undefined, slideFactor) +
+                getSize(xfrmNode, undefined, undefined, slideFactor) +
                 " z-index: " + order + ";" +
                 tbl_borders + ";" +
                 tbl_bgcolor + "'>";
@@ -11682,32 +11680,11 @@ import type { JsZip } from "./types/jszip";
             }
 
             return "<div class='block diagram-content' style='" +
-                getPosition(xfrmNode, node, undefined, undefined, sType) +
-                getSize(xfrmNode, undefined, undefined) +
+                getPosition(xfrmNode, node, undefined, undefined, sType, slideFactor) +
+                getSize(xfrmNode, undefined, undefined, slideFactor) +
                 "'>" + rslt + "</div>";
         }
 
-        function getSize(slideSpNode: any, slideLayoutSpNode: any, slideMasterSpNode: any) {
-            var ext = undefined;
-            var w = -1, h = -1;
-
-            if (slideSpNode !== undefined) {
-                ext = slideSpNode["a:ext"]["attrs"];
-            } else if (slideLayoutSpNode !== undefined) {
-                ext = slideLayoutSpNode["a:ext"]["attrs"];
-            } else if (slideMasterSpNode !== undefined) {
-                ext = slideMasterSpNode["a:ext"]["attrs"];
-            }
-
-            if (ext === undefined) {
-                return "";
-            } else {
-                w = parseInt(ext["cx"]) * slideFactor;
-                h = parseInt(ext["cy"]) * slideFactor;
-                return (isNaN(w) || isNaN(h)) ? "" : "width:" + w + "px; height:" + h + "px;";
-            }
-
-        }
         function getVerticalMargins(pNode: any, textBodyNode: any, type: any, idx: any, warpObj: any) {
             //margin-top ; 
             //a:pPr => a:spcBef => a:spcPts (/100) | a:spcPct (/?)

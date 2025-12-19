@@ -72,8 +72,8 @@ export function getPosition(
   pNode: ParentNode | undefined,
   slideLayoutSpNode: TransformNode | undefined,
   slideMasterSpNode: TransformNode | undefined,
-  sType?: string,
-  slideFactor: number = 96 / 914400
+  sType: string | undefined,
+  slideFactor: number
 ): string {
   let off: { x?: string; y?: string } | undefined;
   let x = -1,
