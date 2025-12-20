@@ -3,3 +3,4 @@
  */
 export { processSpNode } from "./process-sp-node";
 export { processGroupSpNode } from "./process-group-sp-node";
+export { processGraphicFrameNode } from "./process-graphic-frame-node";

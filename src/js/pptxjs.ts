@@ -77,7 +77,7 @@ import { updateProgressBar } from "./utils/ui";
 import { initSlideMode } from "./utils/presentation";
 import { processCxnSpNode } from "./utils/shape";
 import { getTableCellParams, genTable } from "./utils/table";
-import { processSpNode, processGroupSpNode } from "./utils/node";
+import { processSpNode, processGroupSpNode, processGraphicFrameNode } from "./utils/node";
 import tinycolor from "tinycolor2";
 import { tXml } from "./utils/vendors/txml";
 import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle, indexNodes } from "./utils/xml";
@@ -97,7 +97,7 @@ import type { JsZip } from "./types/jszip";
 
         var defaultTextStyle: any = null;
 
-        var chartID = 0;
+        var chartID = { value: 0 };
 
         var _order = 1;
 
@@ -669,7 +669,7 @@ import type { JsZip } from "./types/jszip";
                     result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
                     break;
                 case "p:graphicFrame":    // Chart, Diagram, Table
-                    result = processGraphicFrameNode(nodeValue, warpObj, source, sType);
+                    result = processGraphicFrameNode(nodeValue, warpObj, source, sType, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, genTable, genChart, genDiagram, processGroupSpNode, processNodesInSlide);
                     break;
                 case "p:grpSp":
                     result = processGroupSpNode(nodeValue, warpObj, source, slideFactor, processNodesInSlide);
@@ -9328,40 +9328,6 @@ import type { JsZip } from "./types/jszip";
             return points;
         }
         */
-
-        function processGraphicFrameNode(node: any, warpObj: any, source: any, sType: any) {
-
-            var result = "";
-            var graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
-
-            switch (graphicTypeUri) {
-                case "http://schemas.openxmlformats.org/drawingml/2006/table":
-                    result = genTable(node, warpObj, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor);
-                    break;
-                case "http://schemas.openxmlformats.org/drawingml/2006/chart":
-                    [result, chartID] = genChart(node, warpObj, chartID, MsgQueue, slideFactor);
-                    break;
-                case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
-                    result = genDiagram(node, warpObj, source, sType);
-                    break;
-                case "http://schemas.openxmlformats.org/presentationml/2006/ole":
-                    //result = genDiagram(node, warpObj, source, sType);
-                    var oleObjNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "mc:AlternateContent", "mc:Fallback","p:oleObj"]);
-                    
-                    if (oleObjNode === undefined) {
-                        oleObjNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "p:oleObj"]);
-                    }
-                    //console.log("node:", node, "oleObjNode:", oleObjNode)
-                    if (oleObjNode !== undefined){
-                        result = processGroupSpNode(oleObjNode, warpObj, source, slideFactor, processNodesInSlide);
-                    }
-                    break;
-                default:
-            }
-
-            return result;
-        }
-
 
         var is_first_br = false;
 
