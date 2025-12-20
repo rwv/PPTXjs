@@ -18,6 +18,7 @@ export default [
           target: 'ES2020',
           module: 'ESNext',
           strict: false,
+          esModuleInterop: true,
           allowSyntheticDefaultImports: true
         }
       })
@@ -43,6 +44,7 @@ export default [
           target: 'ES2020',
           module: 'ESNext',
           strict: false,
+          esModuleInterop: true,
           allowSyntheticDefaultImports: true
         }
       })
@@ -68,6 +70,7 @@ export default [
           target: 'ES2020',
           module: 'ESNext',
           strict: false,
+          esModuleInterop: true,
           allowSyntheticDefaultImports: true
         }
       })

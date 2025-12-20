@@ -5,3 +5,6 @@ export { getPicFill } from "./get-pic-fill";
 export { getBgPicFill } from "./get-bg-pic-fill";
 export { getPatternFill } from "./get-pattern-fill";
 export { getLinerGrandient } from "./get-liner-grandient";
+export { getBgGradientFill } from "./get-bg-gradient-fill";
+export { getShapeFill } from "./get-shape-fill";
+export { getSlideBackgroundFill } from "./get-slide-background-fill";

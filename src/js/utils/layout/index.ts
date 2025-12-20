@@ -10,3 +10,4 @@ export { getLayoutAndMasterNode } from "./get-layout-and-master-node";
 export { getTextHorizontalAlign } from "./get-text-horizontal-align";
 export { getTextVerticalAlign } from "./get-text-vertical-align";
 export { angleToDegrees } from "./angle-to-degrees";
+export { getPregraphMargn } from "./get-pregraph-margn";
