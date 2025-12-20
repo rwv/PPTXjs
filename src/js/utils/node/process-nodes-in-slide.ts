@@ -78,7 +78,7 @@ export function processNodesInSlide(
             result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
             break;
         case "p:graphicFrame":    // Chart, Diagram, Table
-            result = processGraphicFrameNode(nodeValue, warpObj, source, sType, tableStyles, isFirstBr, styleTable, rtlLangsArray, slideFactor, fontSizeFactor, chartID, MsgQueue, genTable, genChart, genDiagram, processGroupSpNode, processNodesInSlide);
+            result = processGraphicFrameNode(nodeValue, warpObj, source, sType, tableStyles, isFirstBr, styleTable, rtlLangsArray, slideFactor, fontSizeFactor, chartID, MsgQueue, genTable, genChart, genDiagram, processGroupSpNode, processNodesInSlide, processSpNode, genShape);
             break;
         case "p:grpSp":
             result = processGroupSpNode(nodeValue, warpObj, source, slideFactor, processNodesInSlide);
