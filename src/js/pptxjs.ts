@@ -78,7 +78,7 @@ import { initSlideMode } from "./utils/presentation";
 import * as tinycolor from "tinycolor2";
 >>>>>>> 1efc157 (refactor: extract initSlideMode to presentation utilities module)
 import { tXml } from "./utils/vendors/txml";
-import { readXmlFile, getContentTypes } from "./utils/xml";
+import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle } from "./utils/xml";
 import type { JsZip } from "./types/jszip";
 
 (function ($) {
@@ -334,7 +334,11 @@ import type { JsZip } from "./types/jszip";
             }
 
             var filesInfo = getContentTypes(zip);
-            var slideSize = getSlideSizeAndSetDefaultTextStyle(zip);
+            var slideSize = getSlideSizeAndSetDefaultTextStyle(zip, slideFactor, settings);
+            app_verssion = slideSize.appVersion;
+            defaultTextStyle = slideSize.defaultTextStyle;
+            slideWidth = slideSize.width;
+            slideHeight = slideSize.height;
             // @ts-expect-error TS(2304): Cannot find name 'tableStyles'.
             tableStyles = readXmlFile(zip, "ppt/tableStyles.xml");
             //console.log("slideSize: ", slideSize)
@@ -398,68 +402,6 @@ import type { JsZip } from "./types/jszip";
         }
 
 
-        function getSlideSizeAndSetDefaultTextStyle(zip: JsZip) {
-            //get app version
-            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-            var app = readXmlFile(zip, "docProps/app.xml");
-            var app_verssion_str = app["Properties"]["AppVersion"]
-            app_verssion = parseInt(app_verssion_str);
-            console.log("create by Office PowerPoint app verssion: ", app_verssion_str)
-
-            //get slide dimensions
-            var rtenObj = {};
-            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-            var content = readXmlFile(zip, "ppt/presentation.xml");
-            var sldSzAttrs = content["p:presentation"]["p:sldSz"]["attrs"];
-            var sldSzWidth = parseInt(sldSzAttrs["cx"]);
-            var sldSzHeight = parseInt(sldSzAttrs["cy"]);
-            var sldSzType = sldSzAttrs["type"];
-            console.log("Presentation size type: ", sldSzType)
-
-            //1 inches  = 96px = 2.54cm
-            // 1 EMU = 1 / 914400 inch
-            // Pixel = EMUs * Resolution / 914400;  (Resolution = 96)
-            //var standardHeight = 6858000;
-            //console.log("slideFactor: ", slideFactor, "standardHeight:", standardHeight, (standardHeight - sldSzHeight) / standardHeight)
-            
-            //slideFactor = (96 * (1 + ((standardHeight - sldSzHeight) / standardHeight))) / 914400 ;
-
-            //slideFactor = slideFactor + sldSzHeight*((standardHeight - sldSzHeight) / standardHeight) ;
-
-            //var ration = sldSzWidth / sldSzHeight;
-            
-            //Scale
-            // var viewProps = readXmlFile(zip, "ppt/viewProps.xml");
-            // var scaleLoc = getTextByPathList(viewProps, ["p:viewPr", "p:slideViewPr", "p:cSldViewPr", "p:cViewPr","p:scale"]);
-            // var scaleXnodes, scaleX = 1, scaleYnode, scaleY = 1;
-            // if (scaleLoc !== undefined){
-            //     scaleXnodes = scaleLoc["a:sx"]["attrs"];
-            //     var scaleXnodesN = scaleXnodes["n"];
-            //     var scaleXnodesD = scaleXnodes["d"];
-            //     if (scaleXnodesN !== undefined && scaleXnodesD !== undefined && scaleXnodesN != 0){
-            //         scaleX = parseInt(scaleXnodesD)/parseInt(scaleXnodesN);
-            //     }
-            //     scaleYnode = scaleLoc["a:sy"]["attrs"];
-            //     var scaleYnodeN = scaleYnode["n"];
-            //     var scaleYnodeD = scaleYnode["d"];
-            //     if (scaleYnodeN !== undefined && scaleYnodeD !== undefined && scaleYnodeN != 0) {
-            //         scaleY = parseInt(scaleYnodeD) / parseInt(scaleYnodeN) ;
-            //     }
-
-            // }
-            //console.log("scaleX: ", scaleX, "scaleY:", scaleY)
-            //slideFactor = slideFactor * scaleX;
-
-            defaultTextStyle = content["p:presentation"]["p:defaultTextStyle"];
-
-            slideWidth = sldSzWidth * slideFactor + settings.incSlide.width|0;// * scaleX;//parseInt(sldSzAttrs["cx"]) * 96 / 914400;
-            slideHeight = sldSzHeight * slideFactor + settings.incSlide.height|0;// * scaleY;//parseInt(sldSzAttrs["cy"]) * 96 / 914400;
-            rtenObj = {
-                "width": slideWidth,
-                "height": slideHeight
-            };
-            return rtenObj;
-        }
         function processSingleSlide(zip: JsZip, sldFileName: any, index: any, slideSize: any) {
             /*
             self.postMessage({
