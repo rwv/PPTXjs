@@ -77,7 +77,7 @@ import { updateProgressBar } from "./utils/ui";
 import { initSlideMode } from "./utils/presentation";
 import { processCxnSpNode } from "./utils/shape";
 import { getTableCellParams, genTable } from "./utils/table";
-import { processSpNode, processGroupSpNode, processGraphicFrameNode } from "./utils/node";
+import { processSpNode, processGroupSpNode, processGraphicFrameNode, processNodesInSlide } from "./utils/node";
 import tinycolor from "tinycolor2";
 import { tXml } from "./utils/vendors/txml";
 import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle, indexNodes } from "./utils/xml";
@@ -102,6 +102,8 @@ import type { JsZip } from "./types/jszip";
         var _order = 1;
 
         var app_verssion: any ;
+
+        var tableStyles: any;
 
         var rtl_langs_array = ["he-IL", "ar-AE", "ar-SA", "dv-MV", "fa-IR","ur-PK"]
 
@@ -341,7 +343,6 @@ import type { JsZip } from "./types/jszip";
             defaultTextStyle = slideSize.defaultTextStyle;
             slideWidth = slideSize.width;
             slideHeight = slideSize.height;
-            // @ts-expect-error TS(2304): Cannot find name 'tableStyles'.
             tableStyles = readXmlFile(zip, "ppt/tableStyles.xml");
             //console.log("slideSize: ", slideSize)
             post_ary.push({
@@ -638,12 +639,10 @@ import type { JsZip } from "./types/jszip";
             for (var nodeKey in nodes) {
                 if (nodes[nodeKey].constructor === Array) {
                     for (var i = 0; i < nodes[nodeKey].length; i++) {
-                        // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-                        result += processNodesInSlide(nodeKey, nodes[nodeKey][i], nodes, warpObj, "slide");
+                        result += processNodesInSlide(nodeKey, nodes[nodeKey][i], nodes, warpObj, "slide", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram);
                     }
                 } else {
-                    // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-                    result += processNodesInSlide(nodeKey, nodes[nodeKey], nodes, warpObj, "slide");
+                    result += processNodesInSlide(nodeKey, nodes[nodeKey], nodes, warpObj, "slide", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram);
                 }
             }
             if (settings.slideMode && settings.slideType == "revealjs") {
@@ -655,37 +654,6 @@ import type { JsZip } from "./types/jszip";
         }
 
 
-        function processNodesInSlide(nodeKey: any, nodeValue: any, nodes: any, warpObj: any, source: any, sType: any) {
-            var result = "";
-
-            switch (nodeKey) {
-                case "p:sp":    // Shape, Text
-                    result = processSpNode(nodeValue, nodes, warpObj, source, sType, genShape);
-                    break;
-                case "p:cxnSp":    // Shape, Text (with connection)
-                    result = processCxnSpNode(nodeValue, nodes, warpObj, source, sType, genShape);
-                    break;
-                case "p:pic":    // Picture
-                    result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
-                    break;
-                case "p:graphicFrame":    // Chart, Diagram, Table
-                    result = processGraphicFrameNode(nodeValue, warpObj, source, sType, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, genTable, genChart, genDiagram, processGroupSpNode, processNodesInSlide);
-                    break;
-                case "p:grpSp":
-                    result = processGroupSpNode(nodeValue, warpObj, source, slideFactor, processNodesInSlide);
-                    break;
-                case "mc:AlternateContent": //Equations and formulas as Image
-                    //console.log("mc:AlternateContent nodeValue:" , nodeValue , "nodes:",nodes, "sType:",sType)
-                    var mcFallbackNode = getTextByPathList(nodeValue, ["mc:Fallback"]);
-                    result = processGroupSpNode(mcFallbackNode, warpObj, source, slideFactor, processNodesInSlide);
-                    break;
-                default:
-                    //console.log("nodeKey: ", nodeKey)
-            }
-
-            return result;
-
-        }
 
 
 
@@ -9431,8 +9399,7 @@ import type { JsZip } from "./types/jszip";
                             //     node_ph_type_ary.push(ph_type);
                             // }
                             if (ph_type != "pic") {
-                                // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-                                result += processNodesInSlide(nodeKey, nodesSldLayout[nodeKey][i], nodesSldLayout, warpObj, "slideLayoutBg"); //slideLayoutBg , slideMasterBg
+                                result += processNodesInSlide(nodeKey, nodesSldLayout[nodeKey][i], nodesSldLayout, warpObj, "slideLayoutBg", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram); //slideLayoutBg , slideMasterBg
                             }
                         }
                     } else {
@@ -9441,8 +9408,7 @@ import type { JsZip } from "./types/jszip";
                         //     node_ph_type_ary.push(ph_type);
                         // }
                         if (ph_type != "pic") {
-                            // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-                            result += processNodesInSlide(nodeKey, nodesSldLayout[nodeKey], nodesSldLayout, warpObj, "slideLayoutBg"); //slideLayoutBg, slideMasterBg
+                            result += processNodesInSlide(nodeKey, nodesSldLayout[nodeKey], nodesSldLayout, warpObj, "slideLayoutBg", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram); //slideLayoutBg, slideMasterBg
                         }
                     }
                 }
@@ -9453,15 +9419,13 @@ import type { JsZip } from "./types/jszip";
                         for (var i = 0; i < nodesSldMaster[nodeKey].length; i++) {
                             var ph_type = getTextByPathList(nodesSldMaster[nodeKey][i], ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
                             //if (node_ph_type_ary.indexOf(ph_type) > -1) {
-                            // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-                            result += processNodesInSlide(nodeKey, nodesSldMaster[nodeKey][i], nodesSldMaster, warpObj, "slideMasterBg"); //slideLayoutBg , slideMasterBg
+                            result += processNodesInSlide(nodeKey, nodesSldMaster[nodeKey][i], nodesSldMaster, warpObj, "slideMasterBg", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram); //slideLayoutBg , slideMasterBg
                             //}
                         }
                     } else {
                         var ph_type = getTextByPathList(nodesSldMaster[nodeKey], ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
                         //if (node_ph_type_ary.indexOf(ph_type) > -1) {
-                        // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-                        result += processNodesInSlide(nodeKey, nodesSldMaster[nodeKey], nodesSldMaster, warpObj, "slideMasterBg"); //slideLayoutBg, slideMasterBg
+                        result += processNodesInSlide(nodeKey, nodesSldMaster[nodeKey], nodesSldMaster, warpObj, "slideMasterBg", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram); //slideLayoutBg, slideMasterBg
                         //}
                     }
                 }
