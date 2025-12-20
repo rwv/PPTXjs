@@ -69,7 +69,7 @@ import {
   setTextByPathList,
   eachElement,
 } from "./utils/object";
-import { extractChartData, genChart, processSingleMsg } from "./utils/chart";
+import { extractChartData, genChart, processSingleMsg, processMsgQueue } from "./utils/chart";
 import { genGlobalCSS } from "./utils/css";
 import { updateProgressBar } from "./utils/ui";
 import { initSlideMode } from "./utils/presentation";
@@ -11147,13 +11147,6 @@ import type { JsZip } from "./types/jszip";
             }
             return result;
 
-        }
-        function processMsgQueue(queue: any) {
-            for (var i = 0; i < queue.length; i++) {
-                if (processSingleMsg(queue[i].data)) {
-                    isDone = true;
-                }
-            }
         }
 
     };
