@@ -73,6 +73,7 @@ import { extractChartData, genChart, processSingleMsg, processMsgQueue } from ".
 import { genGlobalCSS } from "./utils/css";
 import { updateProgressBar } from "./utils/ui";
 import { initSlideMode } from "./utils/presentation";
+import { processCxnSpNode } from "./utils/shape";
 import tinycolor from "tinycolor2";
 import { tXml } from "./utils/vendors/txml";
 import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle, indexNodes } from "./utils/xml";
@@ -658,7 +659,7 @@ import type { JsZip } from "./types/jszip";
                     result = processSpNode(nodeValue, nodes, warpObj, source, sType);
                     break;
                 case "p:cxnSp":    // Shape, Text (with connection)
-                    result = processCxnSpNode(nodeValue, nodes, warpObj, source, sType);
+                    result = processCxnSpNode(nodeValue, nodes, warpObj, source, sType, genShape);
                     break;
                 case "p:pic":    // Picture
                     result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
@@ -836,17 +837,6 @@ import type { JsZip } from "./types/jszip";
             return genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, name, idx, type, order, warpObj, isUserDrawnBg, sType, source);
         }
 
-        function processCxnSpNode(node: any, pNode: any, warpObj: any, source: any, sType: any) {
-
-            var id = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["id"];
-            var name = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["name"];
-            var idx = (node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined) ? undefined : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["idx"];
-            var type = (node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined) ? undefined : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["type"];
-            //<p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
-            var order = node["attrs"]["order"];
-
-            return genShape(node, pNode, undefined, undefined, id, name, idx, type, order, warpObj, undefined, sType, source);
-        }
 
         function genShape(node: any, pNode: any, slideLayoutSpNode: any, slideMasterSpNode: any, id: any, name: any, idx: any, type: any, order: any, warpObj: any, isUserDrawnBg: any, sType: any, source: any) {
             //var dltX = 0;
