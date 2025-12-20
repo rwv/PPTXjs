@@ -79,6 +79,7 @@ import { processCxnSpNode } from "./utils/shape";
 import { getTableCellParams, genTable } from "./utils/table";
 import { processSpNode, processGroupSpNode, processGraphicFrameNode, processNodesInSlide } from "./utils/node";
 import { genDiagram } from "./utils/diagram";
+import { getBackground } from "./utils/slide";
 import tinycolor from "tinycolor2";
 import { tXml } from "./utils/vendors/txml";
 import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle, indexNodes } from "./utils/xml";
@@ -621,7 +622,7 @@ import type { JsZip } from "./types/jszip";
             };
             var bgResult = "";
             if (processFullTheme === true) {
-                bgResult = getBackground(warpObj, slideSize, index);
+                bgResult = getBackground(warpObj, slideSize, index, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processNodesInSlide, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram);
             }
 
             var bgColor = "";
@@ -9303,67 +9304,6 @@ import type { JsZip } from "./types/jszip";
 
 
 
-
-        function getBackground(warpObj: any, slideSize: any, index: any) {
-            //var rslt = "";
-            var slideContent = warpObj["slideContent"];
-            var slideLayoutContent = warpObj["slideLayoutContent"];
-            var slideMasterContent = warpObj["slideMasterContent"];
-
-            var nodesSldLayout = getTextByPathList(slideLayoutContent, ["p:sldLayout", "p:cSld", "p:spTree"]);
-            var nodesSldMaster = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:cSld", "p:spTree"]);
-            // console.log("slideContent : ", slideContent)
-            // console.log("slideLayoutContent : ", slideLayoutContent)
-            // console.log("slideMasterContent : ", slideMasterContent)
-            //console.log("warpObj : ", warpObj)
-            var showMasterSp = getTextByPathList(slideLayoutContent, ["p:sldLayout", "attrs", "showMasterSp"]);
-            //console.log("slideLayoutContent : ", slideLayoutContent, ", showMasterSp: ", showMasterSp)
-            var bgColor = getSlideBackgroundFill(warpObj, index);
-            var result = "<div class='slide-background-" + index + "' style='width:" + slideSize.width + "px; height:" + slideSize.height + "px;" + bgColor + "'>"
-            var node_ph_type_ary = [];
-            if (nodesSldLayout !== undefined) {
-                for (var nodeKey in nodesSldLayout) {
-                    if (nodesSldLayout[nodeKey].constructor === Array) {
-                        for (var i = 0; i < nodesSldLayout[nodeKey].length; i++) {
-                            var ph_type = getTextByPathList(nodesSldLayout[nodeKey][i], ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
-                            // if (ph_type !== undefined && ph_type != "pic") {
-                            //     node_ph_type_ary.push(ph_type);
-                            // }
-                            if (ph_type != "pic") {
-                                result += processNodesInSlide(nodeKey, nodesSldLayout[nodeKey][i], nodesSldLayout, warpObj, "slideLayoutBg", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram); //slideLayoutBg , slideMasterBg
-                            }
-                        }
-                    } else {
-                        var ph_type = getTextByPathList(nodesSldLayout[nodeKey], ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
-                        // if (ph_type !== undefined && ph_type != "pic") {
-                        //     node_ph_type_ary.push(ph_type);
-                        // }
-                        if (ph_type != "pic") {
-                            result += processNodesInSlide(nodeKey, nodesSldLayout[nodeKey], nodesSldLayout, warpObj, "slideLayoutBg", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram); //slideLayoutBg, slideMasterBg
-                        }
-                    }
-                }
-            }
-            if (nodesSldMaster !== undefined && (showMasterSp == "1" || showMasterSp === undefined)) {
-                for (var nodeKey in nodesSldMaster) {
-                    if (nodesSldMaster[nodeKey].constructor === Array) {
-                        for (var i = 0; i < nodesSldMaster[nodeKey].length; i++) {
-                            var ph_type = getTextByPathList(nodesSldMaster[nodeKey][i], ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
-                            //if (node_ph_type_ary.indexOf(ph_type) > -1) {
-                            result += processNodesInSlide(nodeKey, nodesSldMaster[nodeKey][i], nodesSldMaster, warpObj, "slideMasterBg", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram); //slideLayoutBg , slideMasterBg
-                            //}
-                        }
-                    } else {
-                        var ph_type = getTextByPathList(nodesSldMaster[nodeKey], ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
-                        //if (node_ph_type_ary.indexOf(ph_type) > -1) {
-                        result += processNodesInSlide(nodeKey, nodesSldMaster[nodeKey], nodesSldMaster, warpObj, "slideMasterBg", undefined, tableStyles, {value: is_first_br}, styleTable, rtl_langs_array, slideFactor, fontSizeFactor, chartID, MsgQueue, settings, processSpNode, processCxnSpNode, processPicNode, processGraphicFrameNode, processGroupSpNode, genShape, genTable, genChart, genDiagram); //slideLayoutBg, slideMasterBg
-                        //}
-                    }
-                }
-            }
-            return result;
-
-        }
 
     };
 
