@@ -3,3 +3,4 @@
  */
 export { getDingbatToUnicode } from "./get-dingbat-to-unicode";
 export { getHtmlBullet } from "./get-html-bullet";
+export { genBuChar } from "./gen-bu-char";
