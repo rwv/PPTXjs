@@ -68,7 +68,7 @@ import {
   setTextByPathList,
   eachElement,
 } from "./utils/object";
-import { extractChartData, genChart } from "./utils/chart";
+import { extractChartData, genChart, processSingleMsg } from "./utils/chart";
 import tinycolor from "tinycolor2";
 import { tXml } from "./utils/vendors/txml";
 import { readXmlFile, getContentTypes } from "./utils/xml";
@@ -11516,88 +11516,10 @@ import type { JsZip } from "./types/jszip";
         }
         function processMsgQueue(queue: any) {
             for (var i = 0; i < queue.length; i++) {
-                processSingleMsg(queue[i].data);
+                if (processSingleMsg(queue[i].data)) {
+                    isDone = true;
+                }
             }
-        }
-
-        function processSingleMsg(d: any) {
-
-            var chartID = d.chartID;
-            var chartType = d.chartType;
-            var chartData = d.chartData;
-
-            var data = [];
-
-            var chart = null;
-            switch (chartType) {
-                case "lineChart":
-                    data = chartData;
-                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
-                    chart = nv.models.lineChart()
-                        .useInteractiveGuideline(true);
-                    chart.xAxis.tickFormat(function (d: any) { return chartData[0].xlabels[d] || d; });
-                    break;
-                case "barChart":
-                    data = chartData;
-                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
-                    chart = nv.models.multiBarChart();
-                    chart.xAxis.tickFormat(function (d: any) { return chartData[0].xlabels[d] || d; });
-                    break;
-                case "pieChart":
-                case "pie3DChart":
-                    if (chartData.length > 0) {
-                        data = chartData[0].values;
-                    }
-                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
-                    chart = nv.models.pieChart();
-                    break;
-                case "areaChart":
-                    data = chartData;
-                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
-                    chart = nv.models.stackedAreaChart()
-                        .clipEdge(true)
-                        .useInteractiveGuideline(true);
-                    chart.xAxis.tickFormat(function (d: any) { return chartData[0].xlabels[d] || d; });
-                    break;
-                case "scatterChart":
-
-                    for (var i = 0; i < chartData.length; i++) {
-                        var arr = [];
-                        for (var j = 0; j < chartData[i].length; j++) {
-                            arr.push({ x: j, y: chartData[i][j] });
-                        }
-                        data.push({ key: 'data' + (i + 1), values: arr });
-                    }
-
-                    //data = chartData;
-                    // @ts-expect-error TS(2304): Cannot find name 'nv'.
-                    chart = nv.models.scatterChart()
-                        .showDistX(true)
-                        .showDistY(true)
-                        // @ts-expect-error TS(2304): Cannot find name 'd3'.
-                        .color(d3.scale.category10().range());
-                    // @ts-expect-error TS(2304): Cannot find name 'd3'.
-                    chart.xAxis.axisLabel('X').tickFormat(d3.format('.02f'));
-                    // @ts-expect-error TS(2304): Cannot find name 'd3'.
-                    chart.yAxis.axisLabel('Y').tickFormat(d3.format('.02f'));
-                    break;
-                default:
-            }
-
-            if (chart !== null) {
-
-                // @ts-expect-error TS(2304): Cannot find name 'd3'.
-                d3.select("#" + chartID)
-                    .append("svg")
-                    .datum(data)
-                    .transition().duration(500)
-                    .call(chart);
-
-                // @ts-expect-error TS(2304): Cannot find name 'nv'.
-                nv.utils.windowResize(chart.update);
-                isDone = true;
-            }
-
         }
 
     };

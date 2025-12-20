@@ -3,3 +3,4 @@
  */
 export { extractChartData } from "./extract-chart-data";
 export { genChart } from "./gen-chart";
+export { processSingleMsg } from "./process-single-msg";
