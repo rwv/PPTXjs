@@ -70,6 +70,7 @@ import {
 } from "./utils/object";
 import { extractChartData, genChart, processSingleMsg } from "./utils/chart";
 import { genGlobalCSS } from "./utils/css";
+import { updateProgressBar } from "./utils/ui";
 import tinycolor from "tinycolor2";
 import { tXml } from "./utils/vendors/txml";
 import { readXmlFile, getContentTypes } from "./utils/xml";
@@ -213,12 +214,6 @@ import type { JsZip } from "./types/jszip";
             });
         }
 
-        function updateProgressBar(percent: any) {
-            //console.log("percent: ", percent)
-            var progressBarElemtnt = $(".slides-loading-progress-bar")
-            progressBarElemtnt.width(percent + "%")
-            progressBarElemtnt.html("<span style='text-align: center;'>Loading...(" + percent + "%)</span>");
-        }
 
         function convertToHtml(file: any) {
             //'use strict';
