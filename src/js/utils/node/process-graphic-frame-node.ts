@@ -30,6 +30,8 @@ import { getTextByPathList } from "../object";
  * @param genDiagram - genDiagram function
  * @param processGroupSpNode - processGroupSpNode function
  * @param processNodesInSlide - processNodesInSlide function
+ * @param processSpNode - processSpNode function
+ * @param genShape - genShape function
  * @returns HTML string for the graphic frame content
  */
 export function processGraphicFrameNode(
@@ -49,7 +51,9 @@ export function processGraphicFrameNode(
     genChart: any,
     genDiagram: any,
     processGroupSpNode: any,
-    processNodesInSlide: any
+    processNodesInSlide: any,
+    processSpNode: any,
+    genShape: any
 ): string {
 
     var result = "";
@@ -64,7 +68,7 @@ export function processGraphicFrameNode(
             [result, chartIdRef.value] = genChart(node, warpObj, chartIdRef.value, MsgQueue, slideFactor);
             break;
         case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
-            result = genDiagram(node, warpObj, source, sType);
+            result = genDiagram(node, warpObj, source, sType, slideFactor, processSpNode, genShape);
             break;
         case "http://schemas.openxmlformats.org/presentationml/2006/ole":
             //result = genDiagram(node, warpObj, source, sType);
