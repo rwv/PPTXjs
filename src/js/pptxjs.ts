@@ -8,82 +8,24 @@
  * fix issues:
  * [#16](https://github.com/meshesha/PPTXjs/issues/16)
  */
-import { shapePie } from "./utils/shape/shape-pie";
-import { shapeArc } from "./utils/shape/shape-arc";
-import { shapeSnipRoundRect } from "./utils/shape/shape-snip-round-rect";
-import { shapeGear } from "./utils/shape/shape-gear";
-import {
-  rgba2hex,
-  getSchemeColorFromTheme,
-  getSolidFill,
-} from "./utils/color";
-import { getHtmlBullet, genBuChar } from "./utils/bullet";
-import {
-  getMimeType,
-  getBase64ImageDimensions,
-  isVideoLink,
-  extractFileExtension,
-  base64ArrayBuffer,
-  processPicNode,
-} from "./utils/media";
-import {
-  romanize,
-  alphaNumeric,
-  archaicNumbers,
-  hebrew2Minus,
-  getNumTypeNum,
-  setNumericBullets,
-  genSpanElement,
-  genTextBody,
-} from "./utils/text";
-import { escapeHtml } from "./utils/string";
-import { getSvgGradient, svgAngle, getMiddleStops, getSvgImagePattern } from "./utils/svg";
-import {
-  getPosition,
-  getSize,
-  getVerticalAlign,
-  getVerticalMargins,
-  getHorizontalAlign,
-  getPregraphDir,
-  getContentDir,
-  getLayoutAndMasterNode,
-  getTextHorizontalAlign,
-  getTextVerticalAlign,
-  angleToDegrees,
-  getPregraphMargn,
-} from "./utils/layout";
-import { getFontSize, getFontType, getFontBold, getFontItalic, getFontDecoration, getFontColorPr } from "./utils/font";
-import {
-  getFillType,
-  getGradientFill,
-  getPicFill,
-  getBgPicFill,
-  getPatternFill,
-  getLinerGrandient,
-  getBgGradientFill,
-  getShapeFill,
-  getSlideBackgroundFill,
-} from "./utils/fill";
-import { getBorder, getTableBorders } from "./utils/border";
-import {
-  getTextByPathList,
-  getTextByPathStr,
-  setTextByPathList,
-  eachElement,
-} from "./utils/object";
-import { extractChartData, genChart, processSingleMsg, processMsgQueue } from "./utils/chart";
+import { base64ArrayBuffer, processPicNode } from "./utils/media";
+import { setNumericBullets } from "./utils/text";
+import { getSvgGradient, getSvgImagePattern } from "./utils/svg";
+import { getPosition, getSize, getVerticalAlign, getHorizontalAlign } from "./utils/layout";
+import { getShapeFill } from "./utils/fill";
+import { getBorder } from "./utils/border";
+import { getTextByPathList } from "./utils/object";
+import { genChart, processMsgQueue } from "./utils/chart";
 import { genGlobalCSS } from "./utils/css";
 import { updateProgressBar } from "./utils/ui";
 import { initSlideMode } from "./utils/presentation";
 import { processCxnSpNode, genShape } from "./utils/shape";
-import { getTableCellParams, genTable } from "./utils/table";
+import { genTable } from "./utils/table";
 import { processSpNode, processGroupSpNode, processGraphicFrameNode, processNodesInSlide } from "./utils/node";
 import { genDiagram } from "./utils/diagram";
 import { getBackground, processSingleSlide } from "./utils/slide";
 import { processPPTX } from "./utils/pptx";
-import tinycolor from "tinycolor2";
-import { tXml } from "./utils/vendors/txml";
-import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle, indexNodes } from "./utils/xml";
+import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle } from "./utils/xml";
 import type { JsZip } from "./types/jszip";
 
 (function ($) {
