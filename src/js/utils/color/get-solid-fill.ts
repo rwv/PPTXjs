@@ -1,17 +1,15 @@
 import tinycolor from "tinycolor2";
 import { getTextByPathList } from "../object/get-text-by-path-list";
-import {
-  toHex,
-  hslToRgb,
-  getColorName2Hex,
-  applyHueMod,
-  applyLumMod,
-  applyLumOff,
-  applySatMod,
-  applyShade,
-  applyTint,
-  getSchemeColorFromTheme,
-} from "./index";
+import { toHex } from "./to-hex";
+import { hslToRgb } from "./hsl-to-rgb";
+import { getColorName2Hex } from "./get-color-name-2-hex";
+import { applyHueMod } from "./apply-hue-mod";
+import { applyLumMod } from "./apply-lum-mod";
+import { applyLumOff } from "./apply-lum-off";
+import { applySatMod } from "./apply-sat-mod";
+import { applyShade } from "./apply-shade";
+import { applyTint } from "./apply-tint";
+import { getSchemeColorFromTheme } from "./get-scheme-color-from-theme";
 
 /**
  * Color node with attributes from PPTX XML

@@ -2,7 +2,7 @@ import { getTextByPathList } from "../object";
 import { getFontColorPr, getFontSize } from "../font";
 import { getLayoutAndMasterNode } from "../layout";
 import { getSolidFill } from "../color";
-import { getHtmlBullet } from "../bullet";
+import { getHtmlBullet } from "./get-html-bullet";
 import { getMimeType, base64ArrayBuffer } from "../media";
 
 /**

@@ -34,7 +34,11 @@ import { getPosition, getSize, getVerticalAlign, angleToDegrees } from "../layou
 import { getFillType, getShapeFill } from "../fill";
 import { getBorder } from "../border";
 import { genTextBody } from "../text";
-import { shapePie, shapeArc, shapeGear, shapeSnipRoundRect } from "./index";
+import { getSolidFill } from "../color";
+import { shapePie } from "./shape-pie";
+import { shapeArc } from "./shape-arc";
+import { shapeGear } from "./shape-gear";
+import { shapeSnipRoundRect } from "./shape-snip-round-rect";
 import { getSvgGradient, getSvgImagePattern } from "../svg";
 
 export function genShape(
