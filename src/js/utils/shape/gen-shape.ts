@@ -42,6 +42,7 @@ import { shapeSnipRoundRect } from "./shape-snip-round-rect";
 import { getSvgGradient, getSvgImagePattern } from "../svg";
 import { renderCustomGeometry } from "./render-custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
+import { initShapeContext } from "./init-shape-context";
 
 export function genShape(
     node: any,
@@ -63,130 +64,58 @@ export function genShape(
     rtlLangsArray: string[],
     isFirstBr: { value: boolean }
 ): string {
-            //var dltX = 0;
-            //var dltY = 0;
-            var xfrmList = ["p:spPr", "a:xfrm"];
-            var slideXfrmNode = getTextByPathList(node, xfrmList);
-            var slideLayoutXfrmNode = getTextByPathList(slideLayoutSpNode, xfrmList);
-            var slideMasterXfrmNode = getTextByPathList(slideMasterSpNode, xfrmList);
+    // Initialize shape rendering context
+    const context = initShapeContext(
+        node,
+        pNode,
+        slideLayoutSpNode,
+        slideMasterSpNode,
+        id,
+        idx,
+        type,
+        name,
+        order,
+        sType,
+        source,
+        warpObj,
+        slideFactor,
+        styleTable
+    );
 
-            var result = "";
-            var shpId = getTextByPathList(node, ["attrs", "order"]);
-            //console.log("shpId: ",shpId)
-            var shapType = getTextByPathList(node, ["p:spPr", "a:prstGeom", "attrs", "prst"]);
+    if (!context) {
+        // No valid shape type found, return empty result
+        return "";
+    }
 
-            //custGeom - Amir
-            var custShapType = getTextByPathList(node, ["p:spPr", "a:custGeom"]);
-            var headEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]);
-            var tailEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]);
+    // Destructure context
+    const {
+        slideXfrmNode,
+        slideLayoutXfrmNode,
+        slideMasterXfrmNode,
+        shpId,
+        shapType,
+        custShapType,
+        rotate,
+        txtRotate,
+        flip,
+        x,
+        y,
+        w,
+        h,
+        svgCssName,
+        effectsClassName,
+        fillColor,
+        grndFillFlg,
+        imgFillFlg,
+        clrFillType,
+        border
+    } = context;
+    const headEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]);
+    const tailEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]);
 
-            var isFlipV = false;
-            var isFlipH = false;
-            var flip = "";
-            if (getTextByPathList(slideXfrmNode, ["attrs", "flipV"]) === "1") {
-                isFlipV = true;
-            }
-            if (getTextByPathList(slideXfrmNode, ["attrs", "flipH"]) === "1") {
-                isFlipH = true;
-            }
-            if (isFlipH && !isFlipV) {
-                flip = " scale(-1,1)"
-            } else if (!isFlipH && isFlipV) {
-                flip = " scale(1,-1)"
-            } else if (isFlipH && isFlipV) {
-                flip = " scale(-1,-1)"
-            }
-            /////////////////////////Amir////////////////////////
-            //rotate
-            var rotate = angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
-
-            //console.log("genShape rotate: " + rotate);
-            var txtRotate;
-            var txtXframeNode = getTextByPathList(node, ["p:txXfrm"]);
-            if (txtXframeNode !== undefined) {
-                var txtXframeRot = getTextByPathList(txtXframeNode, ["attrs", "rot"]);
-                if (txtXframeRot !== undefined) {
-                    txtRotate = angleToDegrees(txtXframeRot) + 90;
-                }
-            } else {
-                txtRotate = rotate;
-            }
-            //////////////////////////////////////////////////
-            if (shapType !== undefined || custShapType !== undefined /*&& slideXfrmNode !== undefined*/) {
-                var off = getTextByPathList(slideXfrmNode, ["a:off", "attrs"]);
-                var x = parseInt(off["x"]) * slideFactor;
-                var y = parseInt(off["y"]) * slideFactor;
-
-                var ext = getTextByPathList(slideXfrmNode, ["a:ext", "attrs"]);
-                var w = parseInt(ext["cx"]) * slideFactor;
-                var h = parseInt(ext["cy"]) * slideFactor;
-
-                var svgCssName = "_svg_css_" + (Object.keys(styleTable).length + 1) + "_"  + Math.floor(Math.random() * 1001);
-                //console.log("name:", name, "svgCssName: ", svgCssName)
-                var effectsClassName = svgCssName + "_effects";
-                result += "<svg class='drawing " + svgCssName + " " + effectsClassName + " ' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name + "'" +
-                    "' style='" +
-                    getPosition(slideXfrmNode, pNode, undefined, undefined, sType, slideFactor) +
-                    getSize(slideXfrmNode, undefined, undefined, slideFactor) +
-                    " z-index: " + order + ";" +
-                    "transform: rotate(" + ((rotate !== undefined) ? rotate : 0) + "deg)" + flip + ";" +
-                    "'>";
-                result += '<defs>'
-                // Fill Color
-                var fillColor = getShapeFill(node, pNode, true, warpObj, source);
-                //console.log("genShape: fillColor: ", fillColor)
-                var grndFillFlg = false;
-                var imgFillFlg = false;
-                var clrFillType = getFillType(getTextByPathList(node, ["p:spPr"]));
-                if (clrFillType == "GROUP_FILL") {
-                    clrFillType = getFillType(getTextByPathList(pNode, ["p:grpSpPr"]));
-                }
-                // if (clrFillType == "") {
-                //     var clrFillType = getFillType(getTextByPathList(node, ["p:style","a:fillRef"]));
-                // }
-                //console.log("genShape: fillColor: ", fillColor, ", clrFillType: ", clrFillType, ", node: ", node)
-                /////////////////////////////////////////                    
-                if (clrFillType == "GRADIENT_FILL") {
-                    grndFillFlg = true;
-                    var color_arry = fillColor.color;
-                    var angl = fillColor.rot + 90;
-                    var svgGrdnt = getSvgGradient(w, h, angl, color_arry, shpId);
-                    //fill="url(#linGrd)"
-                    //console.log("genShape: svgGrdnt: ", svgGrdnt)
-                    result += svgGrdnt;
-
-                } else if (clrFillType == "PIC_FILL") {
-                    imgFillFlg = true;
-                    var svgBgImg = getSvgImagePattern(node, fillColor, shpId, warpObj);
-                    //fill="url(#imgPtrn)"
-                    //console.log(svgBgImg)
-                    result += svgBgImg;
-                } else if (clrFillType == "PATTERN_FILL") {
-                    var styleText = fillColor;
-                    if (styleText in styleTable) {
-                        styleText += "do-nothing: " + svgCssName +";";
-                    }
-                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-                    styleTable[styleText] = {
-                        "name": svgCssName,
-                        "text": styleText
-                    };
-                    //}
-                    fillColor = "none";
-                } else {
-                    if (clrFillType != "SOLID_FILL" && clrFillType != "PATTERN_FILL" &&
-                        (shapType == "arc" ||
-                            shapType == "bracketPair" ||
-                            shapType == "bracePair" ||
-                            shapType == "leftBracket" ||
-                            shapType == "leftBrace" ||
-                            shapType == "rightBrace" ||
-                            shapType == "rightBracket")) { //Temp. solution  - TODO
-                        fillColor = "none";
-                    }
-                }
-                // Border Color
-                var border = getBorder(node, pNode, true, "shape", warpObj);
+    var result = context.svgHeader;
+    result += '<defs>';
+    result += context.defsContent;
 
 
                 // Process shape effects (shadows, markers)
@@ -202,7 +131,6 @@ export function genShape(
                 result += effectsResult.defsContent;
 
                 result += '</defs>'
-            }
             if (shapType !== undefined && custShapType === undefined) {
                 //console.log("shapType: ", shapType)
                 switch (shapType) {
