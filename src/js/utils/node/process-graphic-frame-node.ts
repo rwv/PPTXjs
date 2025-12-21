@@ -67,7 +67,7 @@ export function processGraphicFrameNode(
             [result, chartID] = genChart(node, warpObj, chartID, MsgQueue, slideFactor);
             break;
         case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
-            result = genDiagram(node, warpObj, source, sType, slideFactor, processSpNode, genShape);
+            result = genDiagram(node, warpObj, source, sType, slideFactor, processSpNode, genShape, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr);
             break;
         case "http://schemas.openxmlformats.org/presentationml/2006/ole":
             //result = genDiagram(node, warpObj, source, sType);

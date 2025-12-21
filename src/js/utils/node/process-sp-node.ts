@@ -18,6 +18,11 @@ import { getTextByPathList } from "../object";
  * @param source - Source context (e.g., "slideLayoutBg", "slideMasterBg", "diagramBg")
  * @param sType - Shape type context
  * @param genShape - genShape function to delegate HTML generation to
+ * @param slideFactor - EMU to pixel conversion factor
+ * @param styleTable - Global CSS style table
+ * @param fontSizeFactor - Font size scaling factor
+ * @param rtlLangsArray - Array of RTL language codes
+ * @param isFirstBr - Mutable object tracking first line break state
  * @returns HTML string for the shape
  */
 export function processSpNode(
@@ -26,7 +31,12 @@ export function processSpNode(
     warpObj: any,
     source: any,
     sType: any,
-    genShape: any
+    genShape: any,
+    slideFactor: number,
+    styleTable: any,
+    fontSizeFactor: number,
+    rtlLangsArray: string[],
+    isFirstBr: { value: boolean }
 ): string {
 
     /*
@@ -93,5 +103,5 @@ export function processSpNode(
         }
     }
     //console.log("processSpNode type:", type, "idx:", idx);
-    return genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, name, idx, type, order, warpObj, isUserDrawnBg, sType, source);
+    return genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, name, idx, type, order, warpObj, isUserDrawnBg, sType, source, slideFactor, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr);
 }

@@ -10,6 +10,11 @@
  * @param source - Source type (slide, slideLayout, slideMaster, etc.)
  * @param sType - Shape type
  * @param genShape - The genShape function to delegate rendering to
+ * @param slideFactor - EMU to pixel conversion factor
+ * @param styleTable - Global CSS style table
+ * @param fontSizeFactor - Font size scaling factor
+ * @param rtlLangsArray - Array of RTL language codes
+ * @param isFirstBr - Mutable object tracking first line break state
  * @returns HTML string for the connection shape
  */
 export function processCxnSpNode(
@@ -18,7 +23,12 @@ export function processCxnSpNode(
     warpObj: any,
     source: any,
     sType: any,
-    genShape: any
+    genShape: any,
+    slideFactor: number,
+    styleTable: any,
+    fontSizeFactor: number,
+    rtlLangsArray: string[],
+    isFirstBr: { value: boolean }
 ): string {
     var id = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["id"];
     var name = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["name"];
@@ -27,5 +37,5 @@ export function processCxnSpNode(
     // <p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
     var order = node["attrs"]["order"];
 
-    return genShape(node, pNode, undefined, undefined, id, name, idx, type, order, warpObj, undefined, sType, source);
+    return genShape(node, pNode, undefined, undefined, id, name, idx, type, order, warpObj, undefined, sType, source, slideFactor, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr);
 }
