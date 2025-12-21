@@ -329,23 +329,6 @@ import type { JsZip } from "./types/jszip";
 
 
 
-
-        /*
-        function shapePolygon(sidesNum) {
-            var sides  = sidesNum;
-            var radius = 100;
-            var angle  = 2 * Math.PI / sides;
-            var points = []; 
-            
-            for (var i = 0; i < sides; i++) {
-                points.push(radius + radius * Math.sin(i * angle));
-                points.push(radius - radius * Math.cos(i * angle));
-            }
-
-            return points;
-        }
-        */
-
         var is_first_br = false;
 
 
