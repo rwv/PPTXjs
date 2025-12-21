@@ -69,10 +69,10 @@ export function processNodesInSlide(
 
     switch (nodeKey) {
         case "p:sp":    // Shape, Text
-            result = processSpNode(nodeValue, nodes, warpObj, source, sType, genShape);
+            result = processSpNode(nodeValue, nodes, warpObj, source, sType, genShape, slideFactor, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr);
             break;
         case "p:cxnSp":    // Shape, Text (with connection)
-            result = processCxnSpNode(nodeValue, nodes, warpObj, source, sType, genShape);
+            result = processCxnSpNode(nodeValue, nodes, warpObj, source, sType, genShape, slideFactor, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr);
             break;
         case "p:pic":    // Picture
             result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);

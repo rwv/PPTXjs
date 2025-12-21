@@ -25,6 +25,10 @@ import { getPosition, getSize } from "../layout";
  * @param slideFactor - EMU to pixel conversion factor
  * @param processSpNode - processSpNode function for rendering shapes
  * @param genShape - genShape function (passed to processSpNode)
+ * @param styleTable - Global CSS style table
+ * @param fontSizeFactor - Font size scaling factor
+ * @param rtlLangsArray - Array of RTL language codes
+ * @param isFirstBr - Mutable object tracking first line break state
  * @returns HTML string for the diagram
  */
 export function genDiagram(
@@ -34,7 +38,11 @@ export function genDiagram(
     sType: any,
     slideFactor: number,
     processSpNode: any,
-    genShape: any
+    genShape: any,
+    styleTable: any,
+    fontSizeFactor: number,
+    rtlLangsArray: string[],
+    isFirstBr: { value: boolean }
 ): string {
     //console.log(warpObj)
     //readXmlFile(zip, sldFileName)
@@ -94,7 +102,7 @@ export function genDiagram(
             // var pSpStrToObj = JSON.parse(pSpStr);
             //console.log("pSpStrToObj[" + i + "]: ", pSpStrToObj);
             //rslt += processSpNode(pSpStrToObj, node, warpObj, "diagramBg", sType)
-            rslt += processSpNode(dspSp, node, warpObj, "diagramBg", sType, genShape)
+            rslt += processSpNode(dspSp, node, warpObj, "diagramBg", sType, genShape, slideFactor, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr)
         }
         // dgmDrwFile: "dsp:"-> "p:"
     }
