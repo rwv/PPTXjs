@@ -30,7 +30,7 @@
  */
 
 import { getTextByPathList } from "../object";
-import { getContentDir, getPosition, getSize, getVerticalAlign, angleToDegrees } from "../layout";
+import { getPosition, getSize, getVerticalAlign, angleToDegrees, getContentDir } from "../layout";
 import { getFillType, getShapeFill } from "../fill";
 import { getBorder } from "../border";
 import { genTextBody } from "../text";
@@ -40,6 +40,7 @@ import { shapeArc } from "./shape-arc";
 import { shapeGear } from "./shape-gear";
 import { shapeSnipRoundRect } from "./shape-snip-round-rect";
 import { getSvgGradient, getSvgImagePattern } from "../svg";
+import { renderCustomGeometry } from "./render-custom-geometry";
 
 export function genShape(
     node: any,
@@ -8342,323 +8343,38 @@ export function genShape(
                 }
                 result += "</div>";
             } else if (custShapType !== undefined) {
-                //custGeom here - Amir ///////////////////////////////////////////////////////
-                //http://officeopenxml.com/drwSp-custGeom.php
-                var pathLstNode = getTextByPathList(custShapType, ["a:pathLst"]);
-                var pathNodes = getTextByPathList(pathLstNode, ["a:path"]);
-                //var pathNode = getTextByPathList(pathLstNode, ["a:path", "attrs"]);
-                var maxX = parseInt(pathNodes["attrs"]["w"]);// * slideFactor;
-                var maxY = parseInt(pathNodes["attrs"]["h"]);// * slideFactor;
-                // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                var cX = (1 / maxX) * w;
-                // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                var cY = (1 / maxY) * h;
-                //console.log("w = "+w+"\nh = "+h+"\nmaxX = "+maxX +"\nmaxY = " + maxY);
-                //cheke if it is close shape
+                result += renderCustomGeometry(
+                    custShapType,
+                    node,
+                    slideLayoutSpNode,
+                    slideMasterSpNode,
+                    slideXfrmNode,
+                    slideLayoutXfrmNode,
+                    pNode,
+                    slideMasterXfrmNode,
+                    w,
+                    h,
+                    shpId,
+                    imgFillFlg,
+                    grndFillFlg,
+                    fillColor,
+                    border,
+                    id,
+                    idx,
+                    type,
+                    name,
+                    order,
+                    sType,
+                    txtRotate,
+                    warpObj,
+                    isUserDrawnBg,
+                    isFirstBr,
+                    styleTable,
+                    rtlLangsArray,
+                    slideFactor,
+                    fontSizeFactor
+                );
 
-                //console.log("custShapType : ", custShapType, ", pathLstNode: ", pathLstNode, ", node: ", node);//, ", y:", y, ", w:", w, ", h:", h);
-
-                var moveToNode = getTextByPathList(pathNodes, ["a:moveTo"]);
-                var total_shapes = moveToNode.length;
-
-                var lnToNodes = pathNodes["a:lnTo"]; //total a:pt : 1
-                var cubicBezToNodes = pathNodes["a:cubicBezTo"]; //total a:pt : 3
-                var arcToNodes = pathNodes["a:arcTo"]; //total a:pt : 0?1? ; attrs: ~4 ()
-                var closeNode = getTextByPathList(pathNodes, ["a:close"]); //total a:pt : 0
-                //quadBezTo //total a:pt : 2 - TODO
-                //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
-                if (!Array.isArray(moveToNode)) {
-                    moveToNode = [moveToNode];
-                }
-                //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
-
-                var multiSapeAry = [];
-                if (moveToNode.length > 0) {
-                    //a:moveTo
-                    Object.keys(moveToNode).forEach(function (key) {
-                        var moveToPtNode = moveToNode[key]["a:pt"];
-                        if (moveToPtNode !== undefined) {
-                            Object.keys(moveToPtNode).forEach(function (key2) {
-                                var ptObj = {};
-                                var moveToNoPt = moveToPtNode[key2];
-                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-                                var spX = moveToNoPt[("attrs", "x")];//parseInt(moveToNoPt["attrs", "x"]) * slideFactor;
-                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-                                var spY = moveToNoPt[("attrs", "y")];//parseInt(moveToNoPt["attrs", "y"]) * slideFactor;
-                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-                                var ptOrdr = moveToNoPt[("attrs", "order")];
-                                // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
-                                ptObj.type = "movto";
-                                // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
-                                ptObj.order = ptOrdr;
-                                // @ts-expect-error TS(2339): Property 'x' does not exist on type '{}'.
-                                ptObj.x = spX;
-                                // @ts-expect-error TS(2339): Property 'y' does not exist on type '{}'.
-                                ptObj.y = spY;
-                                multiSapeAry.push(ptObj);
-                                //console.log(key2, lnToNoPt);
-
-                            });
-                        }
-                    });
-                    //a:lnTo
-                    if (lnToNodes !== undefined) {
-                        Object.keys(lnToNodes).forEach(function (key) {
-                            var lnToPtNode = lnToNodes[key]["a:pt"];
-                            if (lnToPtNode !== undefined) {
-                                Object.keys(lnToPtNode).forEach(function (key2) {
-                                    var ptObj = {};
-                                    var lnToNoPt = lnToPtNode[key2];
-                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-                                    var ptX = lnToNoPt[("attrs", "x")];
-                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-                                    var ptY = lnToNoPt[("attrs", "y")];
-                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-                                    var ptOrdr = lnToNoPt[("attrs", "order")];
-                                    // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
-                                    ptObj.type = "lnto";
-                                    // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
-                                    ptObj.order = ptOrdr;
-                                    // @ts-expect-error TS(2339): Property 'x' does not exist on type '{}'.
-                                    ptObj.x = ptX;
-                                    // @ts-expect-error TS(2339): Property 'y' does not exist on type '{}'.
-                                    ptObj.y = ptY;
-                                    multiSapeAry.push(ptObj);
-                                    //console.log(key2, lnToNoPt);
-                                });
-                            }
-                        });
-                    }
-                    //a:cubicBezTo
-                    if (cubicBezToNodes !== undefined) {
-
-                        var cubicBezToPtNodesAry: any = [];
-                        //console.log("cubicBezToNodes: ", cubicBezToNodes, ", is arry: ", Array.isArray(cubicBezToNodes))
-                        if (!Array.isArray(cubicBezToNodes)) {
-                            cubicBezToNodes = [cubicBezToNodes];
-                        }
-                        Object.keys(cubicBezToNodes).forEach(function (key) {
-                            //console.log("cubicBezTo[" + key + "]:");
-                            cubicBezToPtNodesAry.push(cubicBezToNodes[key]["a:pt"]);
-                        });
-
-                        //console.log("cubicBezToNodes: ", cubicBezToPtNodesAry)
-                        // @ts-expect-error TS(7006): Parameter 'key2' implicitly has an 'any' type.
-                        cubicBezToPtNodesAry.forEach(function (key2) {
-                            //console.log("cubicBezToPtNodesAry: key2 : ", key2)
-                            var nodeObj = {};
-                            // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
-                            nodeObj.type = "cubicBezTo";
-                            // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
-                            nodeObj.order = key2[0]["attrs"]["order"];
-                            var pts_ary: any = [];
-                            key2.forEach(function (pt: any) {
-                                var pt_obj = {
-                                    x: pt["attrs"]["x"],
-                                    y: pt["attrs"]["y"]
-                                }
-                                pts_ary.push(pt_obj)
-                            })
-                            // @ts-expect-error TS(2339): Property 'cubBzPt' does not exist on type '{}'.
-                            nodeObj.cubBzPt = pts_ary;//key2;
-                            multiSapeAry.push(nodeObj);
-                        });
-                    }
-                    //a:arcTo
-                    if (arcToNodes !== undefined) {
-                        var arcToNodesAttrs = arcToNodes["attrs"];
-                        var arcOrder = arcToNodesAttrs["order"];
-                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                        var hR = arcToNodesAttrs["hR"];
-                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                        var wR = arcToNodesAttrs["wR"];
-                        var stAng = arcToNodesAttrs["stAng"];
-                        var swAng = arcToNodesAttrs["swAng"];
-                        var shftX = 0;
-                        var shftY = 0;
-                        var arcToPtNode = getTextByPathList(arcToNodes, ["a:pt", "attrs"]);
-                        if (arcToPtNode !== undefined) {
-                            shftX = arcToPtNode["x"];
-                            shftY = arcToPtNode["y"];
-                            //console.log("shftX: ",shftX," shftY: ",shftY)
-                        }
-                        var ptObj = {};
-                        // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
-                        ptObj.type = "arcTo";
-                        // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
-                        ptObj.order = arcOrder;
-                        // @ts-expect-error TS(2339): Property 'hR' does not exist on type '{}'.
-                        ptObj.hR = hR;
-                        // @ts-expect-error TS(2339): Property 'wR' does not exist on type '{}'.
-                        ptObj.wR = wR;
-                        // @ts-expect-error TS(2339): Property 'stAng' does not exist on type '{}'.
-                        ptObj.stAng = stAng;
-                        // @ts-expect-error TS(2339): Property 'swAng' does not exist on type '{}'.
-                        ptObj.swAng = swAng;
-                        // @ts-expect-error TS(2339): Property 'shftX' does not exist on type '{}'.
-                        ptObj.shftX = shftX;
-                        // @ts-expect-error TS(2339): Property 'shftY' does not exist on type '{}'.
-                        ptObj.shftY = shftY;
-                        multiSapeAry.push(ptObj);
-
-                    }
-                    //a:quadBezTo - TODO
-
-                    //a:close
-                    if (closeNode !== undefined) {
-
-                        if (!Array.isArray(closeNode)) {
-                            closeNode = [closeNode];
-                        }
-                        // Object.keys(closeNode).forEach(function (key) {
-                        //     //console.log("cubicBezTo[" + key + "]:");
-                        //     cubicBezToPtNodesAry.push(closeNode[key]["a:pt"]);
-                        // });
-                        Object.keys(closeNode).forEach(function (key) {
-                            //console.log("custShapType >> closeNode: key: ", key);
-                            var clsAttrs = closeNode[key]["attrs"];
-                            //var clsAttrs = closeNode["attrs"];
-                            var clsOrder = clsAttrs["order"];
-                            var ptObj = {};
-                            // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
-                            ptObj.type = "close";
-                            // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
-                            ptObj.order = clsOrder;
-                            multiSapeAry.push(ptObj);
-
-                        });
-
-                    }
-
-                    // console.log("custShapType >> multiSapeAry: ", multiSapeAry);
-
-                    multiSapeAry.sort(function (a, b) {
-                        // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
-                        return a.order - b.order;
-                    });
-
-                    //console.log("custShapType >>sorted  multiSapeAry: ");
-                    //console.log(multiSapeAry);
-                    var k = 0;
-                    // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                    var isClose = false;
-                    var d = "";
-                    while (k < multiSapeAry.length) {
-
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        if (multiSapeAry[k].type == "movto") {
-                            //start point
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var spX = parseInt(multiSapeAry[k].x) * cX;//slideFactor;
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var spY = parseInt(multiSapeAry[k].y) * cY;//slideFactor;
-                            // if (d == "") {
-                            //     d = "M" + spX + "," + spY;
-                            // } else {
-                            //     //shape without close : then close the shape and start new path
-                            //     result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            //         "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
-                            //     result += "/>";
-
-                            //     if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
-                            //         result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
-                            //     }
-                            //     if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
-                            //         result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
-                            //     }
-                            //     result += "/>";
-
-                            //     d = "M" + spX + "," + spY;
-                            //     isClose = true;
-                            // }
-
-                            d += " M" + spX + "," + spY;
-
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        } else if (multiSapeAry[k].type == "lnto") {
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var Lx = parseInt(multiSapeAry[k].x) * cX;//slideFactor;
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var Ly = parseInt(multiSapeAry[k].y) * cY;//slideFactor;
-                            d += " L" + Lx + "," + Ly;
-
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        } else if (multiSapeAry[k].type == "cubicBezTo") {
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX;//slideFactor;
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY;//slideFactor;
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX;//slideFactor;
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var Cy2 = parseInt(multiSapeAry[k].cubBzPt[1].y) * cY;//slideFactor;
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX;//slideFactor;
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY;//slideFactor;
-                            d += " C" + Cx1 + "," + Cy1 + " " + Cx2 + "," + Cy2 + " " + Cx3 + "," + Cy3;
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        } else if (multiSapeAry[k].type == "arcTo") {
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var hR = parseInt(multiSapeAry[k].hR) * cX;//slideFactor;
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            var wR = parseInt(multiSapeAry[k].wR) * cY;//slideFactor;
-                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                            var stAng = parseInt(multiSapeAry[k].stAng) / 60000;
-                            // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                            var swAng = parseInt(multiSapeAry[k].swAng) / 60000;
-                            //var shftX = parseInt(multiSapeAry[k].shftX) * slideFactor;
-                            //var shftY = parseInt(multiSapeAry[k].shftY) * slideFactor;
-                            var endAng = stAng + swAng;
-
-                            d += shapeArc(wR, hR, wR, hR, stAng, endAng, false);
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        } else if (multiSapeAry[k].type == "quadBezTo") {
-                            console.log("custShapType: quadBezTo - TODO")
-
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        } else if (multiSapeAry[k].type == "close") {
-                            // result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            //     "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
-                            // result += "/>";
-                            // d = "";
-                            // isClose = true;
-
-                            d += "z";
-                        }
-                        k++;
-                    }
-                    //if (!isClose) {
-                    //only one "moveTo" and no "close"
-                    // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                    result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                        // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                        "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
-                    result += "/>";
-                    //console.log(result);
-                }
-
-                result += "</svg>";
-                result += "<div class='block " + getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) + //block content 
-                    " " + getContentDir(node, type, warpObj) +
-                    "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
-                    "' style='" +
-                    getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, slideFactor) +
-                    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, slideFactor) +
-                    " z-index: " + order + ";" +
-                    "transform: rotate(" + ((txtRotate !== undefined) ? txtRotate : 0) + "deg);" +
-                    "'>";
-
-                // TextBody
-                if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
-                    if (type != "diagram" && type != "textBox") {
-                        type = "shape";
-                    }
-                    result += genTextBody(node["p:txBody"], node, slideLayoutSpNode, slideMasterSpNode, type, idx, warpObj, undefined, isFirstBr, styleTable, rtlLangsArray, slideFactor, fontSizeFactor); //type=shape
-                }
-                result += "</div>";
-
-                // result = "";
             } else {
 
                 result += "<div class='block " + getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) +//block content 
