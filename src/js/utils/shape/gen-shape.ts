@@ -43,7 +43,7 @@ import { getSvgGradient, getSvgImagePattern } from "../svg";
 import { renderCustomGeometry } from "./render-custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
-import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape, isArcShape, renderArcShape, isPolygonShape, renderPolygonShape, isScrollShape, renderScrollShapeType, isMiscSymbolShape, renderMiscSymbolShape } from "./shapes";
+import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape, isArcShape, renderArcShape, isPolygonShape, renderPolygonShape, isScrollShape, renderScrollShapeType, isMiscSymbolShape, renderMiscSymbolShape, isPlateCylinderShape, renderPlateCylinderShape } from "./shapes";
 
 export function genShape(
     node: any,
@@ -302,6 +302,19 @@ export function genShape(
                         border,
                         slideFactor,
                         setTxtRotate: (angle: number) => { txtRotate = angle; }
+                    });
+                } else if (isPlateCylinderShape(shapType)) {
+                    // Handle plate and cylinder shapes via dedicated module
+                    result += renderPlateCylinderShape(shapType, {
+                        node,
+                        w,
+                        h,
+                        shpId,
+                        fillColor,
+                        grndFillFlg,
+                        imgFillFlg,
+                        border,
+                        slideFactor
                     });
                 } else switch (shapType) {
                     case "rect":
@@ -654,124 +667,6 @@ export function genShape(
                             result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
                         }
                         result += "/>";
-                        break;
-                    case "homePlate":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adj = 50000 * slideFactor;
-                        var cnstVal1 = 100000 * slideFactor;
-                        if (shapAdjst !== undefined) {
-                            adj = parseInt(shapAdjst.substr(4)) * slideFactor;
-                        }
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var a, x1, dx1, maxAdj, vc = h / 2;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var minWH = Math.min(w, h);
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        maxAdj = cnstVal1 * w / minWH;
-                        if (adj < 0) a = 0
-                        else if (adj > maxAdj) a = maxAdj
-                        else a = adj
-                        dx1 = minWH * a / cnstVal1;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x1 = w - dx1;
-                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                        var d_val = "M" + 0 + "," + 0 +
-                            " L" + x1 + "," + 0 +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + vc +
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            " L" + x1 + "," + h +
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            " L" + 0 + "," + h + " z";
-
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path  d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-
-                        break;
-                    case "chevron":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adj = 50000 * slideFactor;
-                        var cnstVal1 = 100000 * slideFactor;
-                        if (shapAdjst !== undefined) {
-                            adj = parseInt(shapAdjst.substr(4)) * slideFactor;
-                        }
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var a, x1, dx1, x2, maxAdj, vc = h / 2;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var minWH = Math.min(w, h);
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        maxAdj = cnstVal1 * w / minWH;
-                        if (adj < 0) a = 0
-                        else if (adj > maxAdj) a = maxAdj
-                        else a = adj
-                        x1 = minWH * a / cnstVal1;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x2 = w - x1;
-                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                        var d_val = "M" + 0 + "," + 0 +
-                            " L" + x2 + "," + 0 +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + vc +
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            " L" + x2 + "," + h +
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            " L" + 0 + "," + h +
-                            " L" + x1 + "," + vc + " z";
-
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-
-
-                        break;
-                    case "can":
-                    case "flowChartMagneticDisk":
-                    case "flowChartMagneticDrum":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adj = 25000 * slideFactor;
-                        var cnstVal1 = 50000 * slideFactor;
-                        var cnstVal2 = 200000 * slideFactor;
-                        if (shapAdjst !== undefined) {
-                            adj = parseInt(shapAdjst.substr(4)) * slideFactor;
-                        }
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var ss = Math.min(w, h);
-                        var maxAdj, a, y1, y2, y3, dVal;
-                        if (shapType == "flowChartMagneticDisk" || shapType == "flowChartMagneticDrum") {
-                            adj = 50000 * slideFactor;
-                        }
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        maxAdj = cnstVal1 * h / ss;
-                        a = (adj < 0) ? 0 : (adj > maxAdj) ? maxAdj : adj;
-                        y1 = ss * a / cnstVal2;
-                        y2 = y1 + y1;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y3 = h - y1;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var cd2 = 180, wd2 = w / 2;
-
-                        var tranglRott = "";
-                        if (shapType == "flowChartMagneticDrum") {
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            tranglRott = "transform='rotate(90 " + w / 2 + "," + h / 2 + ")'";
-                        }
-                        dVal = shapeArc(wd2, y1, wd2, y1, 0, cd2, false) +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(wd2, y1, wd2, y1, cd2, cd2 + cd2, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + y3 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(wd2, y3, wd2, y1, 0, cd2, false).replace("M", "L") +
-                            " L" + 0 + "," + y1;
-
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path " + tranglRott + " d='" + dVal + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-
                         break;
                     case "leftRightCircularArrow":
                     case "chartPlus":

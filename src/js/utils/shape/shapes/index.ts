@@ -42,3 +42,6 @@ export type { ScrollShapeContext } from "./scrolls";
 
 export { isMiscSymbolShape, renderMiscSymbolShape, MISC_SYMBOL_TYPES } from "./misc-symbols";
 export type { MiscSymbolContext } from "./misc-symbols";
+
+export { isPlateCylinderShape, renderPlateCylinderShape, PLATE_CYLINDER_TYPES } from "./plate-cylinder";
+export type { PlateCylinderContext } from "./plate-cylinder";
