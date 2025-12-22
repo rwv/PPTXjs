@@ -9,3 +9,6 @@ export type { StarShapeContext } from "./stars";
 
 export { isFlowchartShape, renderFlowchartShape, FLOWCHART_SHAPE_TYPES } from "./flowchart";
 export type { FlowchartShapeContext } from "./flowchart";
+
+export { isActionButtonShape, renderActionButtonShape, ACTION_BUTTON_TYPES } from "./action-buttons";
+export type { ActionButtonContext } from "./action-buttons";
