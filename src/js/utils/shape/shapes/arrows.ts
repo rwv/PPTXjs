@@ -12,7 +12,7 @@
  */
 
 import { getTextByPathList } from "../../object";
-import { shapeArc } from "../shape-arc";
+import { shapeArc } from "./helpers/arc";
 
 /**
  * Context for rendering arrow shapes

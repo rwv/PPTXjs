@@ -7,8 +7,8 @@
  * - halfFrame, blockArc
  */
 
-import { shapeArc } from "../shape-arc";
-import { shapePie } from "../shape-pie";
+import { shapeArc } from "./helpers/arc";
+import { shapePie } from "./helpers/pie";
 import { getTextByPathList } from "../../object";
 
 /**

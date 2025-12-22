@@ -10,7 +10,7 @@
  * Note: actionButtonBlank shares rendering with rect and remains in gen-shape.ts
  */
 
-import { shapeArc } from "../shape-arc";
+import { shapeArc } from "./helpers/arc";
 
 /**
  * Context for rendering action button shapes
