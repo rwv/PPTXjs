@@ -45,3 +45,6 @@ export type { MiscSymbolContext } from "./misc-symbols";
 
 export { isPlateCylinderShape, renderPlateCylinderShape, PLATE_CYLINDER_TYPES } from "./plate-cylinder";
 export type { PlateCylinderContext } from "./plate-cylinder";
+
+export { isConnectorShape, renderConnectorShape, CONNECTOR_TYPES } from "./connectors";
+export type { ConnectorContext } from "./connectors";
