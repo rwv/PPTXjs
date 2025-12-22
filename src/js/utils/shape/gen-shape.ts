@@ -43,7 +43,7 @@ import { getSvgGradient, getSvgImagePattern } from "../svg";
 import { renderCustomGeometry } from "./render-custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
-import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape, isArcShape, renderArcShape, isPolygonShape, renderPolygonShape } from "./shapes";
+import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape, isArcShape, renderArcShape, isPolygonShape, renderPolygonShape, isScrollShape, renderScrollShapeType } from "./shapes";
 
 export function genShape(
     node: any,
@@ -264,6 +264,19 @@ export function genShape(
                 } else if (isPolygonShape(shapType)) {
                     // Handle polygon shapes via dedicated module
                     result += renderPolygonShape(shapType, {
+                        node,
+                        w,
+                        h,
+                        shpId,
+                        fillColor,
+                        grndFillFlg,
+                        imgFillFlg,
+                        border,
+                        slideFactor
+                    });
+                } else if (isScrollShape(shapType)) {
+                    // Handle scroll shapes via dedicated module
+                    result += renderScrollShapeType(shapType, {
                         node,
                         w,
                         h,
@@ -1528,117 +1541,6 @@ export function genShape(
                             // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, wd2, hd2, 180, 540, false).replace("M", "L") +
                             " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-
-                        break;
-                    case "verticalScroll":
-                    case "horizontalScroll":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var refr = slideFactor;
-                        var adj = 12500 * refr;
-                        if (shapAdjst !== undefined) {
-                            adj = parseInt(shapAdjst.substr(4)) * refr;
-                        }
-                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                        var d_val;
-                        var cnstVal1 = 25000 * refr;
-                        var cnstVal2 = 100000 * refr;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var ss = Math.min(w, h);
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var t = 0, l = 0, b = h, r = w;
-                        var a, ch, ch2, ch4;
-                        a = (adj < 0) ? 0 : (adj > cnstVal1) ? cnstVal1 : adj;
-                        ch = ss * a / cnstVal2;
-                        ch2 = ch / 2;
-                        ch4 = ch / 4;
-                        if (shapType == "verticalScroll") {
-                            var x3, x4, x6, x7, x5, y3, y4;
-                            x3 = ch + ch2;
-                            x4 = ch + ch;
-                            x6 = r - ch;
-                            x7 = r - ch2;
-                            x5 = x6 - ch2;
-                            y3 = b - ch;
-                            y4 = b - ch2;
-
-                            d_val = "M" + ch + "," + y3 +
-                                " L" + ch + "," + ch2 +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(x3, ch2, ch2, ch2, 180, 270, false).replace("M", "L") +
-                                " L" + x7 + "," + t +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(x7, ch2, ch2, ch2, 270, 450, false).replace("M", "L") +
-                                " L" + x6 + "," + ch +
-                                " L" + x6 + "," + y4 +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(x5, y4, ch2, ch2, 0, 90, false).replace("M", "L") +
-                                " L" + ch2 + "," + b +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(ch2, y4, ch2, ch2, 90, 270, false).replace("M", "L") +
-                                " z" +
-                                " M" + x3 + "," + t +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(x3, ch2, ch2, ch2, 270, 450, false).replace("M", "L") +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(x3, x3 / 2, ch4, ch4, 90, 270, false).replace("M", "L") +
-                                " L" + x4 + "," + ch2 +
-                                " M" + x6 + "," + ch +
-                                " L" + x3 + "," + ch +
-                                " M" + ch + "," + y4 +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(ch2, y4, ch2, ch2, 0, 270, false).replace("M", "L") +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(ch2, (y4 + y3) / 2, ch4, ch4, 270, 450, false).replace("M", "L") +
-                                " z" +
-                                " M" + ch + "," + y4 +
-                                " L" + ch + "," + y3;
-                        } else if (shapType == "horizontalScroll") {
-                            var y3, y4, y6, y7, y5, x3, x4;
-                            y3 = ch + ch2;
-                            y4 = ch + ch;
-                            y6 = b - ch;
-                            y7 = b - ch2;
-                            y5 = y6 - ch2;
-                            x3 = r - ch;
-                            x4 = r - ch2;
-
-                            d_val = "M" + l + "," + y3 +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(ch2, y3, ch2, ch2, 180, 270, false).replace("M", "L") +
-                                " L" + x3 + "," + ch +
-                                " L" + x3 + "," + ch2 +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(x4, ch2, ch2, ch2, 180, 360, false).replace("M", "L") +
-                                " L" + r + "," + y5 +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(x4, y5, ch2, ch2, 0, 90, false).replace("M", "L") +
-                                " L" + ch + "," + y6 +
-                                " L" + ch + "," + y7 +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(ch2, y7, ch2, ch2, 0, 180, false).replace("M", "L") +
-                                " z" +
-                                "M" + x4 + "," + ch +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(x4, ch2, ch2, ch2, 90, -180, false).replace("M", "L") +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc((x3 + x4) / 2, ch2, ch4, ch4, 180, 0, false).replace("M", "L") +
-                                " z" +
-                                " M" + x4 + "," + ch +
-                                " L" + x3 + "," + ch +
-                                " M" + ch2 + "," + y4 +
-                                " L" + ch2 + "," + y3 +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(y3 / 2, y3, ch4, ch4, 180, 360, false).replace("M", "L") +
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                                shapeArc(ch2, y3, ch2, ch2, 0, 180, false).replace("M", "L") +
-                                " M" + ch + "," + y3 +
-                                " L" + ch + "," + y6;
-                        }
-
                         // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d_val + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
                             // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.

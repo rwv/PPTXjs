@@ -36,3 +36,6 @@ export type { ArcShapeContext } from "./arc-shapes";
 
 export { isPolygonShape, renderPolygonShape, POLYGON_SHAPE_TYPES } from "./polygons";
 export type { PolygonShapeContext } from "./polygons";
+
+export { isScrollShape, renderScrollShapeType, SCROLL_SHAPE_TYPES } from "./scrolls";
+export type { ScrollShapeContext } from "./scrolls";

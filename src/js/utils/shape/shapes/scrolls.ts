@@ -1,0 +1,191 @@
+/**
+ * Scroll shape rendering functions.
+ *
+ * Handles scroll shapes:
+ * - verticalScroll, horizontalScroll
+ */
+
+import { shapeArc } from "../shape-arc";
+import { getTextByPathList } from "../../object";
+
+/**
+ * Context for rendering scroll shapes
+ */
+export interface ScrollShapeContext {
+    node: any;
+    w: number;
+    h: number;
+    shpId: string;
+    fillColor: string;
+    grndFillFlg: boolean;
+    imgFillFlg: boolean;
+    border: {
+        color: string;
+        width: string;
+        strokeDasharray: string;
+    };
+    slideFactor: number;
+}
+
+/**
+ * List of scroll shape types handled by this module
+ */
+export const SCROLL_SHAPE_TYPES = [
+    "verticalScroll",
+    "horizontalScroll"
+] as const;
+
+/**
+ * Generate fill attribute string for SVG path
+ */
+function getFillAttr(ctx: ScrollShapeContext): string {
+    const { imgFillFlg, grndFillFlg, shpId, fillColor } = ctx;
+    if (imgFillFlg) {
+        return `url(#imgPtrn_${shpId})`;
+    }
+    if (grndFillFlg) {
+        return `url(#linGrd_${shpId})`;
+    }
+    return fillColor;
+}
+
+/**
+ * Generate stroke attributes string for SVG path
+ */
+function getStrokeAttrs(ctx: ScrollShapeContext): string {
+    const { border } = ctx;
+    return `stroke='${border.color}' stroke-width='${border.width}' stroke-dasharray='${border.strokeDasharray}'`;
+}
+
+/**
+ * Create SVG path element with fill and stroke
+ */
+function createPath(d: string, ctx: ScrollShapeContext): string {
+    return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
+}
+
+// =============================================================================
+// Scroll Shape Renderers
+// =============================================================================
+
+/**
+ * Render verticalScroll or horizontalScroll shape
+ */
+function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
+    const { node, w, h, slideFactor } = ctx;
+
+    var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
+    var refr = slideFactor;
+    var adj = 12500 * refr;
+    if (shapAdjst !== undefined) {
+        adj = parseInt(shapAdjst.substr(4)) * refr;
+    }
+    var d_val;
+    var cnstVal1 = 25000 * refr;
+    var cnstVal2 = 100000 * refr;
+    var ss = Math.min(w, h);
+    var t = 0, l = 0, b = h, r = w;
+    var a, ch, ch2, ch4;
+    a = (adj < 0) ? 0 : (adj > cnstVal1) ? cnstVal1 : adj;
+    ch = ss * a / cnstVal2;
+    ch2 = ch / 2;
+    ch4 = ch / 4;
+
+    if (shapType == "verticalScroll") {
+        var x3, x4, x6, x7, x5, y3, y4;
+        x3 = ch + ch2;
+        x4 = ch + ch;
+        x6 = r - ch;
+        x7 = r - ch2;
+        x5 = x6 - ch2;
+        y3 = b - ch;
+        y4 = b - ch2;
+
+        d_val = "M" + ch + "," + y3 +
+            " L" + ch + "," + ch2 +
+            shapeArc(x3, ch2, ch2, ch2, 180, 270, false).replace("M", "L") +
+            " L" + x7 + "," + t +
+            shapeArc(x7, ch2, ch2, ch2, 270, 450, false).replace("M", "L") +
+            " L" + x6 + "," + ch +
+            " L" + x6 + "," + y4 +
+            shapeArc(x5, y4, ch2, ch2, 0, 90, false).replace("M", "L") +
+            " L" + ch2 + "," + b +
+            shapeArc(ch2, y4, ch2, ch2, 90, 270, false).replace("M", "L") +
+            " z" +
+            " M" + x3 + "," + t +
+            shapeArc(x3, ch2, ch2, ch2, 270, 450, false).replace("M", "L") +
+            shapeArc(x3, x3 / 2, ch4, ch4, 90, 270, false).replace("M", "L") +
+            " L" + x4 + "," + ch2 +
+            " M" + x6 + "," + ch +
+            " L" + x3 + "," + ch +
+            " M" + ch + "," + y4 +
+            shapeArc(ch2, y4, ch2, ch2, 0, 270, false).replace("M", "L") +
+            shapeArc(ch2, (y4 + y3) / 2, ch4, ch4, 270, 450, false).replace("M", "L") +
+            " z" +
+            " M" + ch + "," + y4 +
+            " L" + ch + "," + y3;
+    } else if (shapType == "horizontalScroll") {
+        var y3, y4, y6, y7, y5, x3, x4;
+        y3 = ch + ch2;
+        y4 = ch + ch;
+        y6 = b - ch;
+        y7 = b - ch2;
+        y5 = y6 - ch2;
+        x3 = r - ch;
+        x4 = r - ch2;
+
+        d_val = "M" + l + "," + y3 +
+            shapeArc(ch2, y3, ch2, ch2, 180, 270, false).replace("M", "L") +
+            " L" + x3 + "," + ch +
+            " L" + x3 + "," + ch2 +
+            shapeArc(x4, ch2, ch2, ch2, 180, 360, false).replace("M", "L") +
+            " L" + r + "," + y5 +
+            shapeArc(x4, y5, ch2, ch2, 0, 90, false).replace("M", "L") +
+            " L" + ch + "," + y6 +
+            " L" + ch + "," + y7 +
+            shapeArc(ch2, y7, ch2, ch2, 0, 180, false).replace("M", "L") +
+            " z" +
+            "M" + x4 + "," + ch +
+            shapeArc(x4, ch2, ch2, ch2, 90, -180, false).replace("M", "L") +
+            shapeArc((x3 + x4) / 2, ch2, ch4, ch4, 180, 0, false).replace("M", "L") +
+            " z" +
+            " M" + x4 + "," + ch +
+            " L" + x3 + "," + ch +
+            " M" + ch2 + "," + y4 +
+            " L" + ch2 + "," + y3 +
+            shapeArc(y3 / 2, y3, ch4, ch4, 180, 360, false).replace("M", "L") +
+            shapeArc(ch2, y3, ch2, ch2, 0, 180, false).replace("M", "L") +
+            " M" + ch + "," + y3 +
+            " L" + ch + "," + y6;
+    }
+
+    return createPath(d_val, ctx);
+}
+
+// =============================================================================
+// Shape Registry
+// =============================================================================
+
+/**
+ * Registry mapping shape types to their render functions
+ */
+const SCROLL_SHAPE_RENDERERS: Record<string, (ctx: ScrollShapeContext, shapType: string) => string> = {
+    "verticalScroll": renderScrollShape,
+    "horizontalScroll": renderScrollShape
+};
+
+/**
+ * Check if a shape type is a scroll shape handled by this module
+ */
+export function isScrollShape(shapType: string): boolean {
+    return shapType in SCROLL_SHAPE_RENDERERS;
+}
+
+/**
+ * Render a scroll shape
+ * @returns SVG string for the shape, or empty string if not a scroll shape
+ */
+export function renderScrollShapeType(shapType: string, ctx: ScrollShapeContext): string {
+    const renderer = SCROLL_SHAPE_RENDERERS[shapType];
+    return renderer ? renderer(ctx, shapType) : "";
+}
