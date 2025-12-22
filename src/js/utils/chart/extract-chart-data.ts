@@ -48,24 +48,11 @@ export function extractChartData(serNode: any) {
     eachElement(serNode, function (innerNode: any, index: any) {
       const dataRow = new Array();
       const colName =
-        getTextByPathList(innerNode, [
-          "c:tx",
-          "c:strRef",
-          "c:strCache",
-          "c:pt",
-          "c:v",
-        ]) || index;
+        getTextByPathList(innerNode, ["c:tx", "c:strRef", "c:strCache", "c:pt", "c:v"]) || index;
 
       // Category (string or number)
       const rowNames = {};
-      if (
-        getTextByPathList(innerNode, [
-          "c:cat",
-          "c:strRef",
-          "c:strCache",
-          "c:pt",
-        ]) !== undefined
-      ) {
+      if (getTextByPathList(innerNode, ["c:cat", "c:strRef", "c:strCache", "c:pt"]) !== undefined) {
         eachElement(
           innerNode["c:cat"]["c:strRef"]["c:strCache"]["c:pt"],
           function (innerNode: any, index: any) {
@@ -75,12 +62,7 @@ export function extractChartData(serNode: any) {
           }
         );
       } else if (
-        getTextByPathList(innerNode, [
-          "c:cat",
-          "c:numRef",
-          "c:numCache",
-          "c:pt",
-        ]) !== undefined
+        getTextByPathList(innerNode, ["c:cat", "c:numRef", "c:numCache", "c:pt"]) !== undefined
       ) {
         eachElement(
           innerNode["c:cat"]["c:numRef"]["c:numCache"]["c:pt"],
@@ -93,14 +75,7 @@ export function extractChartData(serNode: any) {
       }
 
       // Value
-      if (
-        getTextByPathList(innerNode, [
-          "c:val",
-          "c:numRef",
-          "c:numCache",
-          "c:pt",
-        ]) !== undefined
-      ) {
+      if (getTextByPathList(innerNode, ["c:val", "c:numRef", "c:numCache", "c:pt"]) !== undefined) {
         eachElement(
           innerNode["c:val"]["c:numRef"]["c:numCache"]["c:pt"],
           function (innerNode: any, index: any) {

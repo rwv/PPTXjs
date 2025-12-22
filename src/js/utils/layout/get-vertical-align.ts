@@ -27,27 +27,12 @@ export function getVerticalAlign(
   type: any
 ): string {
   // Find anchor with fallback hierarchy: node -> layout -> master -> default
-  let anchor = getTextByPathList(node, [
-    "p:txBody",
-    "a:bodyPr",
-    "attrs",
-    "anchor",
-  ]);
+  let anchor = getTextByPathList(node, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
 
   if (anchor === undefined) {
-    anchor = getTextByPathList(slideLayoutSpNode, [
-      "p:txBody",
-      "a:bodyPr",
-      "attrs",
-      "anchor",
-    ]);
+    anchor = getTextByPathList(slideLayoutSpNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
     if (anchor === undefined) {
-      anchor = getTextByPathList(slideMasterSpNode, [
-        "p:txBody",
-        "a:bodyPr",
-        "attrs",
-        "anchor",
-      ]);
+      anchor = getTextByPathList(slideMasterSpNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
       if (anchor === undefined) {
         // "If this attribute is omitted, then a value of t, or top is implied."
         anchor = "t";
@@ -58,4 +43,3 @@ export function getVerticalAlign(
   // Map PPTX anchor values to CSS classes
   return anchor === "ctr" ? "v-mid" : anchor === "b" ? "v-down" : "v-up";
 }
-

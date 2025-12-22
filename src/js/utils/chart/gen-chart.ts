@@ -15,101 +15,105 @@ import { readXmlFile } from "../xml/read-xml-file";
 import { extractChartData } from "./extract-chart-data";
 
 export function genChart(
-    node: any,
-    warpObj: any,
-    chartID: number,
-    MsgQueue: any[],
-    slideFactor: number
+  node: any,
+  warpObj: any,
+  chartID: number,
+  MsgQueue: any[],
+  slideFactor: number
 ): [string, number] {
+  var order = node["attrs"]["order"];
+  var xfrmNode = getTextByPathList(node, ["p:xfrm"]);
+  var result =
+    "<div id='chart" +
+    chartID +
+    "' class='block content' style='" +
+    getPosition(xfrmNode, node, undefined, undefined, undefined, slideFactor) +
+    getSize(xfrmNode, undefined, undefined, slideFactor) +
+    " z-index: " +
+    order +
+    ";'></div>";
 
-    var order = node["attrs"]["order"];
-    var xfrmNode = getTextByPathList(node, ["p:xfrm"]);
-    var result = "<div id='chart" + chartID + "' class='block content' style='" +
-        getPosition(xfrmNode, node, undefined, undefined, undefined, slideFactor) +
-        getSize(xfrmNode, undefined, undefined, slideFactor) +
-        " z-index: " + order + ";'></div>";
+  var rid = node["a:graphic"]["a:graphicData"]["c:chart"]["attrs"]["r:id"];
+  var refName = warpObj["slideResObj"][rid]["target"];
+  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
+  var content = readXmlFile(warpObj["zip"], refName);
+  var plotArea = getTextByPathList(content, ["c:chartSpace", "c:chart", "c:plotArea"]);
 
-    var rid = node["a:graphic"]["a:graphicData"]["c:chart"]["attrs"]["r:id"];
-    var refName = warpObj["slideResObj"][rid]["target"];
-    // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-    var content = readXmlFile(warpObj["zip"], refName);
-    var plotArea = getTextByPathList(content, ["c:chartSpace", "c:chart", "c:plotArea"]);
-
-    var chartData = null;
-    for (var key in plotArea) {
-        switch (key) {
-            case "c:lineChart":
-                chartData = {
-                    "type": "createChart",
-                    "data": {
-                        "chartID": "chart" + chartID,
-                        "chartType": "lineChart",
-                        "chartData": extractChartData(plotArea[key]["c:ser"])
-                    }
-                };
-                break;
-            case "c:barChart":
-                chartData = {
-                    "type": "createChart",
-                    "data": {
-                        "chartID": "chart" + chartID,
-                        "chartType": "barChart",
-                        "chartData": extractChartData(plotArea[key]["c:ser"])
-                    }
-                };
-                break;
-            case "c:pieChart":
-                chartData = {
-                    "type": "createChart",
-                    "data": {
-                        "chartID": "chart" + chartID,
-                        "chartType": "pieChart",
-                        "chartData": extractChartData(plotArea[key]["c:ser"])
-                    }
-                };
-                break;
-            case "c:pie3DChart":
-                chartData = {
-                    "type": "createChart",
-                    "data": {
-                        "chartID": "chart" + chartID,
-                        "chartType": "pie3DChart",
-                        "chartData": extractChartData(plotArea[key]["c:ser"])
-                    }
-                };
-                break;
-            case "c:areaChart":
-                chartData = {
-                    "type": "createChart",
-                    "data": {
-                        "chartID": "chart" + chartID,
-                        "chartType": "areaChart",
-                        "chartData": extractChartData(plotArea[key]["c:ser"])
-                    }
-                };
-                break;
-            case "c:scatterChart":
-                chartData = {
-                    "type": "createChart",
-                    "data": {
-                        "chartID": "chart" + chartID,
-                        "chartType": "scatterChart",
-                        "chartData": extractChartData(plotArea[key]["c:ser"])
-                    }
-                };
-                break;
-            case "c:catAx":
-                break;
-            case "c:valAx":
-                break;
-            default:
-        }
+  var chartData = null;
+  for (var key in plotArea) {
+    switch (key) {
+      case "c:lineChart":
+        chartData = {
+          type: "createChart",
+          data: {
+            chartID: "chart" + chartID,
+            chartType: "lineChart",
+            chartData: extractChartData(plotArea[key]["c:ser"]),
+          },
+        };
+        break;
+      case "c:barChart":
+        chartData = {
+          type: "createChart",
+          data: {
+            chartID: "chart" + chartID,
+            chartType: "barChart",
+            chartData: extractChartData(plotArea[key]["c:ser"]),
+          },
+        };
+        break;
+      case "c:pieChart":
+        chartData = {
+          type: "createChart",
+          data: {
+            chartID: "chart" + chartID,
+            chartType: "pieChart",
+            chartData: extractChartData(plotArea[key]["c:ser"]),
+          },
+        };
+        break;
+      case "c:pie3DChart":
+        chartData = {
+          type: "createChart",
+          data: {
+            chartID: "chart" + chartID,
+            chartType: "pie3DChart",
+            chartData: extractChartData(plotArea[key]["c:ser"]),
+          },
+        };
+        break;
+      case "c:areaChart":
+        chartData = {
+          type: "createChart",
+          data: {
+            chartID: "chart" + chartID,
+            chartType: "areaChart",
+            chartData: extractChartData(plotArea[key]["c:ser"]),
+          },
+        };
+        break;
+      case "c:scatterChart":
+        chartData = {
+          type: "createChart",
+          data: {
+            chartID: "chart" + chartID,
+            chartType: "scatterChart",
+            chartData: extractChartData(plotArea[key]["c:ser"]),
+          },
+        };
+        break;
+      case "c:catAx":
+        break;
+      case "c:valAx":
+        break;
+      default:
     }
+  }
 
-    if (chartData !== null) {
-        MsgQueue.push(chartData);
-    }
+  if (chartData !== null) {
+    MsgQueue.push(chartData);
+  }
 
-    chartID++;
-    return [result, chartID];
+  chartID++;
+  return [result, chartID];
 }

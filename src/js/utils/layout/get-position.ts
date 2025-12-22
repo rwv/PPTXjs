@@ -113,11 +113,7 @@ export function getPosition(
   }
 
   // Handle rotated group positioning
-  if (
-    sType === "group-rotate" &&
-    pNode !== undefined &&
-    pNode["p:grpSpPr"] !== undefined
-  ) {
+  if (sType === "group-rotate" && pNode !== undefined && pNode["p:grpSpPr"] !== undefined) {
     const xfrmNode = pNode["p:grpSpPr"]["a:xfrm"];
     if (xfrmNode !== undefined && xfrmNode["a:chOff"] !== undefined) {
       // var ox = parseInt(xfrmNode["a:off"]["attrs"]["x"]) * slideFactor;

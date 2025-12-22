@@ -8,10 +8,7 @@ import { getDingbatToUnicode } from "./get-dingbat-to-unicode";
  * @param buChar - Bullet character to convert
  * @returns HTML entity string
  */
-export function getHtmlBullet(
-  typefaceNode: string,
-  buChar: string
-): string {
+export function getHtmlBullet(typefaceNode: string, buChar: string): string {
   // http://www.alanwood.net/demos/wingdings.html
   // Handle common special cases
   switch (buChar) {
@@ -27,10 +24,7 @@ export function getHtmlBullet(
       return "&#10004;"; // ✔ Heavy check mark (U+2714)
     default:
       // Handle Wingdings fonts
-      if (
-        typefaceNode === "Wingdings 2" ||
-        typefaceNode === "Wingdings 3"
-      ) {
+      if (typefaceNode === "Wingdings 2" || typefaceNode === "Wingdings 3") {
         const wingCharCode = getDingbatToUnicode(typefaceNode, buChar);
         if (wingCharCode !== null) {
           return "&#" + wingCharCode + ";";

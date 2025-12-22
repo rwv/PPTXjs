@@ -6,9 +6,7 @@
  */
 export function rgba2hex(rgbaStr: string): string {
   // Parse RGBA string
-  const rgb = rgbaStr
-    .replace(/\s/g, "")
-    .match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i);
+  const rgb = rgbaStr.replace(/\s/g, "").match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i);
 
   const alpha = (rgb && rgb[4]) || "";
   const alphaVal = alpha.trim();

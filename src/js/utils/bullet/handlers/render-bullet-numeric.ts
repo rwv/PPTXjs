@@ -9,25 +9,37 @@
  */
 
 export function renderBulletNumeric(
-    bultColor: any,
-    bultSize: string,
-    marLStr: string,
-    marRStr: string,
-    isRTL: boolean,
-    buNum: string,
-    lvl: number
+  bultColor: any,
+  bultSize: string,
+  marLStr: string,
+  marRStr: string,
+  isRTL: boolean,
+  buNum: string,
+  lvl: number
 ): string {
-    var bullet = "<div style='height: 100%;" + marLStr + marRStr +
-        "color:#" + bultColor[0] + ";" +
-        "font-size:" + bultSize + ";";
+  var bullet =
+    "<div style='height: 100%;" +
+    marLStr +
+    marRStr +
+    "color:#" +
+    bultColor[0] +
+    ";" +
+    "font-size:" +
+    bultSize +
+    ";";
 
-    if (isRTL) {
-        bullet += "display: inline-block;white-space: nowrap ;direction:rtl;";
-    } else {
-        bullet += "display: inline-block;white-space: nowrap ;direction:ltr;";
-    }
+  if (isRTL) {
+    bullet += "display: inline-block;white-space: nowrap ;direction:rtl;";
+  } else {
+    bullet += "display: inline-block;white-space: nowrap ;direction:ltr;";
+  }
 
-    bullet += "' data-bulltname = '" + buNum + "' data-bulltlvl = '" + lvl + "' class='numeric-bullet-style'></div>";
+  bullet +=
+    "' data-bulltname = '" +
+    buNum +
+    "' data-bulltlvl = '" +
+    lvl +
+    "' class='numeric-bullet-style'></div>";
 
-    return bullet;
+  return bullet;
 }

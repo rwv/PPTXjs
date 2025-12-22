@@ -32,7 +32,11 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
   var tialphaModFixNode = getTextByPathList(blipNode, ["a:alphaModFix", "attrs"]);
   var imgOpacity = "";
 
-  if (tialphaModFixNode !== undefined && tialphaModFixNode["amt"] !== undefined && tialphaModFixNode["amt"] != "") {
+  if (
+    tialphaModFixNode !== undefined &&
+    tialphaModFixNode["amt"] !== undefined &&
+    tialphaModFixNode["amt"] != ""
+  ) {
     var amt = parseInt(tialphaModFixNode["amt"]) / 100000;
     var opacity = amt;
     imgOpacity = "opacity='" + opacity + "'";
@@ -40,9 +44,19 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
 
   var ptrn: string;
   if (sx !== undefined && sx != 0) {
-    ptrn = '<pattern id="imgPtrn_' + shpId + '" x="0" y="0"  width="' + sx + '" height="' + sy + '" patternUnits="userSpaceOnUse">';
+    ptrn =
+      '<pattern id="imgPtrn_' +
+      shpId +
+      '" x="0" y="0"  width="' +
+      sx +
+      '" height="' +
+      sy +
+      '" patternUnits="userSpaceOnUse">';
   } else {
-    ptrn = '<pattern id="imgPtrn_' + shpId + '"  patternContentUnits="objectBoundingBox"  width="1" height="1">';
+    ptrn =
+      '<pattern id="imgPtrn_' +
+      shpId +
+      '"  patternContentUnits="objectBoundingBox"  width="1" height="1">';
   }
 
   var duotoneNode = getTextByPathList(blipNode, ["a:duotone"]);
@@ -62,18 +76,31 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
     });
 
     if (clr_ary.length == 2) {
-      fillterNode = '<filter id="svg_image_duotone"> ' +
+      fillterNode =
+        '<filter id="svg_image_duotone"> ' +
         '<feColorMatrix type="matrix" values=".33 .33 .33 0 0' +
-        '.33 .33 .33 0 0' +
-        '.33 .33 .33 0 0' +
+        ".33 .33 .33 0 0" +
+        ".33 .33 .33 0 0" +
         '0 0 0 1 0">' +
-        '</feColorMatrix>' +
+        "</feColorMatrix>" +
         '<feComponentTransfer color-interpolation-filters="sRGB">' +
-        '<feFuncR type="table" tableValues="' + clr_ary[0].r / 255 + ' ' + clr_ary[1].r / 255 + '"></feFuncR>' +
-        '<feFuncG type="table" tableValues="' + clr_ary[0].g / 255 + ' ' + clr_ary[1].g / 255 + '"></feFuncG>' +
-        '<feFuncB type="table" tableValues="' + clr_ary[0].b / 255 + ' ' + clr_ary[1].b / 255 + '"></feFuncB>' +
-        '</feComponentTransfer>' +
-        ' </filter>';
+        '<feFuncR type="table" tableValues="' +
+        clr_ary[0].r / 255 +
+        " " +
+        clr_ary[1].r / 255 +
+        '"></feFuncR>' +
+        '<feFuncG type="table" tableValues="' +
+        clr_ary[0].g / 255 +
+        " " +
+        clr_ary[1].g / 255 +
+        '"></feFuncG>' +
+        '<feFuncB type="table" tableValues="' +
+        clr_ary[0].b / 255 +
+        " " +
+        clr_ary[1].b / 255 +
+        '"></feFuncB>' +
+        "</feComponentTransfer>" +
+        " </filter>";
     }
 
     filterUrl = 'filter="url(#svg_image_duotone)"';
@@ -83,11 +110,29 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
   fill = escapeHtml(fill);
 
   if (sx !== undefined && sx != 0) {
-    ptrn += '<image  xlink:href="' + fill + '" x="0" y="0" width="' + sx + '" height="' + sy + '" ' + imgOpacity + ' ' + filterUrl + '></image>';
+    ptrn +=
+      '<image  xlink:href="' +
+      fill +
+      '" x="0" y="0" width="' +
+      sx +
+      '" height="' +
+      sy +
+      '" ' +
+      imgOpacity +
+      " " +
+      filterUrl +
+      "></image>";
   } else {
-    ptrn += '<image  xlink:href="' + fill + '" preserveAspectRatio="none" width="1" height="1" ' + imgOpacity + ' ' + filterUrl + '></image>';
+    ptrn +=
+      '<image  xlink:href="' +
+      fill +
+      '" preserveAspectRatio="none" width="1" height="1" ' +
+      imgOpacity +
+      " " +
+      filterUrl +
+      "></image>";
   }
-  ptrn += '</pattern>';
+  ptrn += "</pattern>";
 
   return ptrn;
 }

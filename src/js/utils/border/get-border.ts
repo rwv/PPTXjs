@@ -34,7 +34,10 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
     var lnRefNode = getTextByPathList(node, ["p:style", "a:lnRef"]);
     if (lnRefNode !== undefined) {
       var lnIdx = getTextByPathList(lnRefNode, ["attrs", "idx"]);
-      lineNode = warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:lnStyleLst"]["a:ln"][Number(lnIdx) - 1];
+      lineNode =
+        warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:lnStyleLst"][
+          "a:ln"
+        ][Number(lnIdx) - 1];
     }
   }
   if (lineNode == undefined) {
@@ -52,7 +55,7 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
     // Border width: 1pt = 12700, default = 0.75pt
     borderWidth = parseInt(getTextByPathList(lineNode, ["attrs", "w"])) / 12700;
     if (isNaN(borderWidth) || borderWidth < 1) {
-      cssText += (4 / 3) + "px ";
+      cssText += 4 / 3 + "px ";
     } else {
       cssText += borderWidth + "px ";
     }
@@ -144,7 +147,12 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
   cssText += " " + borderColor + " ";
 
   if (isSvgMode) {
-    return { "color": borderColor, "width": borderWidth, "type": borderType, "strokeDasharray": strokeDasharray };
+    return {
+      color: borderColor,
+      width: borderWidth,
+      type: borderType,
+      strokeDasharray: strokeDasharray,
+    };
   } else {
     return cssText + ";";
   }

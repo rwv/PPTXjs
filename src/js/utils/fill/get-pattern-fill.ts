@@ -15,7 +15,9 @@ import { getLinerGrandient } from "./get-liner-grandient";
  * @returns Array with CSS gradient string, size, and position
  */
 export function getPatternFill(node: any, warpObj: any) {
-  var fgColor = "", bgColor = "", prst = "";
+  var fgColor = "",
+    bgColor = "",
+    prst = "";
   var bgClr = node["a:bgClr"];
   var fgClr = node["a:fgClr"];
   prst = node["attrs"]["prst"];

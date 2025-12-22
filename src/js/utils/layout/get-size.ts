@@ -50,8 +50,6 @@ export function getSize(
   } else {
     w = parseInt(ext["cx"] || "0") * slideFactor;
     h = parseInt(ext["cy"] || "0") * slideFactor;
-    return isNaN(w) || isNaN(h)
-      ? ""
-      : "width:" + w + "px; height:" + h + "px;";
+    return isNaN(w) || isNaN(h) ? "" : "width:" + w + "px; height:" + h + "px;";
   }
 }

@@ -7,10 +7,7 @@ import { dingbat_unicode } from "../../dingbat";
  * @param buChar - Character to convert
  * @returns Unicode code point as string, or null if not found
  */
-export function getDingbatToUnicode(
-  typefaceNode: string,
-  buChar: string
-): string | null {
+export function getDingbatToUnicode(typefaceNode: string, buChar: string): string | null {
   if (!dingbat_unicode) {
     return null;
   }

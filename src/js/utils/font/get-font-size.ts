@@ -37,19 +37,19 @@ export function getFontSize(
 ): string {
   // if(type == "sldNum")
   //console.log("getFontSize node:", node, "lstStyle", lstStyle, "lvl:", lvl, 'type:', type, "warpObj:", warpObj)
-  var lstStyle = (textBodyNode !== undefined)? textBodyNode["a:lstStyle"] : undefined;
+  var lstStyle = textBodyNode !== undefined ? textBodyNode["a:lstStyle"] : undefined;
   var lvlpPr = "a:lvl" + lvl + "pPr";
   var fontSize: number | undefined = undefined;
   var sz, kern;
   if (node["a:rPr"] !== undefined) {
     fontSize = parseInt(node["a:rPr"]["attrs"]["sz"]) / 100;
   }
-  if (isNaN(fontSize) || fontSize === undefined && node["a:fld"] !== undefined) {
+  if (isNaN(fontSize) || (fontSize === undefined && node["a:fld"] !== undefined)) {
     sz = getTextByPathList(node["a:fld"], ["a:rPr", "attrs", "sz"]);
     fontSize = parseInt(sz) / 100;
   }
   if ((isNaN(fontSize) || fontSize === undefined) && node["a:t"] === undefined) {
-    sz = getTextByPathList(node["a:endParaRPr"], [ "attrs", "sz"]);
+    sz = getTextByPathList(node["a:endParaRPr"], ["attrs", "sz"]);
     fontSize = parseInt(sz) / 100;
   }
   if ((isNaN(fontSize) || fontSize === undefined) && lstStyle !== undefined) {
@@ -59,12 +59,12 @@ export function getFontSize(
   //a:spAutoFit
   var isAutoFit = false;
   var isKerning = false;
-  if (textBodyNode !== undefined){
+  if (textBodyNode !== undefined) {
     var spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:spAutoFit"]);
     // if (spAutoFitNode === undefined) {
     //     spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:normAutofit"]);
     // }
-    if (spAutoFitNode !== undefined){
+    if (spAutoFitNode !== undefined) {
       isAutoFit = true;
       isKerning = true;
     }
@@ -74,10 +74,33 @@ export function getFontSize(
     //     type = "body";
     //     lvlpPr = "a:lvl1pPr";
     // }
-    sz = getTextByPathList(warpObj["slideLayoutTables"], ["typeTable", type, "p:txBody", "a:lstStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
+    sz = getTextByPathList(warpObj["slideLayoutTables"], [
+      "typeTable",
+      type,
+      "p:txBody",
+      "a:lstStyle",
+      lvlpPr,
+      "a:defRPr",
+      "attrs",
+      "sz",
+    ]);
     fontSize = parseInt(sz) / 100;
-    kern = getTextByPathList(warpObj["slideLayoutTables"], ["typeTable", type, "p:txBody", "a:lstStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
-    if (isKerning && kern !== undefined && !isNaN(fontSize) && (fontSize - parseInt(kern) / 100) > 0){
+    kern = getTextByPathList(warpObj["slideLayoutTables"], [
+      "typeTable",
+      type,
+      "p:txBody",
+      "a:lstStyle",
+      lvlpPr,
+      "a:defRPr",
+      "attrs",
+      "kern",
+    ]);
+    if (
+      isKerning &&
+      kern !== undefined &&
+      !isNaN(fontSize) &&
+      fontSize - parseInt(kern) / 100 > 0
+    ) {
       fontSize = fontSize - parseInt(kern) / 100;
     }
   }
@@ -87,26 +110,88 @@ export function getFontSize(
     //     type = "body";
     //     lvlpPr = "a:lvl1pPr";
     // }
-    sz = getTextByPathList(warpObj["slideMasterTables"], ["typeTable", type, "p:txBody", "a:lstStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-    kern = getTextByPathList(warpObj["slideMasterTables"], ["typeTable", type, "p:txBody", "a:lstStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
+    sz = getTextByPathList(warpObj["slideMasterTables"], [
+      "typeTable",
+      type,
+      "p:txBody",
+      "a:lstStyle",
+      lvlpPr,
+      "a:defRPr",
+      "attrs",
+      "sz",
+    ]);
+    kern = getTextByPathList(warpObj["slideMasterTables"], [
+      "typeTable",
+      type,
+      "p:txBody",
+      "a:lstStyle",
+      lvlpPr,
+      "a:defRPr",
+      "attrs",
+      "kern",
+    ]);
     if (sz === undefined) {
       if (type == "title" || type == "subTitle" || type == "ctrTitle") {
-        sz = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:titleStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-        kern = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:titleStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
-      } else if (type == "body" || type == "obj" || type == "dt" || type == "sldNum" || type === "textBox") {
-        sz = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:bodyStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-        kern = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:bodyStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
-      }
-      else if (type == "shape") {
+        sz = getTextByPathList(warpObj["slideMasterTextStyles"], [
+          "p:titleStyle",
+          lvlpPr,
+          "a:defRPr",
+          "attrs",
+          "sz",
+        ]);
+        kern = getTextByPathList(warpObj["slideMasterTextStyles"], [
+          "p:titleStyle",
+          lvlpPr,
+          "a:defRPr",
+          "attrs",
+          "kern",
+        ]);
+      } else if (
+        type == "body" ||
+        type == "obj" ||
+        type == "dt" ||
+        type == "sldNum" ||
+        type === "textBox"
+      ) {
+        sz = getTextByPathList(warpObj["slideMasterTextStyles"], [
+          "p:bodyStyle",
+          lvlpPr,
+          "a:defRPr",
+          "attrs",
+          "sz",
+        ]);
+        kern = getTextByPathList(warpObj["slideMasterTextStyles"], [
+          "p:bodyStyle",
+          lvlpPr,
+          "a:defRPr",
+          "attrs",
+          "kern",
+        ]);
+      } else if (type == "shape") {
         //textBox and shape text does not indent
-        sz = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-        kern = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
+        sz = getTextByPathList(warpObj["slideMasterTextStyles"], [
+          "p:otherStyle",
+          lvlpPr,
+          "a:defRPr",
+          "attrs",
+          "sz",
+        ]);
+        kern = getTextByPathList(warpObj["slideMasterTextStyles"], [
+          "p:otherStyle",
+          lvlpPr,
+          "a:defRPr",
+          "attrs",
+          "kern",
+        ]);
         isKerning = false;
       }
 
       if (sz === undefined) {
         sz = getTextByPathList(warpObj["defaultTextStyle"], [lvlpPr, "a:defRPr", "attrs", "sz"]);
-        kern = (kern === undefined)? getTextByPathList(warpObj["defaultTextStyle"], [lvlpPr, "a:defRPr", "attrs", "kern"]) : undefined;
+        kern =
+          kern === undefined
+            ? getTextByPathList(warpObj["defaultTextStyle"], [lvlpPr, "a:defRPr", "attrs", "kern"])
+            : undefined;
         isKerning = false;
       }
       //  else if (type === undefined || type == "shape") {
@@ -119,7 +204,12 @@ export function getFontSize(
       // }
     }
     fontSize = parseInt(sz) / 100;
-    if (isKerning && kern !== undefined && !isNaN(fontSize) && ((fontSize - parseInt(kern) / 100) > parseInt(kern) / 100 )) {
+    if (
+      isKerning &&
+      kern !== undefined &&
+      !isNaN(fontSize) &&
+      fontSize - parseInt(kern) / 100 > parseInt(kern) / 100
+    ) {
       fontSize = fontSize - parseInt(kern) / 100;
       //fontSize =  parseInt(kern) / 100;
     }
@@ -133,13 +223,22 @@ export function getFontSize(
     fontSize -= baselineVl;
   }
 
-  if (!isNaN(fontSize)){
-    var normAutofit = getTextByPathList(textBodyNode, ["a:bodyPr", "a:normAutofit", "attrs", "fontScale"]);
-    if (normAutofit !== undefined && normAutofit != 0){
+  if (!isNaN(fontSize)) {
+    var normAutofit = getTextByPathList(textBodyNode, [
+      "a:bodyPr",
+      "a:normAutofit",
+      "attrs",
+      "fontScale",
+    ]);
+    if (normAutofit !== undefined && normAutofit != 0) {
       //console.log("fontSize", fontSize, "normAutofit: ", normAutofit, normAutofit/100000)
-      fontSize = Math.round(fontSize * (normAutofit / 100000))
+      fontSize = Math.round(fontSize * (normAutofit / 100000));
     }
   }
 
-  return isNaN(fontSize) ? ((type == "br") ? "initial" : "inherit") : (fontSize * fontSizeFactor + "px");// + "pt");
+  return isNaN(fontSize)
+    ? type == "br"
+      ? "initial"
+      : "inherit"
+    : fontSize * fontSizeFactor + "px"; // + "pt");
 }

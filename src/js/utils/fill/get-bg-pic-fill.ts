@@ -38,23 +38,27 @@ export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, in
         obj[clr_type] = duotone[clr_type];
         clr_ary.push(getSolidFill(obj, undefined, phClr, warpObj));
       }
-    })
+    });
   }
 
-  var aphaModFixNode = getTextByPathList(aBlipNode, ["a:alphaModFix", "attrs"])
+  var aphaModFixNode = getTextByPathList(aBlipNode, ["a:alphaModFix", "attrs"]);
   var imgOpacity = "";
-  if (aphaModFixNode !== undefined && aphaModFixNode["amt"] !== undefined && aphaModFixNode["amt"] != "") {
+  if (
+    aphaModFixNode !== undefined &&
+    aphaModFixNode["amt"] !== undefined &&
+    aphaModFixNode["amt"] != ""
+  ) {
     var amt = parseInt(aphaModFixNode["amt"]) / 100000;
     imgOpacity = "opacity:" + amt + ";";
   }
 
-  var tileNode = getTextByPathList(bgPr, ["a:blipFill", "a:tile", "attrs"])
+  var tileNode = getTextByPathList(bgPr, ["a:blipFill", "a:tile", "attrs"]);
   var prop_style = "";
   if (tileNode !== undefined && tileNode["sx"] !== undefined) {
-    var sx = (parseInt(tileNode["sx"]) / 100000);
-    var sy = (parseInt(tileNode["sy"]) / 100000);
-    var tx = (parseInt(tileNode["tx"]) / 100000);
-    var ty = (parseInt(tileNode["ty"]) / 100000);
+    var sx = parseInt(tileNode["sx"]) / 100000;
+    var sy = parseInt(tileNode["sy"]) / 100000;
+    var tx = parseInt(tileNode["tx"]) / 100000;
+    var ty = parseInt(tileNode["ty"]) / 100000;
     var algn = tileNode["algn"];
     var flip = tileNode["flip"];
 
@@ -70,7 +74,8 @@ export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, in
       prop_style += "background-size:  100% 100%;;";
     }
   }
-  bgcolor = "background: url(" + picFillBase64 + ");  z-index: " + ordr + ";" + prop_style + imgOpacity;
+  bgcolor =
+    "background: url(" + picFillBase64 + ");  z-index: " + ordr + ";" + prop_style + imgOpacity;
 
   return bgcolor;
 }

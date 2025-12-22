@@ -26,11 +26,21 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
     if (bgFillTyp == "SOLID_FILL") {
       var sldFill = bgPr["a:solidFill"];
       var clrMapOvr;
-      var sldClrMapOvr = getTextByPathList(slideContent, ["p:sld", "p:clrMapOvr", "a:overrideClrMapping", "attrs"]);
+      var sldClrMapOvr = getTextByPathList(slideContent, [
+        "p:sld",
+        "p:clrMapOvr",
+        "a:overrideClrMapping",
+        "attrs",
+      ]);
       if (sldClrMapOvr !== undefined) {
         clrMapOvr = sldClrMapOvr;
       } else {
-        sldClrMapOvr = getTextByPathList(slideLayoutContent, ["p:sldLayout", "p:clrMapOvr", "a:overrideClrMapping", "attrs"]);
+        sldClrMapOvr = getTextByPathList(slideLayoutContent, [
+          "p:sldLayout",
+          "p:clrMapOvr",
+          "a:overrideClrMapping",
+          "attrs",
+        ]);
         if (sldClrMapOvr !== undefined) {
           clrMapOvr = sldClrMapOvr;
         } else {
@@ -46,11 +56,21 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
     }
   } else if (bgRef !== undefined) {
     var clrMapOvr;
-    var sldClrMapOvr = getTextByPathList(slideContent, ["p:sld", "p:clrMapOvr", "a:overrideClrMapping", "attrs"]);
+    var sldClrMapOvr = getTextByPathList(slideContent, [
+      "p:sld",
+      "p:clrMapOvr",
+      "a:overrideClrMapping",
+      "attrs",
+    ]);
     if (sldClrMapOvr !== undefined) {
       clrMapOvr = sldClrMapOvr;
     } else {
-      sldClrMapOvr = getTextByPathList(slideLayoutContent, ["p:sldLayout", "p:clrMapOvr", "a:overrideClrMapping", "attrs"]);
+      sldClrMapOvr = getTextByPathList(slideLayoutContent, [
+        "p:sldLayout",
+        "p:clrMapOvr",
+        "a:overrideClrMapping",
+        "attrs",
+      ]);
       if (sldClrMapOvr !== undefined) {
         clrMapOvr = sldClrMapOvr;
       } else {
@@ -67,7 +87,8 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
     } else if (idx > 1000) {
       // bgFillStyleLst in themeContent
       var trueIdx = idx - 1000;
-      var bgFillLst = warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
+      var bgFillLst =
+        warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
       var sortblAry: any[] = [];
 
       Object.keys(bgFillLst).forEach(function (key) {
@@ -78,14 +99,14 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
               var obj: any = {};
               obj[key] = bgFillLstTyp[i];
               obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
-              obj["attrs"] = { "order": bgFillLstTyp[i]["attrs"]["order"] };
+              obj["attrs"] = { order: bgFillLstTyp[i]["attrs"]["order"] };
               sortblAry.push(obj);
             }
           } else {
             var obj: any = {};
             obj[key] = bgFillLstTyp;
             obj["idex"] = bgFillLstTyp["attrs"]["order"];
-            obj["attrs"] = { "order": bgFillLstTyp["attrs"]["order"] };
+            obj["attrs"] = { order: bgFillLstTyp["attrs"]["order"] };
             sortblAry.push(obj);
           }
         }
@@ -115,7 +136,12 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
     bgRef = getTextByPathList(slideLayoutContent, ["p:sldLayout", "p:cSld", "p:bg", "p:bgRef"]);
 
     var clrMapOvr;
-    var sldClrMapOvr = getTextByPathList(slideLayoutContent, ["p:sldLayout", "p:clrMapOvr", "a:overrideClrMapping", "attrs"]);
+    var sldClrMapOvr = getTextByPathList(slideLayoutContent, [
+      "p:sldLayout",
+      "p:clrMapOvr",
+      "a:overrideClrMapping",
+      "attrs",
+    ]);
     if (sldClrMapOvr !== undefined) {
       clrMapOvr = sldClrMapOvr;
     } else {
@@ -145,7 +171,8 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
       } else if (idx > 1000) {
         // bgFillStyleLst in themeContent
         var trueIdx = idx - 1000;
-        var bgFillLst = warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
+        var bgFillLst =
+          warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
         var sortblAry: any[] = [];
 
         Object.keys(bgFillLst).forEach(function (key) {
@@ -156,14 +183,14 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
                 var obj: any = {};
                 obj[key] = bgFillLstTyp[i];
                 obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
-                obj["attrs"] = { "order": bgFillLstTyp[i]["attrs"]["order"] };
+                obj["attrs"] = { order: bgFillLstTyp[i]["attrs"]["order"] };
                 sortblAry.push(obj);
               }
             } else {
               var obj: any = {};
               obj[key] = bgFillLstTyp;
               obj["idex"] = bgFillLstTyp["attrs"]["order"];
-              obj["attrs"] = { "order": bgFillLstTyp["attrs"]["order"] };
+              obj["attrs"] = { order: bgFillLstTyp["attrs"]["order"] };
               sortblAry.push(obj);
             }
           }
@@ -218,7 +245,10 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
         } else if (idx > 1000) {
           // bgFillStyleLst in themeContent
           var trueIdx = idx - 1000;
-          var bgFillLst = warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
+          var bgFillLst =
+            warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"][
+              "a:bgFillStyleLst"
+            ];
           var sortblAry: any[] = [];
 
           Object.keys(bgFillLst).forEach(function (key) {
@@ -229,14 +259,14 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
                   var obj: any = {};
                   obj[key] = bgFillLstTyp[i];
                   obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
-                  obj["attrs"] = { "order": bgFillLstTyp[i]["attrs"]["order"] };
+                  obj["attrs"] = { order: bgFillLstTyp[i]["attrs"]["order"] };
                   sortblAry.push(obj);
                 }
               } else {
                 var obj: any = {};
                 obj[key] = bgFillLstTyp;
                 obj["idex"] = bgFillLstTyp["attrs"]["order"];
-                obj["attrs"] = { "order": bgFillLstTyp["attrs"]["order"] };
+                obj["attrs"] = { order: bgFillLstTyp["attrs"]["order"] };
                 sortblAry.push(obj);
               }
             }

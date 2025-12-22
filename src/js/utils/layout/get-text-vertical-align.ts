@@ -11,11 +11,7 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @param slideMasterTextStyles - Master text styles (unused but kept for consistency)
  * @returns CSS vertical-align value (percentage or "baseline")
  */
-export function getTextVerticalAlign(
-  node: any,
-  type: any,
-  slideMasterTextStyles: any
-): string {
+export function getTextVerticalAlign(node: any, type: any, slideMasterTextStyles: any): string {
   var baseline = getTextByPathList(node, ["a:rPr", "attrs", "baseline"]);
-  return baseline === undefined ? "baseline" : (parseInt(baseline) / 1000) + "%";
+  return baseline === undefined ? "baseline" : parseInt(baseline) / 1000 + "%";
 }

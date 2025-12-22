@@ -27,7 +27,7 @@ export function readXmlFile(
     if (isSlideContent && appVersion !== undefined && appVersion <= 12) {
       // Office 2007 and earlier
       // Remove "<![CDATA[ ... ]]>" tag
-      fileContent = fileContent.replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1');
+      fileContent = fileContent.replace(/<!\[CDATA\[(.*?)\]\]>/g, "$1");
     }
 
     const xmlData = tXml(fileContent, { simplify: 1 });

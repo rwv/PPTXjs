@@ -16,7 +16,13 @@ import { getPatternFill } from "./get-pattern-fill";
 import { getPicFill } from "./get-pic-fill";
 import tinycolor from "tinycolor2";
 
-export function getShapeFill(node: any, pNode: any, isSvgMode: any, warpObj: any, source: any): any {
+export function getShapeFill(
+  node: any,
+  pNode: any,
+  isSvgMode: any,
+  warpObj: any,
+  source: any
+): any {
   // 1. presentationML
   // p:spPr/ [a:noFill, solidFill, gradFill, blipFill, pattFill, grpFill]
   // From slide
@@ -93,7 +99,9 @@ export function getShapeFill(node: any, pNode: any, isSvgMode: any, warpObj: any
         return "background-image:url(" + fillColor + ");";
       }
     } else if (fillType == "PATTERN_FILL") {
-      var bgPtrn = "", bgSize = "", bgPos = "";
+      var bgPtrn = "",
+        bgSize = "",
+        bgPos = "";
       bgPtrn = fillColor[0];
       if (fillColor[1] !== null && fillColor[1] !== undefined && fillColor[1] != "") {
         bgSize = " background-size:" + fillColor[1] + ";";

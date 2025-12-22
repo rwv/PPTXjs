@@ -13,36 +13,46 @@ import { getTextByPathList } from "../../object";
 import { getMimeType, base64ArrayBuffer } from "../../media";
 
 export function renderBulletPic(
-    buPic: any,
-    warpObj: any,
-    marLStr: string,
-    marRStr: string,
-    bultSize: string,
-    isRTL: boolean
+  buPic: any,
+  warpObj: any,
+  marLStr: string,
+  marRStr: string,
+  bultSize: string,
+  isRTL: boolean
 ): string {
-    var buPicId = getTextByPathList(buPic, ["a:blip", "attrs", "r:embed"]);
-    var buImg;
+  var buPicId = getTextByPathList(buPic, ["a:blip", "attrs", "r:embed"]);
+  var buImg;
 
-    if (buPicId !== undefined) {
-        var imgPath = warpObj["slideResObj"][buPicId]["target"];
-        var imgArrayBuffer = warpObj["zip"].file(imgPath).asArrayBuffer();
-        var imgExt = imgPath.split(".").pop();
-        var imgMimeType = getMimeType(imgExt);
-        buImg = "<img src='data:" + imgMimeType + ";base64," + base64ArrayBuffer(imgArrayBuffer) + "' style='width: 100%;'/>";
-    }
+  if (buPicId !== undefined) {
+    var imgPath = warpObj["slideResObj"][buPicId]["target"];
+    var imgArrayBuffer = warpObj["zip"].file(imgPath).asArrayBuffer();
+    var imgExt = imgPath.split(".").pop();
+    var imgMimeType = getMimeType(imgExt);
+    buImg =
+      "<img src='data:" +
+      imgMimeType +
+      ";base64," +
+      base64ArrayBuffer(imgArrayBuffer) +
+      "' style='width: 100%;'/>";
+  }
 
-    if (buPicId === undefined) {
-        buImg = "&#8227;";
-    }
+  if (buPicId === undefined) {
+    buImg = "&#8227;";
+  }
 
-    var bullet = "<div style='height: 100%;" + marLStr + marRStr +
-        "width:" + bultSize + ";display: inline-block; ";
+  var bullet =
+    "<div style='height: 100%;" +
+    marLStr +
+    marRStr +
+    "width:" +
+    bultSize +
+    ";display: inline-block; ";
 
-    if (isRTL) {
-        bullet += "display: inline-block;white-space: nowrap ;direction:rtl;";
-    }
+  if (isRTL) {
+    bullet += "display: inline-block;white-space: nowrap ;direction:rtl;";
+  }
 
-    bullet += "'>" + buImg + "  </div>";
+  bullet += "'>" + buImg + "  </div>";
 
-    return bullet;
+  return bullet;
 }

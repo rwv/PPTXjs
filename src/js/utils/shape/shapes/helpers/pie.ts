@@ -42,8 +42,7 @@ export function shapePie(
       "," +
       (radius - x * radius) +
       " z";
-    const rot =
-      "rotate(" + (piAngle - 270) + ", " + radius + ", " + radius + ")";
+    const rot = "rotate(" + (piAngle - 270) + ", " + radius + ", " + radius + ")";
     return [d, rot];
   } else {
     const longArc = value <= 180 ? 0 : 1;
@@ -64,8 +63,7 @@ export function shapePie(
       (radius2 + y * radius2) +
       "," +
       (radius1 - x * radius1);
-    const rot =
-      "rotate(" + (piAngle + 90) + ", " + radius + ", " + radius + ")";
+    const rot = "rotate(" + (piAngle + 90) + ", " + radius + ", " + radius + ")";
     return [d, rot];
   }
 }

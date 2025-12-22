@@ -20,110 +20,122 @@ import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color";
 
 export interface ShapeEffectsResult {
-    /** SVG defs content (markers, filters) */
-    defsContent: string;
-    /** CSS class name for effects */
-    effectsClassName: string;
+  /** SVG defs content (markers, filters) */
+  defsContent: string;
+  /** CSS class name for effects */
+  effectsClassName: string;
 }
 
 /**
  * Process shape effects and generate SVG defs
  */
 export function processShapeEffects(
-    node: any,
-    shpId: any,
-    svgCssName: string,
-    border: any,
-    warpObj: any,
-    slideFactor: number,
-    styleTable: any
+  node: any,
+  shpId: any,
+  svgCssName: string,
+  border: any,
+  warpObj: any,
+  slideFactor: number,
+  styleTable: any
 ): ShapeEffectsResult {
-    let defsContent = "";
-    const effectsClassName = svgCssName + "_effects";
+  let defsContent = "";
+  const effectsClassName = svgCssName + "_effects";
 
-    ////////////////////effects/////////////////////////////////////////////////////
-    //p:spPr => a:effectLst =>
-    //"a:blur"
-    //"a:fillOverlay"
-    //"a:glow"
-    //"a:innerShdw"
-    //"a:outerShdw"
-    //"a:prstShdw"
-    //"a:reflection"
-    //"a:softEdge"
-    //p:spPr => a:scene3d
-    //"a:camera"
-    //"a:lightRig"
-    //"a:backdrop"
-    //"a:extLst"?
-    //p:spPr => a:sp3d
-    //"a:bevelT"
-    //"a:bevelB"
-    //"a:extrusionClr"
-    //"a:contourClr"
-    //"a:extLst"?
-    //////////////////////////////outerShdw///////////////////////////////////////////
-    //not support sizing the shadow
-    var outerShdwNode = getTextByPathList(node, ["p:spPr", "a:effectLst", "a:outerShdw"]);
-    if (outerShdwNode !== undefined) {
-        var chdwClrNode = getSolidFill(outerShdwNode, undefined, undefined, warpObj);
-        var outerShdwAttrs = outerShdwNode["attrs"];
+  ////////////////////effects/////////////////////////////////////////////////////
+  //p:spPr => a:effectLst =>
+  //"a:blur"
+  //"a:fillOverlay"
+  //"a:glow"
+  //"a:innerShdw"
+  //"a:outerShdw"
+  //"a:prstShdw"
+  //"a:reflection"
+  //"a:softEdge"
+  //p:spPr => a:scene3d
+  //"a:camera"
+  //"a:lightRig"
+  //"a:backdrop"
+  //"a:extLst"?
+  //p:spPr => a:sp3d
+  //"a:bevelT"
+  //"a:bevelB"
+  //"a:extrusionClr"
+  //"a:contourClr"
+  //"a:extLst"?
+  //////////////////////////////outerShdw///////////////////////////////////////////
+  //not support sizing the shadow
+  var outerShdwNode = getTextByPathList(node, ["p:spPr", "a:effectLst", "a:outerShdw"]);
+  if (outerShdwNode !== undefined) {
+    var chdwClrNode = getSolidFill(outerShdwNode, undefined, undefined, warpObj);
+    var outerShdwAttrs = outerShdwNode["attrs"];
 
-        //var algn = outerShdwAttrs["algn"];
-        var dir = (outerShdwAttrs["dir"]) ? (parseInt(outerShdwAttrs["dir"]) / 60000) : 0;
-        var dist = parseInt(outerShdwAttrs["dist"]) * slideFactor;//(px) //* (3 / 4); //(pt)
-        //var rotWithShape = outerShdwAttrs["rotWithShape"];
-        var blurRad = (outerShdwAttrs["blurRad"]) ? (parseInt(outerShdwAttrs["blurRad"]) * slideFactor) : ""; //+ "px"
-        //var sx = (outerShdwAttrs["sx"]) ? (parseInt(outerShdwAttrs["sx"]) / 100000) : 1;
-        //var sy = (outerShdwAttrs["sy"]) ? (parseInt(outerShdwAttrs["sy"]) / 100000) : 1;
-        var vx = dist * Math.sin(dir * Math.PI / 180);
-        var hx = dist * Math.cos(dir * Math.PI / 180);
-        //SVG
-        //var oShadowId = "outerhadow_" + shpId;
-        //oShadowSvgUrlStr = "filter='url(#" + oShadowId+")'";
-        //var shadowFilterStr = '<filter id="' + oShadowId + '" x="0" y="0" width="' + w * (6 / 8) + '" height="' + h + '">';
-        //1:
-        //shadowFilterStr += '<feDropShadow dx="' + vx + '" dy="' + hx + '" stdDeviation="' + blurRad * (3 / 4) + '" flood-color="#' + chdwClrNode +'" flood-opacity="1" />'
-        //2:
-        //shadowFilterStr += '<feFlood result="floodColor" flood-color="red" flood-opacity="0.5"   width="' + w * (6 / 8) + '" height="' + h + '"  />'; //#' + chdwClrNode +'
-        //shadowFilterStr += '<feOffset result="offOut" in="SourceGraph ccfsdf-+ic"  dx="' + vx + '" dy="' + hx + '"/>'; //how much to offset
-        //shadowFilterStr += '<feGaussianBlur result="blurOut" in="offOut" stdDeviation="' + blurRad*(3/4) +'"/>'; //tdDeviation is how much to blur
-        //shadowFilterStr += '<feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>'; //slope is the opacity of the shadow
-        //shadowFilterStr += '<feBlend in="SourceGraphic" in2="blurOut"  mode="normal" />'; //this contains the element that the filter is applied to
-        //shadowFilterStr += '</filter>';
-        //result += shadowFilterStr;
+    //var algn = outerShdwAttrs["algn"];
+    var dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
+    var dist = parseInt(outerShdwAttrs["dist"]) * slideFactor; //(px) //* (3 / 4); //(pt)
+    //var rotWithShape = outerShdwAttrs["rotWithShape"];
+    var blurRad = outerShdwAttrs["blurRad"]
+      ? parseInt(outerShdwAttrs["blurRad"]) * slideFactor
+      : ""; //+ "px"
+    //var sx = (outerShdwAttrs["sx"]) ? (parseInt(outerShdwAttrs["sx"]) / 100000) : 1;
+    //var sy = (outerShdwAttrs["sy"]) ? (parseInt(outerShdwAttrs["sy"]) / 100000) : 1;
+    var vx = dist * Math.sin((dir * Math.PI) / 180);
+    var hx = dist * Math.cos((dir * Math.PI) / 180);
+    //SVG
+    //var oShadowId = "outerhadow_" + shpId;
+    //oShadowSvgUrlStr = "filter='url(#" + oShadowId+")'";
+    //var shadowFilterStr = '<filter id="' + oShadowId + '" x="0" y="0" width="' + w * (6 / 8) + '" height="' + h + '">';
+    //1:
+    //shadowFilterStr += '<feDropShadow dx="' + vx + '" dy="' + hx + '" stdDeviation="' + blurRad * (3 / 4) + '" flood-color="#' + chdwClrNode +'" flood-opacity="1" />'
+    //2:
+    //shadowFilterStr += '<feFlood result="floodColor" flood-color="red" flood-opacity="0.5"   width="' + w * (6 / 8) + '" height="' + h + '"  />'; //#' + chdwClrNode +'
+    //shadowFilterStr += '<feOffset result="offOut" in="SourceGraph ccfsdf-+ic"  dx="' + vx + '" dy="' + hx + '"/>'; //how much to offset
+    //shadowFilterStr += '<feGaussianBlur result="blurOut" in="offOut" stdDeviation="' + blurRad*(3/4) +'"/>'; //tdDeviation is how much to blur
+    //shadowFilterStr += '<feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>'; //slope is the opacity of the shadow
+    //shadowFilterStr += '<feBlend in="SourceGraphic" in2="blurOut"  mode="normal" />'; //this contains the element that the filter is applied to
+    //shadowFilterStr += '</filter>';
+    //result += shadowFilterStr;
 
-        //css:
-        var svg_css_shadow = "filter:drop-shadow(" + hx + "px " + vx + "px " + blurRad + "px #" + chdwClrNode + ");";
+    //css:
+    var svg_css_shadow =
+      "filter:drop-shadow(" + hx + "px " + vx + "px " + blurRad + "px #" + chdwClrNode + ");";
 
-        if (svg_css_shadow in styleTable) {
-            svg_css_shadow += "do-nothing: " + svgCssName + ";";
-        }
-
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-        styleTable[svg_css_shadow] = {
-            "name": effectsClassName,
-            "text": svg_css_shadow
-        };
-
-    }
-    ////////////////////////////////////////////////////////////////////////////////////////
-
-    // Arrow/triangle markers for line ends
-    var headEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]);
-    var tailEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]);
-    // type: none, triangle, stealth, diamond, oval, arrow
-
-    if ((headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) ||
-        (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow"))) {
-        // @ts-expect-error TS(2339): Property 'color' does not exist on type 'string | ... Remove this comment to see the full error message
-        var triangleMarker = "<marker id='markerTriangle_" + shpId + "' viewBox='0 0 10 10' refX='1' refY='5' markerWidth='5' markerHeight='5' stroke='" + border.color + "' fill='" + border.color +
-            "' orient='auto-start-reverse' markerUnits='strokeWidth'><path d='M 0 0 L 10 5 L 0 10 z' /></marker>";
-        defsContent += triangleMarker;
+    if (svg_css_shadow in styleTable) {
+      svg_css_shadow += "do-nothing: " + svgCssName + ";";
     }
 
-    return {
-        defsContent,
-        effectsClassName
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+    styleTable[svg_css_shadow] = {
+      name: effectsClassName,
+      text: svg_css_shadow,
     };
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  // Arrow/triangle markers for line ends
+  var headEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]);
+  var tailEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]);
+  // type: none, triangle, stealth, diamond, oval, arrow
+
+  if (
+    (headEndNodeAttrs !== undefined &&
+      (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) ||
+    (tailEndNodeAttrs !== undefined &&
+      (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow"))
+  ) {
+    // @ts-expect-error TS(2339): Property 'color' does not exist on type 'string | ... Remove this comment to see the full error message
+    var triangleMarker =
+      "<marker id='markerTriangle_" +
+      shpId +
+      "' viewBox='0 0 10 10' refX='1' refY='5' markerWidth='5' markerHeight='5' stroke='" +
+      border.color +
+      "' fill='" +
+      border.color +
+      "' orient='auto-start-reverse' markerUnits='strokeWidth'><path d='M 0 0 L 10 5 L 0 10 z' /></marker>";
+    defsContent += triangleMarker;
+  }
+
+  return {
+    defsContent,
+    effectsClassName,
+  };
 }

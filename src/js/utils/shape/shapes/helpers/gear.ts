@@ -6,11 +6,7 @@
  * @param points - Number of teeth/notches on the gear
  * @returns SVG path string representing the gear shape
  */
-export function shapeGear(
-  w: number | string,
-  h: number | string,
-  points: number | string
-): string {
+export function shapeGear(w: number | string, h: number | string, points: number | string): string {
   // Convert to numbers
   const height = typeof h === "number" ? h : parseFloat(h);
   const notches = typeof points === "number" ? points : parseFloat(points);
@@ -34,8 +30,8 @@ export function shapeGear(
   // Pre-calculate values for loop
   const pi2 = 2 * Math.PI; // cache 2xPI (360deg)
   const angle = pi2 / (notches * 2); // angle between notches
-  const taperAI = (angle * taperI * 0.005); // inner taper offset (100% = half notch)
-  const taperAO = (angle * taperO * 0.005); // outer taper offset
+  const taperAI = angle * taperI * 0.005; // inner taper offset (100% = half notch)
+  const taperAO = angle * taperO * 0.005; // outer taper offset
 
   // Move to starting point
   let d = `M${cx + radiusO * Math.cos(taperAO)} ${cy + radiusO * Math.sin(taperAO)}`;

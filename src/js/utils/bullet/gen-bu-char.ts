@@ -29,320 +29,341 @@ import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handle
  * @returns Array [bulletHTML, marginValue, fontValue] or empty string if no bullet
  */
 export function genBuChar(
-    node: any,
-    i: any,
-    spNode: any,
-    textBodyNode: any,
-    pFontStyle: any,
-    idx: any,
-    type: any,
-    warpObj: any,
-    slideFactor: number,
-    fontSizeFactor: number
+  node: any,
+  i: any,
+  spNode: any,
+  textBodyNode: any,
+  pFontStyle: any,
+  idx: any,
+  type: any,
+  warpObj: any,
+  slideFactor: number,
+  fontSizeFactor: number
 ): string | [string, number, number] {
-    //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
-    ///////////////////////////////////////Amir///////////////////////////////
-    var sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
-    var lstStyle = textBodyNode["a:lstStyle"];
+  //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
+  ///////////////////////////////////////Amir///////////////////////////////
+  var sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
+  var lstStyle = textBodyNode["a:lstStyle"];
 
-    var rNode = getTextByPathList(node, ["a:r"]);
-    if (rNode !== undefined && rNode.constructor === Array) {
-        rNode = rNode[0]; //bullet only to first "a:r"
-    }
-    var lvl = parseInt(getTextByPathList(node["a:pPr"], ["attrs", "lvl"])) + 1;
-    if (isNaN(lvl)) {
-        lvl = 1;
-    }
-    var lvlStr = "a:lvl" + lvl + "pPr";
-    var dfltBultColor, dfltBultSize, bultColor, bultSize, color_tye;
+  var rNode = getTextByPathList(node, ["a:r"]);
+  if (rNode !== undefined && rNode.constructor === Array) {
+    rNode = rNode[0]; //bullet only to first "a:r"
+  }
+  var lvl = parseInt(getTextByPathList(node["a:pPr"], ["attrs", "lvl"])) + 1;
+  if (isNaN(lvl)) {
+    lvl = 1;
+  }
+  var lvlStr = "a:lvl" + lvl + "pPr";
+  var dfltBultColor, dfltBultSize, bultColor, bultSize, color_tye;
 
-    if (rNode !== undefined) {
-        dfltBultColor = getFontColorPr(rNode, spNode, lstStyle, pFontStyle, lvl, idx, type, warpObj, slideFactor);
-        color_tye = dfltBultColor[2];
-        dfltBultSize = getFontSize(rNode, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);
-    } else {
+  if (rNode !== undefined) {
+    dfltBultColor = getFontColorPr(
+      rNode,
+      spNode,
+      lstStyle,
+      pFontStyle,
+      lvl,
+      idx,
+      type,
+      warpObj,
+      slideFactor
+    );
+    color_tye = dfltBultColor[2];
+    dfltBultSize = getFontSize(rNode, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);
+  } else {
+    return "";
+  }
+  //console.log("Bullet Size: " + bultSize);
+
+  var bullet = "",
+    marRStr = "",
+    marLStr = "",
+    margin_val = 0,
+    font_val = 0;
+  /////////////////////////////////////////////////////////////////
+
+  var pPrNode = node["a:pPr"];
+  var BullNONE = getTextByPathList(pPrNode, ["a:buNone"]);
+  if (BullNONE !== undefined) {
+    return "";
+  }
+
+  var buType = "TYPE_NONE";
+
+  var layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
+  var pPrNodeLaout = layoutMasterNode.nodeLaout;
+  var pPrNodeMaster = layoutMasterNode.nodeMaster;
+
+  var buChar = getTextByPathList(pPrNode, ["a:buChar", "attrs", "char"]);
+  var buNum = getTextByPathList(pPrNode, ["a:buAutoNum", "attrs", "type"]);
+  var buPic = getTextByPathList(pPrNode, ["a:buBlip"]);
+  if (buChar !== undefined) {
+    buType = "TYPE_BULLET";
+  }
+  if (buNum !== undefined) {
+    buType = "TYPE_NUMERIC";
+  }
+  if (buPic !== undefined) {
+    buType = "TYPE_BULPIC";
+  }
+
+  var buFontSize = getTextByPathList(pPrNode, ["a:buSzPts", "attrs", "val"]);
+  if (buFontSize === undefined) {
+    buFontSize = getTextByPathList(pPrNode, ["a:buSzPct", "attrs", "val"]);
+    if (buFontSize !== undefined) {
+      var prcnt = parseInt(buFontSize) / 100000;
+      //dfltBultSize = XXpt
+      //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
+      // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
+      var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
+      // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
+      bultSize = prcnt * parseInt(dfltBultSizeNoPt) + "px"; // + "pt";
+    }
+  } else {
+    bultSize = (parseInt(buFontSize) / 100) * fontSizeFactor + "px";
+  }
+
+  //get definde bullet COLOR
+  var buClrNode = getTextByPathList(pPrNode, ["a:buClr"]);
+
+  if (buChar === undefined && buNum === undefined && buPic === undefined) {
+    if (lstStyle !== undefined) {
+      BullNONE = getTextByPathList(lstStyle, [lvlStr, "a:buNone"]);
+      if (BullNONE !== undefined) {
         return "";
-    }
-    //console.log("Bullet Size: " + bultSize);
-
-    var bullet = "", marRStr = "", marLStr = "", margin_val=0, font_val=0;
-    /////////////////////////////////////////////////////////////////
-
-
-    var pPrNode = node["a:pPr"];
-    var BullNONE = getTextByPathList(pPrNode, ["a:buNone"]);
-    if (BullNONE !== undefined) {
-        return "";
-    }
-
-    var buType = "TYPE_NONE";
-
-    var layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
-    var pPrNodeLaout = layoutMasterNode.nodeLaout;
-    var pPrNodeMaster = layoutMasterNode.nodeMaster;
-
-    var buChar = getTextByPathList(pPrNode, ["a:buChar", "attrs", "char"]);
-    var buNum = getTextByPathList(pPrNode, ["a:buAutoNum", "attrs", "type"]);
-    var buPic = getTextByPathList(pPrNode, ["a:buBlip"]);
-    if (buChar !== undefined) {
+      }
+      buType = "TYPE_NONE";
+      buChar = getTextByPathList(lstStyle, [lvlStr, "a:buChar", "attrs", "char"]);
+      buNum = getTextByPathList(lstStyle, [lvlStr, "a:buAutoNum", "attrs", "type"]);
+      buPic = getTextByPathList(lstStyle, [lvlStr, "a:buBlip"]);
+      if (buChar !== undefined) {
         buType = "TYPE_BULLET";
-    }
-    if (buNum !== undefined) {
+      }
+      if (buNum !== undefined) {
         buType = "TYPE_NUMERIC";
-    }
-    if (buPic !== undefined) {
+      }
+      if (buPic !== undefined) {
         buType = "TYPE_BULPIC";
+      }
+      if (buChar !== undefined || buNum !== undefined || buPic !== undefined) {
+        pPrNode = lstStyle[lvlStr];
+      }
     }
-
-    var buFontSize = getTextByPathList(pPrNode, ["a:buSzPts", "attrs", "val"]);
-    if (buFontSize === undefined) {
-        buFontSize = getTextByPathList(pPrNode, ["a:buSzPct", "attrs", "val"]);
-        if (buFontSize !== undefined) {
-            var prcnt = parseInt(buFontSize) / 100000;
-            //dfltBultSize = XXpt
-            //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
-            // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-            var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
-            // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-            bultSize = prcnt * (parseInt(dfltBultSizeNoPt)) + "px";// + "pt";
-        }
-    } else {
-        bultSize = (parseInt(buFontSize) / 100) * fontSizeFactor + "px";
-    }
-
-    //get definde bullet COLOR
-    var buClrNode = getTextByPathList(pPrNode, ["a:buClr"]);
-
-
-    if (buChar === undefined && buNum === undefined && buPic === undefined) {
-
-        if (lstStyle !== undefined) {
-            BullNONE = getTextByPathList(lstStyle, [lvlStr,"a:buNone"]);
-            if (BullNONE !== undefined) {
-                return "";
-            }
-            buType = "TYPE_NONE";
-            buChar = getTextByPathList(lstStyle, [lvlStr,"a:buChar", "attrs", "char"]);
-            buNum = getTextByPathList(lstStyle, [lvlStr,"a:buAutoNum", "attrs", "type"]);
-            buPic = getTextByPathList(lstStyle, [lvlStr,"a:buBlip"]);
-            if (buChar !== undefined) {
-                buType = "TYPE_BULLET";
-            }
-            if (buNum !== undefined) {
-                buType = "TYPE_NUMERIC";
-            }
-            if (buPic !== undefined) {
-                buType = "TYPE_BULPIC";
-            }
-            if (buChar !== undefined || buNum !== undefined || buPic !== undefined) {
-                pPrNode = lstStyle[lvlStr];
-            }
-        }
+  }
+  if (buChar === undefined && buNum === undefined && buPic === undefined) {
+    //check in slidelayout and masterlayout - TODO
+    if (pPrNodeLaout !== undefined) {
+      BullNONE = getTextByPathList(pPrNodeLaout, ["a:buNone"]);
+      if (BullNONE !== undefined) {
+        return "";
+      }
+      buType = "TYPE_NONE";
+      buChar = getTextByPathList(pPrNodeLaout, ["a:buChar", "attrs", "char"]);
+      buNum = getTextByPathList(pPrNodeLaout, ["a:buAutoNum", "attrs", "type"]);
+      buPic = getTextByPathList(pPrNodeLaout, ["a:buBlip"]);
+      if (buChar !== undefined) {
+        buType = "TYPE_BULLET";
+      }
+      if (buNum !== undefined) {
+        buType = "TYPE_NUMERIC";
+      }
+      if (buPic !== undefined) {
+        buType = "TYPE_BULPIC";
+      }
     }
     if (buChar === undefined && buNum === undefined && buPic === undefined) {
-        //check in slidelayout and masterlayout - TODO
-        if (pPrNodeLaout !== undefined) {
-            BullNONE = getTextByPathList(pPrNodeLaout, ["a:buNone"]);
-            if (BullNONE !== undefined) {
-                return "";
-            }
-            buType = "TYPE_NONE";
-            buChar = getTextByPathList(pPrNodeLaout, ["a:buChar", "attrs", "char"]);
-            buNum = getTextByPathList(pPrNodeLaout, ["a:buAutoNum", "attrs", "type"]);
-            buPic = getTextByPathList(pPrNodeLaout, ["a:buBlip"]);
-            if (buChar !== undefined) {
-                buType = "TYPE_BULLET";
-            }
-            if (buNum !== undefined) {
-                buType = "TYPE_NUMERIC";
-            }
-            if (buPic !== undefined) {
-                buType = "TYPE_BULPIC";
-            }
-        }
-        if (buChar === undefined && buNum === undefined && buPic === undefined) {
-            //masterlayout
+      //masterlayout
 
-            if (pPrNodeMaster !== undefined) {
-                BullNONE = getTextByPathList(pPrNodeMaster, ["a:buNone"]);
-                if (BullNONE !== undefined) {
-                    return "";
-                }
-                buType = "TYPE_NONE";
-                buChar = getTextByPathList(pPrNodeMaster, ["a:buChar", "attrs", "char"]);
-                buNum = getTextByPathList(pPrNodeMaster, ["a:buAutoNum", "attrs", "type"]);
-                buPic = getTextByPathList(pPrNodeMaster, ["a:buBlip"]);
-                if (buChar !== undefined) {
-                    buType = "TYPE_BULLET";
-                }
-                if (buNum !== undefined) {
-                    buType = "TYPE_NUMERIC";
-                }
-                if (buPic !== undefined) {
-                    buType = "TYPE_BULPIC";
-                }
-            }
-
+      if (pPrNodeMaster !== undefined) {
+        BullNONE = getTextByPathList(pPrNodeMaster, ["a:buNone"]);
+        if (BullNONE !== undefined) {
+          return "";
         }
-
-    }
-    //rtl
-    var getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
-    if (getRtlVal === undefined) {
-        getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
-        if (getRtlVal === undefined && type != "shape") {
-            getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
+        buType = "TYPE_NONE";
+        buChar = getTextByPathList(pPrNodeMaster, ["a:buChar", "attrs", "char"]);
+        buNum = getTextByPathList(pPrNodeMaster, ["a:buAutoNum", "attrs", "type"]);
+        buPic = getTextByPathList(pPrNodeMaster, ["a:buBlip"]);
+        if (buChar !== undefined) {
+          buType = "TYPE_BULLET";
         }
+        if (buNum !== undefined) {
+          buType = "TYPE_NUMERIC";
+        }
+        if (buPic !== undefined) {
+          buType = "TYPE_BULPIC";
+        }
+      }
     }
-    var isRTL = false;
-    if (getRtlVal !== undefined && getRtlVal == "1") {
-        isRTL = true;
+  }
+  //rtl
+  var getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
+  if (getRtlVal === undefined) {
+    getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
+    if (getRtlVal === undefined && type != "shape") {
+      getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
     }
-    //align
-    var alignNode = getTextByPathList(pPrNode, ["attrs", "algn"]); //"l" | "ctr" | "r" | "just" | "justLow" | "dist" | "thaiDist
+  }
+  var isRTL = false;
+  if (getRtlVal !== undefined && getRtlVal == "1") {
+    isRTL = true;
+  }
+  //align
+  var alignNode = getTextByPathList(pPrNode, ["attrs", "algn"]); //"l" | "ctr" | "r" | "just" | "justLow" | "dist" | "thaiDist
+  if (alignNode === undefined) {
+    alignNode = getTextByPathList(pPrNodeLaout, ["attrs", "algn"]);
     if (alignNode === undefined) {
-        alignNode = getTextByPathList(pPrNodeLaout, ["attrs", "algn"]);
-        if (alignNode === undefined) {
-            alignNode = getTextByPathList(pPrNodeMaster, ["attrs", "algn"]);
-        }
+      alignNode = getTextByPathList(pPrNodeMaster, ["attrs", "algn"]);
     }
-    //indent?
-    var indentNode = getTextByPathList(pPrNode, ["attrs", "indent"]);
+  }
+  //indent?
+  var indentNode = getTextByPathList(pPrNode, ["attrs", "indent"]);
+  if (indentNode === undefined) {
+    indentNode = getTextByPathList(pPrNodeLaout, ["attrs", "indent"]);
     if (indentNode === undefined) {
-        indentNode = getTextByPathList(pPrNodeLaout, ["attrs", "indent"]);
-        if (indentNode === undefined) {
-            indentNode = getTextByPathList(pPrNodeMaster, ["attrs", "indent"]);
-        }
+      indentNode = getTextByPathList(pPrNodeMaster, ["attrs", "indent"]);
     }
-    var indent = 0;
-    if (indentNode !== undefined) {
-        indent = parseInt(indentNode) * slideFactor;
-    }
-    //marL
-    var marLNode = getTextByPathList(pPrNode, ["attrs", "marL"]);
+  }
+  var indent = 0;
+  if (indentNode !== undefined) {
+    indent = parseInt(indentNode) * slideFactor;
+  }
+  //marL
+  var marLNode = getTextByPathList(pPrNode, ["attrs", "marL"]);
+  if (marLNode === undefined) {
+    marLNode = getTextByPathList(pPrNodeLaout, ["attrs", "marL"]);
     if (marLNode === undefined) {
-        marLNode = getTextByPathList(pPrNodeLaout, ["attrs", "marL"]);
-        if (marLNode === undefined) {
-            marLNode = getTextByPathList(pPrNodeMaster, ["attrs", "marL"]);
-        }
+      marLNode = getTextByPathList(pPrNodeMaster, ["attrs", "marL"]);
     }
-    //console.log("genBuChar() isRTL", isRTL, "alignNode:", alignNode)
-    if (marLNode !== undefined) {
-        var marginLeft = parseInt(marLNode) * slideFactor;
-        if (isRTL) {// && alignNode == "r") {
-            marLStr = "padding-right:";// "margin-right: ";
-        } else {
-            marLStr = "padding-left:";//"margin-left: ";
-        }
-        margin_val = ((marginLeft + indent < 0) ? 0 : (marginLeft + indent));
-        marLStr += margin_val + "px;";
+  }
+  //console.log("genBuChar() isRTL", isRTL, "alignNode:", alignNode)
+  if (marLNode !== undefined) {
+    var marginLeft = parseInt(marLNode) * slideFactor;
+    if (isRTL) {
+      // && alignNode == "r") {
+      marLStr = "padding-right:"; // "margin-right: ";
+    } else {
+      marLStr = "padding-left:"; //"margin-left: ";
     }
+    margin_val = marginLeft + indent < 0 ? 0 : marginLeft + indent;
+    marLStr += margin_val + "px;";
+  }
 
-    //marR?
-    var marRNode = getTextByPathList(pPrNode, ["attrs", "marR"]);
-    if (marRNode === undefined && marLNode === undefined) {
-        //need to check if this posble - TODO
-        marRNode = getTextByPathList(pPrNodeLaout, ["attrs", "marR"]);
-        if (marRNode === undefined) {
-            marRNode = getTextByPathList(pPrNodeMaster, ["attrs", "marR"]);
-        }
+  //marR?
+  var marRNode = getTextByPathList(pPrNode, ["attrs", "marR"]);
+  if (marRNode === undefined && marLNode === undefined) {
+    //need to check if this posble - TODO
+    marRNode = getTextByPathList(pPrNodeLaout, ["attrs", "marR"]);
+    if (marRNode === undefined) {
+      marRNode = getTextByPathList(pPrNodeMaster, ["attrs", "marR"]);
     }
-    if (marRNode !== undefined) {
-        var marginRight = parseInt(marRNode) * slideFactor;
-        if (isRTL) {// && alignNode == "r") {
-            marLStr = "padding-right:";// "margin-right: ";
-        } else {
-            marLStr = "padding-left:";//"margin-left: ";
-        }
-        marRStr += ((marginRight + indent < 0) ? 0 : (marginRight + indent)) + "px;";
+  }
+  if (marRNode !== undefined) {
+    var marginRight = parseInt(marRNode) * slideFactor;
+    if (isRTL) {
+      // && alignNode == "r") {
+      marLStr = "padding-right:"; // "margin-right: ";
+    } else {
+      marLStr = "padding-left:"; //"margin-left: ";
     }
+    marRStr += (marginRight + indent < 0 ? 0 : marginRight + indent) + "px;";
+  }
 
-    if (buType != "TYPE_NONE") {
-        //var buFontAttrs = getTextByPathList(pPrNode, ["a:buFont", "attrs"]);
-    }
-    //console.log("Bullet Type: " + buType);
-    //console.log("NumericTypr: " + buNum);
-    //console.log("buChar: " + (buChar === undefined?'':buChar.charCodeAt(0)));
-    //get definde bullet COLOR
-    if (buClrNode === undefined){
-        //lstStyle
-        buClrNode = getTextByPathList(lstStyle, [lvlStr, "a:buClr"]);
-    }
+  if (buType != "TYPE_NONE") {
+    //var buFontAttrs = getTextByPathList(pPrNode, ["a:buFont", "attrs"]);
+  }
+  //console.log("Bullet Type: " + buType);
+  //console.log("NumericTypr: " + buNum);
+  //console.log("buChar: " + (buChar === undefined?'':buChar.charCodeAt(0)));
+  //get definde bullet COLOR
+  if (buClrNode === undefined) {
+    //lstStyle
+    buClrNode = getTextByPathList(lstStyle, [lvlStr, "a:buClr"]);
+  }
+  if (buClrNode === undefined) {
+    buClrNode = getTextByPathList(pPrNodeLaout, ["a:buClr"]);
     if (buClrNode === undefined) {
-        buClrNode = getTextByPathList(pPrNodeLaout, ["a:buClr"]);
-        if (buClrNode === undefined) {
-            buClrNode = getTextByPathList(pPrNodeMaster, ["a:buClr"]);
-        }
+      buClrNode = getTextByPathList(pPrNodeMaster, ["a:buClr"]);
     }
-    var defBultColor;
-    if (buClrNode !== undefined) {
-        defBultColor = getSolidFill(buClrNode, undefined, undefined, warpObj);
-    } else {
-        if (pFontStyle !== undefined) {
-            //console.log("genBuChar pFontStyle: ", pFontStyle)
-            defBultColor = getSolidFill(pFontStyle, undefined, undefined, warpObj);
-        }
+  }
+  var defBultColor;
+  if (buClrNode !== undefined) {
+    defBultColor = getSolidFill(buClrNode, undefined, undefined, warpObj);
+  } else {
+    if (pFontStyle !== undefined) {
+      //console.log("genBuChar pFontStyle: ", pFontStyle)
+      defBultColor = getSolidFill(pFontStyle, undefined, undefined, warpObj);
     }
-    if (defBultColor === undefined || defBultColor == "NONE") {
-        bultColor = dfltBultColor;
-    } else {
-        bultColor = [defBultColor, "", "solid"];
-        color_tye = "solid";
-    }
-    //console.log("genBuChar node:", node, "pPrNode", pPrNode, " buClrNode: ", buClrNode, "defBultColor:", defBultColor,"dfltBultColor:" , dfltBultColor , "bultColor:", bultColor)
+  }
+  if (defBultColor === undefined || defBultColor == "NONE") {
+    bultColor = dfltBultColor;
+  } else {
+    bultColor = [defBultColor, "", "solid"];
+    color_tye = "solid";
+  }
+  //console.log("genBuChar node:", node, "pPrNode", pPrNode, " buClrNode: ", buClrNode, "defBultColor:", defBultColor,"dfltBultColor:" , dfltBultColor , "bultColor:", bultColor)
 
-    //console.log("genBuChar: buClrNode: ", buClrNode, "bultColor", bultColor)
-    //get definde bullet SIZE
+  //console.log("genBuChar: buClrNode: ", buClrNode, "bultColor", bultColor)
+  //get definde bullet SIZE
+  if (buFontSize === undefined) {
+    buFontSize = getTextByPathList(pPrNodeLaout, ["a:buSzPts", "attrs", "val"]);
     if (buFontSize === undefined) {
-        buFontSize = getTextByPathList(pPrNodeLaout, ["a:buSzPts", "attrs", "val"]);
-        if (buFontSize === undefined) {
-            buFontSize = getTextByPathList(pPrNodeLaout, ["a:buSzPct", "attrs", "val"]);
-            if (buFontSize !== undefined) {
-                var prcnt = parseInt(buFontSize) / 100000;
-                //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
-                // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-                var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
-                // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-                bultSize = prcnt * (parseInt(dfltBultSizeNoPt)) + "px";// + "pt";
-            }
-        }else{
-            bultSize = (parseInt(buFontSize) / 100) * fontSizeFactor + "px";
-        }
+      buFontSize = getTextByPathList(pPrNodeLaout, ["a:buSzPct", "attrs", "val"]);
+      if (buFontSize !== undefined) {
+        var prcnt = parseInt(buFontSize) / 100000;
+        //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
+        // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
+        var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
+        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
+        bultSize = prcnt * parseInt(dfltBultSizeNoPt) + "px"; // + "pt";
+      }
+    } else {
+      bultSize = (parseInt(buFontSize) / 100) * fontSizeFactor + "px";
     }
+  }
+  if (buFontSize === undefined) {
+    buFontSize = getTextByPathList(pPrNodeMaster, ["a:buSzPts", "attrs", "val"]);
     if (buFontSize === undefined) {
-        buFontSize = getTextByPathList(pPrNodeMaster, ["a:buSzPts", "attrs", "val"]);
-        if (buFontSize === undefined) {
-            buFontSize = getTextByPathList(pPrNodeMaster, ["a:buSzPct", "attrs", "val"]);
-            if (buFontSize !== undefined) {
-                var prcnt = parseInt(buFontSize) / 100000;
-                //dfltBultSize = XXpt
-                //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
-                // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-                var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
-                // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-                bultSize = prcnt * (parseInt(dfltBultSizeNoPt)) + "px";// + "pt";
-            }
-        } else {
-            bultSize = (parseInt(buFontSize) / 100) * fontSizeFactor + "px";
-        }
+      buFontSize = getTextByPathList(pPrNodeMaster, ["a:buSzPct", "attrs", "val"]);
+      if (buFontSize !== undefined) {
+        var prcnt = parseInt(buFontSize) / 100000;
+        //dfltBultSize = XXpt
+        //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
+        // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
+        var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
+        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
+        bultSize = prcnt * parseInt(dfltBultSizeNoPt) + "px"; // + "pt";
+      }
+    } else {
+      bultSize = (parseInt(buFontSize) / 100) * fontSizeFactor + "px";
     }
-    if (buFontSize === undefined) {
-        bultSize = dfltBultSize;
-    }
-    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-    font_val = parseInt(bultSize, "px");
-    ////////////////////////////////////////////////////////////////////////
-    if (buType == "TYPE_BULLET") {
-        bullet = renderBulletChar(pPrNode, buChar, bultColor, color_tye, bultSize, marLStr, marRStr, isRTL, font_val);
-    } else if (buType == "TYPE_NUMERIC") {
-        bullet = renderBulletNumeric(bultColor, bultSize, marLStr, marRStr, isRTL, buNum, lvl);
-    } else if (buType == "TYPE_BULPIC") {
-        bullet = renderBulletPic(buPic, warpObj, marLStr, marRStr, bultSize, isRTL);
-    }
-    // else {
-    //     bullet = "<div style='margin-left: " + 328600 * slideFactor * lvl + "px" +
-    //         "; margin-right: " + 0 + "px;'></div>";
-    // }
-    //console.log("genBuChar: width: ", $(bullet).outerWidth())
-    return [bullet, margin_val, font_val];//$(bullet).outerWidth()];
+  }
+  if (buFontSize === undefined) {
+    bultSize = dfltBultSize;
+  }
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
+  font_val = parseInt(bultSize, "px");
+  ////////////////////////////////////////////////////////////////////////
+  if (buType == "TYPE_BULLET") {
+    bullet = renderBulletChar(
+      pPrNode,
+      buChar,
+      bultColor,
+      color_tye,
+      bultSize,
+      marLStr,
+      marRStr,
+      isRTL,
+      font_val
+    );
+  } else if (buType == "TYPE_NUMERIC") {
+    bullet = renderBulletNumeric(bultColor, bultSize, marLStr, marRStr, isRTL, buNum, lvl);
+  } else if (buType == "TYPE_BULPIC") {
+    bullet = renderBulletPic(buPic, warpObj, marLStr, marRStr, bultSize, isRTL);
+  }
+  // else {
+  //     bullet = "<div style='margin-left: " + 328600 * slideFactor * lvl + "px" +
+  //         "; margin-right: " + 0 + "px;'></div>";
+  // }
+  //console.log("genBuChar: width: ", $(bullet).outerWidth())
+  return [bullet, margin_val, font_val]; //$(bullet).outerWidth()];
 }
