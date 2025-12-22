@@ -43,7 +43,7 @@ import { getSvgGradient, getSvgImagePattern } from "../svg";
 import { renderCustomGeometry } from "./render-custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
-import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType } from "./shapes";
+import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape } from "./shapes";
 
 export function genShape(
     node: any,
@@ -225,6 +225,19 @@ export function genShape(
                 } else if (isMathShape(shapType)) {
                     // Handle math shapes via dedicated module
                     result += renderMathShapeType(shapType, {
+                        node,
+                        w,
+                        h,
+                        shpId,
+                        fillColor,
+                        grndFillFlg,
+                        imgFillFlg,
+                        border,
+                        slideFactor
+                    });
+                } else if (isBracketShape(shapType)) {
+                    // Handle bracket shapes via dedicated module
+                    result += renderBracketShape(shapType, {
                         node,
                         w,
                         h,
@@ -1116,277 +1129,6 @@ export function genShape(
                             // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             shapeArc(wd2, hd2, iwd2, ihd2, istAng, iendAng, false).replace("M", "L") +
                             " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "bracePair":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adj = 8333 * slideFactor;
-                        var cnstVal1 = 25000 * slideFactor;
-                        var cnstVal2 = 50000 * slideFactor;
-                        var cnstVal3 = 100000 * slideFactor;
-                        if (shapAdjst !== undefined) {
-                            adj = parseInt(shapAdjst.substr(4)) * slideFactor;
-                        }
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var vc = h / 2, cd = 360, cd2 = 180, cd4 = 90, c3d4 = 270, a, x1, x2, x3, x4, y2, y3, y4;
-                        if (adj < 0) a = 0
-                        else if (adj > cnstVal1) a = cnstVal1
-                        else a = adj
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var minWH = Math.min(w, h);
-                        x1 = minWH * a / cnstVal3;
-                        x2 = minWH * a / cnstVal2;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x3 = w - x2;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x4 = w - x1;
-                        y2 = vc - x1;
-                        y3 = vc + x1;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y4 = h - x1;
-                        //console.log("w:",w," h:",h," x1:",x1," x2:",x2," x3:",x3," x4:",x4," y2:",y2," y3:",y3," y4:",y4)
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var d = "M" + x2 + "," + h +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x2, y4, x1, x1, cd4, cd2, false).replace("M", "L") +
-                            " L" + x1 + "," + y3 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(0, y3, x1, x1, 0, (-cd4), false).replace("M", "L") +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(0, y2, x1, x1, cd4, 0, false).replace("M", "L") +
-                            " L" + x1 + "," + x1 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x2, x1, x1, x1, cd2, c3d4, false).replace("M", "L") +
-                            " M" + x3 + "," + 0 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x3, x1, x1, x1, c3d4, cd, false).replace("M", "L") +
-                            " L" + x4 + "," + y2 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w, y2, x1, x1, cd2, cd4, false).replace("M", "L") +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w, y3, x1, x1, c3d4, cd2, false).replace("M", "L") +
-                            " L" + x4 + "," + y4 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x3, y4, x1, x1, 0, cd4, false).replace("M", "L");
-
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "leftBrace":
-                        var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-                        var sAdj1, adj1 = 8333 * slideFactor;
-                        var sAdj2, adj2 = 50000 * slideFactor;
-                        var cnstVal2 = 100000 * slideFactor;
-                        if (shapAdjst_ary !== undefined) {
-                            for (var i = 0; i < shapAdjst_ary.length; i++) {
-                                var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-                                if (sAdj_name == "adj1") {
-                                    sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
-                                    adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-                                } else if (sAdj_name == "adj2") {
-                                    sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
-                                    adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-                                }
-                            }
-                        }
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var vc = h / 2, cd2 = 180, cd4 = 90, c3d4 = 270, a1, a2, q1, q2, q3, y1, y2, y3, y4;
-                        if (adj2 < 0) a2 = 0
-                        else if (adj2 > cnstVal2) a2 = cnstVal2
-                        else a2 = adj2
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var minWH = Math.min(w, h);
-                        q1 = cnstVal2 - a2;
-                        if (q1 < a2) q2 = q1
-                        else q2 = a2
-                        q3 = q2 / 2;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var maxAdj1 = q3 * h / minWH;
-                        if (adj1 < 0) a1 = 0
-                        else if (adj1 > maxAdj1) a1 = maxAdj1
-                        else a1 = adj1
-                        y1 = minWH * a1 / cnstVal2;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y3 = h * a2 / cnstVal2;
-                        y2 = y3 - y1;
-                        y4 = y3 + y1;
-                        //console.log("w:",w," h:",h," q1:",q1," q2:",q2," q3:",q3," y1:",y1," y3:",y3," y4:",y4," maxAdj1:",maxAdj1)
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var d = "M" + w + "," + h +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w, h - y1, w / 2, y1, cd4, cd2, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w / 2 + "," + y4 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(0, y4, w / 2, y1, 0, (-cd4), false).replace("M", "L") +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(0, y2, w / 2, y1, cd4, 0, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w / 2 + "," + y1 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w, y1, w / 2, y1, cd2, c3d4, false).replace("M", "L");
-
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "rightBrace":
-                        var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-                        var sAdj1, adj1 = 8333 * slideFactor;
-                        var sAdj2, adj2 = 50000 * slideFactor;
-                        var cnstVal2 = 100000 * slideFactor;
-                        if (shapAdjst_ary !== undefined) {
-                            for (var i = 0; i < shapAdjst_ary.length; i++) {
-                                var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-                                if (sAdj_name == "adj1") {
-                                    sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
-                                    adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-                                } else if (sAdj_name == "adj2") {
-                                    sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
-                                    adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-                                }
-                            }
-                        }
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var vc = h / 2, cd = 360, cd2 = 180, cd4 = 90, c3d4 = 270, a1, a2, q1, q2, q3, y1, y2, y3, y4;
-                        if (adj2 < 0) a2 = 0
-                        else if (adj2 > cnstVal2) a2 = cnstVal2
-                        else a2 = adj2
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var minWH = Math.min(w, h);
-                        q1 = cnstVal2 - a2;
-                        if (q1 < a2) q2 = q1
-                        else q2 = a2
-                        q3 = q2 / 2;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var maxAdj1 = q3 * h / minWH;
-                        if (adj1 < 0) a1 = 0
-                        else if (adj1 > maxAdj1) a1 = maxAdj1
-                        else a1 = adj1
-                        y1 = minWH * a1 / cnstVal2;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y3 = h * a2 / cnstVal2;
-                        y2 = y3 - y1;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y4 = h - y1;
-                        //console.log("w:",w," h:",h," q1:",q1," q2:",q2," q3:",q3," y1:",y1," y2:",y2," y3:",y3," y4:",y4," maxAdj1:",maxAdj1)
-                        var d = "M" + 0 + "," + 0 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(0, y1, w / 2, y1, c3d4, cd, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w / 2 + "," + y2 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w, y2, w / 2, y1, cd2, cd4, false).replace("M", "L") +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w, y3 + y1, w / 2, y1, c3d4, cd2, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w / 2 + "," + y4 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(0, y4, w / 2, y1, 0, cd4, false).replace("M", "L");
-
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "bracketPair":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adj = 16667 * slideFactor;
-                        var cnstVal1 = 50000 * slideFactor;
-                        var cnstVal2 = 100000 * slideFactor;
-                        if (shapAdjst !== undefined) {
-                            adj = parseInt(shapAdjst.substr(4)) * slideFactor;
-                        }
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var r = w, b = h, cd2 = 180, cd4 = 90, c3d4 = 270, a, x1, x2, y2;
-                        if (adj < 0) a = 0
-                        else if (adj > cnstVal1) a = cnstVal1
-                        else a = adj
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x1 = Math.min(w, h) * a / cnstVal2;
-                        x2 = r - x1;
-                        y2 = b - x1;
-                        //console.log("w:",w," h:",h," x1:",x1," x2:",x2," y2:",y2)
-                        var d = shapeArc(x1, x1, x1, x1, c3d4, cd2, false) +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x1, y2, x1, x1, cd2, cd4, false).replace("M", "L") +
-                            shapeArc(x2, x1, x1, x1, c3d4, (c3d4 + cd4), false) +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x2, y2, x1, x1, 0, cd4, false).replace("M", "L");
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "leftBracket":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adj = 8333 * slideFactor;
-                        var cnstVal1 = 50000 * slideFactor;
-                        var cnstVal2 = 100000 * slideFactor;
-                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                        var maxAdj = cnstVal1 * h / Math.min(w, h);
-                        if (shapAdjst !== undefined) {
-                            adj = parseInt(shapAdjst.substr(4)) * slideFactor;
-                        }
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var r = w, b = h, cd2 = 180, cd4 = 90, c3d4 = 270, a, y1, y2;
-                        if (adj < 0) a = 0
-                        else if (adj > maxAdj) a = maxAdj
-                        else a = adj
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        y1 = Math.min(w, h) * a / cnstVal2;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        if (y1 > w) y1 = w;
-                        y2 = b - y1;
-                        var d = "M" + r + "," + b +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(y1, y2, y1, y1, cd4, cd2, false).replace("M", "L") +
-                            " L" + 0 + "," + y1 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(y1, y1, y1, y1, cd2, c3d4, false).replace("M", "L") +
-                            " L" + r + "," + 0
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "rightBracket":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adj = 8333 * slideFactor;
-                        var cnstVal1 = 50000 * slideFactor;
-                        var cnstVal2 = 100000 * slideFactor;
-                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                        var maxAdj = cnstVal1 * h / Math.min(w, h);
-                        if (shapAdjst !== undefined) {
-                            adj = parseInt(shapAdjst.substr(4)) * slideFactor;
-                        }
-                        var cd = 360, cd2 = 180, cd4 = 90, c3d4 = 270, a, y1, y2, y3;
-                        if (adj < 0) a = 0
-                        else if (adj > maxAdj) a = maxAdj
-                        else a = adj
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        y1 = Math.min(w, h) * a / cnstVal2;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y2 = h - y1;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        y3 = w - y1;
-                        //console.log("w:",w," h:",h," y1:",y1," y2:",y2," y3:",y3)
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var d = "M" + 0 + "," + h +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(y3, y2, y1, y1, cd4, 0, false).replace("M", "L") +
-                            //" L"+ r + "," + y2 +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + h / 2 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(y3, y1, y1, y1, cd, c3d4, false).replace("M", "L") +
-                            " L" + 0 + "," + 0
                         // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
                             // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
