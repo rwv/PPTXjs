@@ -33,3 +33,6 @@ export type { BracketShapeContext } from "./brackets";
 
 export { isArcShape, renderArcShape, ARC_SHAPE_TYPES } from "./arc-shapes";
 export type { ArcShapeContext } from "./arc-shapes";
+
+export { isPolygonShape, renderPolygonShape, POLYGON_SHAPE_TYPES } from "./polygons";
+export type { PolygonShapeContext } from "./polygons";
