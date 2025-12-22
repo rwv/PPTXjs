@@ -27,3 +27,6 @@ export type { RibbonContext } from "./ribbons";
 
 export { isMathShape, renderMathShapeType, MATH_SHAPE_TYPES } from "./math-shapes";
 export type { MathShapeContext } from "./math-shapes";
+
+export { isBracketShape, renderBracketShape, BRACKET_SHAPE_TYPES } from "./brackets";
+export type { BracketShapeContext } from "./brackets";
