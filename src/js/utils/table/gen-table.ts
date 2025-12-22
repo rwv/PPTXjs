@@ -3,6 +3,7 @@ import { getSolidFill } from "../color";
 import { getTableBorders } from "../border";
 import { getPosition, getSize } from "../layout";
 import { getTableCellParams } from "./get-table-cell-params";
+import { getTableRowStyle, getTableStyleById } from "./helpers";
 
 /**
  * Generate HTML table from PPTX table node
@@ -70,26 +71,9 @@ export function genTable(
         isBandColAttr: (bandColAttr !== undefined && bandColAttr == "1") ? 1 : 0
     }
 
-    var thisTblStyle;
     var tbleStyleId = getTblPr["a:tableStyleId"];
-    if (tbleStyleId !== undefined) {
-        var tbleStylList = tableStyles["a:tblStyleLst"]["a:tblStyle"];
-        if (tbleStylList !== undefined) {
-            if (tbleStylList.constructor === Array) {
-                for (var k = 0; k < tbleStylList.length; k++) {
-                    if (tbleStylList[k]["attrs"]["styleId"] == tbleStyleId) {
-                        thisTblStyle = tbleStylList[k];
-                    }
-                }
-            } else {
-                if (tbleStylList["attrs"]["styleId"] == tbleStyleId) {
-                    thisTblStyle = tbleStylList;
-                }
-            }
-        }
-    }
+    var thisTblStyle = getTableStyleById(tbleStyleId, tableStyles, tblStylAttrObj);
     if (thisTblStyle !== undefined) {
-        thisTblStyle["tblStylAttrObj"] = tblStylAttrObj;
         warpObj["thisTbiStyle"] = thisTblStyle;
     }
     var tblStyl = getTextByPathList(thisTblStyle, ["a:wholeTbl", "a:tcStyle"]);
@@ -139,165 +123,12 @@ export function genTable(
                 rowHeight = parseInt(rowHeightParam) * slideFactor;
                 rowsStyl += "height:" + rowHeight + "px;";
             }
-            var fillColor = "";
-            var row_borders = "";
-            var fontClrPr = "";
-            var fontWeight = "";
-            var band_1H_fillColor;
-            var band_2H_fillColor;
-
-            if (thisTblStyle !== undefined && thisTblStyle["a:wholeTbl"] !== undefined) {
-                var bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:wholeTbl", "a:tcStyle", "a:fill", "a:solidFill"]);
-                if (bgFillschemeClr !== undefined) {
-                    var local_fillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpObj);
-                    if (local_fillColor !== undefined) {
-                        fillColor = local_fillColor;
-                    }
-                }
-                var rowTxtStyl = getTextByPathList(thisTblStyle, ["a:wholeTbl", "a:tcTxStyle"]);
-                if (rowTxtStyl !== undefined) {
-                    var local_fontColor = getSolidFill(rowTxtStyl, undefined, undefined, warpObj);
-                    if (local_fontColor !== undefined) {
-                        fontClrPr = local_fontColor;
-                    }
-
-                    var local_fontWeight = ((getTextByPathList(rowTxtStyl, ["attrs", "b"]) == "on") ? "bold" : "");
-                    if (local_fontWeight != "") {
-                        fontWeight = local_fontWeight
-                    }
-                }
-            }
-
-            if (i == 0 && tblStylAttrObj["isFrstRowAttr"] == 1 && thisTblStyle !== undefined) {
-
-                var bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:firstRow", "a:tcStyle", "a:fill", "a:solidFill"]);
-                if (bgFillschemeClr !== undefined) {
-                    var local_fillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpObj);
-                    if (local_fillColor !== undefined) {
-                        fillColor = local_fillColor;
-                    }
-                }
-                var borderStyl = getTextByPathList(thisTblStyle, ["a:firstRow", "a:tcStyle", "a:tcBdr"]);
-                if (borderStyl !== undefined) {
-                    var local_row_borders = getTableBorders(borderStyl, warpObj);
-                    if (local_row_borders != "") {
-                        row_borders = local_row_borders;
-                    }
-                }
-                var rowTxtStyl = getTextByPathList(thisTblStyle, ["a:firstRow", "a:tcTxStyle"]);
-                if (rowTxtStyl !== undefined) {
-                    var local_fontClrPr = getSolidFill(rowTxtStyl, undefined, undefined, warpObj);
-                    if (local_fontClrPr !== undefined) {
-                        fontClrPr = local_fontClrPr;
-                    }
-                    var local_fontWeight = ((getTextByPathList(rowTxtStyl, ["attrs", "b"]) == "on") ? "bold" : "");
-                    if (local_fontWeight !== "") {
-                        fontWeight = local_fontWeight;
-                    }
-                }
-
-            } else if (i > 0 && tblStylAttrObj["isBandRowAttr"] == 1 && thisTblStyle !== undefined) {
-                fillColor = "";
-                // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
-                row_borders = undefined;
-                if ((i % 2) == 0 && thisTblStyle["a:band2H"] !== undefined) {
-                    // console.log("i: ", i, 'thisTblStyle["a:band2H"]:', thisTblStyle["a:band2H"])
-                    //check if there is a row bg
-                    var bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:band2H", "a:tcStyle", "a:fill", "a:solidFill"]);
-                    if (bgFillschemeClr !== undefined) {
-                        var local_fillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpObj);
-                        if (local_fillColor !== "") {
-                            // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
-                            fillColor = local_fillColor;
-                            band_2H_fillColor = local_fillColor;
-                        }
-                    }
-
-
-                    var borderStyl = getTextByPathList(thisTblStyle, ["a:band2H", "a:tcStyle", "a:tcBdr"]);
-                    if (borderStyl !== undefined) {
-                        var local_row_borders = getTableBorders(borderStyl, warpObj);
-                        if (local_row_borders != "") {
-                            row_borders = local_row_borders;
-                        }
-                    }
-                    var rowTxtStyl = getTextByPathList(thisTblStyle, ["a:band2H", "a:tcTxStyle"]);
-                    if (rowTxtStyl !== undefined) {
-                        var local_fontClrPr = getSolidFill(rowTxtStyl, undefined, undefined, warpObj);
-                        if (local_fontClrPr !== undefined) {
-                            fontClrPr = local_fontClrPr;
-                        }
-                    }
-
-                    var local_fontWeight = ((getTextByPathList(rowTxtStyl, ["attrs", "b"]) == "on") ? "bold" : "");
-
-                    if (local_fontWeight !== "") {
-                        fontWeight = local_fontWeight;
-                    }
-                }
-                if ((i % 2) != 0 && thisTblStyle["a:band1H"] !== undefined) {
-                    var bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:band1H", "a:tcStyle", "a:fill", "a:solidFill"]);
-                    if (bgFillschemeClr !== undefined) {
-                        var local_fillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpObj);
-                        if (local_fillColor !== undefined) {
-                            fillColor = local_fillColor;
-                            band_1H_fillColor = local_fillColor;
-                        }
-                    }
-                    var borderStyl = getTextByPathList(thisTblStyle, ["a:band1H", "a:tcStyle", "a:tcBdr"]);
-                    if (borderStyl !== undefined) {
-                        var local_row_borders = getTableBorders(borderStyl, warpObj);
-                        if (local_row_borders != "") {
-                            row_borders = local_row_borders;
-                        }
-                    }
-                    var rowTxtStyl = getTextByPathList(thisTblStyle, ["a:band1H", "a:tcTxStyle"]);
-                    if (rowTxtStyl !== undefined) {
-                        var local_fontClrPr = getSolidFill(rowTxtStyl, undefined, undefined, warpObj);
-                        if (local_fontClrPr !== undefined) {
-                            fontClrPr = local_fontClrPr;
-                        }
-                        var local_fontWeight = ((getTextByPathList(rowTxtStyl, ["attrs", "b"]) == "on") ? "bold" : "");
-                        if (local_fontWeight != "") {
-                            fontWeight = local_fontWeight;
-                        }
-                    }
-                }
-
-            }
-            //last row
-            if (i == (trNodes.length - 1) && tblStylAttrObj["isLstRowAttr"] == 1 && thisTblStyle !== undefined) {
-                var bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:lastRow", "a:tcStyle", "a:fill", "a:solidFill"]);
-                if (bgFillschemeClr !== undefined) {
-                    var local_fillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpObj);
-                    if (local_fillColor !== undefined) {
-                        fillColor = local_fillColor;
-                    }
-                    // var local_colorOpacity = getColorOpacity(bgFillschemeClr);
-                    // if(local_colorOpacity !== undefined){
-                    //     colorOpacity = local_colorOpacity;
-                    // }
-                }
-                var borderStyl = getTextByPathList(thisTblStyle, ["a:lastRow", "a:tcStyle", "a:tcBdr"]);
-                if (borderStyl !== undefined) {
-                    var local_row_borders = getTableBorders(borderStyl, warpObj);
-                    if (local_row_borders != "") {
-                        row_borders = local_row_borders;
-                    }
-                }
-                var rowTxtStyl = getTextByPathList(thisTblStyle, ["a:lastRow", "a:tcTxStyle"]);
-                if (rowTxtStyl !== undefined) {
-                    var local_fontClrPr = getSolidFill(rowTxtStyl, undefined, undefined, warpObj);
-                    if (local_fontClrPr !== undefined) {
-                        fontClrPr = local_fontClrPr;
-                    }
-
-                    var local_fontWeight = ((getTextByPathList(rowTxtStyl, ["attrs", "b"]) == "on") ? "bold" : "");
-                    if (local_fontWeight !== "") {
-                        fontWeight = local_fontWeight;
-                    }
-                }
-            }
+            // Get row styling based on position and table style attributes
+            const rowStyle = getTableRowStyle(i, trNodes.length, tblStylAttrObj, thisTblStyle, warpObj);
+            var fillColor = rowStyle.fillColor;
+            var row_borders = rowStyle.row_borders;
+            var fontClrPr = rowStyle.fontClrPr;
+            var fontWeight = rowStyle.fontWeight;
             rowsStyl += ((row_borders !== undefined) ? row_borders : "");
             rowsStyl += ((fontClrPr !== undefined) ? " color: #" + fontClrPr + ";" : "");
             rowsStyl += ((fontWeight != "") ? " font-weight:" + fontWeight + ";" : "");
