@@ -43,7 +43,7 @@ import { getSvgGradient, getSvgImagePattern } from "../svg";
 import { renderCustomGeometry } from "./render-custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
-import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape, isArcShape, renderArcShape, isPolygonShape, renderPolygonShape, isScrollShape, renderScrollShapeType, isMiscSymbolShape, renderMiscSymbolShape, isPlateCylinderShape, renderPlateCylinderShape } from "./shapes";
+import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape, isArcShape, renderArcShape, isPolygonShape, renderPolygonShape, isScrollShape, renderScrollShapeType, isMiscSymbolShape, renderMiscSymbolShape, isPlateCylinderShape, renderPlateCylinderShape, isConnectorShape, renderConnectorShape } from "./shapes";
 
 export function genShape(
     node: any,
@@ -315,6 +315,15 @@ export function genShape(
                         imgFillFlg,
                         border,
                         slideFactor
+                    });
+                } else if (isConnectorShape(shapType)) {
+                    // Handle connector shapes via dedicated module
+                    result += renderConnectorShape(shapType, {
+                        node,
+                        w,
+                        h,
+                        shpId,
+                        border
                     });
                 } else switch (shapType) {
                     case "rect":
@@ -597,76 +606,6 @@ export function genShape(
                         result += "<path   d='" + d_val + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
                             // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "bentConnector2":
-                        var d = "";
-                        // if (isFlipV) {
-                        //     d = "M 0 " + w + " L " + h + " " + w + " L " + h + " 0";
-                        // } else {
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        d = "M " + w + " 0 L " + w + " " + h + " L 0 " + h;
-                        //}
-                        // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                        result += "<path d='" + d + "' stroke='" + border.color +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' fill='none' ";
-                        if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
-                            result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
-                        }
-                        if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
-                            result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
-                        }
-                        result += "/>";
-                        break;
-                    // Star shapes (star4-star32) handled by shapes/stars.ts module
-
-                    case "bentConnector3":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var shapAdjst_val = 0.5;
-                        if (shapAdjst !== undefined) {
-                            shapAdjst_val = parseInt(shapAdjst.substr(4)) / 100000;
-                            // if (isFlipV) {
-                            //     result += " <polyline points='" + w + " 0," + ((1 - shapAdjst_val) * w) + " 0," + ((1 - shapAdjst_val) * w) + " " + h + ",0 " + h + "' fill='transparent'" +
-                            //         "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
-                            // } else {
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            result += " <polyline points='0 0," + (shapAdjst_val) * w + " 0," + (shapAdjst_val) * w + " " + h + "," + w + " " + h + "' fill='transparent'" +
-                                // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                                "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
-                            //}
-                            if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
-                                result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
-                            }
-                            if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
-                                result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
-                            }
-                            result += "/>";
-                        }
-                        break;
-                    case "line":
-                    case "straightConnector1":
-                    case "bentConnector4":
-                    case "bentConnector5":
-                    case "curvedConnector2":
-                    case "curvedConnector3":
-                    case "curvedConnector4":
-                    case "curvedConnector5":
-                        // if (isFlipV) {
-                        //     result += "<line x1='" + w + "' y1='0' x2='0' y2='" + h + "' stroke='" + border.color +
-                        //         "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
-                        // } else {
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += "<line x1='0' y1='0' x2='" + w + "' y2='" + h + "' stroke='" + border.color +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
-                        //}
-                        if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
-                            result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
-                        }
-                        if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
-                            result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
-                        }
-                        result += "/>";
                         break;
                     case "leftRightCircularArrow":
                     case "chartPlus":
