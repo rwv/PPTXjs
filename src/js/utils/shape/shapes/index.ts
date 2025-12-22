@@ -39,3 +39,6 @@ export type { PolygonShapeContext } from "./polygons";
 
 export { isScrollShape, renderScrollShapeType, SCROLL_SHAPE_TYPES } from "./scrolls";
 export type { ScrollShapeContext } from "./scrolls";
+
+export { isMiscSymbolShape, renderMiscSymbolShape, MISC_SYMBOL_TYPES } from "./misc-symbols";
+export type { MiscSymbolContext } from "./misc-symbols";
