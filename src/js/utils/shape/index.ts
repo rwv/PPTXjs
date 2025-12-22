@@ -10,3 +10,4 @@ export { genShape } from "./gen-shape";
 export { renderCustomGeometry } from "./render-custom-geometry";
 export { processShapeEffects } from "./process-shape-effects";
 export { initShapeContext } from "./init-shape-context";
+export { isBasicShape, renderBasicShape } from "./render-basic-shapes";
