@@ -6,7 +6,7 @@
  * - bracketPair, leftBracket, rightBracket
  */
 
-import { shapeArc } from "../shape-arc";
+import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
 
 /**

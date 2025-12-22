@@ -9,8 +9,8 @@
  * - Irregular seals (irregularSeal1, irregularSeal2)
  */
 
-import { getTextByPathList } from "../object";
-import { shapeSnipRoundRect } from "./shape-snip-round-rect";
+import { getTextByPathList } from "../../object";
+import { shapeSnipRoundRect } from "./helpers/snip-round-rect";
 
 export interface BasicShapeParams {
     node: any;

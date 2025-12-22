@@ -11,10 +11,10 @@
  * Reference: http://officeopenxml.com/drwSp-custGeom.php
  */
 
-import { getTextByPathList } from "../object";
-import { getVerticalAlign, getPosition, getSize, getContentDir } from "../layout";
-import { shapeArc } from "./shape-arc";
-import { genTextBody } from "../text";
+import { getTextByPathList } from "../../object";
+import { getVerticalAlign, getPosition, getSize, getContentDir } from "../../layout";
+import { shapeArc } from "./helpers/arc";
+import { genTextBody } from "../../text";
 
 export function renderCustomGeometry(
     custShapType: any,

@@ -10,7 +10,7 @@
  * and remain in gen-shape.ts switch statement.
  */
 
-import { shapeArc } from "../shape-arc";
+import { shapeArc } from "./helpers/arc";
 
 /**
  * Context for rendering flowchart shapes

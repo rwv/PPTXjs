@@ -35,16 +35,12 @@ import { getFillType, getShapeFill } from "../fill";
 import { getBorder } from "../border";
 import { genTextBody } from "../text";
 import { getSolidFill } from "../color";
-import { shapePie } from "./shape-pie";
-import { shapeArc } from "./shape-arc";
-import { shapeGear } from "./shape-gear";
-import { shapeSnipRoundRect } from "./shape-snip-round-rect";
 import { getSvgGradient, getSvgImagePattern } from "../svg";
-import { renderCustomGeometry } from "./render-custom-geometry";
+import { renderCustomGeometry } from "./shapes/custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
 import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape, isArcShape, renderArcShape, isPolygonShape, renderPolygonShape, isScrollShape, renderScrollShapeType, isMiscSymbolShape, renderMiscSymbolShape, isPlateCylinderShape, renderPlateCylinderShape, isConnectorShape, renderConnectorShape } from "./shapes";
-import { isBasicShape, renderBasicShape } from "./render-basic-shapes";
+import { isBasicShape, renderBasicShape } from "./shapes/basic-shapes";
 
 export function genShape(
     node: any,

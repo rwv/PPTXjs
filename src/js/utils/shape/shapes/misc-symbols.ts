@@ -8,8 +8,8 @@
  * - cloud, cloudCallout, smileyFace
  */
 
-import { shapeArc } from "../shape-arc";
-import { shapeGear } from "../shape-gear";
+import { shapeArc } from "./helpers/arc";
+import { shapeGear } from "./helpers/gear";
 import { getTextByPathList } from "../../object";
 
 /**

@@ -7,7 +7,7 @@
  * - accentBorderCallout1/2/3, accentCallout1/2/3
  */
 
-import { shapeArc } from "../shape-arc";
+import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
 
 /**
