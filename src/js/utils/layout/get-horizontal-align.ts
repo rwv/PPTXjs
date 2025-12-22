@@ -47,35 +47,96 @@ export function getHorizontalAlign(
 
     if (algn === undefined && idx !== undefined) {
       //slidelayout
-      algn = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], ["p:txBody", "a:lstStyle", lvlStr, "attrs", "algn"]);
+      algn = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
+        "p:txBody",
+        "a:lstStyle",
+        lvlStr,
+        "attrs",
+        "algn",
+      ]);
       if (algn === undefined) {
-        algn = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], ["p:txBody", "a:p", "a:pPr", "attrs", "algn"]);
+        algn = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
+          "p:txBody",
+          "a:p",
+          "a:pPr",
+          "attrs",
+          "algn",
+        ]);
         if (algn === undefined) {
-          algn = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], ["p:txBody", "a:p", (lvlIdx - 1), "a:pPr", "attrs", "algn"]);
+          algn = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
+            "p:txBody",
+            "a:p",
+            lvlIdx - 1,
+            "a:pPr",
+            "attrs",
+            "algn",
+          ]);
         }
       }
     }
     if (algn === undefined) {
       if (type !== undefined) {
         //slidelayout
-        algn = getTextByPathList(warpObj, ["slideLayoutTables", "typeTable", type, "p:txBody", "a:lstStyle", lvlStr, "attrs", "algn"]);
+        algn = getTextByPathList(warpObj, [
+          "slideLayoutTables",
+          "typeTable",
+          type,
+          "p:txBody",
+          "a:lstStyle",
+          lvlStr,
+          "attrs",
+          "algn",
+        ]);
 
         if (algn === undefined) {
           //masterlayout
           if (type == "title" || type == "ctrTitle") {
-            algn = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:titleStyle", lvlStr, "attrs", "algn"]);
+            algn = getTextByPathList(warpObj, [
+              "slideMasterTextStyles",
+              "p:titleStyle",
+              lvlStr,
+              "attrs",
+              "algn",
+            ]);
           } else if (type == "body" || type == "obj" || type == "subTitle") {
-            algn = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:bodyStyle", lvlStr, "attrs", "algn"]);
+            algn = getTextByPathList(warpObj, [
+              "slideMasterTextStyles",
+              "p:bodyStyle",
+              lvlStr,
+              "attrs",
+              "algn",
+            ]);
           } else if (type == "shape" || type == "diagram") {
-            algn = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:otherStyle", lvlStr, "attrs", "algn"]);
+            algn = getTextByPathList(warpObj, [
+              "slideMasterTextStyles",
+              "p:otherStyle",
+              lvlStr,
+              "attrs",
+              "algn",
+            ]);
           } else if (type == "textBox") {
             algn = getTextByPathList(warpObj, ["defaultTextStyle", lvlStr, "attrs", "algn"]);
           } else {
-            algn = getTextByPathList(warpObj, ["slideMasterTables", "typeTable", type, "p:txBody", "a:lstStyle", lvlStr, "attrs", "algn"]);
+            algn = getTextByPathList(warpObj, [
+              "slideMasterTables",
+              "typeTable",
+              type,
+              "p:txBody",
+              "a:lstStyle",
+              lvlStr,
+              "attrs",
+              "algn",
+            ]);
           }
         }
       } else {
-        algn = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:bodyStyle", lvlStr, "attrs", "algn"]);
+        algn = getTextByPathList(warpObj, [
+          "slideMasterTextStyles",
+          "p:bodyStyle",
+          lvlStr,
+          "attrs",
+          "algn",
+        ]);
       }
     }
   }

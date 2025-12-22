@@ -35,55 +35,81 @@ import { getTextByPathList } from "../object";
  * @returns HTML string for the graphic frame content
  */
 export function processGraphicFrameNode(
-    node: any,
-    warpObj: any,
-    source: any,
-    sType: any,
-    tableStyles: any,
-    isFirstBr: { value: boolean },
-    styleTable: any,
-    rtlLangsArray: string[],
-    slideFactor: number,
-    fontSizeFactor: number,
-    chartID: { value: number },
-    MsgQueue: any,
-    genTable: any,
-    genChart: any,
-    genDiagram: any,
-    processGroupSpNode: any,
-    processNodesInSlide: any,
-    processSpNode: any,
-    genShape: any
+  node: any,
+  warpObj: any,
+  source: any,
+  sType: any,
+  tableStyles: any,
+  isFirstBr: { value: boolean },
+  styleTable: any,
+  rtlLangsArray: string[],
+  slideFactor: number,
+  fontSizeFactor: number,
+  chartID: { value: number },
+  MsgQueue: any,
+  genTable: any,
+  genChart: any,
+  genDiagram: any,
+  processGroupSpNode: any,
+  processNodesInSlide: any,
+  processSpNode: any,
+  genShape: any
 ): string {
+  var result = "";
+  var chartIdRef = chartID ?? { value: 0 };
+  var graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
 
-    var result = "";
-    var chartIdRef = chartID ?? { value: 0 };
-    var graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
+  switch (graphicTypeUri) {
+    case "http://schemas.openxmlformats.org/drawingml/2006/table":
+      result = genTable(
+        node,
+        warpObj,
+        tableStyles,
+        isFirstBr,
+        styleTable,
+        rtlLangsArray,
+        slideFactor,
+        fontSizeFactor
+      );
+      break;
+    case "http://schemas.openxmlformats.org/drawingml/2006/chart":
+      [result, chartIdRef.value] = genChart(node, warpObj, chartIdRef.value, MsgQueue, slideFactor);
+      break;
+    case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
+      result = genDiagram(
+        node,
+        warpObj,
+        source,
+        sType,
+        slideFactor,
+        processSpNode,
+        genShape,
+        styleTable,
+        fontSizeFactor,
+        rtlLangsArray,
+        isFirstBr
+      );
+      break;
+    case "http://schemas.openxmlformats.org/presentationml/2006/ole":
+      //result = genDiagram(node, warpObj, source, sType);
+      var oleObjNode = getTextByPathList(node, [
+        "a:graphic",
+        "a:graphicData",
+        "mc:AlternateContent",
+        "mc:Fallback",
+        "p:oleObj",
+      ]);
 
-    switch (graphicTypeUri) {
-        case "http://schemas.openxmlformats.org/drawingml/2006/table":
-            result = genTable(node, warpObj, tableStyles, isFirstBr, styleTable, rtlLangsArray, slideFactor, fontSizeFactor);
-            break;
-        case "http://schemas.openxmlformats.org/drawingml/2006/chart":
-            [result, chartIdRef.value] = genChart(node, warpObj, chartIdRef.value, MsgQueue, slideFactor);
-            break;
-        case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
-            result = genDiagram(node, warpObj, source, sType, slideFactor, processSpNode, genShape, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr);
-            break;
-        case "http://schemas.openxmlformats.org/presentationml/2006/ole":
-            //result = genDiagram(node, warpObj, source, sType);
-            var oleObjNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "mc:AlternateContent", "mc:Fallback","p:oleObj"]);
+      if (oleObjNode === undefined) {
+        oleObjNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "p:oleObj"]);
+      }
+      //console.log("node:", node, "oleObjNode:", oleObjNode)
+      if (oleObjNode !== undefined) {
+        result = processGroupSpNode(oleObjNode, warpObj, source, slideFactor, processNodesInSlide);
+      }
+      break;
+    default:
+  }
 
-            if (oleObjNode === undefined) {
-                oleObjNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "p:oleObj"]);
-            }
-            //console.log("node:", node, "oleObjNode:", oleObjNode)
-            if (oleObjNode !== undefined){
-                result = processGroupSpNode(oleObjNode, warpObj, source, slideFactor, processNodesInSlide);
-            }
-            break;
-        default:
-    }
-
-    return result;
+  return result;
 }

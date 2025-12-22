@@ -9,7 +9,9 @@
     "type-check": "tsc --noEmit",
     "test": "vitest --run --browser.headless",
     "test:ui": "vitest --ui",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json,md}\""
   },
   "keywords": [],
   "author": "",
@@ -37,6 +39,7 @@
     "esbuild": "^0.27.2",
     "jscodeshift": "^17.3.0",
     "playwright": "^1.57.0",
+    "prettier": "^3.7.4",
     "rollup": "^4.53.5",
     "ts-migrate": "^0.1.35",
     "typescript": "^5.9.3",

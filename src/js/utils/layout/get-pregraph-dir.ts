@@ -27,7 +27,6 @@ export function getPregraphDir(
   var rtl = getTextByPathList(node, ["a:pPr", "attrs", "rtl"]);
   //console.log("getPregraphDir node:", node, "textBodyNode", textBodyNode, "rtl:", rtl, "idx", idx, "type", type, "warpObj", warpObj)
 
-
   if (rtl === undefined) {
     var layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
     var pPrNodeLaout = layoutMasterNode.nodeLaout;

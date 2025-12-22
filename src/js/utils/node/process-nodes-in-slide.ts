@@ -40,57 +40,107 @@ import { getTextByPathList } from "../object";
  * @returns HTML string for the node
  */
 export function processNodesInSlide(
-    nodeKey: any,
-    nodeValue: any,
-    nodes: any,
-    warpObj: any,
-    source: any,
-    sType: any,
-    tableStyles: any,
-    isFirstBr: { value: boolean },
-    styleTable: any,
-    rtlLangsArray: string[],
-    slideFactor: number,
-    fontSizeFactor: number,
-    chartID: any,
-    MsgQueue: any,
-    settings: any,
-    processSpNode: any,
-    processCxnSpNode: any,
-    processPicNode: any,
-    processGraphicFrameNode: any,
-    processGroupSpNode: any,
-    genShape: any,
-    genTable: any,
-    genChart: any,
-    genDiagram: any
+  nodeKey: any,
+  nodeValue: any,
+  nodes: any,
+  warpObj: any,
+  source: any,
+  sType: any,
+  tableStyles: any,
+  isFirstBr: { value: boolean },
+  styleTable: any,
+  rtlLangsArray: string[],
+  slideFactor: number,
+  fontSizeFactor: number,
+  chartID: any,
+  MsgQueue: any,
+  settings: any,
+  processSpNode: any,
+  processCxnSpNode: any,
+  processPicNode: any,
+  processGraphicFrameNode: any,
+  processGroupSpNode: any,
+  genShape: any,
+  genTable: any,
+  genChart: any,
+  genDiagram: any
 ): string {
-    var result = "";
+  var result = "";
 
-    switch (nodeKey) {
-        case "p:sp":    // Shape, Text
-            result = processSpNode(nodeValue, nodes, warpObj, source, sType, genShape, slideFactor, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr);
-            break;
-        case "p:cxnSp":    // Shape, Text (with connection)
-            result = processCxnSpNode(nodeValue, nodes, warpObj, source, sType, genShape, slideFactor, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr);
-            break;
-        case "p:pic":    // Picture
-            result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
-            break;
-        case "p:graphicFrame":    // Chart, Diagram, Table
-            result = processGraphicFrameNode(nodeValue, warpObj, source, sType, tableStyles, isFirstBr, styleTable, rtlLangsArray, slideFactor, fontSizeFactor, chartID, MsgQueue, genTable, genChart, genDiagram, processGroupSpNode, processNodesInSlide, processSpNode, genShape);
-            break;
-        case "p:grpSp":
-            result = processGroupSpNode(nodeValue, warpObj, source, slideFactor, processNodesInSlide);
-            break;
-        case "mc:AlternateContent": //Equations and formulas as Image
-            //console.log("mc:AlternateContent nodeValue:" , nodeValue , "nodes:",nodes, "sType:",sType)
-            var mcFallbackNode = getTextByPathList(nodeValue, ["mc:Fallback"]);
-            result = processGroupSpNode(mcFallbackNode, warpObj, source, slideFactor, processNodesInSlide);
-            break;
-        default:
-            //console.log("nodeKey: ", nodeKey)
-    }
+  switch (nodeKey) {
+    case "p:sp": // Shape, Text
+      result = processSpNode(
+        nodeValue,
+        nodes,
+        warpObj,
+        source,
+        sType,
+        genShape,
+        slideFactor,
+        styleTable,
+        fontSizeFactor,
+        rtlLangsArray,
+        isFirstBr
+      );
+      break;
+    case "p:cxnSp": // Shape, Text (with connection)
+      result = processCxnSpNode(
+        nodeValue,
+        nodes,
+        warpObj,
+        source,
+        sType,
+        genShape,
+        slideFactor,
+        styleTable,
+        fontSizeFactor,
+        rtlLangsArray,
+        isFirstBr
+      );
+      break;
+    case "p:pic": // Picture
+      result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
+      break;
+    case "p:graphicFrame": // Chart, Diagram, Table
+      result = processGraphicFrameNode(
+        nodeValue,
+        warpObj,
+        source,
+        sType,
+        tableStyles,
+        isFirstBr,
+        styleTable,
+        rtlLangsArray,
+        slideFactor,
+        fontSizeFactor,
+        chartID,
+        MsgQueue,
+        genTable,
+        genChart,
+        genDiagram,
+        processGroupSpNode,
+        processNodesInSlide,
+        processSpNode,
+        genShape
+      );
+      break;
+    case "p:grpSp":
+      result = processGroupSpNode(nodeValue, warpObj, source, slideFactor, processNodesInSlide);
+      break;
+    case "mc:AlternateContent": //Equations and formulas as Image
+      //console.log("mc:AlternateContent nodeValue:" , nodeValue , "nodes:",nodes, "sType:",sType)
+      var mcFallbackNode = getTextByPathList(nodeValue, ["mc:Fallback"]);
+      result = processGroupSpNode(
+        mcFallbackNode,
+        warpObj,
+        source,
+        slideFactor,
+        processNodesInSlide
+      );
+      break;
+    default:
+    //console.log("nodeKey: ", nodeKey)
+  }
 
-    return result;
+  return result;
 }

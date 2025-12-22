@@ -8,13 +8,8 @@ import tinycolor from "tinycolor2";
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)
  */
-export function applySatMod(
-  rgbStr: string,
-  multiplier: number | string,
-  isAlpha: boolean
-): string {
-  const mult =
-    typeof multiplier === "number" ? multiplier : parseFloat(multiplier);
+export function applySatMod(rgbStr: string, multiplier: number | string, isAlpha: boolean): string {
+  const mult = typeof multiplier === "number" ? multiplier : parseFloat(multiplier);
   const color = tinycolor(rgbStr).toHsl();
 
   // Calculate new saturation

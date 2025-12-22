@@ -26,7 +26,7 @@ export function getGradientFill(node: any, warpObj: any) {
     rot = angleToDegrees(lin["attrs"]["ang"]) + 90;
   }
   return {
-    "color": color_ary,
-    "rot": rot
-  }
+    color: color_ary,
+    rot: rot,
+  };
 }

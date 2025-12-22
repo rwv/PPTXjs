@@ -17,11 +17,7 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @param warpObj - Container object with master slide text styles
  * @returns CSS class name for content direction (currently always "content")
  */
-export function getContentDir(
-  node: any,
-  type: any,
-  warpObj: any
-): string {
+export function getContentDir(node: any, type: any, warpObj: any): string {
   return "content";
   var defRtl = getTextByPathList(node, ["p:txBody", "a:lstStyle", "a:defPPr", "attrs", "rtl"]);
   if (defRtl !== undefined) {

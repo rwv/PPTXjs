@@ -11,7 +11,12 @@ import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color/get-solid-fill";
 import { angleToDegrees } from "../layout/angle-to-degrees";
 
-export function getBgGradientFill(bgPr: any, phClr: any, slideMasterContent: any, warpObj: any): string {
+export function getBgGradientFill(
+  bgPr: any,
+  phClr: any,
+  slideMasterContent: any,
+  warpObj: any
+): string {
   var bgcolor = "";
   if (bgPr !== undefined) {
     var grdFill = bgPr["a:gradFill"];
@@ -22,7 +27,12 @@ export function getBgGradientFill(bgPr: any, phClr: any, slideMasterContent: any
     for (var i = 0; i < gsLst.length; i++) {
       var lo_tint;
       var lo_color = "";
-      lo_color = getSolidFill(gsLst[i], slideMasterContent["p:sldMaster"]["p:clrMap"]["attrs"], phClr, warpObj);
+      lo_color = getSolidFill(
+        gsLst[i],
+        slideMasterContent["p:sldMaster"]["p:clrMap"]["attrs"],
+        phClr,
+        warpObj
+      );
       var pos = getTextByPathList(gsLst[i], ["attrs", "pos"]);
       if (pos !== undefined) {
         pos_ary[i] = pos / 1000 + "%";

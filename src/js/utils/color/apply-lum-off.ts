@@ -8,11 +8,7 @@ import tinycolor from "tinycolor2";
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)
  */
-export function applyLumOff(
-  rgbStr: string,
-  offset: number | string,
-  isAlpha: boolean
-): string {
+export function applyLumOff(rgbStr: string, offset: number | string, isAlpha: boolean): string {
   const off = typeof offset === "number" ? offset : parseFloat(offset);
   const color = tinycolor(rgbStr).toHsl();
 

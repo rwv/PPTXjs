@@ -95,8 +95,8 @@ export interface JsZip {
    * @returns Generated data
    */
   generate(options?: {
-    type?: 'string' | 'base64' | 'uint8array' | 'arraybuffer' | 'blob';
-    compression?: 'STORE' | 'DEFLATE';
+    type?: "string" | "base64" | "uint8array" | "arraybuffer" | "blob";
+    compression?: "STORE" | "DEFLATE";
   }): any;
 
   /**

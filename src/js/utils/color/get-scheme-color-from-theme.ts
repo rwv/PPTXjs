@@ -68,10 +68,11 @@ export function getSchemeColorFromTheme(
       if (sldClrMapOvr !== undefined) {
         slideLayoutClrOvride = sldClrMapOvr;
       } else {
-        slideLayoutClrOvride = getTextByPathList(
-          warpObj["slideMasterContent"],
-          ["p:sldMaster", "p:clrMap", "attrs"]
-        );
+        slideLayoutClrOvride = getTextByPathList(warpObj["slideMasterContent"], [
+          "p:sldMaster",
+          "p:clrMap",
+          "attrs",
+        ]);
       }
     }
   }

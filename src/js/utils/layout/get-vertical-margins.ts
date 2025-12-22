@@ -42,7 +42,7 @@ export function getVerticalMargins(
   //a:pPr =>a:lnSpc => a:spcPts (/?) | a:spcPct (/?)
   //console.log("getVerticalMargins ", pNode, type,idx, warpObj)
   //var lstStyle = textBodyNode["a:lstStyle"];
-  var lvl = 1
+  var lvl = 1;
   var spcBefNode = getTextByPathList(pNode, ["a:pPr", "a:spcBef", "a:spcPts", "attrs", "val"]);
   var spcAftNode = getTextByPathList(pNode, ["a:pPr", "a:spcAft", "a:spcPts", "attrs", "val"]);
   var lnSpcNode = getTextByPathList(pNode, ["a:pPr", "a:lnSpc", "a:spcPct", "attrs", "val"]);
@@ -59,7 +59,15 @@ export function getVerticalMargins(
   }
   var fontSize;
   if (getTextByPathList(pNode, ["a:r"]) !== undefined) {
-    var fontSizeStr = getFontSize(pNode["a:r"], textBodyNode, undefined, lvl, type, warpObj, fontSizeFactor);
+    var fontSizeStr = getFontSize(
+      pNode["a:r"],
+      textBodyNode,
+      undefined,
+      lvl,
+      type,
+      warpObj,
+      fontSizeFactor
+    );
     if (fontSizeStr != "inherit") {
       // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
       fontSize = parseInt(fontSizeStr, "px"); //pt
@@ -95,10 +103,21 @@ export function getVerticalMargins(
   if (type == "shape" || type == "textBox") {
     isInLayoutOrMaster = false;
   }
-  if (isInLayoutOrMaster && (spcBefNode === undefined || spcAftNode === undefined || lnSpcNode === undefined)) {
+  if (
+    isInLayoutOrMaster &&
+    (spcBefNode === undefined || spcAftNode === undefined || lnSpcNode === undefined)
+  ) {
     //check in layout
     if (idx !== undefined) {
-      var laypPrNode = getTextByPathList(warpObj, ["slideLayoutTables", "idxTable", idx, "p:txBody", "a:p", (lvl - 1), "a:pPr"]);
+      var laypPrNode = getTextByPathList(warpObj, [
+        "slideLayoutTables",
+        "idxTable",
+        idx,
+        "p:txBody",
+        "a:p",
+        lvl - 1,
+        "a:pPr",
+      ]);
 
       if (spcBefNode === undefined) {
         spcBefNode = getTextByPathList(laypPrNode, ["a:spcBef", "a:spcPts", "attrs", "val"]);
@@ -131,16 +150,24 @@ export function getVerticalMargins(
       if (lnSpcNode === undefined) {
         lnSpcNode = getTextByPathList(laypPrNode, ["a:lnSpc", "a:spcPct", "attrs", "val"]);
         if (lnSpcNode === undefined) {
-          lnSpcNode = getTextByPathList(laypPrNode, ["a:pPr", "a:lnSpc", "a:spcPts", "attrs", "val"]);
+          lnSpcNode = getTextByPathList(laypPrNode, [
+            "a:pPr",
+            "a:lnSpc",
+            "a:spcPts",
+            "attrs",
+            "val",
+          ]);
           if (lnSpcNode !== undefined) {
             lnSpcNodeType = "Pts";
           }
         }
       }
     }
-
   }
-  if (isInLayoutOrMaster && (spcBefNode === undefined || spcAftNode === undefined || lnSpcNode === undefined)) {
+  if (
+    isInLayoutOrMaster &&
+    (spcBefNode === undefined || spcAftNode === undefined || lnSpcNode === undefined)
+  ) {
     //check in master
     //slideMasterTextStyles
     var slideMasterTextStyles = warpObj["slideMasterTextStyles"];
@@ -202,7 +229,13 @@ export function getVerticalMargins(
       if (lnSpcNode === undefined) {
         lnSpcNode = getTextByPathList(inLvlNode, ["a:lnSpc", "a:spcPct", "attrs", "val"]);
         if (lnSpcNode === undefined) {
-          lnSpcNode = getTextByPathList(inLvlNode, ["a:pPr", "a:lnSpc", "a:spcPts", "attrs", "val"]);
+          lnSpcNode = getTextByPathList(inLvlNode, [
+            "a:pPr",
+            "a:lnSpc",
+            "a:spcPts",
+            "attrs",
+            "val",
+          ]);
           if (lnSpcNode !== undefined) {
             lnSpcNodeType = "Pts";
           }
@@ -210,7 +243,9 @@ export function getVerticalMargins(
       }
     }
   }
-  var spcBefor = 0, spcAfter = 0, spcLines = 0;
+  var spcBefor = 0,
+    spcAfter = 0,
+    spcLines = 0;
   var marginTopBottomStr = "";
   if (spcBefNode !== undefined) {
     spcBefor = parseInt(spcBefNode) / 100;
@@ -221,26 +256,26 @@ export function getVerticalMargins(
 
   if (lnSpcNode !== undefined && fontSize !== undefined) {
     if (lnSpcNodeType == "Pts") {
-      marginTopBottomStr += "padding-top: " + ((parseInt(lnSpcNode) / 100) - fontSize) + "px;";//+ "pt;";
+      marginTopBottomStr += "padding-top: " + (parseInt(lnSpcNode) / 100 - fontSize) + "px;"; //+ "pt;";
     } else {
       var fct = parseInt(lnSpcNode) / 100000;
-      spcLines = fontSize * (fct - 1) - fontSize;// fontSize *
-      var pTop = (fct > 1) ? spcLines : 0;
-      var pBottom = (fct > 1) ? fontSize : 0;
+      spcLines = fontSize * (fct - 1) - fontSize; // fontSize *
+      var pTop = fct > 1 ? spcLines : 0;
+      var pBottom = fct > 1 ? fontSize : 0;
       // marginTopBottomStr += "padding-top: " + spcLines + "pt;";
       // marginTopBottomStr += "padding-bottom: " + pBottom + "pt;";
-      marginTopBottomStr += "padding-top: " + pBottom + "px;";// + "pt;";
-      marginTopBottomStr += "padding-bottom: " + spcLines + "px;";// + "pt;";
+      marginTopBottomStr += "padding-top: " + pBottom + "px;"; // + "pt;";
+      marginTopBottomStr += "padding-bottom: " + spcLines + "px;"; // + "pt;";
     }
   }
 
   //if (spcBefNode !== undefined || lnSpcNode !== undefined) {
-  marginTopBottomStr += "margin-top: " + (spcBefor - 1) + "px;";// + "pt;"; //margin-top: + spcLines // minus 1 - to fix space
+  marginTopBottomStr += "margin-top: " + (spcBefor - 1) + "px;"; // + "pt;"; //margin-top: + spcLines // minus 1 - to fix space
   //}
   if (spcAftNode !== undefined || lnSpcNode !== undefined) {
     //marginTopBottomStr += "margin-bottom: " + ((spcAfter - fontSize < 0) ? 0 : (spcAfter - fontSize)) + "pt;"; //margin-bottom: + spcLines
     //marginTopBottomStr += "margin-bottom: " + spcAfter * (1 / 4) + "px;";// + "pt;";
-    marginTopBottomStr += "margin-bottom: " + spcAfter + "px;";// + "pt;";
+    marginTopBottomStr += "margin-bottom: " + spcAfter + "px;"; // + "pt;";
   }
 
   //console.log("getVerticalMargins 2 fontSize:", fontSize, "lnSpcNode:", lnSpcNode, "spcLines:", spcLines, "spcBefor:", spcBefor, "spcAfter:", spcAfter)

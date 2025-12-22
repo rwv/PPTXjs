@@ -71,6 +71,6 @@ export const hebrew2Minus = archaicNumbers([
   [1, "א"],
   [/יה/, "ט״ו"], // 15 special case
   [/יו/, "ט״ז"], // 16 special case
-  [/([א-ת])([א-ת])$/, '$1״$2'], // Add gershayim for multi-letter
+  [/([א-ת])([א-ת])$/, "$1״$2"], // Add gershayim for multi-letter
   [/^([א-ת])$/, "$1׳"], // Add geresh for single letter
 ]);

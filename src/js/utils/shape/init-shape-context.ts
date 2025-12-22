@@ -15,214 +15,237 @@ import { getBorder } from "../border";
 import { getSvgGradient, getSvgImagePattern } from "../svg";
 
 export interface ShapeContext {
-    /** Shape transform nodes */
-    slideXfrmNode: any;
-    slideLayoutXfrmNode: any;
-    slideMasterXfrmNode: any;
+  /** Shape transform nodes */
+  slideXfrmNode: any;
+  slideLayoutXfrmNode: any;
+  slideMasterXfrmNode: any;
 
-    /** Shape IDs and types */
-    shpId: any;
-    shapType: any;
-    custShapType: any;
+  /** Shape IDs and types */
+  shpId: any;
+  shapType: any;
+  custShapType: any;
 
-    /** Transform properties */
-    rotate: number | undefined;
-    txtRotate: number | undefined;
-    flip: string;
+  /** Transform properties */
+  rotate: number | undefined;
+  txtRotate: number | undefined;
+  flip: string;
 
-    /** Shape dimensions (in pixels) */
-    x: number;
-    y: number;
-    w: number;
-    h: number;
+  /** Shape dimensions (in pixels) */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
 
-    /** SVG and CSS naming */
-    svgCssName: string;
-    effectsClassName: string;
+  /** SVG and CSS naming */
+  svgCssName: string;
+  effectsClassName: string;
 
-    /** Fill properties */
-    fillColor: any;
-    grndFillFlg: boolean;
-    imgFillFlg: boolean;
-    clrFillType: string;
+  /** Fill properties */
+  fillColor: any;
+  grndFillFlg: boolean;
+  imgFillFlg: boolean;
+  clrFillType: string;
 
-    /** Border properties */
-    border: any;
+  /** Border properties */
+  border: any;
 
-    /** Initial SVG markup with defs */
-    svgHeader: string;
-    defsContent: string;
+  /** Initial SVG markup with defs */
+  svgHeader: string;
+  defsContent: string;
 }
 
 /**
  * Initialize shape rendering context
  */
 export function initShapeContext(
-    node: any,
-    pNode: any,
-    slideLayoutSpNode: any,
-    slideMasterSpNode: any,
-    id: any,
-    idx: any,
-    type: any,
-    name: any,
-    order: any,
-    sType: any,
-    source: any,
-    warpObj: any,
-    slideFactor: number,
-    styleTable: any
+  node: any,
+  pNode: any,
+  slideLayoutSpNode: any,
+  slideMasterSpNode: any,
+  id: any,
+  idx: any,
+  type: any,
+  name: any,
+  order: any,
+  sType: any,
+  source: any,
+  warpObj: any,
+  slideFactor: number,
+  styleTable: any
 ): ShapeContext | null {
-    //var dltX = 0;
-    //var dltY = 0;
-    var xfrmList = ["p:spPr", "a:xfrm"];
-    var slideXfrmNode = getTextByPathList(node, xfrmList);
-    var slideLayoutXfrmNode = getTextByPathList(slideLayoutSpNode, xfrmList);
-    var slideMasterXfrmNode = getTextByPathList(slideMasterSpNode, xfrmList);
+  //var dltX = 0;
+  //var dltY = 0;
+  var xfrmList = ["p:spPr", "a:xfrm"];
+  var slideXfrmNode = getTextByPathList(node, xfrmList);
+  var slideLayoutXfrmNode = getTextByPathList(slideLayoutSpNode, xfrmList);
+  var slideMasterXfrmNode = getTextByPathList(slideMasterSpNode, xfrmList);
 
-    var shpId = getTextByPathList(node, ["attrs", "order"]);
-    //console.log("shpId: ",shpId)
-    var shapType = getTextByPathList(node, ["p:spPr", "a:prstGeom", "attrs", "prst"]);
+  var shpId = getTextByPathList(node, ["attrs", "order"]);
+  //console.log("shpId: ",shpId)
+  var shapType = getTextByPathList(node, ["p:spPr", "a:prstGeom", "attrs", "prst"]);
 
-    //custGeom - Amir
-    var custShapType = getTextByPathList(node, ["p:spPr", "a:custGeom"]);
+  //custGeom - Amir
+  var custShapType = getTextByPathList(node, ["p:spPr", "a:custGeom"]);
 
-    var isFlipV = false;
-    var isFlipH = false;
-    var flip = "";
-    if (getTextByPathList(slideXfrmNode, ["attrs", "flipV"]) === "1") {
-        isFlipV = true;
+  var isFlipV = false;
+  var isFlipH = false;
+  var flip = "";
+  if (getTextByPathList(slideXfrmNode, ["attrs", "flipV"]) === "1") {
+    isFlipV = true;
+  }
+  if (getTextByPathList(slideXfrmNode, ["attrs", "flipH"]) === "1") {
+    isFlipH = true;
+  }
+  if (isFlipH && !isFlipV) {
+    flip = " scale(-1,1)";
+  } else if (!isFlipH && isFlipV) {
+    flip = " scale(1,-1)";
+  } else if (isFlipH && isFlipV) {
+    flip = " scale(-1,-1)";
+  }
+  /////////////////////////Amir////////////////////////
+  //rotate
+  var rotate = angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
+
+  //console.log("genShape rotate: " + rotate);
+  var txtRotate;
+  var txtXframeNode = getTextByPathList(node, ["p:txXfrm"]);
+  if (txtXframeNode !== undefined) {
+    var txtXframeRot = getTextByPathList(txtXframeNode, ["attrs", "rot"]);
+    if (txtXframeRot !== undefined) {
+      txtRotate = angleToDegrees(txtXframeRot) + 90;
     }
-    if (getTextByPathList(slideXfrmNode, ["attrs", "flipH"]) === "1") {
-        isFlipH = true;
-    }
-    if (isFlipH && !isFlipV) {
-        flip = " scale(-1,1)"
-    } else if (!isFlipH && isFlipV) {
-        flip = " scale(1,-1)"
-    } else if (isFlipH && isFlipV) {
-        flip = " scale(-1,-1)"
-    }
-    /////////////////////////Amir////////////////////////
-    //rotate
-    var rotate = angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
+  } else {
+    txtRotate = rotate;
+  }
+  //////////////////////////////////////////////////
+  if (shapType !== undefined || custShapType !== undefined /*&& slideXfrmNode !== undefined*/) {
+    var off = getTextByPathList(slideXfrmNode, ["a:off", "attrs"]);
+    var x = parseInt(off["x"]) * slideFactor;
+    var y = parseInt(off["y"]) * slideFactor;
 
-    //console.log("genShape rotate: " + rotate);
-    var txtRotate;
-    var txtXframeNode = getTextByPathList(node, ["p:txXfrm"]);
-    if (txtXframeNode !== undefined) {
-        var txtXframeRot = getTextByPathList(txtXframeNode, ["attrs", "rot"]);
-        if (txtXframeRot !== undefined) {
-            txtRotate = angleToDegrees(txtXframeRot) + 90;
-        }
+    var ext = getTextByPathList(slideXfrmNode, ["a:ext", "attrs"]);
+    var w = parseInt(ext["cx"]) * slideFactor;
+    var h = parseInt(ext["cy"]) * slideFactor;
+
+    var svgCssName =
+      "_svg_css_" + (Object.keys(styleTable).length + 1) + "_" + Math.floor(Math.random() * 1001);
+    //console.log("name:", name, "svgCssName: ", svgCssName)
+    var effectsClassName = svgCssName + "_effects";
+
+    var svgHeader =
+      "<svg class='drawing " +
+      svgCssName +
+      " " +
+      effectsClassName +
+      " ' _id='" +
+      id +
+      "' _idx='" +
+      idx +
+      "' _type='" +
+      type +
+      "' _name='" +
+      name +
+      "'" +
+      "' style='" +
+      getPosition(slideXfrmNode, pNode, undefined, undefined, sType, slideFactor) +
+      getSize(slideXfrmNode, undefined, undefined, slideFactor) +
+      " z-index: " +
+      order +
+      ";" +
+      "transform: rotate(" +
+      (rotate !== undefined ? rotate : 0) +
+      "deg)" +
+      flip +
+      ";" +
+      "'>";
+
+    var defsContent = "";
+
+    // Fill Color
+    var fillColor = getShapeFill(node, pNode, true, warpObj, source);
+    //console.log("genShape: fillColor: ", fillColor)
+    var grndFillFlg = false;
+    var imgFillFlg = false;
+    var clrFillType = getFillType(getTextByPathList(node, ["p:spPr"]));
+    if (clrFillType == "GROUP_FILL") {
+      clrFillType = getFillType(getTextByPathList(pNode, ["p:grpSpPr"]));
+    }
+    // if (clrFillType == "") {
+    //     var clrFillType = getFillType(getTextByPathList(node, ["p:style","a:fillRef"]));
+    // }
+    //console.log("genShape: fillColor: ", fillColor, ", clrFillType: ", clrFillType, ", node: ", node)
+    /////////////////////////////////////////
+    if (clrFillType == "GRADIENT_FILL") {
+      grndFillFlg = true;
+      var color_arry = fillColor.color;
+      var angl = fillColor.rot + 90;
+      var svgGrdnt = getSvgGradient(w, h, angl, color_arry, shpId);
+      //fill="url(#linGrd)"
+      //console.log("genShape: svgGrdnt: ", svgGrdnt)
+      defsContent += svgGrdnt;
+    } else if (clrFillType == "PIC_FILL") {
+      imgFillFlg = true;
+      var svgBgImg = getSvgImagePattern(node, fillColor, shpId, warpObj);
+      //fill="url(#imgPtrn)"
+      //console.log(svgBgImg)
+      defsContent += svgBgImg;
+    } else if (clrFillType == "PATTERN_FILL") {
+      var styleText = fillColor;
+      if (styleText in styleTable) {
+        styleText += "do-nothing: " + svgCssName + ";";
+      }
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+      styleTable[styleText] = {
+        name: svgCssName,
+        text: styleText,
+      };
+      //}
+      fillColor = "none";
     } else {
-        txtRotate = rotate;
+      if (
+        clrFillType != "SOLID_FILL" &&
+        clrFillType != "PATTERN_FILL" &&
+        (shapType == "arc" ||
+          shapType == "bracketPair" ||
+          shapType == "bracePair" ||
+          shapType == "leftBracket" ||
+          shapType == "leftBrace" ||
+          shapType == "rightBrace" ||
+          shapType == "rightBracket")
+      ) {
+        //Temp. solution  - TODO
+        fillColor = "none";
+      }
     }
-    //////////////////////////////////////////////////
-    if (shapType !== undefined || custShapType !== undefined /*&& slideXfrmNode !== undefined*/) {
-        var off = getTextByPathList(slideXfrmNode, ["a:off", "attrs"]);
-        var x = parseInt(off["x"]) * slideFactor;
-        var y = parseInt(off["y"]) * slideFactor;
+    // Border Color
+    var border = getBorder(node, pNode, true, "shape", warpObj);
 
-        var ext = getTextByPathList(slideXfrmNode, ["a:ext", "attrs"]);
-        var w = parseInt(ext["cx"]) * slideFactor;
-        var h = parseInt(ext["cy"]) * slideFactor;
+    return {
+      slideXfrmNode,
+      slideLayoutXfrmNode,
+      slideMasterXfrmNode,
+      shpId,
+      shapType,
+      custShapType,
+      rotate,
+      txtRotate,
+      flip,
+      x,
+      y,
+      w,
+      h,
+      svgCssName,
+      effectsClassName,
+      fillColor,
+      grndFillFlg,
+      imgFillFlg,
+      clrFillType,
+      border,
+      svgHeader,
+      defsContent,
+    };
+  }
 
-        var svgCssName = "_svg_css_" + (Object.keys(styleTable).length + 1) + "_"  + Math.floor(Math.random() * 1001);
-        //console.log("name:", name, "svgCssName: ", svgCssName)
-        var effectsClassName = svgCssName + "_effects";
-
-        var svgHeader = "<svg class='drawing " + svgCssName + " " + effectsClassName + " ' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name + "'" +
-            "' style='" +
-            getPosition(slideXfrmNode, pNode, undefined, undefined, sType, slideFactor) +
-            getSize(slideXfrmNode, undefined, undefined, slideFactor) +
-            " z-index: " + order + ";" +
-            "transform: rotate(" + ((rotate !== undefined) ? rotate : 0) + "deg)" + flip + ";" +
-            "'>";
-
-        var defsContent = "";
-
-        // Fill Color
-        var fillColor = getShapeFill(node, pNode, true, warpObj, source);
-        //console.log("genShape: fillColor: ", fillColor)
-        var grndFillFlg = false;
-        var imgFillFlg = false;
-        var clrFillType = getFillType(getTextByPathList(node, ["p:spPr"]));
-        if (clrFillType == "GROUP_FILL") {
-            clrFillType = getFillType(getTextByPathList(pNode, ["p:grpSpPr"]));
-        }
-        // if (clrFillType == "") {
-        //     var clrFillType = getFillType(getTextByPathList(node, ["p:style","a:fillRef"]));
-        // }
-        //console.log("genShape: fillColor: ", fillColor, ", clrFillType: ", clrFillType, ", node: ", node)
-        /////////////////////////////////////////
-        if (clrFillType == "GRADIENT_FILL") {
-            grndFillFlg = true;
-            var color_arry = fillColor.color;
-            var angl = fillColor.rot + 90;
-            var svgGrdnt = getSvgGradient(w, h, angl, color_arry, shpId);
-            //fill="url(#linGrd)"
-            //console.log("genShape: svgGrdnt: ", svgGrdnt)
-            defsContent += svgGrdnt;
-
-        } else if (clrFillType == "PIC_FILL") {
-            imgFillFlg = true;
-            var svgBgImg = getSvgImagePattern(node, fillColor, shpId, warpObj);
-            //fill="url(#imgPtrn)"
-            //console.log(svgBgImg)
-            defsContent += svgBgImg;
-        } else if (clrFillType == "PATTERN_FILL") {
-            var styleText = fillColor;
-            if (styleText in styleTable) {
-                styleText += "do-nothing: " + svgCssName +";";
-            }
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-            styleTable[styleText] = {
-                "name": svgCssName,
-                "text": styleText
-            };
-            //}
-            fillColor = "none";
-        } else {
-            if (clrFillType != "SOLID_FILL" && clrFillType != "PATTERN_FILL" &&
-                (shapType == "arc" ||
-                    shapType == "bracketPair" ||
-                    shapType == "bracePair" ||
-                    shapType == "leftBracket" ||
-                    shapType == "leftBrace" ||
-                    shapType == "rightBrace" ||
-                    shapType == "rightBracket")) { //Temp. solution  - TODO
-                fillColor = "none";
-            }
-        }
-        // Border Color
-        var border = getBorder(node, pNode, true, "shape", warpObj);
-
-        return {
-            slideXfrmNode,
-            slideLayoutXfrmNode,
-            slideMasterXfrmNode,
-            shpId,
-            shapType,
-            custShapType,
-            rotate,
-            txtRotate,
-            flip,
-            x,
-            y,
-            w,
-            h,
-            svgCssName,
-            effectsClassName,
-            fillColor,
-            grndFillFlg,
-            imgFillFlg,
-            clrFillType,
-            border,
-            svgHeader,
-            defsContent
-        };
-    }
-
-    return null;
+  return null;
 }

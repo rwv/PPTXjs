@@ -24,7 +24,9 @@ export function getPregraphMargn(
     return ["", 0];
   }
 
-  var marLStr = "", marRStr = "", maginVal = 0;
+  var marLStr = "",
+    marRStr = "",
+    maginVal = 0;
   var pPrNode = pNode["a:pPr"];
   var layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
   var pPrNodeLaout = layoutMasterNode.nodeLaout;
@@ -80,7 +82,7 @@ export function getPregraphMargn(
     marginLeft = parseInt(marLNode) * slideFactor;
   }
 
-  if ((indentNode !== undefined || marLNode !== undefined)) {
+  if (indentNode !== undefined || marLNode !== undefined) {
     if (isRTL) {
       marLStr = "padding-right: ";
     } else {

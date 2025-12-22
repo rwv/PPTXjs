@@ -9,13 +9,8 @@ import tinycolor from "tinycolor2";
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)
  */
-export function applyShade(
-  rgbStr: string,
-  shadeValue: number | string,
-  isAlpha: boolean
-): string {
-  const shade =
-    typeof shadeValue === "number" ? shadeValue : parseFloat(shadeValue);
+export function applyShade(rgbStr: string, shadeValue: number | string, isAlpha: boolean): string {
+  const shade = typeof shadeValue === "number" ? shadeValue : parseFloat(shadeValue);
   const color = tinycolor(rgbStr).toHsl();
 
   // Clamp shade value to max 1

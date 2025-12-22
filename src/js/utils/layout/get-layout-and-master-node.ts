@@ -32,11 +32,24 @@ export function getLayoutAndMasterNode(
   }
   if (idx !== undefined) {
     //slidelayout
-    pPrNodeLaout = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], ["p:txBody", "a:lstStyle", "a:lvl" + lvl + "pPr"]);
+    pPrNodeLaout = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
+      "p:txBody",
+      "a:lstStyle",
+      "a:lvl" + lvl + "pPr",
+    ]);
     if (pPrNodeLaout === undefined) {
-      pPrNodeLaout = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], ["p:txBody", "a:p", "a:pPr"]);
+      pPrNodeLaout = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
+        "p:txBody",
+        "a:p",
+        "a:pPr",
+      ]);
       if (pPrNodeLaout === undefined) {
-        pPrNodeLaout = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], ["p:txBody", "a:p", (lvl - 1), "a:pPr"]);
+        pPrNodeLaout = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
+          "p:txBody",
+          "a:p",
+          lvl - 1,
+          "a:pPr",
+        ]);
       }
     }
   }
@@ -44,7 +57,14 @@ export function getLayoutAndMasterNode(
     //slidelayout
     var lvlStr = "a:lvl" + lvl + "pPr";
     if (pPrNodeLaout === undefined) {
-      pPrNodeLaout = getTextByPathList(warpObj, ["slideLayoutTables", "typeTable", type, "p:txBody", "a:lstStyle", lvlStr]);
+      pPrNodeLaout = getTextByPathList(warpObj, [
+        "slideLayoutTables",
+        "typeTable",
+        type,
+        "p:txBody",
+        "a:lstStyle",
+        lvlStr,
+      ]);
     }
     //masterlayout
     if (type == "title" || type == "ctrTitle") {
@@ -56,11 +76,18 @@ export function getLayoutAndMasterNode(
     } else if (type == "textBox") {
       pPrNodeMaster = getTextByPathList(warpObj, ["defaultTextStyle", lvlStr]);
     } else {
-      pPrNodeMaster = getTextByPathList(warpObj, ["slideMasterTables", "typeTable", type, "p:txBody", "a:lstStyle", lvlStr]);
+      pPrNodeMaster = getTextByPathList(warpObj, [
+        "slideMasterTables",
+        "typeTable",
+        type,
+        "p:txBody",
+        "a:lstStyle",
+        lvlStr,
+      ]);
     }
   }
   return {
-    "nodeLaout": pPrNodeLaout,
-    "nodeMaster": pPrNodeMaster
+    nodeLaout: pPrNodeLaout,
+    nodeMaster: pPrNodeMaster,
   };
 }

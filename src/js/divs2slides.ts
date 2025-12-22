@@ -140,8 +140,7 @@ interface Divs2SlidesSettings {
                 class: "slides-nav-play",
                 alt: "fullscreen Slide",
                 src: "data:image/png;base64,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",
-                style:
-                  "float: left;cursor: pointer;opacity: 0.7; padding: 0 10px 0 10px",
+                style: "float: left;cursor: pointer;opacity: 0.7; padding: 0 10px 0 10px",
               })
               .bind("click", function () {
                 pptxjslideObj.fullscreen();
@@ -156,8 +155,7 @@ interface Divs2SlidesSettings {
                 class: "slides-nav-play",
                 alt: "Play/Pause Slide",
                 src: "data:image/png;base64,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",
-                style:
-                  "float: left;cursor: pointer;opacity: 0.7;  padding: 0 10px 0 10px",
+                style: "float: left;cursor: pointer;opacity: 0.7;  padding: 0 10px 0 10px",
               })
               .html("<span style='font-size:80%;'>&#x23ef;</span>")
               .bind("click", function () {
@@ -202,9 +200,7 @@ interface Divs2SlidesSettings {
         data.isEnblePrevBtn = true;
       }
       if (document.getElementById("all_slides_warpper") === null) {
-        $("#" + divId + " .slide").wrapAll(
-          "<div id='all_slides_warpper'></div>"
-        );
+        $("#" + divId + " .slide").wrapAll("<div id='all_slides_warpper'></div>");
       }
       // Go to first slide
       pptxjslideObj.gotoSlide(1);
@@ -259,9 +255,7 @@ interface Divs2SlidesSettings {
       let transitionType = data.transition; /*"slid","fade","default" */
       if (transitionType == "random") {
         const availableTransitionTypes = ["default", "fade", "slid"] as const;
-        const randomIndex = Math.floor(
-          Math.random() * availableTransitionTypes.length
-        );
+        const randomIndex = Math.floor(Math.random() * availableTransitionTypes.length);
         transitionType = availableTransitionTypes[randomIndex];
       }
       const transTime = 1000 * data.transitionTime;
@@ -434,40 +428,22 @@ interface Divs2SlidesSettings {
         orginalMainDivWidth = $("#" + div_Id).width();
         orginalMainDivHeight = $("#" + div_Id).height();
         const m = $("#" + div_Id + " #all_slides_warpper").css("transform");
-        orginalSlidesWarpperScale = m
-          .substring(m.indexOf("(") + 1, m.indexOf(")"))
-          .split(",");
-        orginalSlideTop = $(
-          "#" + div_Id + " #all_slides_warpper .slide"
-        ).offset().top;
-        orginalSlideLeft = $(
-          "#" + div_Id + " #all_slides_warpper .slide"
-        ).offset().left;
-        orginalSlidesToolbarWidth = $(
-          "#" + div_Id + " .slides-toolbar"
-        ).width();
-        orginalSlidesToolbarTop = $("#" + div_Id + " .slides-toolbar").offset()
-          .top;
+        orginalSlidesWarpperScale = m.substring(m.indexOf("(") + 1, m.indexOf(")")).split(",");
+        orginalSlideTop = $("#" + div_Id + " #all_slides_warpper .slide").offset().top;
+        orginalSlideLeft = $("#" + div_Id + " #all_slides_warpper .slide").offset().left;
+        orginalSlidesToolbarWidth = $("#" + div_Id + " .slides-toolbar").width();
+        orginalSlidesToolbarTop = $("#" + div_Id + " .slides-toolbar").offset().top;
 
         $("#" + div_Id).attr({
-          style:
-            "width: " +
-            (winWidth - 10) +
-            "px; height: " +
-            (winHeight - 10) +
-            "px;",
+          style: "width: " + (winWidth - 10) + "px; height: " + (winHeight - 10) + "px;",
         });
 
         $("#" + div_Id + " #all_slides_warpper").css({
           transform: "scale(1)",
         });
 
-        const slideWidth = $(
-          "#" + div_Id + " #all_slides_warpper .slide"
-        ).width();
-        const sildeHeight = $(
-          "#" + div_Id + " #all_slides_warpper .slide"
-        ).height();
+        const slideWidth = $("#" + div_Id + " #all_slides_warpper .slide").width();
+        const sildeHeight = $("#" + div_Id + " #all_slides_warpper .slide").height();
         $("#" + div_Id + " #all_slides_warpper .slide").css({
           top: (winHeight - sildeHeight) / 2 + "px",
           left: (winWidth - slideWidth) / 2 + "px",
@@ -504,12 +480,7 @@ interface Divs2SlidesSettings {
               orginalSlidesToolbarTop
               */
       $("#" + div_Id).attr({
-        style:
-          "width: " +
-          orginalMainDivWidth +
-          "px; height: " +
-          orginalMainDivHeight +
-          "px;",
+        style: "width: " + orginalMainDivWidth + "px; height: " + orginalMainDivHeight + "px;",
       });
       console.log(orginalSlidesWarpperScale[0]);
       $("#" + div_Id + " #all_slides_warpper").css({

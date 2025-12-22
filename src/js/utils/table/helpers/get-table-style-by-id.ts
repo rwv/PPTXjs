@@ -11,41 +11,41 @@
  */
 
 export function getTableStyleById(
-    styleId: string | undefined,
-    tableStyles: any,
-    tblStylAttrObj: any
+  styleId: string | undefined,
+  tableStyles: any,
+  tblStylAttrObj: any
 ): any {
-    if (styleId === undefined) {
-        return undefined;
-    }
+  if (styleId === undefined) {
+    return undefined;
+  }
 
-    const tbleStylList = tableStyles?.["a:tblStyleLst"]?.["a:tblStyle"];
-    if (tbleStylList === undefined) {
-        return undefined;
-    }
+  const tbleStylList = tableStyles?.["a:tblStyleLst"]?.["a:tblStyle"];
+  if (tbleStylList === undefined) {
+    return undefined;
+  }
 
-    let foundStyle: any = undefined;
+  let foundStyle: any = undefined;
 
-    // Handle array of styles
-    if (Array.isArray(tbleStylList)) {
-        for (let k = 0; k < tbleStylList.length; k++) {
-            if (tbleStylList[k]["attrs"]?.["styleId"] === styleId) {
-                foundStyle = tbleStylList[k];
-                break;
-            }
-        }
+  // Handle array of styles
+  if (Array.isArray(tbleStylList)) {
+    for (let k = 0; k < tbleStylList.length; k++) {
+      if (tbleStylList[k]["attrs"]?.["styleId"] === styleId) {
+        foundStyle = tbleStylList[k];
+        break;
+      }
     }
-    // Handle single style
-    else {
-        if (tbleStylList["attrs"]?.["styleId"] === styleId) {
-            foundStyle = tbleStylList;
-        }
+  }
+  // Handle single style
+  else {
+    if (tbleStylList["attrs"]?.["styleId"] === styleId) {
+      foundStyle = tbleStylList;
     }
+  }
 
-    // Attach style attributes to the found style
-    if (foundStyle !== undefined) {
-        foundStyle["tblStylAttrObj"] = tblStylAttrObj;
-    }
+  // Attach style attributes to the found style
+  if (foundStyle !== undefined) {
+    foundStyle["tblStylAttrObj"] = tblStylAttrObj;
+  }
 
-    return foundStyle;
+  return foundStyle;
 }

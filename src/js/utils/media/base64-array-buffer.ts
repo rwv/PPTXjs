@@ -6,8 +6,7 @@
  */
 export function base64ArrayBuffer(arrayBuffer: ArrayBuffer): string {
   let base64 = "";
-  const encodings =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  const encodings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   const bytes = new Uint8Array(arrayBuffer);
   const byteLength = bytes.byteLength;
   const byteRemainder = byteLength % 3;

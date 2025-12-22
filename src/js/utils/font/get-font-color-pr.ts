@@ -33,7 +33,11 @@ export function getFontColorPr(
   slideFactor: number
 ): [any, any, string, string] {
   var rPrNode = getTextByPathList(node, ["a:rPr"]);
-  var filTyp, color, textBordr, colorType = "", highlightColor = "";
+  var filTyp,
+    color,
+    textBordr,
+    colorType = "",
+    highlightColor = "";
 
   if (rPrNode !== undefined) {
     filTyp = getFillType(rPrNode);
@@ -59,7 +63,10 @@ export function getFontColorPr(
     }
   }
 
-  if (color === undefined && getTextByPathList(lstStyle, ["a:lvl" + lvl + "pPr", "a:defRPr"]) !== undefined) {
+  if (
+    color === undefined &&
+    getTextByPathList(lstStyle, ["a:lvl" + lvl + "pPr", "a:defRPr"]) !== undefined
+  ) {
     // lstStyle
     var lstStyledefRPr = getTextByPathList(lstStyle, ["a:lvl" + lvl + "pPr", "a:defRPr"]);
     filTyp = getFillType(lstStyledefRPr);
@@ -148,10 +155,26 @@ export function getFontColorPr(
     var txBrd = getBorder(node, pNode, false, "text", warpObj);
     if (typeof txBrd === "string") {
       var txBrdAry = txBrd.split(" ");
-      var brdSize = (parseInt(txBrdAry[0].substring(0, txBrdAry[0].indexOf("px")))) + "px";
+      var brdSize = parseInt(txBrdAry[0].substring(0, txBrdAry[0].indexOf("px"))) + "px";
       var brdClr = txBrdAry[2];
       if (colorType == "solid") {
-        textBordr = "-" + brdSize + " 0 " + brdClr + ", 0 " + brdSize + " " + brdClr + ", " + brdSize + " 0 " + brdClr + ", 0 -" + brdSize + " " + brdClr;
+        textBordr =
+          "-" +
+          brdSize +
+          " 0 " +
+          brdClr +
+          ", 0 " +
+          brdSize +
+          " " +
+          brdClr +
+          ", " +
+          brdSize +
+          " 0 " +
+          brdClr +
+          ", 0 -" +
+          brdSize +
+          " " +
+          brdClr;
         txtEffects.push(textBordr);
       } else {
         txtEffObj.border = brdSize + " " + brdClr;
@@ -164,21 +187,55 @@ export function getFontColorPr(
   var oGlowStr = "";
   if (txtGlowNode !== undefined) {
     var glowClr = getSolidFill(txtGlowNode, undefined, undefined, warpObj);
-    var rad = (txtGlowNode["attrs"]["rad"]) ? (txtGlowNode["attrs"]["rad"] * slideFactor) : 0;
-    oGlowStr = "0 0 " + rad + "px #" + glowClr +
-      ", 0 0 " + rad + "px #" + glowClr +
-      ", 0 0 " + rad + "px #" + glowClr +
-      ", 0 0 " + rad + "px #" + glowClr +
-      ", 0 0 " + rad + "px #" + glowClr +
-      ", 0 0 " + rad + "px #" + glowClr +
-      ", 0 0 " + rad + "px #" + glowClr;
+    var rad = txtGlowNode["attrs"]["rad"] ? txtGlowNode["attrs"]["rad"] * slideFactor : 0;
+    oGlowStr =
+      "0 0 " +
+      rad +
+      "px #" +
+      glowClr +
+      ", 0 0 " +
+      rad +
+      "px #" +
+      glowClr +
+      ", 0 0 " +
+      rad +
+      "px #" +
+      glowClr +
+      ", 0 0 " +
+      rad +
+      "px #" +
+      glowClr +
+      ", 0 0 " +
+      rad +
+      "px #" +
+      glowClr +
+      ", 0 0 " +
+      rad +
+      "px #" +
+      glowClr +
+      ", 0 0 " +
+      rad +
+      "px #" +
+      glowClr;
     if (colorType == "solid") {
       txtEffects.push(oGlowStr);
     } else {
       txtEffects.push(
-        "drop-shadow(0 0 " + rad / 3 + "px #" + glowClr + ") " +
-        "drop-shadow(0 0 " + rad * 2 / 3 + "px #" + glowClr + ") " +
-        "drop-shadow(0 0 " + rad + "px #" + glowClr + ")"
+        "drop-shadow(0 0 " +
+          rad / 3 +
+          "px #" +
+          glowClr +
+          ") " +
+          "drop-shadow(0 0 " +
+          (rad * 2) / 3 +
+          "px #" +
+          glowClr +
+          ") " +
+          "drop-shadow(0 0 " +
+          rad +
+          "px #" +
+          glowClr +
+          ")"
       );
     }
   }
@@ -190,26 +247,31 @@ export function getFontColorPr(
     var shadowClr = getSolidFill(txtShadow, undefined, undefined, warpObj);
     var outerShdwAttrs = txtShadow["attrs"];
     var algn = outerShdwAttrs["algn"];
-    var dir = (outerShdwAttrs["dir"]) ? (parseInt(outerShdwAttrs["dir"]) / 60000) : 0;
+    var dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
     var dist = parseInt(outerShdwAttrs["dist"]) * slideFactor;
     var rotWithShape = outerShdwAttrs["rotWithShape"];
-    var blurRad = (outerShdwAttrs["blurRad"]) ? (parseInt(outerShdwAttrs["blurRad"]) * slideFactor + "px") : "";
-    var sx = (outerShdwAttrs["sx"]) ? (parseInt(outerShdwAttrs["sx"]) / 100000) : 1;
-    var sy = (outerShdwAttrs["sy"]) ? (parseInt(outerShdwAttrs["sy"]) / 100000) : 1;
-    var vx = dist * Math.sin(dir * Math.PI / 180);
-    var hx = dist * Math.cos(dir * Math.PI / 180);
+    var blurRad = outerShdwAttrs["blurRad"]
+      ? parseInt(outerShdwAttrs["blurRad"]) * slideFactor + "px"
+      : "";
+    var sx = outerShdwAttrs["sx"] ? parseInt(outerShdwAttrs["sx"]) / 100000 : 1;
+    var sy = outerShdwAttrs["sy"] ? parseInt(outerShdwAttrs["sy"]) / 100000 : 1;
+    var vx = dist * Math.sin((dir * Math.PI) / 180);
+    var hx = dist * Math.cos((dir * Math.PI) / 180);
 
     if (!isNaN(vx) && !isNaN(hx)) {
       oShadowStr = hx + "px " + vx + "px " + blurRad + " #" + shadowClr;
       if (colorType == "solid") {
         txtEffects.push(oShadowStr);
       } else {
-        txtEffects.push("drop-shadow(" + hx + "px " + vx + "px " + blurRad + " #" + shadowClr + ")");
+        txtEffects.push(
+          "drop-shadow(" + hx + "px " + vx + "px " + blurRad + " #" + shadowClr + ")"
+        );
       }
     }
   }
 
-  var text_effcts = "", txt_effects: any;
+  var text_effcts = "",
+    txt_effects: any;
   if (colorType == "solid") {
     if (txtEffects.length > 0) {
       text_effcts = txtEffects.join(",");

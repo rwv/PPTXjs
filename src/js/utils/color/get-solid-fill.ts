@@ -109,12 +109,7 @@ export function getSolidFill(
     //a:schemeClr
     clrNode = node["a:schemeClr"];
     const schemeClr = getTextByPathList(clrNode, ["attrs", "val"]);
-    color = getSchemeColorFromTheme(
-      "a:" + schemeClr,
-      clrMap,
-      phClr,
-      warpObj
-    );
+    color = getSchemeColorFromTheme("a:" + schemeClr, clrMap, phClr, warpObj);
     //console.log("schemeClr: ", schemeClr, "color: ", color)
   } else if (node["a:scrgbClr"] !== undefined) {
     clrNode = node["a:scrgbClr"];
@@ -152,16 +147,18 @@ export function getSolidFill(
     //<a:hslClr hue="14400000" sat="100%" lum="50%"/>  //Need to test/////////////////////////////////////////////
     const defBultColorVals = clrNode["attrs"];
     const hue = Number(defBultColorVals["hue"]) / 100000;
-    const sat = Number(
-      defBultColorVals["sat"].indexOf("%") != -1
-        ? defBultColorVals["sat"].split("%").shift()
-        : defBultColorVals["sat"]
-    ) / 100;
-    const lum = Number(
-      defBultColorVals["lum"].indexOf("%") != -1
-        ? defBultColorVals["lum"].split("%").shift()
-        : defBultColorVals["lum"]
-    ) / 100;
+    const sat =
+      Number(
+        defBultColorVals["sat"].indexOf("%") != -1
+          ? defBultColorVals["sat"].split("%").shift()
+          : defBultColorVals["sat"]
+      ) / 100;
+    const lum =
+      Number(
+        defBultColorVals["lum"].indexOf("%") != -1
+          ? defBultColorVals["lum"].split("%").shift()
+          : defBultColorVals["lum"]
+      ) / 100;
     //var hslClr = defBultColorVals["hue"] + "," + defBultColorVals["sat"] + "," + defBultColorVals["lum"];
     const hsl2rgb = hslToRgb(hue, sat, lum);
     color = toHex(hsl2rgb.r) + toHex(hsl2rgb.g) + toHex(hsl2rgb.b);
@@ -188,9 +185,7 @@ export function getSolidFill(
   //     </a:srgbClr>
   // </a: solidFill >
   let isAlpha = false;
-  const alpha =
-    parseInt(getTextByPathList(clrNode, ["a:alpha", "attrs", "val"]) || "") /
-    100000;
+  const alpha = parseInt(getTextByPathList(clrNode, ["a:alpha", "attrs", "val"]) || "") / 100000;
   //console.log("alpha: ", alpha)
   if (!isNaN(alpha)) {
     // var al_color = new colz.Color(color);
@@ -318,9 +313,7 @@ export function getSolidFill(
   //             </a:srgbClr>
   //         </a: solidFill >
 
-  const hueMod =
-    parseInt(getTextByPathList(clrNode, ["a:hueMod", "attrs", "val"]) || "") /
-    100000;
+  const hueMod = parseInt(getTextByPathList(clrNode, ["a:hueMod", "attrs", "val"]) || "") / 100000;
   //console.log("hueMod: ", hueMod)
   if (!isNaN(hueMod)) {
     color = applyHueMod(color, hueMod, isAlpha);
@@ -386,9 +379,7 @@ export function getSolidFill(
   //         </a:srgbClr>
   //     </a: solidFill >
   // end example]
-  const lumMod =
-    parseInt(getTextByPathList(clrNode, ["a:lumMod", "attrs", "val"]) || "") /
-    100000;
+  const lumMod = parseInt(getTextByPathList(clrNode, ["a:lumMod", "attrs", "val"]) || "") / 100000;
   //console.log("lumMod: ", lumMod)
   if (!isNaN(lumMod)) {
     color = applyLumMod(color, lumMod, isAlpha);
@@ -406,9 +397,7 @@ export function getSolidFill(
   //             <a:lumOff val="-20%" />
   //         </a:srgbClr>
   //     </a: solidFill >
-  const lumOff =
-    parseInt(getTextByPathList(clrNode, ["a:lumOff", "attrs", "val"]) || "") /
-    100000;
+  const lumOff = parseInt(getTextByPathList(clrNode, ["a:lumOff", "attrs", "val"]) || "") / 100000;
   //console.log("lumOff: ", lumOff)
   if (!isNaN(lumOff)) {
     color = applyLumOff(color, lumOff, isAlpha);
@@ -480,9 +469,7 @@ export function getSolidFill(
   //             <a:satMod val="20%" />
   //         </a:srgbClr>
   //     </a: solidFill >
-  const satMod =
-    parseInt(getTextByPathList(clrNode, ["a:satMod", "attrs", "val"]) || "") /
-    100000;
+  const satMod = parseInt(getTextByPathList(clrNode, ["a:satMod", "attrs", "val"]) || "") / 100000;
   if (!isNaN(satMod)) {
     color = applySatMod(color, satMod, isAlpha);
   }
@@ -512,9 +499,7 @@ export function getSolidFill(
   //         </a:srgbClr>
   //     </a: solidFill >
   // end example]
-  const shade =
-    parseInt(getTextByPathList(clrNode, ["a:shade", "attrs", "val"]) || "") /
-    100000;
+  const shade = parseInt(getTextByPathList(clrNode, ["a:shade", "attrs", "val"]) || "") / 100000;
   if (!isNaN(shade)) {
     color = applyShade(color, shade, isAlpha);
   }
@@ -528,9 +513,7 @@ export function getSolidFill(
   //             <a:tint val="50%" />
   //         </a:srgbClr>
   //     </a: solidFill >
-  const tint =
-    parseInt(getTextByPathList(clrNode, ["a:tint", "attrs", "val"]) || "") /
-    100000;
+  const tint = parseInt(getTextByPathList(clrNode, ["a:tint", "attrs", "val"]) || "") / 100000;
   if (!isNaN(tint)) {
     color = applyTint(color, tint, isAlpha);
   }

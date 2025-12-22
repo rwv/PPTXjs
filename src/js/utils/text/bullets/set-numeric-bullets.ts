@@ -59,20 +59,14 @@ export function setNumericBullets(elem: any) {
             tmpArry[tmpArryIndx] = buletIndex;
             buletTypSrry[tmpArryIndx] = bult_typ;
             buletIndex = 1;
-          } else if (
-            bult_typ != prevBultTyp &&
-            Number(bult_lvl) > Number(prevBultLvl)
-          ) {
+          } else if (bult_typ != prevBultTyp && Number(bult_lvl) > Number(prevBultLvl)) {
             prevBultTyp = bult_typ;
             prevBultLvl = bult_lvl;
             tmpArryIndx++;
             tmpArry[tmpArryIndx] = buletIndex;
             buletTypSrry[tmpArryIndx] = bult_typ;
             buletIndex = 1;
-          } else if (
-            bult_typ != prevBultTyp &&
-            Number(bult_lvl) < Number(prevBultLvl)
-          ) {
+          } else if (bult_typ != prevBultTyp && Number(bult_lvl) < Number(prevBultLvl)) {
             prevBultTyp = bult_typ;
             prevBultLvl = bult_lvl;
             tmpArryIndx--;

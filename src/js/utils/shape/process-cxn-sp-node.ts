@@ -18,24 +18,49 @@
  * @returns HTML string for the connection shape
  */
 export function processCxnSpNode(
-    node: any,
-    pNode: any,
-    warpObj: any,
-    source: any,
-    sType: any,
-    genShape: any,
-    slideFactor: number,
-    styleTable: any,
-    fontSizeFactor: number,
-    rtlLangsArray: string[],
-    isFirstBr: { value: boolean }
+  node: any,
+  pNode: any,
+  warpObj: any,
+  source: any,
+  sType: any,
+  genShape: any,
+  slideFactor: number,
+  styleTable: any,
+  fontSizeFactor: number,
+  rtlLangsArray: string[],
+  isFirstBr: { value: boolean }
 ): string {
-    var id = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["id"];
-    var name = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["name"];
-    var idx = (node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined) ? undefined : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["idx"];
-    var type = (node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined) ? undefined : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["type"];
-    // <p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
-    var order = node["attrs"]["order"];
+  var id = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["id"];
+  var name = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["name"];
+  var idx =
+    node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined
+      ? undefined
+      : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["idx"];
+  var type =
+    node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined
+      ? undefined
+      : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["type"];
+  // <p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
+  var order = node["attrs"]["order"];
 
-    return genShape(node, pNode, undefined, undefined, id, name, idx, type, order, warpObj, undefined, sType, source, slideFactor, styleTable, fontSizeFactor, rtlLangsArray, isFirstBr);
+  return genShape(
+    node,
+    pNode,
+    undefined,
+    undefined,
+    id,
+    name,
+    idx,
+    type,
+    order,
+    warpObj,
+    undefined,
+    sType,
+    source,
+    slideFactor,
+    styleTable,
+    fontSizeFactor,
+    rtlLangsArray,
+    isFirstBr
+  );
 }

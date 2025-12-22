@@ -5,10 +5,7 @@
  * @param upperLower - "upperCase" or "lowerCase"
  * @returns Alphabetic string representation
  */
-export function alphaNumeric(
-  num: number | string,
-  upperLower: "upperCase" | "lowerCase"
-): string {
+export function alphaNumeric(num: number | string, upperLower: "upperCase" | "lowerCase"): string {
   let numValue = Number(num) - 1;
   let aNum = "";
 
