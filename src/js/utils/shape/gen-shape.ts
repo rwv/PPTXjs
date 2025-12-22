@@ -43,7 +43,7 @@ import { getSvgGradient, getSvgImagePattern } from "../svg";
 import { renderCustomGeometry } from "./render-custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
-import { isStarShape, renderStarShape } from "./shapes";
+import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape } from "./shapes";
 
 export function genShape(
     node: any,
@@ -148,6 +148,19 @@ export function genShape(
                         border,
                         slideFactor
                     });
+                } else if (isFlowchartShape(shapType)) {
+                    // Handle independent flowchart shapes via dedicated module
+                    result += renderFlowchartShape(shapType, {
+                        node,
+                        w,
+                        h,
+                        shpId,
+                        fillColor,
+                        grndFillFlg,
+                        imgFillFlg,
+                        border,
+                        slideFactor
+                    });
                 } else switch (shapType) {
                     case "rect":
                     case "flowChartProcess":
@@ -168,100 +181,6 @@ export function genShape(
                             // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
                             result += " <polyline points='0 " + h * (1 / 8) + "," + w + " " + h * (1 / 8) + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         }
-                        break;
-                    case "flowChartCollate":
-                        var d = "M 0,0" +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + 0 +
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            " L" + 0 + "," + h +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + h +
-                            " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-
-                        break;
-                    case "flowChartDocument":
-                        var y1, y2, y3, x1;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x1 = w * 10800 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y1 = h * 17322 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y2 = h * 20172 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y3 = h * 23922 / 21600;
-                        var d = "M" + 0 + "," + 0 +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + 0 +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + y1 +
-                            " C" + x1 + "," + y1 + " " + x1 + "," + y3 + " " + 0 + "," + y2 +
-                            " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "flowChartMultidocument":
-                        var y1, y2, y3, y4, y5, y6, y7, y8, y9, x1, x2, x3, x4, x5, x6, x7;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y1 = h * 18022 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y2 = h * 3675 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y3 = h * 23542 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y4 = h * 1815 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y5 = h * 16252 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y6 = h * 16352 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y7 = h * 14392 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y8 = h * 20782 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y9 = h * 14467 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x1 = w * 1532 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x2 = w * 20000 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x3 = w * 9298 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x4 = w * 19298 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x5 = w * 18595 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x6 = w * 2972 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x7 = w * 20800 / 21600;
-                        var d = "M" + 0 + "," + y2 +
-                            " L" + x5 + "," + y2 +
-                            " L" + x5 + "," + y1 +
-                            " C" + x3 + "," + y1 + " " + x3 + "," + y3 + " " + 0 + "," + y8 +
-                            " z" +
-                            "M" + x1 + "," + y2 +
-                            " L" + x1 + "," + y4 +
-                            " L" + x2 + "," + y4 +
-                            " L" + x2 + "," + y5 +
-                            " C" + x4 + "," + y5 + " " + x5 + "," + y6 + " " + x5 + "," + y6 +
-                            "M" + x6 + "," + y4 +
-                            " L" + x6 + "," + 0 +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + 0 +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + y7 +
-                            " C" + x7 + "," + y7 + " " + x2 + "," + y9 + " " + x2 + "," + y9;
-
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     case "actionButtonBackPrevious":
                         // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
@@ -946,141 +865,6 @@ export function genShape(
                                 " z";
                         }
                         // @ts-expect-error TS(2454): Variable 'd' is used before being assigned.
-                        result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "flowChartTerminator":
-                        var x1, x2, y1, cd2 = 180, cd4 = 90, c3d4 = 270;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x1 = w * 3475 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x2 = w * 18125 / 21600;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y1 = h * 10800 / 21600;
-                        //path attrs: w = 21600; h = 21600; 
-                        var d = "M" + x1 + "," + 0 +
-                            " L" + x2 + "," + 0 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x2, h / 2, x1, y1, c3d4, c3d4 + cd2, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            " L" + x1 + "," + h +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x1, h / 2, x1, y1, cd4, cd4 + cd2, false).replace("M", "L") +
-                            " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "flowChartPunchedTape":
-                        var x1, x1, y1, y2, cd2 = 180;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x1 = w * 5 / 20;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y1 = h * 2 / 20;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y2 = h * 18 / 20;
-                        var d = "M" + 0 + "," + y1 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x1, y1, x1, y1, cd2, 0, false).replace("M", "L") +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w * (3 / 4), y1, x1, y1, cd2, 360, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + y2 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w * (3 / 4), y2, x1, y1, 0, -cd2, false).replace("M", "L") +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x1, y2, x1, y1, 0, cd2, false).replace("M", "L") +
-                            " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "flowChartOnlineStorage":
-                        var x1, y1, c3d4 = 270, cd4 = 90;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x1 = w * 1 / 6;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y1 = h * 3 / 6;
-                        var d = "M" + x1 + "," + 0 +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + 0 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w, h / 2, x1, y1, c3d4, 90, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            " L" + x1 + "," + h +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(x1, h / 2, x1, y1, cd4, 270, false).replace("M", "L") +
-                            " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "flowChartDisplay":
-                        var x1, x2, y1, c3d4 = 270, cd2 = 180;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x1 = w * 1 / 6;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x2 = w * 5 / 6;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        y1 = h * 3 / 6;
-                        //path attrs: w = 6; h = 6; 
-                        var d = "M" + 0 + "," + y1 +
-                            " L" + x1 + "," + 0 +
-                            " L" + x2 + "," + 0 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(w, h / 2, x1, y1, c3d4, c3d4 + cd2, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            " L" + x1 + "," + h +
-                            " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "flowChartDelay":
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var wd2 = w / 2, hd2 = h / 2, cd2 = 180, c3d4 = 270, cd4 = 90;
-                        var d = "M" + 0 + "," + 0 +
-                            " L" + wd2 + "," + 0 +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(wd2, hd2, wd2, hd2, c3d4, c3d4 + cd2, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            " L" + 0 + "," + h +
-                            " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "flowChartMagneticTape":
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var wd2 = w / 2, hd2 = h / 2, cd2 = 180, c3d4 = 270, cd4 = 90;
-                        var idy, ib, ang1;
-                        idy = hd2 * Math.sin(Math.PI / 4);
-                        ib = hd2 + idy;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        ang1 = Math.atan(h / w);
-                        var ang1Dg = ang1 * 180 / Math.PI;
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var d = "M" + wd2 + "," + h +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(wd2, hd2, wd2, hd2, cd4, cd2, false).replace("M", "L") +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(wd2, hd2, wd2, hd2, cd2, c3d4, false).replace("M", "L") +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(wd2, hd2, wd2, hd2, c3d4, 360, false).replace("M", "L") +
-                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                            shapeArc(wd2, hd2, wd2, hd2, 0, ang1Dg, false).replace("M", "L") +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + ib +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + h +
-                            " z";
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
                         result += "<path d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
                             // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
                             "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
