@@ -15,3 +15,6 @@ export type { ActionButtonContext } from "./action-buttons";
 
 export { isArrowShape, renderArrowShape, ARROW_SHAPE_TYPES } from "./arrows";
 export type { ArrowShapeContext } from "./arrows";
+
+export { isCurvedArrowShape, renderCurvedArrowShape, CURVED_ARROW_TYPES } from "./curved-arrows";
+export type { CurvedArrowContext } from "./curved-arrows";
