@@ -24,3 +24,6 @@ export type { CalloutContext } from "./callouts";
 
 export { isRibbonShape, renderRibbonShape, RIBBON_SHAPE_TYPES } from "./ribbons";
 export type { RibbonContext } from "./ribbons";
+
+export { isMathShape, renderMathShapeType, MATH_SHAPE_TYPES } from "./math-shapes";
+export type { MathShapeContext } from "./math-shapes";
