@@ -12,3 +12,6 @@ export type { FlowchartShapeContext } from "./flowchart";
 
 export { isActionButtonShape, renderActionButtonShape, ACTION_BUTTON_TYPES } from "./action-buttons";
 export type { ActionButtonContext } from "./action-buttons";
+
+export { isArrowShape, renderArrowShape, ARROW_SHAPE_TYPES } from "./arrows";
+export type { ArrowShapeContext } from "./arrows";
