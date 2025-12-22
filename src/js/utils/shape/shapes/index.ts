@@ -18,3 +18,6 @@ export type { ArrowShapeContext } from "./arrows";
 
 export { isCurvedArrowShape, renderCurvedArrowShape, CURVED_ARROW_TYPES } from "./curved-arrows";
 export type { CurvedArrowContext } from "./curved-arrows";
+
+export { isCalloutShape, renderCalloutShape, CALLOUT_SHAPE_TYPES } from "./callouts";
+export type { CalloutContext } from "./callouts";
