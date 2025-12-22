@@ -43,7 +43,7 @@ import { getSvgGradient, getSvgImagePattern } from "../svg";
 import { renderCustomGeometry } from "./render-custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
-import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape, isArcShape, renderArcShape } from "./shapes";
+import { isStarShape, renderStarShape, isFlowchartShape, renderFlowchartShape, isActionButtonShape, renderActionButtonShape, isArrowShape, renderArrowShape, isCurvedArrowShape, renderCurvedArrowShape, isCalloutShape, renderCalloutShape, isRibbonShape, renderRibbonShape, isMathShape, renderMathShapeType, isBracketShape, renderBracketShape, isArcShape, renderArcShape, isPolygonShape, renderPolygonShape } from "./shapes";
 
 export function genShape(
     node: any,
@@ -251,6 +251,19 @@ export function genShape(
                 } else if (isArcShape(shapType)) {
                     // Handle arc shapes via dedicated module
                     result += renderArcShape(shapType, {
+                        node,
+                        w,
+                        h,
+                        shpId,
+                        fillColor,
+                        grndFillFlg,
+                        imgFillFlg,
+                        border,
+                        slideFactor
+                    });
+                } else if (isPolygonShape(shapType)) {
+                    // Handle polygon shapes via dedicated module
+                    result += renderPolygonShape(shapType, {
                         node,
                         w,
                         h,
@@ -562,183 +575,6 @@ export function genShape(
                             result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
                         }
                         result += "/>";
-                        break;
-                    case "rtTriangle":
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        result += " <polygon points='0 0,0 " + h + "," + w + " " + h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "triangle":
-                    case "flowChartExtract":
-                    case "flowChartMerge":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var shapAdjst_val = 0.5;
-                        if (shapAdjst !== undefined) {
-                            shapAdjst_val = parseInt(shapAdjst.substr(4)) * slideFactor;
-                            //console.log("w: "+w+"\nh: "+h+"\nshapAdjst: "+shapAdjst+"\nshapAdjst_val: "+shapAdjst_val);
-                        }
-                        var tranglRott = "";
-                        if (shapType == "flowChartMerge") {
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            tranglRott = "transform='rotate(180 " + w / 2 + "," + h / 2 + ")'";
-                        }
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += " <polygon " + tranglRott + " points='" + (w * shapAdjst_val) + " 0,0 " + h + "," + w + " " + h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "diamond":
-                    case "flowChartDecision":
-                    case "flowChartSort":
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += " <polygon points='" + (w / 2) + " 0,0 " + (h / 2) + "," + (w / 2) + " " + h + "," + w + " " + (h / 2) + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        if (shapType == "flowChartSort") {
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            result += " <polyline points='0 " + h / 2 + "," + w + " " + h / 2 + "' fill='none' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        }
-                        break;
-                    case "trapezoid":
-                    case "flowChartManualOperation":
-                    case "flowChartManualInput":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adjst_val = 0.2;
-                        var max_adj_const = 0.7407;
-                        if (shapAdjst !== undefined) {
-                            var adjst = parseInt(shapAdjst.substr(4)) * slideFactor;
-                            adjst_val = (adjst * 0.5) / max_adj_const;
-                            // console.log("w: "+w+"\nh: "+h+"\nshapAdjst: "+shapAdjst+"\nadjst_val: "+adjst_val);
-                        }
-                        var cnstVal = 0;
-                        var tranglRott = "";
-                        if (shapType == "flowChartManualOperation") {
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            tranglRott = "transform='rotate(180 " + w / 2 + "," + h / 2 + ")'";
-                        }
-                        if (shapType == "flowChartManualInput") {
-                            adjst_val = 0;
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            cnstVal = h / 5;
-                        }
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += " <polygon " + tranglRott + " points='" + (w * adjst_val) + " " + cnstVal + ",0 " + h + "," + w + " " + h + "," + (1 - adjst_val) * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "parallelogram":
-                    case "flowChartInputOutput":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adjst_val = 0.25;
-                        // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-                        var max_adj_const;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        if (w > h) {
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            max_adj_const = w / h;
-                        } else {
-                            // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                            max_adj_const = h / w;
-                        }
-                        if (shapAdjst !== undefined) {
-                            var adjst = parseInt(shapAdjst.substr(4)) / 100000;
-                            adjst_val = adjst / max_adj_const;
-                            //console.log("w: "+w+"\nh: "+h+"\nadjst: "+adjst_val+"\nmax_adj_const: "+max_adj_const);
-                        }
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += " <polygon points='" + adjst_val * w + " 0,0 " + h + "," + (1 - adjst_val) * w + " " + h + "," + w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-
-                        break;
-                    case "pentagon":
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += " <polygon points='" + (0.5 * w) + " 0,0 " + (0.375 * h) + "," + (0.15 * w) + " " + h + "," + 0.85 * w + " " + h + "," + w + " " + 0.375 * h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "hexagon":
-                    case "flowChartPreparation":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adj = 25000 * slideFactor;
-                        var vf = 115470 * slideFactor;;
-                        var cnstVal1 = 50000 * slideFactor;
-                        var cnstVal2 = 100000 * slideFactor;
-                        var angVal1 = 60 * Math.PI / 180;
-                        if (shapAdjst !== undefined) {
-                            adj = parseInt(shapAdjst.substr(4)) * slideFactor;
-                        }
-                        // @ts-expect-error TS(2454): Variable 'h' is used before being assigned.
-                        var maxAdj, a, shd2, x1, x2, dy1, y1, y2, vc = h / 2, hd2 = h / 2;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        var ss = Math.min(w, h);
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        maxAdj = cnstVal1 * w / ss;
-                        a = (adj < 0) ? 0 : (adj > maxAdj) ? maxAdj : adj;
-                        shd2 = hd2 * vf / cnstVal2;
-                        x1 = ss * a / cnstVal2;
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        x2 = w - x1;
-                        dy1 = shd2 * Math.sin(angVal1);
-                        y1 = vc - dy1;
-                        y2 = vc + dy1;
-
-                        var d = "M" + 0 + "," + vc +
-                            " L" + x1 + "," + y1 +
-                            " L" + x2 + "," + y1 +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            " L" + w + "," + vc +
-                            " L" + x2 + "," + y2 +
-                            " L" + x1 + "," + y2 +
-                            " z";
-
-                        // @ts-expect-error TS(2454): Variable 'imgFillFlg' is used before being assigne... Remove this comment to see the full error message
-                        result += "<path   d='" + d + "'  fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "heptagon":
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += " <polygon points='" + (0.5 * w) + " 0," + w / 8 + " " + h / 4 + ",0 " + (5 / 8) * h + "," + w / 4 + " " + h + "," + (3 / 4) * w + " " + h + "," +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            w + " " + (5 / 8) * h + "," + (7 / 8) * w + " " + h / 4 + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "octagon":
-                        var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"]);
-                        var adj1 = 0.25;
-                        if (shapAdjst !== undefined) {
-                            adj1 = parseInt(shapAdjst.substr(4)) / 100000;
-
-                        }
-                        var adj2 = (1 - adj1);
-                        //console.log("adj1: "+adj1+"\nadj2: "+adj2);
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += " <polygon points='" + adj1 * w + " 0,0 " + adj1 * h + ",0 " + adj2 * h + "," + adj1 * w + " " + h + "," + adj2 * w + " " + h + "," +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            w + " " + adj2 * h + "," + w + " " + adj1 * h + "," + adj2 * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-
-                        break;
-                    case "decagon":
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += " <polygon points='" + (3 / 8) * w + " 0," + w / 8 + " " + h / 8 + ",0 " + h / 2 + "," + w / 8 + " " + (7 / 8) * h + "," + (3 / 8) * w + " " + h + "," +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            (5 / 8) * w + " " + h + "," + (7 / 8) * w + " " + (7 / 8) * h + "," + w + " " + h / 2 + "," + (7 / 8) * w + " " + h / 8 + "," + (5 / 8) * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
-                        break;
-                    case "dodecagon":
-                        // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                        result += " <polygon points='" + (3 / 8) * w + " 0," + w / 8 + " " + h / 8 + ",0 " + (3 / 8) * h + ",0 " + (5 / 8) * h + "," + w / 8 + " " + (7 / 8) * h + "," + (3 / 8) * w + " " + h + "," +
-                            // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-                            (5 / 8) * w + " " + h + "," + (7 / 8) * w + " " + (7 / 8) * h + "," + w + " " + (5 / 8) * h + "," + w + " " + (3 / 8) * h + "," + (7 / 8) * w + " " + h / 8 + "," + (5 / 8) * w + " 0' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-                            // @ts-expect-error TS(2454): Variable 'border' is used before being assigned.
-                            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
                         break;
                     // Star shapes (star4-star32) handled by shapes/stars.ts module
 
