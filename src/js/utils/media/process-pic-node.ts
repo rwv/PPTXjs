@@ -80,8 +80,7 @@ export function processPicNode(
     mediaSupportFlag = false,
     isVdeoLink = false;
   const mediaProcess = settings.mediaProcess;
-  // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
-  if ((vdoNode !== undefined) & mediaProcess) {
+  if (vdoNode !== undefined && mediaProcess) {
     vdoRid = vdoNode["attrs"]["r:link"];
     vdoFile = resObj[vdoRid]["target"];
     const checkIfLink = isVideoLink(vdoFile);
@@ -110,8 +109,7 @@ export function processPicNode(
   let audioRid, audioFile, audioFileExt, _audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
   let audioPlayerFlag = false;
   let audioObjc;
-  // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
-  if ((audioNode !== undefined) & mediaProcess) {
+  if (audioNode !== undefined && mediaProcess) {
     audioRid = audioNode["attrs"]["r:link"];
     audioFile = resObj[audioRid]["target"];
     audioFileExt = extractFileExtension(audioFile).toLowerCase();
