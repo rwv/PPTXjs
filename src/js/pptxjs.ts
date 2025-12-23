@@ -10,11 +10,6 @@
  */
 import { base64ArrayBuffer, processPicNode } from "./utils/media";
 import { setNumericBullets } from "./utils/text";
-import { getSvgGradient, getSvgImagePattern } from "./utils/svg";
-import { getPosition, getSize, getVerticalAlign, getHorizontalAlign } from "./utils/layout";
-import { getShapeFill } from "./utils/fill";
-import { getBorder } from "./utils/border";
-import { getTextByPathList } from "./utils/object";
 import { genChart, processMsgQueue } from "./utils/chart";
 import { genGlobalCSS } from "./utils/css";
 import { updateProgressBar } from "./utils/ui";
@@ -43,27 +38,13 @@ import type { JsZip } from "./types/jszip";
 
     var MsgQueue = new Array();
 
-    //var slideLayoutClrOvride = "";
-
-    var defaultTextStyle: any = null;
-
     var chartID = { value: 0 };
-
-    var _order = 1;
-
-    var app_verssion: any;
-
-    var tableStyles: any;
 
     var rtl_langs_array = ["he-IL", "ar-AE", "ar-SA", "dv-MV", "fa-IR", "ur-PK"];
 
     var slideFactor = 96 / 914400;
     var fontSizeFactor = 4 / 3.2;
-    //////////////////////
-    var slideWidth = 0;
-    var slideHeight = 0;
     var isSlideMode = false;
-    var processFullTheme = true;
     var styleTable = {};
     var settings = $.extend(
       true,
@@ -103,8 +84,6 @@ import type { JsZip } from "./types/jszip";
       },
       options
     );
-
-    processFullTheme = settings.themeProcess;
 
     $("#" + divId).prepend(
       $("<div></div>")
@@ -195,10 +174,8 @@ import type { JsZip } from "./types/jszip";
         return;
       }
       // @ts-expect-error TS(2304): Cannot find name 'JSZip'.
-      var zip: JsZip = new JSZip(),
-        s;
-      //if (typeof file === 'string') { // Load
-      zip = zip.load(file); //zip.load(file, { base64: true });
+      var zip: JsZip = new JSZip();
+      zip = zip.load(file);
       var rslt_ary = processPPTX(
         zip,
         slideFactor,
@@ -240,16 +217,7 @@ import type { JsZip } from "./types/jszip";
             //$("#pptx-thumb").attr("src", "data:image/jpeg;base64," +rslt_ary[i]["data"]);
             break;
           case "slideSize":
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-            slideWidth = rslt_ary[i]["data"].width;
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-            slideHeight = rslt_ary[i]["data"].height;
-            /*
-                        $("#"+divId).css({
-                            'width': slideWidth + 80,
-                            'height': slideHeight + 60
-                        });
-                        */
+            // Slide size is calculated but not currently used
             break;
           case "globalCSS":
             //console.log(rslt_ary[i]["data"])
