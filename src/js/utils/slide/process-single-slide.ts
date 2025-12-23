@@ -37,8 +37,8 @@ import { processNodesInSlide } from "../node";
 export function processSingleSlide(
   archive: PptxArchive,
   sldFileName: string,
-  index: any,
-  slideSize: any,
+  index: number,
+  slideSize: { width: number; height: number; appVersion?: any },
   defaultTextStyle: any,
   tableStyles: any,
   isFirstBr: { value: boolean },
