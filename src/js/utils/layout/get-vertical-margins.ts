@@ -189,7 +189,9 @@ export function getVerticalMargins(
         dirLoc = "p:bodyStyle";
         break;
       case "shape":
-      //case "textBox":
+        //case "textBox":
+        dirLoc = "p:otherStyle";
+        break;
       default:
         dirLoc = "p:otherStyle";
     }

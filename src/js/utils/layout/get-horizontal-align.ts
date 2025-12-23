@@ -157,7 +157,6 @@ export function getHorizontalAlign(
         } else {
           return "h-left";
         }
-        break;
       case "r":
         if (prg_dir == "pregraph-rtl") {
           //return "h-left";
@@ -165,10 +164,8 @@ export function getHorizontalAlign(
         } else {
           return "h-right";
         }
-        break;
       case "ctr":
         return "h-mid";
-        break;
       case "just":
       case "dist":
       default:
