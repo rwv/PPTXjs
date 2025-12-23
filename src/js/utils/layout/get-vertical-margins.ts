@@ -32,7 +32,7 @@ export function getVerticalMargins(
   type: any,
   idx: any,
   warpObj: any,
-  fontSizeFactor: any
+  fontSizeFactor: number
 ): string {
   //margin-top ;
   //a:pPr => a:spcBef => a:spcPts (/100) | a:spcPct (/?)
@@ -69,8 +69,7 @@ export function getVerticalMargins(
       fontSizeFactor
     );
     if (fontSizeStr !== "inherit") {
-      // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-      fontSize = parseInt(fontSizeStr, "px"); //pt
+      fontSize = parseInt(fontSizeStr); //pt
     }
   }
   //var spcBef = "";
@@ -172,8 +171,7 @@ export function getVerticalMargins(
     //slideMasterTextStyles
     const slideMasterTextStyles = warpObj["slideMasterTextStyles"];
     let dirLoc = "";
-    // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-    const lvl = "a:lvl" + lvl + "pPr";
+    const lvlPr = "a:lvl" + lvl + "pPr";
     switch (type) {
       case "title":
       case "ctrTitle":
@@ -196,9 +194,9 @@ export function getVerticalMargins(
         dirLoc = "p:otherStyle";
     }
     // if (type === "shape" || type === "textBox") {
-    //     lvl = "a:lvl1pPr";
+    //     lvlPr = "a:lvl1pPr";
     // }
-    const inLvlNode = getTextByPathList(slideMasterTextStyles, [dirLoc, lvl]);
+    const inLvlNode = getTextByPathList(slideMasterTextStyles, [dirLoc, lvlPr]);
     if (inLvlNode !== undefined) {
       if (spcBefNode === undefined) {
         spcBefNode = getTextByPathList(inLvlNode, ["a:spcBef", "a:spcPts", "attrs", "val"]);
