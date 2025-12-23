@@ -20,9 +20,6 @@ importers:
       jszip:
         specifier: ^2.7.0
         version: 2.7.0
-      jszip-utils:
-        specifier: ^0.1.0
-        version: 0.1.0
       nvd3:
         specifier: ^1.8.6
         version: 1.8.6(d3@3.5.17)
@@ -2036,9 +2033,6 @@ packages:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
-
-  jszip-utils@0.1.0:
-    resolution: {integrity: sha512-tBNe0o3HAf8vo0BrOYnLPnXNo5A3KsRMnkBFYjh20Y3GPYGfgyoclEMgvVchx0nnL+mherPi74yLPIusHUQpZg==}
 
   jszip@2.7.0:
     resolution: {integrity: sha512-JIsRKRVC3gTRo2vM4Wy9WBC3TRcfnIZU8k65Phi3izkvPH975FowRYtKGT6PxevA0XnJ/yO8b0QwV0ydVyQwfw==}
@@ -5249,8 +5243,6 @@ snapshots:
       - supports-color
 
   json5@2.2.3: {}
-
-  jszip-utils@0.1.0: {}
 
   jszip@2.7.0:
     dependencies:

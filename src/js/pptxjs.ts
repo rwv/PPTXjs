@@ -149,18 +149,21 @@ import type { JsZip } from "./types/jszip";
       });
     }
     if (settings.pptxFileUrl != "") {
-      try {
-        // @ts-expect-error TS(2304): Cannot find name 'JSZipUtils'.
-        JSZipUtils.getBinaryContent(settings.pptxFileUrl, function (err: any, content: any) {
-          var blob = new Blob([content]);
-          blob.arrayBuffer().then(function (arrayBuffer) {
-            convertToHtml(arrayBuffer);
-          });
+      // Use native fetch API to load PPTX file
+      fetch(settings.pptxFileUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.arrayBuffer();
+        })
+        .then((arrayBuffer) => {
+          convertToHtml(arrayBuffer);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch PPTX file:", err);
+          $(".slides-loadnig-msg").remove();
         });
-      } catch (e) {
-        console.error("file url error (" + settings.pptxFileUrl + "0)");
-        $(".slides-loadnig-msg").remove();
-      }
     } else {
       $(".slides-loadnig-msg").remove();
     }

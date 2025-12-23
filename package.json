@@ -22,7 +22,6 @@
     "jquery": "^1.12.4",
     "jquery-fullscreen-plugin": "^1.1.5",
     "jszip": "^2.7.0",
-    "jszip-utils": "^0.1.0",
     "nvd3": "^1.8.6",
     "tinycolor2": "^1.6.0"
   },
