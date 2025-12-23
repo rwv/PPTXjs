@@ -48,6 +48,7 @@ export function processGraphicFrameNode(
   settings: any
 ): string | [string, any] {
   let result = "";
+  let updatedChartID = chartID;
   const graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
 
   switch (graphicTypeUri) {
@@ -64,8 +65,8 @@ export function processGraphicFrameNode(
       );
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/chart":
-      [result, chartID] = genChart(node, warpObj, chartID, MsgQueue, slideFactor);
-      break;
+      [result, updatedChartID] = genChart(node, warpObj, chartID, MsgQueue, slideFactor);
+      return [result, updatedChartID];
     case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
       result = genDiagram(
         node,

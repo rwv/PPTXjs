@@ -162,7 +162,7 @@ export function genTextBody(
       buText_ary[0] !== undefined && buText_ary[0] !== null && buText_ary[0] !== "" ? true : false;
     const bu_width =
       buText_ary[1] !== undefined && buText_ary[1] !== null && isBullate
-        ? buText_ary[1] + buText_ary[2]
+        ? Number(buText_ary[1]) + Number(buText_ary[2])
         : 0;
     text += buText_ary[0] !== undefined ? buText_ary[0] : "";
     //get text margin

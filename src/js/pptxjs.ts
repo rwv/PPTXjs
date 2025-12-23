@@ -245,5 +245,7 @@ registerDivs2Slides();
     }
 
     const is_first_br = false;
+
+    return this;
   };
 })(jQuery);

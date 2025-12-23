@@ -486,8 +486,8 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
     case "flowChartAlternateProcess":
     case "flowChartPunchedCard":
       var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-      var sAdj1, sAdj1_val; // = 0.33334;
-      var sAdj2, sAdj2_val; // = 0.33334;
+      var sAdj1, sAdj1_val = 0.33334;
+      var sAdj2, sAdj2_val = 0.33334;
       var shpTyp, adjTyp;
       if (shapAdjst_ary !== undefined && shapAdjst_ary.constructor === Array) {
         for (var i = 0; i < shapAdjst_ary.length; i++) {

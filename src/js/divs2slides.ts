@@ -584,6 +584,8 @@ export function registerDivs2Slides() {
         }
       }
       pptxjslideObj.init();
+
+      return this;
     };
   })(jQuery);
 }

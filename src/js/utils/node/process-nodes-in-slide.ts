@@ -86,8 +86,8 @@ export function processNodesInSlide(
     case "p:pic": // Picture
       result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
       break;
-    case "p:graphicFrame": // Chart, Diagram, Table
-      result = processGraphicFrameNode(
+    case "p:graphicFrame": { // Chart, Diagram, Table
+      const graphicResult = processGraphicFrameNode(
         nodeValue,
         warpObj,
         source,
@@ -102,7 +102,14 @@ export function processNodesInSlide(
         MsgQueue,
         settings
       );
+      if (Array.isArray(graphicResult)) {
+        result = graphicResult[0];
+        chartID = graphicResult[1];
+      } else {
+        result = graphicResult;
+      }
       break;
+    }
     case "p:grpSp":
       result = processGroupSpNode(
         nodeValue,
