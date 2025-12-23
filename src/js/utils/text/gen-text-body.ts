@@ -54,7 +54,7 @@ export function genTextBody(
   fontSizeFactor: number
 ): string {
   let text = "";
-  const slideMasterTextStyles = warpObj["slideMasterTextStyles"];
+  const _slideMasterTextStyles = warpObj["slideMasterTextStyles"];
 
   if (textBodyNode === undefined) {
     return text;
@@ -87,7 +87,7 @@ export function genTextBody(
     if (rNode !== undefined && brNode !== undefined) {
       isFirstBr.value = true;
       brNode = brNode.constructor === Array ? brNode : [brNode];
-      brNode.forEach(function (item: any, indx: any) {
+      brNode.forEach(function (item: any, _indx: any) {
         item.type = "br";
       });
       if (brNode.length > 1) {
