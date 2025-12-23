@@ -55,7 +55,6 @@ export function initSlideMode(divId: any, settings: any): void {
     $.getScript(revealjsPath, function (response: any, status: any) {
       if (status === "success") {
         // $("section").removeClass("slide");
-        // @ts-expect-error TS(2304): Cannot find name 'Reveal'.
         Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
       }
     });
