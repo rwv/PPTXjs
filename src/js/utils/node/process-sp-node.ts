@@ -1,4 +1,5 @@
 import { getTextByPathList } from "../object";
+import { genShape } from "../shape";
 
 /**
  * Process shape node (p:sp) to generate HTML
@@ -17,7 +18,6 @@ import { getTextByPathList } from "../object";
  * @param warpObj - Warp object containing slide resources, layout/master tables
  * @param source - Source context (e.g., "slideLayoutBg", "slideMasterBg", "diagramBg")
  * @param sType - Shape type context
- * @param genShape - genShape function to delegate HTML generation to
  * @param slideFactor - EMU to pixel conversion factor
  * @param styleTable - Global CSS style table
  * @param fontSizeFactor - Font size scaling factor
@@ -31,7 +31,6 @@ export function processSpNode(
   warpObj: any,
   source: any,
   sType: any,
-  genShape: any,
   slideFactor: number,
   styleTable: any,
   fontSizeFactor: number,

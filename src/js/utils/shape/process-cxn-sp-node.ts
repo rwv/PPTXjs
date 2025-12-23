@@ -1,3 +1,5 @@
+import { genShape } from "./gen-shape";
+
 /**
  * Process connection shape node and delegate to genShape
  *
@@ -9,7 +11,6 @@
  * @param warpObj - Warp object containing slide resources
  * @param source - Source type (slide, slideLayout, slideMaster, etc.)
  * @param sType - Shape type
- * @param genShape - The genShape function to delegate rendering to
  * @param slideFactor - EMU to pixel conversion factor
  * @param styleTable - Global CSS style table
  * @param fontSizeFactor - Font size scaling factor
@@ -23,7 +24,6 @@ export function processCxnSpNode(
   warpObj: any,
   source: any,
   sType: any,
-  genShape: any,
   slideFactor: number,
   styleTable: any,
   fontSizeFactor: number,

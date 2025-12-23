@@ -111,7 +111,6 @@ export function genDiagram(
         warpObj,
         "diagramBg",
         sType,
-        genShape,
         slideFactor,
         styleTable,
         fontSizeFactor,
