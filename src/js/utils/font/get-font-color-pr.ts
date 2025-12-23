@@ -27,8 +27,8 @@ export function getFontColorPr(
   pNode: PptxNode,
   lstStyle: any,
   pFontStyle: any,
-  lvl: any,
-  idx: any,
+  lvl: number,
+  idx: number | undefined,
   type: any,
   warpObj: WarpObject,
   slideFactor: SlideFactor

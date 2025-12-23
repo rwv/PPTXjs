@@ -9,15 +9,16 @@
  * @param slideFactor - Conversion factor from EMU to pixels
  * @returns Array containing [margin CSS string, margin value in pixels]
  */
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object";
 import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
 
 export function getPregraphMargn(
-  pNode: any,
-  idx: any,
+  pNode: PptxNode,
+  idx: number | undefined,
   type: any,
-  isBullate: any,
-  warpObj: any,
+  isBullate: boolean,
+  warpObj: WarpObject,
   slideFactor: number
 ): [string, number] {
   if (!isBullate) {

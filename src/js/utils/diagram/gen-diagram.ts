@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { readXmlFile } from "../xml";
 import { getPosition, getSize } from "../layout";
@@ -31,13 +32,13 @@ import { processSpNode } from "../node";
  * @returns HTML string for the diagram
  */
 export function genDiagram(
-  node: any,
-  warpObj: any,
+  node: PptxNode,
+  warpObj: WarpObject,
   source: any,
   sType: any,
-  slideFactor: number,
+  slideFactor: SlideFactor,
   styleTable: any,
-  fontSizeFactor: number,
+  fontSizeFactor: FontSizeFactor,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
 ): string {
