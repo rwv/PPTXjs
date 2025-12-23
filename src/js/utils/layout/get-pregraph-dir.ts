@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
 
@@ -18,11 +19,11 @@ import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
  * @returns CSS class name for text direction (pregraph-rtl, pregraph-ltr, or pregraph-inherit)
  */
 export function getPregraphDir(
-  node: any,
-  textBodyNode: any,
+  node: PptxNode,
+  textBodyNode: PptxNode,
   idx: any,
   type: any,
-  warpObj: any
+  warpObj: WarpObject
 ): string {
   let rtl = getTextByPathList(node, ["a:pPr", "attrs", "rtl"]);
   //console.log("getPregraphDir node:", node, "textBodyNode", textBodyNode, "rtl:", rtl, "idx", idx, "type", type, "warpObj", warpObj)

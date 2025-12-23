@@ -1,3 +1,4 @@
+import type { PptxNode } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 
 /**
@@ -21,9 +22,9 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns CSS class name for vertical alignment ("v-mid", "v-down", or "v-up")
  */
 export function getVerticalAlign(
-  node: any,
-  slideLayoutSpNode: any,
-  slideMasterSpNode: any,
+  node: PptxNode,
+  slideLayoutSpNode: PptxNode,
+  slideMasterSpNode: PptxNode,
   _type: any
 ): string {
   // Find anchor with fallback hierarchy: node -> layout -> master -> default

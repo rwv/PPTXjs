@@ -1,3 +1,4 @@
+import type { PptxNode, SlideFactor } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 
 /**
@@ -73,7 +74,7 @@ export function getPosition(
   slideLayoutSpNode: TransformNode | undefined,
   slideMasterSpNode: TransformNode | undefined,
   sType: string | undefined,
-  slideFactor: number
+  slideFactor: SlideFactor
 ): string {
   let off: { x?: string; y?: string } | undefined;
   let x = -1,

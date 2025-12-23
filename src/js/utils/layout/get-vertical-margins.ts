@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 import { getFontSize } from "../font/get-font-size";
 
@@ -27,12 +28,12 @@ import { getFontSize } from "../font/get-font-size";
  * @returns CSS string with margin and padding styles
  */
 export function getVerticalMargins(
-  pNode: any,
-  textBodyNode: any,
+  pNode: PptxNode,
+  textBodyNode: PptxNode,
   type: any,
   idx: any,
-  warpObj: any,
-  fontSizeFactor: number
+  warpObj: WarpObject,
+  fontSizeFactor: FontSizeFactor
 ): string {
   //margin-top ;
   //a:pPr => a:spcBef => a:spcPts (/100) | a:spcPct (/?)

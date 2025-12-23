@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 
 /**
@@ -23,12 +24,12 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns CSS class name for horizontal alignment (h-left, h-right, h-mid, etc.)
  */
 export function getHorizontalAlign(
-  node: any,
-  textBodyNode: any,
+  node: PptxNode,
+  textBodyNode: PptxNode,
   idx: any,
   type: any,
   prg_dir: any,
-  warpObj: any
+  warpObj: WarpObject
 ): string {
   let algn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
   if (algn === undefined) {

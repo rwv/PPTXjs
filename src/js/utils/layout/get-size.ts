@@ -1,3 +1,5 @@
+import type { SlideFactor } from "../../types";
+
 /**
  * PPTX extent node containing size attributes
  */
@@ -29,7 +31,7 @@ export function getSize(
   slideSpNode: ExtentNode | undefined,
   slideLayoutSpNode: ExtentNode | undefined,
   slideMasterSpNode: ExtentNode | undefined,
-  slideFactor: number
+  slideFactor: SlideFactor
 ): string {
   let ext: { cx?: string; cy?: string } | undefined;
   let w = -1,
