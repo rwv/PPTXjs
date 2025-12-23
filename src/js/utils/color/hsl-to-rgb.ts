@@ -1,11 +1,4 @@
-/**
- * RGB color object
- */
-export interface RgbColor {
-  r: number;
-  g: number;
-  b: number;
-}
+import type { RgbColor } from "../../types";
 
 /**
  * Converts HSL color values to RGB

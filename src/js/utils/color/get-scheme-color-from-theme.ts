@@ -1,26 +1,5 @@
+import type { WarpObject, ColorMap } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
-
-/**
- * Color mapping attributes from theme (e.g., tx1="dk1", bg2="lt2")
- */
-interface ColorMap {
-  tx1?: string;
-  tx2?: string;
-  bg1?: string;
-  bg2?: string;
-  [key: string]: string | undefined;
-}
-
-/**
- * Warp object containing PPTX presentation content for lookups
- */
-interface WarpObject {
-  slideContent?: any;
-  slideLayoutContent?: any;
-  slideMasterContent?: any;
-  themeContent?: any;
-  [key: string]: any;
-}
 
 /**
  * Resolves a scheme color reference to an actual color value from the theme

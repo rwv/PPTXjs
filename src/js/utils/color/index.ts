@@ -1,6 +1,6 @@
 // Export all color utility functions
 export { toHex } from "./to-hex";
-export { hslToRgb, hueToRgb, type RgbColor } from "./hsl-to-rgb";
+export { hslToRgb, hueToRgb } from "./hsl-to-rgb";
 export { getColorName2Hex } from "./get-color-name-2-hex";
 export { applyShade } from "./apply-shade";
 export { applyTint } from "./apply-tint";
