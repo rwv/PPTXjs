@@ -79,7 +79,7 @@ export function getSchemeColorFromTheme(
   //console.log("getSchemeColorFromTheme slideLayoutClrOvride: ", slideLayoutClrOvride);
   const schmClrName = schemeClr.substring(2);
   let color: string | undefined;
-  if (schmClrName == "phClr" && phClr !== undefined) {
+  if (schmClrName === "phClr" && phClr !== undefined) {
     color = phClr;
   } else {
     if (slideLayoutClrOvride !== undefined) {
