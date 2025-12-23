@@ -1,4 +1,9 @@
 import { getTextByPathList } from "../object";
+import { processSpNode } from "./process-sp-node";
+import { processCxnSpNode } from "../shape/process-cxn-sp-node";
+import { processPicNode } from "../media/process-pic-node";
+import { processGraphicFrameNode } from "./process-graphic-frame-node";
+import { processGroupSpNode } from "./process-group-sp-node";
 
 /**
  * Main dispatcher for processing slide nodes
@@ -28,15 +33,6 @@ import { getTextByPathList } from "../object";
  * @param chartID - Chart ID counter (modified in place)
  * @param MsgQueue - Message queue for chart processing
  * @param settings - Plugin settings
- * @param processSpNode - processSpNode function
- * @param processCxnSpNode - processCxnSpNode function
- * @param processPicNode - processPicNode function
- * @param processGraphicFrameNode - processGraphicFrameNode function
- * @param processGroupSpNode - processGroupSpNode function
- * @param genShape - genShape function
- * @param genTable - genTable function
- * @param genChart - genChart function
- * @param genDiagram - genDiagram function
  * @returns HTML string for the node
  */
 export function processNodesInSlide(
@@ -54,16 +50,7 @@ export function processNodesInSlide(
   fontSizeFactor: number,
   chartID: any,
   MsgQueue: any,
-  settings: any,
-  processSpNode: any,
-  processCxnSpNode: any,
-  processPicNode: any,
-  processGraphicFrameNode: any,
-  processGroupSpNode: any,
-  genShape: any,
-  genTable: any,
-  genChart: any,
-  genDiagram: any
+  settings: any
 ): string {
   let result = "";
 
@@ -112,11 +99,25 @@ export function processNodesInSlide(
         slideFactor,
         fontSizeFactor,
         chartID,
-        MsgQueue
+        MsgQueue,
+        settings
       );
       break;
     case "p:grpSp":
-      result = processGroupSpNode(nodeValue, warpObj, source, slideFactor);
+      result = processGroupSpNode(
+        nodeValue,
+        warpObj,
+        source,
+        slideFactor,
+        tableStyles,
+        isFirstBr,
+        styleTable,
+        rtlLangsArray,
+        fontSizeFactor,
+        chartID,
+        MsgQueue,
+        settings
+      );
       break;
     case "mc:AlternateContent": //Equations and formulas as Image
       //console.log("mc:AlternateContent nodeValue:" , nodeValue , "nodes:",nodes, "sType:",sType)
@@ -125,7 +126,15 @@ export function processNodesInSlide(
         mcFallbackNode,
         warpObj,
         source,
-        slideFactor
+        slideFactor,
+        tableStyles,
+        isFirstBr,
+        styleTable,
+        rtlLangsArray,
+        fontSizeFactor,
+        chartID,
+        MsgQueue,
+        settings
       );
       break;
     default:

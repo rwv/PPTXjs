@@ -365,16 +365,7 @@ export function processSingleSlide(
           fontSizeFactor,
           chartID,
           MsgQueue,
-          settings,
-          processSpNode,
-          processCxnSpNode,
-          processPicNode,
-          processGraphicFrameNode,
-          processGroupSpNode,
-          genShape,
-          genTable,
-          genChart,
-          genDiagram
+          settings
         );
       }
     } else {
@@ -393,16 +384,7 @@ export function processSingleSlide(
         fontSizeFactor,
         chartID,
         MsgQueue,
-        settings,
-        processSpNode,
-        processCxnSpNode,
-        processPicNode,
-        processGraphicFrameNode,
-        processGroupSpNode,
-        genShape,
-        genTable,
-        genChart,
-        genDiagram
+        settings
       );
     }
   }
