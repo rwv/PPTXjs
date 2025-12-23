@@ -19,15 +19,15 @@ export function getPicFill(type: any, node: any, warpObj: any) {
   let img;
   const rId = node["a:blip"]["attrs"]["r:embed"];
   let imgPath;
-  if (type == "slideBg" || type == "slide") {
+  if (type === "slideBg" || type === "slide") {
     imgPath = getTextByPathList(warpObj, ["slideResObj", rId, "target"]);
-  } else if (type == "slideLayoutBg") {
+  } else if (type === "slideLayoutBg") {
     imgPath = getTextByPathList(warpObj, ["layoutResObj", rId, "target"]);
-  } else if (type == "slideMasterBg") {
+  } else if (type === "slideMasterBg") {
     imgPath = getTextByPathList(warpObj, ["masterResObj", rId, "target"]);
-  } else if (type == "themeBg") {
+  } else if (type === "themeBg") {
     imgPath = getTextByPathList(warpObj, ["themeResObj", rId, "target"]);
-  } else if (type == "diagramBg") {
+  } else if (type === "diagramBg") {
     imgPath = getTextByPathList(warpObj, ["diagramResObj", rId, "target"]);
   }
   if (imgPath === undefined) {
@@ -38,7 +38,7 @@ export function getPicFill(type: any, node: any, warpObj: any) {
     imgPath = escapeHtml(imgPath);
 
     const imgExt = imgPath.split(".").pop();
-    if (imgExt == "xml") {
+    if (imgExt === "xml") {
       return undefined;
     }
     const imgArrayBuffer = warpObj["zip"].file(imgPath).asArrayBuffer();
