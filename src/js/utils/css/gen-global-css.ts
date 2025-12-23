@@ -31,7 +31,7 @@ export function genGlobalCSS(styleTable: any, settings: any, slideWidth: number)
   }
   //cssText += " .slide{margin-bottom: 5px;}\n"; // TODO
 
-  if (settings.slideMode && settings.slideType == "divs2slidesjs") {
+  if (settings.slideMode && settings.slideType === "divs2slidesjs") {
     //divId
     //console.log("slideWidth: ", slideWidth)
     cssText +=
