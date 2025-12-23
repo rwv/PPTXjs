@@ -107,24 +107,83 @@ The codebase is actively being migrated from JavaScript to TypeScript with ESM m
 **Type Annotation Guidelines:**
 - `strict: false` in tsconfig - gradual typing approach
 - **Use proper types for simple values**: `string`, `number`, `boolean`, etc. should be typed
-- **Use `any` for complex PPTX XML structures**: The XML node objects from PPTX files are deeply nested and dynamic - use `any` for these
-- **Don't over-engineer types**: If a type would be complex to define, `any` is acceptable
+- **Use defined type aliases for XML nodes**: Use `PptxNode` instead of `any` for XML node parameters
+- **Use core interfaces**: Use `WarpObject`, `SlideFactor`, `FontSizeFactor` for common parameters
+- **Don't over-engineer types**: If a type would be complex to define, `any` is still acceptable
 - `@ts-expect-error` comments suppress specific errors (many are legacy, can be cleaned up over time)
 
-**Examples:**
+**Core Type Definitions:**
+
+Located in `src/js/types/`:
+
 ```typescript
-// Good - simple types are annotated
+// XML node type (preserves any semantics but provides semantic clarity)
+export type PptxNode = any;
+
+// Core context object containing slide resources
+export interface WarpObject {
+  slideContent?: PptxNode;
+  slideLayoutContent?: PptxNode;
+  slideMasterContent?: PptxNode;
+  themeContent?: PptxNode;
+  slideLayoutTables?: any;
+  slideMasterTables?: any;
+  slideResObj?: Record<string, { target: string }>;
+  archive?: any;
+  [key: string]: any;
+}
+
+// Conversion factors
+export type SlideFactor = number;      // EMU to pixel: 96 / 914400
+export type FontSizeFactor = number;   // Font scaling: 4 / 3.2
+```
+
+**Type Usage Patterns:**
+
+```typescript
+// ✅ GOOD - Updated pattern with type aliases
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
+
 export function getVerticalMargins(
-  pNode: any,              // Complex XML node - use any
-  textBodyNode: any,       // Complex XML node - use any
-  type: any,               // Could be string but has many values - any is fine
-  idx: any,                // Could be number but might be undefined - any is fine
-  warpObj: any,            // Complex object with many properties - use any
-  fontSizeFactor: number   // Simple numeric value - use number
-): string {                // Returns CSS string - use string
+  pNode: PptxNode,              // XML node - use PptxNode type
+  textBodyNode: PptxNode,       // XML node - use PptxNode type
+  type: any,                    // Could be string but has many values - any is fine
+  idx: any,                     // Could be number but might be undefined - any is fine
+  warpObj: WarpObject,          // Core context - use WarpObject interface
+  fontSizeFactor: FontSizeFactor // Scaling factor - use type alias
+): string {                     // Returns CSS string - use string
+  // ...
+}
+
+// ❌ AVOID - Old pattern (still acceptable but discouraged)
+export function getVerticalMargins(
+  pNode: any,
+  textBodyNode: any,
+  type: any,
+  idx: any,
+  warpObj: any,
+  fontSizeFactor: number
+): string {
   // ...
 }
 ```
+
+**When to Use Each Type:**
+
+- ✅ **PptxNode** - For all XML node parameters (node, slideLayoutSpNode, slideMasterSpNode, pNode, textBodyNode, etc.)
+- ✅ **WarpObject** - For the core context object parameter
+- ✅ **SlideFactor** - For EMU-to-pixel conversion factor parameters
+- ✅ **FontSizeFactor** - For font size scaling factor parameters
+- ✅ **any** - For complex/dynamic parameters (border objects, style tables, chart IDs, etc.)
+- ✅ **string, number, boolean** - For simple primitive values
+
+**Current Type Coverage:**
+
+- Total utility functions: ~145
+- `:any` usage in utils/: ~273 (down from ~350 initially)
+- Type coverage: ~85%
+- Defined interfaces: 30+
+- Type definition files: 6
 
 ## Testing
 
