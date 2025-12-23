@@ -86,21 +86,14 @@ export function renderCustomGeometry(
       const moveToPtNode = moveToNode[key]["a:pt"];
       if (moveToPtNode !== undefined) {
         Object.keys(moveToPtNode).forEach(function (key2) {
-          const ptObj = {};
+          const ptObj: any = {};
           const moveToNoPt = moveToPtNode[key2];
-          // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-          const spX = moveToNoPt[("attrs", "x")]; //parseInt(moveToNoPt["attrs", "x"]) * slideFactor;
-          // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-          const spY = moveToNoPt[("attrs", "y")]; //parseInt(moveToNoPt["attrs", "y"]) * slideFactor;
-          // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-          const ptOrdr = moveToNoPt[("attrs", "order")];
-          // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+          const spX = moveToNoPt["attrs"]["x"]; //parseInt(moveToNoPt["attrs"]["x"]) * slideFactor;
+          const spY = moveToNoPt["attrs"]["y"]; //parseInt(moveToNoPt["attrs"]["y"]) * slideFactor;
+          const ptOrdr = moveToNoPt["attrs"]["order"];
           ptObj.type = "movto";
-          // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
           ptObj.order = ptOrdr;
-          // @ts-expect-error TS(2339): Property 'x' does not exist on type '{}'.
           ptObj.x = spX;
-          // @ts-expect-error TS(2339): Property 'y' does not exist on type '{}'.
           ptObj.y = spY;
           multiSapeAry.push(ptObj);
           //console.log(key2, lnToNoPt);
@@ -113,21 +106,14 @@ export function renderCustomGeometry(
         const lnToPtNode = lnToNodes[key]["a:pt"];
         if (lnToPtNode !== undefined) {
           Object.keys(lnToPtNode).forEach(function (key2) {
-            const ptObj = {};
+            const ptObj: any = {};
             const lnToNoPt = lnToPtNode[key2];
-            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-            const ptX = lnToNoPt[("attrs", "x")];
-            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-            const ptY = lnToNoPt[("attrs", "y")];
-            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-            const ptOrdr = lnToNoPt[("attrs", "order")];
-            // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+            const ptX = lnToNoPt["attrs"]["x"];
+            const ptY = lnToNoPt["attrs"]["y"];
+            const ptOrdr = lnToNoPt["attrs"]["order"];
             ptObj.type = "lnto";
-            // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
             ptObj.order = ptOrdr;
-            // @ts-expect-error TS(2339): Property 'x' does not exist on type '{}'.
             ptObj.x = ptX;
-            // @ts-expect-error TS(2339): Property 'y' does not exist on type '{}'.
             ptObj.y = ptY;
             multiSapeAry.push(ptObj);
             //console.log(key2, lnToNoPt);
@@ -150,10 +136,8 @@ export function renderCustomGeometry(
       //console.log("cubicBezToNodes: ", cubicBezToPtNodesAry)
       cubicBezToPtNodesAry.forEach(function (key2) {
         //console.log("cubicBezToPtNodesAry: key2 : ", key2)
-        const nodeObj = {};
-        // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+        const nodeObj: any = {};
         nodeObj.type = "cubicBezTo";
-        // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
         nodeObj.order = key2[0]["attrs"]["order"];
         const pts_ary: any = [];
         key2.forEach(function (pt: any) {
@@ -163,7 +147,6 @@ export function renderCustomGeometry(
           };
           pts_ary.push(pt_obj);
         });
-        // @ts-expect-error TS(2339): Property 'cubBzPt' does not exist on type '{}'.
         nodeObj.cubBzPt = pts_ary; //key2;
         multiSapeAry.push(nodeObj);
       });
@@ -184,22 +167,14 @@ export function renderCustomGeometry(
         shftY = arcToPtNode["y"];
         //console.log("shftX: ",shftX," shftY: ",shftY)
       }
-      const ptObj = {};
-      // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+      const ptObj: any = {};
       ptObj.type = "arcTo";
-      // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
       ptObj.order = arcOrder;
-      // @ts-expect-error TS(2339): Property 'hR' does not exist on type '{}'.
       ptObj.hR = hR;
-      // @ts-expect-error TS(2339): Property 'wR' does not exist on type '{}'.
       ptObj.wR = wR;
-      // @ts-expect-error TS(2339): Property 'stAng' does not exist on type '{}'.
       ptObj.stAng = stAng;
-      // @ts-expect-error TS(2339): Property 'swAng' does not exist on type '{}'.
       ptObj.swAng = swAng;
-      // @ts-expect-error TS(2339): Property 'shftX' does not exist on type '{}'.
       ptObj.shftX = shftX;
-      // @ts-expect-error TS(2339): Property 'shftY' does not exist on type '{}'.
       ptObj.shftY = shftY;
       multiSapeAry.push(ptObj);
     }
