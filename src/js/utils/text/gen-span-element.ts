@@ -123,11 +123,11 @@ export function genSpanElement(
       getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
     }
   }
-  let isRTL = false;
-  let dirStr = "ltr";
+  let _isRTL = false;
+  let _dirStr = "ltr";
   if (getRtlVal !== undefined && getRtlVal === "1") {
-    isRTL = true;
-    dirStr = "rtl";
+    _isRTL = true;
+    _dirStr = "rtl";
   }
 
   const linkID = getTextByPathList(node, ["a:rPr", "a:hlinkClick", "attrs", "r:id"]);
