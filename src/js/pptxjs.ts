@@ -26,8 +26,8 @@ import { genDiagram } from "./utils/diagram";
 import { getBackground, processSingleSlide } from "./utils/slide";
 import { processPPTX } from "./utils/pptx";
 import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle } from "./utils/xml";
-import type { JsZip } from "./types/jszip";
 import { registerDivs2Slides } from "./divs2slides";
+import { createPptxArchive } from "./archive";
 
 // Register divs2slides jQuery plugin
 registerDivs2Slides();
@@ -172,11 +172,10 @@ registerDivs2Slides();
         $(".slides-loadnig-msg").remove();
         return;
       }
-      // @ts-expect-error TS(2304): Cannot find name 'JSZip'.
-      let zip: JsZip = new JSZip();
-      zip = zip.load(file);
+      // Create archive instance using new interface
+      const archive = createPptxArchive(file);
       const rslt_ary = processPPTX(
-        zip,
+        archive,
         slideFactor,
         settings,
         styleTable,

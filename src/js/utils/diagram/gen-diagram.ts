@@ -55,7 +55,7 @@ export function genDiagram(
    */
   ///get colors#.xml, data#.xml , layout#.xml , quickStyle#.xml
   const order = node["attrs"]["order"];
-  const zip = warpObj["zip"];
+  const archive = warpObj["archive"] ?? warpObj["zip"];
   const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
   const dgmRelIds = getTextByPathList(node, ["a:graphic", "a:graphicData", "dgm:relIds", "attrs"]);
   //console.log(dgmRelIds)
@@ -69,13 +69,13 @@ export function genDiagram(
     dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
   //console.log("dgmClrFileName: " , dgmClrFileName,", dgmDataFileName: ",dgmDataFileName,", dgmLayoutFileName: ",dgmLayoutFileName,", dgmQuickStyleFileName: ",dgmQuickStyleFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const dgmClr = readXmlFile(zip, dgmClrFileName);
+  const dgmClr = readXmlFile(archive, dgmClrFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const dgmData = readXmlFile(zip, dgmDataFileName);
+  const dgmData = readXmlFile(archive, dgmDataFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const dgmLayout = readXmlFile(zip, dgmLayoutFileName);
+  const dgmLayout = readXmlFile(archive, dgmLayoutFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const dgmQuickStyle = readXmlFile(zip, dgmQuickStyleFileName);
+  const dgmQuickStyle = readXmlFile(archive, dgmQuickStyleFileName);
   //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
   ///get drawing#.xml
   // var dgmDrwFileName = "";

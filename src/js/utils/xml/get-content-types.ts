@@ -1,17 +1,16 @@
 import { readXmlFile } from "./read-xml-file";
-import type { JsZip } from "../../types/jszip";
+import type { PptxArchive } from "../../archive/pptx-archive";
 
 /**
  * Get content types from PPTX [Content_Types].xml
  *
  * Extracts the locations of slides and slide layouts from the content types XML file
  *
- * @param zip - JSZip instance containing the PPTX file
+ * @param archive - PPTX archive instance
  * @returns Object containing arrays of slide and slideLayout file paths
  */
-export function getContentTypes(zip: JsZip) {
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const ContentTypesJson = readXmlFile(zip, "[Content_Types].xml");
+export function getContentTypes(archive: PptxArchive) {
+  const ContentTypesJson = readXmlFile(archive, "[Content_Types].xml");
 
   const subObj = ContentTypesJson["Types"]["Override"];
   const slidesLocArray = [];

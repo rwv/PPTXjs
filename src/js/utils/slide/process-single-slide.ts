@@ -300,8 +300,11 @@ export function processSingleSlide(
   // =====< Step 3 >=====
   const slideContent = readXmlFile(zip, sldFileName, true, slideSize.appVersion);
   const nodes = slideContent["p:sld"]["p:cSld"]["p:spTree"];
+  // Use raw JSZip for legacy code paths when available.
+  const rawZip = typeof zip?.getRawZip === "function" ? zip.getRawZip() : zip;
   const warpObj = {
-    zip: zip,
+    zip: rawZip,
+    archive: zip,
     slideLayoutContent: slideLayoutContent,
     slideLayoutTables: slideLayoutTables,
     slideMasterContent: slideMasterContent,

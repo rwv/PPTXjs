@@ -16,7 +16,7 @@
  * - "ExecutionTime": Processing duration
  * - "progress-update": Progress percentage
  *
- * @param zip - JSZip instance containing the PPTX file
+ * @param archive - PPTX archive instance
  * @param slideFactor - EMU to pixel conversion factor
  * @param settings - Plugin settings
  * @param tableStyles - Table styles object (modified in place)
@@ -46,8 +46,10 @@
  * @returns Array of objects containing slides and metadata
  */
 
+import type { PptxArchive } from "../../archive/pptx-archive";
+
 export function processPPTX(
-  zip: any,
+  archive: PptxArchive,
   slideFactor: number,
   settings: any,
   styleTable: any,
@@ -77,8 +79,8 @@ export function processPPTX(
   const post_ary = [];
   const dateBefore = new Date();
 
-  if (zip.file("docProps/thumbnail.jpeg") !== null) {
-    const pptxThumbImg = base64ArrayBuffer(zip.file("docProps/thumbnail.jpeg").asArrayBuffer());
+  if (archive.hasFile("docProps/thumbnail.jpeg")) {
+    const pptxThumbImg = base64ArrayBuffer(archive.readAsArrayBuffer("docProps/thumbnail.jpeg"));
     post_ary.push({
       type: "pptx-thumb",
       data: pptxThumbImg,
@@ -86,14 +88,14 @@ export function processPPTX(
     });
   }
 
-  const filesInfo = getContentTypes(zip);
-  const slideSize = getSlideSizeAndSetDefaultTextStyle(zip, slideFactor, settings);
+  const filesInfo = getContentTypes(archive);
+  const slideSize = getSlideSizeAndSetDefaultTextStyle(archive, slideFactor, settings);
   const app_verssion = slideSize.appVersion;
   const defaultTextStyle = slideSize.defaultTextStyle;
   const slideWidth = slideSize.width;
   const slideHeight = slideSize.height;
   const processFullTheme = settings.themeProcess;
-  const tableStyles = readXmlFile(zip, "ppt/tableStyles.xml");
+  const tableStyles = readXmlFile(archive, "ppt/tableStyles.xml");
   //console.log("slideSize: ", slideSize)
   post_ary.push({
     type: "slideSize",
@@ -123,7 +125,7 @@ export function processPPTX(
       slide_number = Number(filename_no_path_no_ext.substr(5));
     }
     const slideHtml = processSingleSlide(
-      zip,
+      archive,
       filename,
       i,
       slideSize,
