@@ -22,8 +22,7 @@ import { getPicFill } from "./get-pic-fill";
  * @param index - Slide index for CSS class naming
  * @returns CSS background style string with z-index
  */
-export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, index: any): string {
-  let bgcolor;
+export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, _index: any): string {
   const picFillBase64 = getPicFill(sorce, bgPr["a:blipFill"], warpObj);
   const ordr = bgPr["attrs"]["order"];
   const aBlipNode = bgPr["a:blipFill"]["a:blip"];
@@ -55,12 +54,12 @@ export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, in
   const tileNode = getTextByPathList(bgPr, ["a:blipFill", "a:tile", "attrs"]);
   let prop_style = "";
   if (tileNode !== undefined && tileNode["sx"] !== undefined) {
-    const sx = parseInt(tileNode["sx"]) / 100000;
-    const sy = parseInt(tileNode["sy"]) / 100000;
-    const tx = parseInt(tileNode["tx"]) / 100000;
-    const ty = parseInt(tileNode["ty"]) / 100000;
-    const algn = tileNode["algn"];
-    const flip = tileNode["flip"];
+    const _sx = parseInt(tileNode["sx"]) / 100000;
+    const _sy = parseInt(tileNode["sy"]) / 100000;
+    const _tx = parseInt(tileNode["tx"]) / 100000;
+    const _ty = parseInt(tileNode["ty"]) / 100000;
+    const _algn = tileNode["algn"];
+    const _flip = tileNode["flip"];
 
     prop_style += "background-repeat: round;";
   }
@@ -74,7 +73,7 @@ export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, in
       prop_style += "background-size:  100% 100%;;";
     }
   }
-  bgcolor =
+  const bgcolor =
     "background: url(" + picFillBase64 + ");  z-index: " + ordr + ";" + prop_style + imgOpacity;
 
   return bgcolor;
