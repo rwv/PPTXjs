@@ -1,4 +1,8 @@
 import { getTextByPathList } from "../object";
+import { genTable } from "../table";
+import { genChart } from "../chart";
+import { genDiagram } from "../diagram";
+import { processGroupSpNode } from "./process-group-sp-node";
 
 /**
  * Process graphic frame node (p:graphicFrame) to generate HTML
@@ -25,13 +29,6 @@ import { getTextByPathList } from "../object";
  * @param fontSizeFactor - Font size scaling factor
  * @param chartID - Chart ID counter object (modified in place)
  * @param MsgQueue - Message queue for chart processing
- * @param genTable - genTable function
- * @param genChart - genChart function
- * @param genDiagram - genDiagram function
- * @param processGroupSpNode - processGroupSpNode function
- * @param processNodesInSlide - processNodesInSlide function
- * @param processSpNode - processSpNode function
- * @param genShape - genShape function
  * @returns HTML string for the graphic frame content
  */
 export function processGraphicFrameNode(
@@ -46,14 +43,7 @@ export function processGraphicFrameNode(
   slideFactor: number,
   fontSizeFactor: number,
   chartID: { value: number },
-  MsgQueue: any,
-  genTable: any,
-  genChart: any,
-  genDiagram: any,
-  processGroupSpNode: any,
-  processNodesInSlide: any,
-  processSpNode: any,
-  genShape: any
+  MsgQueue: any
 ): string {
   let result = "";
   const chartIdRef = chartID ?? { value: 0 };
