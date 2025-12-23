@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { processSpNode } from "./process-sp-node";
 import { processCxnSpNode } from "../shape/process-cxn-sp-node";
@@ -37,17 +38,17 @@ import { processGroupSpNode } from "./process-group-sp-node";
  */
 export function processNodesInSlide(
   nodeKey: any,
-  nodeValue: any,
-  nodes: any,
-  warpObj: any,
+  nodeValue: PptxNode,
+  nodes: PptxNode,
+  warpObj: WarpObject,
   source: any,
   sType: any,
   tableStyles: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number,
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor,
   chartID: any,
   MsgQueue: any,
   settings: any

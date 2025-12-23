@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { genShape } from "../shape";
 
@@ -26,14 +27,14 @@ import { genShape } from "../shape";
  * @returns HTML string for the shape
  */
 export function processSpNode(
-  node: any,
-  pNode: any,
-  warpObj: any,
+  node: PptxNode,
+  pNode: PptxNode,
+  warpObj: WarpObject,
   source: any,
   sType: any,
-  slideFactor: number,
+  slideFactor: SlideFactor,
   styleTable: any,
-  fontSizeFactor: number,
+  fontSizeFactor: FontSizeFactor,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
 ): string {

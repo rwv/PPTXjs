@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { genTable } from "../table";
 import { genChart } from "../chart";
@@ -33,16 +34,16 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @returns HTML string or [HTML string, chartID] for charts
  */
 export function processGraphicFrameNode(
-  node: any,
-  warpObj: any,
+  node: PptxNode,
+  warpObj: WarpObject,
   source: any,
   sType: any,
   tableStyles: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number,
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor,
   chartID: any,
   MsgQueue: any,
   settings: any

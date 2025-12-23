@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { angleToDegrees } from "../layout";
 import { processNodesInSlide } from "./process-nodes-in-slide";
@@ -31,15 +32,15 @@ import { processNodesInSlide } from "./process-nodes-in-slide";
  * @returns HTML string for the group
  */
 export function processGroupSpNode(
-  node: any,
-  warpObj: any,
+  node: PptxNode,
+  warpObj: WarpObject,
   source: any,
-  slideFactor: number,
+  slideFactor: SlideFactor,
   tableStyles: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
-  fontSizeFactor: number,
+  fontSizeFactor: FontSizeFactor,
   chartID: any,
   MsgQueue: any,
   settings: any
