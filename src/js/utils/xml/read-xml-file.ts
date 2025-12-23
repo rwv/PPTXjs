@@ -1,5 +1,5 @@
 import type { PptxArchive } from "../../archive/pptx-archive";
-import { tXml } from "../vendors/txml";
+import { tXml } from "../vendors/txml-enhanced";
 
 /**
  * Reads and parses an XML file from a PPTX archive
@@ -36,7 +36,7 @@ export function readXmlFile(
     } else {
       return xmlData;
     }
-  } catch (e) {
+  } catch {
     // console.log("error readXmlFile: the file '", filename, "' not exit")
     return null;
   }
