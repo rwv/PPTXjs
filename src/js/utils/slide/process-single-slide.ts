@@ -27,6 +27,7 @@
  */
 
 import type { PptxArchive } from "../../archive/pptx-archive";
+import type { SlideFactor, FontSizeFactor } from "../../types";
 import { readXmlFile, indexNodes } from "../xml";
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
@@ -35,7 +36,7 @@ import { processNodesInSlide } from "../node";
 
 export function processSingleSlide(
   archive: PptxArchive,
-  sldFileName: any,
+  sldFileName: string,
   index: any,
   slideSize: any,
   defaultTextStyle: any,
@@ -43,8 +44,8 @@ export function processSingleSlide(
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number,
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor,
   chartID: any,
   MsgQueue: any,
   settings: any

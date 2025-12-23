@@ -8,6 +8,7 @@
  * - Border/stroke processing
  */
 
+import type { PptxNode, WarpObject, SlideFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { angleToDegrees, getPosition, getSize } from "../layout";
 import { getShapeFill, getFillType } from "../fill";
@@ -58,10 +59,10 @@ export interface ShapeContext {
  * Initialize shape rendering context
  */
 export function initShapeContext(
-  node: any,
-  pNode: any,
-  slideLayoutSpNode: any,
-  slideMasterSpNode: any,
+  node: PptxNode,
+  pNode: PptxNode,
+  slideLayoutSpNode: PptxNode,
+  slideMasterSpNode: PptxNode,
   id: any,
   idx: any,
   type: any,
@@ -69,8 +70,8 @@ export function initShapeContext(
   order: any,
   sType: any,
   source: any,
-  warpObj: any,
-  slideFactor: number,
+  warpObj: WarpObject,
+  slideFactor: SlideFactor,
   styleTable: any
 ): ShapeContext | null {
   //var dltX = 0;

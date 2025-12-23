@@ -29,6 +29,7 @@
  * @returns HTML string with SVG shape
  */
 
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { getPosition, getSize, getVerticalAlign, angleToDegrees, getContentDir } from "../layout";
 import { getFillType, getShapeFill } from "../fill";
@@ -74,22 +75,22 @@ import {
 import { isBasicShape, renderBasicShape } from "./shapes/basic-shapes";
 
 export function genShape(
-  node: any,
-  pNode: any,
-  slideLayoutSpNode: any,
-  slideMasterSpNode: any,
+  node: PptxNode,
+  pNode: PptxNode,
+  slideLayoutSpNode: PptxNode,
+  slideMasterSpNode: PptxNode,
   id: any,
   name: any,
   idx: any,
   type: any,
   order: any,
-  warpObj: any,
+  warpObj: WarpObject,
   isUserDrawnBg: any,
   sType: any,
   source: any,
-  slideFactor: number,
+  slideFactor: SlideFactor,
   styleTable: any,
-  fontSizeFactor: number,
+  fontSizeFactor: FontSizeFactor,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
 ): string {

@@ -11,6 +11,7 @@
  * Reference: http://officeopenxml.com/drwSp-custGeom.php
  */
 
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../../types";
 import { getTextByPathList } from "../../object";
 import { getVerticalAlign, getPosition, getSize, getContentDir } from "../../layout";
 import { shapeArc } from "./helpers/arc";
@@ -18,12 +19,12 @@ import { genTextBody } from "../../text";
 
 export function renderCustomGeometry(
   custShapType: any,
-  node: any,
-  slideLayoutSpNode: any,
-  slideMasterSpNode: any,
-  slideXfrmNode: any,
-  pNode: any,
-  slideMasterXfrmNode: any,
+  node: PptxNode,
+  slideLayoutSpNode: PptxNode,
+  slideMasterSpNode: PptxNode,
+  slideXfrmNode: PptxNode,
+  pNode: PptxNode,
+  slideMasterXfrmNode: PptxNode,
   w: number,
   h: number,
   shpId: any,
@@ -38,13 +39,13 @@ export function renderCustomGeometry(
   order: any,
   sType: any,
   txtRotate: number | undefined,
-  warpObj: any,
+  warpObj: WarpObject,
   isUserDrawnBg: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor
 ): string {
   let result = "";
 

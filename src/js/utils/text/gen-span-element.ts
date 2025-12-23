@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { getLayoutAndMasterNode } from "../layout";
 import { getSchemeColorFromTheme, getSolidFill } from "../color";
@@ -42,22 +43,22 @@ import { escapeHtml } from "../string";
  * @returns HTML string for the span element with styling
  */
 export function genSpanElement(
-  node: any,
+  node: PptxNode,
   rIndex: any,
-  pNode: any,
-  textBodyNode: any,
+  pNode: PptxNode,
+  textBodyNode: PptxNode,
   pFontStyle: any,
-  slideLayoutSpNode: any,
+  slideLayoutSpNode: PptxNode,
   idx: any,
   type: any,
   rNodeLength: any,
-  warpObj: any,
+  warpObj: WarpObject,
   isBullate: any,
   styleTable: any,
   isFirstBr: { value: boolean },
   rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor
 ): string {
   //https://codepen.io/imdunn/pen/GRgwaye ?
   let text_style = "";
