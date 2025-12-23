@@ -25,7 +25,7 @@ export function setTextByPathList(node: PptxNode, path: PathList, value: any): v
 
   Reflect.defineProperty(node, "set", {
     value: function (parts: PathList, value: any) {
-      let obj: any = this;
+      let obj: Record<string | number, any> = this;
       const len: number = parts.length;
       for (let i = 0; i < len; i++) {
         const p: string | number = parts[i];

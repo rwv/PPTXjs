@@ -29,6 +29,7 @@
  */
 
 import type { PptxArchive } from "../../archive/pptx-archive";
+import type { SlideFactor, FontSizeFactor } from "../../types";
 import { base64ArrayBuffer } from "../media";
 import { getContentTypes, getSlideSizeAndSetDefaultTextStyle, readXmlFile } from "../xml";
 import { processSingleSlide } from "../slide";
@@ -36,11 +37,11 @@ import { genGlobalCSS } from "../css";
 
 export function processPPTX(
   archive: PptxArchive,
-  slideFactor: number,
+  slideFactor: SlideFactor,
   settings: any,
   styleTable: any,
   rtlLangsArray: string[],
-  fontSizeFactor: number,
+  fontSizeFactor: FontSizeFactor,
   chartID: any,
   MsgQueue: any,
   isFirstBr: { value: boolean }
