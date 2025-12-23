@@ -1,6 +1,7 @@
 import { getTextByPathList } from "../object";
 import { readXmlFile } from "../xml";
 import { getPosition, getSize } from "../layout";
+import { processSpNode } from "../node";
 
 /**
  * Generate HTML for SmartArt diagram
@@ -23,8 +24,6 @@ import { getPosition, getSize } from "../layout";
  * @param source - Source context (e.g., "diagramBg")
  * @param sType - Shape type context
  * @param slideFactor - EMU to pixel conversion factor
- * @param processSpNode - processSpNode function for rendering shapes
- * @param genShape - genShape function (passed to processSpNode)
  * @param styleTable - Global CSS style table
  * @param fontSizeFactor - Font size scaling factor
  * @param rtlLangsArray - Array of RTL language codes
@@ -37,8 +36,6 @@ export function genDiagram(
   source: any,
   sType: any,
   slideFactor: number,
-  processSpNode: any,
-  genShape: any,
   styleTable: any,
   fontSizeFactor: number,
   rtlLangsArray: string[],

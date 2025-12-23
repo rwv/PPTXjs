@@ -81,8 +81,6 @@ export function processGraphicFrameNode(
         source,
         sType,
         slideFactor,
-        processSpNode,
-        genShape,
         styleTable,
         fontSizeFactor,
         rtlLangsArray,
