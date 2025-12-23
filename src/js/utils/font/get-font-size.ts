@@ -57,7 +57,7 @@ export function getFontSize(
     fontSize = parseInt(sz) / 100;
   }
   //a:spAutoFit
-  let isAutoFit = false;
+  let _isAutoFit = false;
   let isKerning = false;
   if (textBodyNode !== undefined) {
     const spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:spAutoFit"]);
@@ -65,7 +65,7 @@ export function getFontSize(
     //     spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:normAutofit"]);
     // }
     if (spAutoFitNode !== undefined) {
-      isAutoFit = true;
+      _isAutoFit = true;
       isKerning = true;
     }
   }
