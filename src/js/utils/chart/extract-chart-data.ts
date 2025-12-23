@@ -1,3 +1,4 @@
+import type { PptxNode } from "../../types";
 import { eachElement } from "../object";
 import { getTextByPathList } from "../object";
 
@@ -18,7 +19,7 @@ import { getTextByPathList } from "../object";
  * const chartData = extractChartData(serNode);
  * // [{ key: "Series1", values: [{x: "0", y: 10}], xlabels: {"0": "Jan"} }]
  */
-export function extractChartData(serNode: any) {
+export function extractChartData(serNode: PptxNode) {
   const dataMat = new Array();
 
   if (serNode === undefined) {

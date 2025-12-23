@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { genShape } from "./gen-shape";
 
 /**
@@ -19,14 +20,14 @@ import { genShape } from "./gen-shape";
  * @returns HTML string for the connection shape
  */
 export function processCxnSpNode(
-  node: any,
-  pNode: any,
-  warpObj: any,
+  node: PptxNode,
+  pNode: PptxNode,
+  warpObj: WarpObject,
   source: any,
   sType: any,
-  slideFactor: number,
+  slideFactor: SlideFactor,
   styleTable: any,
-  fontSizeFactor: number,
+  fontSizeFactor: FontSizeFactor,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
 ): string {
