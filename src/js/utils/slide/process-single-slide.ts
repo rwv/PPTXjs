@@ -113,9 +113,9 @@ export function processSingleSlide(
   ]);
 
   //console.log(slideLayoutClrOvride);
-  let slideLayoutClrOvride;
+  let _slideLayoutClrOvride;
   if (sldLayoutClrOvr !== undefined) {
-    slideLayoutClrOvride = sldLayoutClrOvr["attrs"];
+    _slideLayoutClrOvride = sldLayoutClrOvr["attrs"];
   }
   // =====< Step 2 >=====
   // Read slide master filename of the slidelayout (Get slideMasterXX.xml)
@@ -189,19 +189,20 @@ export function processSingleSlide(
   //console.log(themeFilename)
   //Load Theme file
   const themeResObj = {};
+  let themeContent: any;
   if (themeFilename !== undefined) {
     const themeName = themeFilename.split("/").pop();
     // @ts-expect-error TS(2769): No overload matches this call.
     const themeResFileName = themeFilename.replace(themeName, "_rels/" + themeName) + ".rels";
     //console.log("themeFilename: ", themeFilename, ", themeName: ", themeName, ", themeResFileName: ", themeResFileName)
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-    const themeContent = readXmlFile(archive, themeFilename);
+    themeContent = readXmlFile(archive, themeFilename);
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     const themeResContent = readXmlFile(archive, themeResFileName);
     if (themeResContent !== null) {
       const relationshipArray = themeResContent["Relationships"]["Relationship"];
       if (relationshipArray !== undefined) {
-        const themeFilename = "";
+        const _themeFilename = "";
         if (relationshipArray.constructor === Array) {
           for (let i = 0; i < relationshipArray.length; i++) {
             // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -247,7 +248,7 @@ export function processSingleSlide(
     const digramResContent = readXmlFile(archive, diagramResFileName);
     if (digramResContent !== null) {
       const relationshipArray = digramResContent["Relationships"]["Relationship"];
-      const themeFilename = "";
+      const _themeFilename = "";
       if (relationshipArray.constructor === Array) {
         for (let i = 0; i < relationshipArray.length; i++) {
           // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -317,8 +318,9 @@ export function processSingleSlide(
     bgColor = fillResult !== undefined ? fillResult : "";
   }
 
+  let result = "";
   if (settings.slideMode && settings.slideType === "revealjs") {
-    const result =
+    result =
       "<section class='slide' style='width:" +
       slideSize.width +
       "px; height:" +
@@ -327,7 +329,7 @@ export function processSingleSlide(
       bgColor +
       "'>";
   } else {
-    const result =
+    result =
       "<div class='slide' style='width:" +
       slideSize.width +
       "px; height:" +
