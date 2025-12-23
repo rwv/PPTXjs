@@ -1,5 +1,6 @@
 import { getTextByPathList } from "../object";
 import { angleToDegrees } from "../layout";
+import { processNodesInSlide } from "./process-nodes-in-slide";
 
 /**
  * Process group shape node (p:grpSp) to generate HTML
@@ -19,15 +20,13 @@ import { angleToDegrees } from "../layout";
  * @param warpObj - Warp object containing slide resources
  * @param source - Source context
  * @param slideFactor - EMU to pixel conversion factor
- * @param processNodesInSlide - Function to process child nodes
  * @returns HTML string for the group
  */
 export function processGroupSpNode(
   node: any,
   warpObj: any,
   source: any,
-  slideFactor: number,
-  processNodesInSlide: any
+  slideFactor: number
 ): string {
   //console.log("processGroupSpNode: node: ", node)
   const xfrmNode = getTextByPathList(node, ["p:grpSpPr", "a:xfrm"]);
