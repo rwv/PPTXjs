@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { getFontColorPr, getFontSize } from "../font";
 import { getLayoutAndMasterNode } from "../layout";
@@ -28,16 +29,16 @@ import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handle
  * @returns Array [bulletHTML, marginValue, fontValue] or empty string if no bullet
  */
 export function genBuChar(
-  node: any,
+  node: PptxNode,
   i: any,
-  spNode: any,
-  textBodyNode: any,
+  spNode: PptxNode,
+  textBodyNode: PptxNode,
   pFontStyle: any,
   idx: any,
   type: any,
-  warpObj: any,
-  slideFactor: number,
-  fontSizeFactor: number
+  warpObj: WarpObject,
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor
 ): string | [string, number, number] {
   //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
   ///////////////////////////////////////Amir///////////////////////////////

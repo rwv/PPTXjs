@@ -5,9 +5,10 @@
  * @param warpObj - The warp object containing theme and other resources
  * @returns CSS border style string
  */
+import type { PptxNode, WarpObject } from "../../types";
 import { getBorder } from "./get-border";
 
-export function getTableBorders(node: any, warpObj: any): string {
+export function getTableBorders(node: PptxNode, warpObj: WarpObject): string {
   let borderStyle = "";
 
   if (node["a:bottom"] !== undefined) {

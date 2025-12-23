@@ -8,13 +8,14 @@
  * @param warpObj - The warp object containing theme and other resources
  * @returns Border style as CSS string or SVG object
  */
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object";
 import { getFillType } from "../fill/get-fill-type";
 import { getSolidFill } from "../color/get-solid-fill";
 import { getGradientFill } from "../fill/get-gradient-fill";
 import { getPatternFill } from "../fill/get-pattern-fill";
 
-export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, warpObj: any) {
+export function getBorder(node: PptxNode, pNode: PptxNode, isSvgMode: any, bType: any, warpObj: WarpObject) {
   let cssText, lineNode, _subNodeTxt;
 
   if (bType === "shape") {

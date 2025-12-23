@@ -8,11 +8,12 @@
  * - IE11 compatibility
  */
 
+import type { PptxNode } from "../../../types";
 import { getTextByPathList } from "../../object";
 import { getHtmlBullet } from "../get-html-bullet";
 
 export function renderBulletChar(
-  pPrNode: any,
+  pPrNode: PptxNode,
   buChar: string,
   bultColor: any,
   color_tye: string,
