@@ -47,6 +47,7 @@ export default [
         clearTimeout: 'readonly',
         Element: 'readonly',
         Document: 'readonly',
+        Image: 'readonly',
         // jQuery globals and types
         jQuery: 'readonly',
         $: 'readonly',

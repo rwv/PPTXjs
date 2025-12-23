@@ -88,10 +88,8 @@ export function processSpNode(
   }
 
   if (type === undefined) {
-    // @ts-expect-error TS(2304): Cannot find name 'txBoxVal'.
-    txBoxVal = getTextByPathList(node, ["p:nvSpPr", "p:cNvSpPr", "attrs", "txBox"]);
-    // @ts-expect-error TS(2304): Cannot find name 'txBoxVal'.
-    if (txBoxVal == "1") {
+    const txBoxVal = getTextByPathList(node, ["p:nvSpPr", "p:cNvSpPr", "attrs", "txBox"]);
+    if (txBoxVal === "1") {
       type = "textBox";
     }
   }

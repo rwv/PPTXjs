@@ -39,6 +39,7 @@
 
 import { readXmlFile, indexNodes } from "../xml";
 import { getTextByPathList } from "../object";
+import { getSlideBackgroundFill } from "../fill";
 
 export function processSingleSlide(
   zip: any,
@@ -132,8 +133,8 @@ export function processSingleSlide(
   ]);
 
   //console.log(slideLayoutClrOvride);
+  let slideLayoutClrOvride;
   if (sldLayoutClrOvr !== undefined) {
-    // @ts-expect-error TS(2304): Cannot find name 'slideLayoutClrOvride'.
     slideLayoutClrOvride = sldLayoutClrOvr["attrs"];
   }
   // =====< Step 2 >=====
@@ -293,7 +294,7 @@ export function processSingleSlide(
   }
   //console.log("diagramResObj: " , diagramResObj)
   // =====< Step 3 >=====
-  const slideContent = readXmlFile(zip, sldFileName, true, app_verssion);
+  const slideContent = readXmlFile(zip, sldFileName, true, slideSize.appVersion);
   const nodes = slideContent["p:sld"]["p:cSld"]["p:spTree"];
   const warpObj = {
     zip: zip,
@@ -313,7 +314,7 @@ export function processSingleSlide(
     defaultTextStyle: defaultTextStyle,
   };
   let bgResult = "";
-  if (processFullTheme === true) {
+  if (settings.themeProcess === true) {
     bgResult = getBackground(
       warpObj,
       slideSize,
@@ -341,10 +342,9 @@ export function processSingleSlide(
   }
 
   let bgColor = "";
-  // @ts-expect-error TS(2367): This condition will always return 'false' since th... Remove this comment to see the full error message
-  if (processFullTheme == "colorsAndImageOnly") {
-    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
-    bgColor = getSlideBackgroundFill(warpObj, index);
+  if (settings.themeProcess === "colorsAndImageOnly") {
+    const fillResult = getSlideBackgroundFill(warpObj, index);
+    bgColor = fillResult !== undefined ? fillResult : "";
   }
 
   if (settings.slideMode && settings.slideType == "revealjs") {
