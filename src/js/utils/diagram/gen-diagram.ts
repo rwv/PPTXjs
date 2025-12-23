@@ -65,9 +65,8 @@ export function genDiagram(
   const dgmQuickStyleFileId = dgmRelIds["r:qs"];
   const dgmClrFileName = warpObj["slideResObj"][dgmClrFileId].target,
     dgmDataFileName = warpObj["slideResObj"][dgmDataFileId].target,
-    dgmLayoutFileName = warpObj["slideResObj"][dgmLayoutFileId].target;
-  // @ts-expect-error TS(2304): Cannot find name 'dgmQuickStyleFileName'.
-  dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
+    dgmLayoutFileName = warpObj["slideResObj"][dgmLayoutFileId].target,
+    dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
   //console.log("dgmClrFileName: " , dgmClrFileName,", dgmDataFileName: ",dgmDataFileName,", dgmLayoutFileName: ",dgmLayoutFileName,", dgmQuickStyleFileName: ",dgmQuickStyleFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const dgmClr = readXmlFile(zip, dgmClrFileName);

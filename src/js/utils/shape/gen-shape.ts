@@ -125,7 +125,6 @@ export function genShape(
     shapType,
     custShapType,
     rotate,
-    txtRotate,
     flip,
     x,
     y,
@@ -139,6 +138,9 @@ export function genShape(
     clrFillType,
     border,
   } = context;
+
+  // Declare txtRotate as mutable variable since it may be modified by shape renderers
+  let txtRotate = context.txtRotate;
 
   let result = context.svgHeader;
   result += "<defs>";
