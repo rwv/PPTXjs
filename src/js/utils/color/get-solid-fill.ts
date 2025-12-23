@@ -116,15 +116,15 @@ export function getSolidFill(
     //<a:scrgbClr r="50%" g="50%" b="50%"/>  //Need to test/////////////////////////////////////////////
     const defBultColorVals = clrNode["attrs"];
     const red =
-      defBultColorVals["r"].indexOf("%") != -1
+      defBultColorVals["r"].indexOf("%") !== -1
         ? defBultColorVals["r"].split("%").shift()
         : defBultColorVals["r"];
     const green =
-      defBultColorVals["g"].indexOf("%") != -1
+      defBultColorVals["g"].indexOf("%") !== -1
         ? defBultColorVals["g"].split("%").shift()
         : defBultColorVals["g"];
     const blue =
-      defBultColorVals["b"].indexOf("%") != -1
+      defBultColorVals["b"].indexOf("%") !== -1
         ? defBultColorVals["b"].split("%").shift()
         : defBultColorVals["b"];
     //var scrgbClr = red + "," + green + "," + blue;
@@ -149,13 +149,13 @@ export function getSolidFill(
     const hue = Number(defBultColorVals["hue"]) / 100000;
     const sat =
       Number(
-        defBultColorVals["sat"].indexOf("%") != -1
+        defBultColorVals["sat"].indexOf("%") !== -1
           ? defBultColorVals["sat"].split("%").shift()
           : defBultColorVals["sat"]
       ) / 100;
     const lum =
       Number(
-        defBultColorVals["lum"].indexOf("%") != -1
+        defBultColorVals["lum"].indexOf("%") !== -1
           ? defBultColorVals["lum"].split("%").shift()
           : defBultColorVals["lum"]
       ) / 100;
