@@ -37,7 +37,7 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @returns HTML string for the node
  */
 export function processNodesInSlide(
-  nodeKey: any,
+  nodeKey: string,
   nodeValue: PptxNode,
   nodes: PptxNode,
   warpObj: WarpObject,
