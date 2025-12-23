@@ -5,13 +5,14 @@
  * @param index - Slide index
  * @returns CSS background style string
  */
+import type { WarpObject } from "../../types";
 import { getTextByPathList } from "../object";
 import { getFillType } from "./get-fill-type";
 import { getSolidFill } from "../color/get-solid-fill";
 import { getBgGradientFill } from "./get-bg-gradient-fill";
 import { getBgPicFill } from "./get-bg-pic-fill";
 
-export function getSlideBackgroundFill(warpObj: any, index: any): string | undefined {
+export function getSlideBackgroundFill(warpObj: WarpObject, index: any): string | undefined {
   const slideContent = warpObj["slideContent"];
   const slideLayoutContent = warpObj["slideLayoutContent"];
   const slideMasterContent = warpObj["slideMasterContent"];

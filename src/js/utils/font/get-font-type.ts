@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 
 /**
@@ -13,7 +14,7 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @param pFontStyle - Paragraph font style (may specify font index)
  * @returns Font family name or "inherit"
  */
-export function getFontType(node: any, type: any, warpObj: any, pFontStyle: any): string {
+export function getFontType(node: PptxNode, type: any, warpObj: WarpObject, pFontStyle: any): string {
   let typeface = getTextByPathList(node, ["a:rPr", "a:latin", "attrs", "typeface"]);
 
   if (typeface === undefined) {

@@ -7,15 +7,16 @@
  * @param warpObj - The warp object containing theme and other resources
  * @returns CSS background gradient string
  */
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color/get-solid-fill";
 import { angleToDegrees } from "../layout/angle-to-degrees";
 
 export function getBgGradientFill(
-  bgPr: any,
+  bgPr: PptxNode,
   phClr: any,
-  slideMasterContent: any,
-  warpObj: any
+  slideMasterContent: PptxNode,
+  warpObj: WarpObject
 ): string {
   let bgcolor = "";
   if (bgPr !== undefined) {

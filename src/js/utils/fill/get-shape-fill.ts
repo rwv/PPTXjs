@@ -8,6 +8,7 @@
  * @param source - Source type for image lookup
  * @returns Fill color/style as CSS string or SVG-compatible format
  */
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object";
 import { getFillType } from "./get-fill-type";
 import { getSolidFill } from "../color/get-solid-fill";
@@ -17,10 +18,10 @@ import { getPicFill } from "./get-pic-fill";
 import tinycolor from "tinycolor2";
 
 export function getShapeFill(
-  node: any,
-  pNode: any,
+  node: PptxNode,
+  pNode: PptxNode,
   isSvgMode: any,
-  warpObj: any,
+  warpObj: WarpObject,
   source: any
 ): any {
   // 1. presentationML

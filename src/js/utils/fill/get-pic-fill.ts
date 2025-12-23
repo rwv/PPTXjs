@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList, setTextByPathList } from "../object";
 import { escapeHtml } from "../string/escape-html";
 import { getMimeType } from "../media/get-mime-type";
@@ -15,7 +16,7 @@ import { base64ArrayBuffer } from "../media/base64-array-buffer";
  * @param warpObj - Container object with ZIP file and resource mappings
  * @returns Base64 data URL of the image, or undefined if not found
  */
-export function getPicFill(type: any, node: any, warpObj: any) {
+export function getPicFill(type: any, node: PptxNode, warpObj: WarpObject) {
   let img;
   const rId = node["a:blip"]["attrs"]["r:embed"];
   let imgPath;

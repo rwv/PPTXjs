@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject } from "../../types";
 import { getSolidFill } from "../color/get-solid-fill";
 import { angleToDegrees } from "../layout/angle-to-degrees";
 
@@ -11,7 +12,7 @@ import { angleToDegrees } from "../layout/angle-to-degrees";
  * @param warpObj - Container object with theme and color information
  * @returns Object with color array and rotation angle for CSS gradient
  */
-export function getGradientFill(node: any, warpObj: any) {
+export function getGradientFill(node: PptxNode, warpObj: WarpObject) {
   const gsLst = node["a:gsLst"]["a:gs"];
   const color_ary = [];
   const _tint_ary = [];

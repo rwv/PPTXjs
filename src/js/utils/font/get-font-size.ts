@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 
 /**
@@ -27,13 +28,13 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns Font size as CSS string (e.g., "12px") or "inherit"/"initial"
  */
 export function getFontSize(
-  node: any,
-  textBodyNode: any,
+  node: PptxNode,
+  textBodyNode: PptxNode,
   pFontStyle: any,
   lvl: any,
   type: any,
-  warpObj: any,
-  fontSizeFactor: any
+  warpObj: WarpObject,
+  fontSizeFactor: FontSizeFactor
 ): string {
   // if(type === "sldNum")
   //console.log("getFontSize node:", node, "lstStyle", lstStyle, "lvl:", lvl, 'type:', type, "warpObj:", warpObj)

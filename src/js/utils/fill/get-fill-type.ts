@@ -1,3 +1,5 @@
+import type { PptxNode } from "../../types";
+
 /**
  * Determines the fill type for a PPTX shape node
  *
@@ -12,7 +14,7 @@
  * @param node - Shape properties node from PPTX
  * @returns Fill type as string constant
  */
-export function getFillType(node: any): string {
+export function getFillType(node: PptxNode): string {
   let fillType = "";
   if (node["a:noFill"] !== undefined) {
     fillType = "NO_FILL";

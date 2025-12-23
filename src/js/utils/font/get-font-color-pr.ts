@@ -12,6 +12,7 @@
  * @param slideFactor - Conversion factor from EMU to pixels
  * @returns Array [color, text effects, color type, highlight color]
  */
+import type { PptxNode, WarpObject, SlideFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { getFillType } from "../fill/get-fill-type";
 import { getSolidFill } from "../color/get-solid-fill";
@@ -22,15 +23,15 @@ import { getLayoutAndMasterNode } from "../layout/get-layout-and-master-node";
 import { getBorder } from "../border/get-border";
 
 export function getFontColorPr(
-  node: any,
-  pNode: any,
+  node: PptxNode,
+  pNode: PptxNode,
   lstStyle: any,
   pFontStyle: any,
   lvl: any,
   idx: any,
   type: any,
-  warpObj: any,
-  slideFactor: number
+  warpObj: WarpObject,
+  slideFactor: SlideFactor
 ): [any, any, string, string] {
   const rPrNode = getTextByPathList(node, ["a:rPr"]);
   let filTyp,

@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject } from "../../types";
 import { getSolidFill } from "../color/get-solid-fill";
 import { getLinerGrandient } from "./get-liner-grandient";
 
@@ -14,7 +15,7 @@ import { getLinerGrandient } from "./get-liner-grandient";
  * @param warpObj - Container object with theme and color information
  * @returns Array with CSS gradient string, size, and position
  */
-export function getPatternFill(node: any, warpObj: any) {
+export function getPatternFill(node: PptxNode, warpObj: WarpObject) {
   let fgColor = "",
     bgColor = "",
     prst = "";
