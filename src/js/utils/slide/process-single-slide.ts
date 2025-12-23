@@ -23,17 +23,6 @@
  * @param chartID - Chart ID counter (modified in place)
  * @param MsgQueue - Message queue for chart processing
  * @param settings - Plugin settings
- * @param processNodesInSlide - Function to process slide nodes
- * @param processSpNode - Function to process shape nodes
- * @param processCxnSpNode - Function to process connection shape nodes
- * @param processPicNode - Function to process picture nodes
- * @param processGraphicFrameNode - Function to process graphic frames
- * @param processGroupSpNode - Function to process group shapes
- * @param genShape - Function to generate shape HTML
- * @param genTable - Function to generate table HTML
- * @param genChart - Function to generate chart HTML
- * @param genDiagram - Function to generate diagram HTML
- * @param getBackground - Function to get slide background
  * @returns HTML string for the slide
  */
 
@@ -41,6 +30,8 @@ import type { PptxArchive } from "../../archive/pptx-archive";
 import { readXmlFile, indexNodes } from "../xml";
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
+import { getBackground } from "./get-background";
+import { processNodesInSlide } from "../node";
 
 export function processSingleSlide(
   archive: PptxArchive,
@@ -56,18 +47,7 @@ export function processSingleSlide(
   fontSizeFactor: number,
   chartID: any,
   MsgQueue: any,
-  settings: any,
-  processNodesInSlide: any,
-  processSpNode: any,
-  processCxnSpNode: any,
-  processPicNode: any,
-  processGraphicFrameNode: any,
-  processGroupSpNode: any,
-  genShape: any,
-  genTable: any,
-  genChart: any,
-  genDiagram: any,
-  getBackground: any
+  settings: any
 ): string {
   /*
             self.postMessage({

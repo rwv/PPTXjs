@@ -19,34 +19,20 @@
  * @param archive - PPTX archive instance
  * @param slideFactor - EMU to pixel conversion factor
  * @param settings - Plugin settings
- * @param tableStyles - Table styles object (modified in place)
- * @param isFirstBr - Mutable object tracking first line break state
- * @param styleTable - Global CSS style table
+ * @param styleTable - Global CSS style table (modified in place)
  * @param rtlLangsArray - Array of RTL language codes
  * @param fontSizeFactor - Font size scaling factor
  * @param chartID - Chart ID counter (modified in place)
  * @param MsgQueue - Message queue for chart processing
- * @param processNodesInSlide - Function to process slide nodes
- * @param processSpNode - Function to process shape nodes
- * @param processCxnSpNode - Function to process connection shapes
- * @param processPicNode - Function to process pictures
- * @param processGraphicFrameNode - Function to process graphic frames
- * @param processGroupSpNode - Function to process group shapes
- * @param genShape - Function to generate shape HTML
- * @param genTable - Function to generate table HTML
- * @param genChart - Function to generate chart HTML
- * @param genDiagram - Function to generate diagram HTML
- * @param getBackground - Function to get slide background
- * @param processSingleSlide - Function to process a single slide
- * @param base64ArrayBuffer - Function to encode array buffer to base64
- * @param getContentTypes - Function to get PPTX content types
- * @param getSlideSizeAndSetDefaultTextStyle - Function to get slide dimensions
- * @param readXmlFile - Function to read XML from ZIP
- * @param genGlobalCSS - Function to generate global CSS
+ * @param isFirstBr - Mutable object tracking first line break state
  * @returns Array of objects containing slides and metadata
  */
 
 import type { PptxArchive } from "../../archive/pptx-archive";
+import { base64ArrayBuffer } from "../media";
+import { getContentTypes, getSlideSizeAndSetDefaultTextStyle, readXmlFile } from "../xml";
+import { processSingleSlide } from "../slide";
+import { genGlobalCSS } from "../css";
 
 export function processPPTX(
   archive: PptxArchive,
@@ -57,24 +43,7 @@ export function processPPTX(
   fontSizeFactor: number,
   chartID: any,
   MsgQueue: any,
-  isFirstBr: { value: boolean },
-  processNodesInSlide: any,
-  processSpNode: any,
-  processCxnSpNode: any,
-  processPicNode: any,
-  processGraphicFrameNode: any,
-  processGroupSpNode: any,
-  genShape: any,
-  genTable: any,
-  genChart: any,
-  genDiagram: any,
-  getBackground: any,
-  processSingleSlide: any,
-  base64ArrayBuffer: any,
-  getContentTypes: any,
-  getSlideSizeAndSetDefaultTextStyle: any,
-  readXmlFile: any,
-  genGlobalCSS: any
+  isFirstBr: { value: boolean }
 ): any[] {
   const post_ary = [];
   const dateBefore = new Date();
@@ -137,18 +106,7 @@ export function processPPTX(
       fontSizeFactor,
       chartID,
       MsgQueue,
-      settings,
-      processNodesInSlide,
-      processSpNode,
-      processCxnSpNode,
-      processPicNode,
-      processGraphicFrameNode,
-      processGroupSpNode,
-      genShape,
-      genTable,
-      genChart,
-      genDiagram,
-      getBackground
+      settings
     );
     post_ary.push({
       type: "slide",

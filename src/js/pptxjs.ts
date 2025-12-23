@@ -8,24 +8,11 @@
  * fix issues:
  * [#16](https://github.com/meshesha/PPTXjs/issues/16)
  */
-import { base64ArrayBuffer, processPicNode } from "./utils/media";
 import { setNumericBullets } from "./utils/text";
-import { genChart, processMsgQueue } from "./utils/chart";
-import { genGlobalCSS } from "./utils/css";
+import { processMsgQueue } from "./utils/chart";
 import { updateProgressBar } from "./utils/ui";
 import { initSlideMode } from "./utils/presentation";
-import { processCxnSpNode, genShape } from "./utils/shape";
-import { genTable } from "./utils/table";
-import {
-  processSpNode,
-  processGroupSpNode,
-  processGraphicFrameNode,
-  processNodesInSlide,
-} from "./utils/node";
-import { genDiagram } from "./utils/diagram";
-import { getBackground, processSingleSlide } from "./utils/slide";
 import { processPPTX } from "./utils/pptx";
-import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle } from "./utils/xml";
 import { registerDivs2Slides } from "./divs2slides";
 import { createPptxArchive } from "./archive";
 
@@ -183,24 +170,7 @@ registerDivs2Slides();
         fontSizeFactor,
         chartID,
         MsgQueue,
-        { value: is_first_br },
-        processNodesInSlide,
-        processSpNode,
-        processCxnSpNode,
-        processPicNode,
-        processGraphicFrameNode,
-        processGroupSpNode,
-        genShape,
-        genTable,
-        genChart,
-        genDiagram,
-        getBackground,
-        processSingleSlide,
-        base64ArrayBuffer,
-        getContentTypes,
-        getSlideSizeAndSetDefaultTextStyle,
-        readXmlFile,
-        genGlobalCSS
+        { value: is_first_br }
       );
       //s = readXmlFile(zip, 'ppt/tableStyles.xml');
       //var slidesHeight = $("#" + divId + " .slide").height();
