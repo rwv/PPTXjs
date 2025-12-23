@@ -36,7 +36,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
-      break;
     case "dotGrid":
       return [
         "linear-gradient(to right,  #" +
@@ -49,7 +48,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "8px 8px",
       ];
-      break;
     case "lgGrid":
       return [
         "linear-gradient(to right,  #" +
@@ -62,7 +60,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "8px 8px",
       ];
-      break;
     case "wdUpDiag":
       return [
         "repeating-linear-gradient(-45deg, transparent 1px , transparent 4px, #" +
@@ -72,7 +69,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           bgColor +
           ";",
       ];
-      break;
     case "dkUpDiag":
       return [
         "repeating-linear-gradient(-45deg, transparent 1px , #" +
@@ -82,7 +78,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           fgColor +
           ";",
       ];
-      break;
     case "ltUpDiag":
       return [
         "repeating-linear-gradient(-45deg, transparent 1px , transparent 2px, #" +
@@ -92,7 +87,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           bgColor +
           ";",
       ];
-      break;
     case "wdDnDiag":
       return [
         "repeating-linear-gradient(45deg, transparent 1px , transparent 4px, #" +
@@ -102,7 +96,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           bgColor +
           ";",
       ];
-      break;
     case "dkDnDiag":
       return [
         "repeating-linear-gradient(45deg, transparent 1px , #" +
@@ -112,7 +105,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           fgColor +
           ";",
       ];
-      break;
     case "ltDnDiag":
       return [
         "repeating-linear-gradient(45deg, transparent 1px , transparent 2px, #" +
@@ -122,7 +114,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           bgColor +
           ";",
       ];
-      break;
     case "dkHorz":
       return [
         "repeating-linear-gradient(0deg, transparent 1px , transparent 2px, #" +
@@ -132,7 +123,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           fgColor +
           ";",
       ];
-      break;
     case "ltHorz":
       return [
         "repeating-linear-gradient(0deg, transparent 1px , transparent 5px, #" +
@@ -142,7 +132,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           bgColor +
           ";",
       ];
-      break;
     case "narHorz":
       return [
         "repeating-linear-gradient(0deg, transparent 1px , transparent 2px, #" +
@@ -152,7 +141,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           bgColor +
           ";",
       ];
-      break;
     case "dkVert":
       return [
         "repeating-linear-gradient(90deg, transparent 1px , transparent 2px, #" +
@@ -162,7 +150,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           fgColor +
           ";",
       ];
-      break;
     case "ltVert":
       return [
         "repeating-linear-gradient(90deg, transparent 1px , transparent 5px, #" +
@@ -172,7 +159,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           bgColor +
           ";",
       ];
-      break;
     case "narVert":
       return [
         "repeating-linear-gradient(90deg, transparent 1px , transparent 2px, #" +
@@ -182,7 +168,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           bgColor +
           ";",
       ];
-      break;
     case "lgCheck":
     case "smCheck":
       var size = "";
@@ -211,7 +196,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
         size,
         pos,
       ];
-      break;
     case "dashUpDiag":
       return [
         "repeating-linear-gradient(152deg, #" +
@@ -224,7 +208,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
-      break;
     case "dashDnDiag":
       return [
         "repeating-linear-gradient(45deg, #" +
@@ -237,7 +220,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
-      break;
     case "diagBrick":
       return [
         "linear-gradient(45deg, transparent 15%,  #" +
@@ -254,7 +236,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
-      break;
     case "horzBrick":
       return [
         "linear-gradient(335deg, #" +
@@ -275,7 +256,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
         "4px 4px",
         "0 0.15px, 0.3px 2.5px, 2px 2.15px, 2.35px 0.4px",
       ];
-      break;
 
     case "dashVert":
       return [
@@ -292,7 +272,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
-      break;
     case "dashHorz":
       return [
         "linear-gradient(90deg,  #" +
@@ -308,7 +287,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
-      break;
     case "solidDmnd":
       return [
         "linear-gradient(135deg,  #" +
@@ -328,7 +306,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "8px 8px",
       ];
-      break;
     case "openDmnd":
       return [
         "linear-gradient(45deg, transparent 0%, transparent calc(50% - 0.5px),  #" +
@@ -342,7 +319,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "8px 8px",
       ];
-      break;
 
     case "dotDmnd":
       return [
@@ -358,7 +334,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
         "4px 4px",
         "0 0, 2px 2px",
       ];
-      break;
     case "zigZag":
     case "wave":
       var size = "";
@@ -386,7 +361,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
-      break;
     case "lgConfetti":
     case "smConfetti":
       var size = "";
@@ -410,7 +384,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         size,
       ];
-      break;
     case "plaid":
       return [
         "linear-gradient(0deg, transparent, transparent 25%, #" +
@@ -428,13 +401,11 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
-      break;
     case "sphere":
       return [
         "radial-gradient(#" + fgColor + " 50%, transparent 50%)," + "#" + bgColor + ";",
         "4px 4px",
       ];
-      break;
     case "weave":
     case "shingle":
       return [
@@ -465,7 +436,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 8px",
       ];
-      break;
     case "pct5":
     case "pct10":
     case "pct20":
@@ -538,7 +508,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         px_pr_ary[2],
       ];
-      break;
     default:
       return [0, 0];
   }
