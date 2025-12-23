@@ -24,7 +24,6 @@ export function hslToRgb(
   const s = typeof sat === "number" ? sat : parseFloat(sat);
   const l = typeof light === "number" ? light : parseFloat(light);
 
-  let t1: number;
   let t2: number;
   const hueNorm = h / 60;
 
@@ -34,7 +33,7 @@ export function hslToRgb(
     t2 = l + s - l * s;
   }
 
-  t1 = l * 2 - t2;
+  const t1 = l * 2 - t2;
 
   const r = hueToRgb(t1, t2, hueNorm + 2) * 255;
   const g = hueToRgb(t1, t2, hueNorm) * 255;
