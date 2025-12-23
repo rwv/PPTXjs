@@ -65,6 +65,7 @@ export function getContentDir(node: any, type: any, warpObj: any): string {
       break;
     case "shape":
       dirLoc = "p:otherStyle";
+      break;
   }
   if (slideMasterTextStyles !== undefined && dirLoc !== "") {
     const dirVal = getTextByPathList(slideMasterTextStyles[dirLoc], ["a:lvl1pPr", "attrs", "rtl"]);
