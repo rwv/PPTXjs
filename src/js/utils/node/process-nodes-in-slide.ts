@@ -119,7 +119,7 @@ export function processNodesInSlide(
         settings
       );
       break;
-    case "mc:AlternateContent": //Equations and formulas as Image
+    case "mc:AlternateContent": { //Equations and formulas as Image
       //console.log("mc:AlternateContent nodeValue:" , nodeValue , "nodes:",nodes, "sType:",sType)
       const mcFallbackNode = getTextByPathList(nodeValue, ["mc:Fallback"]);
       result = processGroupSpNode(
@@ -137,6 +137,7 @@ export function processNodesInSlide(
         settings
       );
       break;
+    }
     default:
     //console.log("nodeKey: ", nodeKey)
   }
