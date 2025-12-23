@@ -52,7 +52,7 @@ export function processPicNode(
   let xfrmNode = node["p:spPr"]["a:xfrm"];
   if (xfrmNode === undefined) {
     const idx = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "idx"]);
-    const type = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "type"]);
+    const _type = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "type"]);
     if (idx !== undefined) {
       xfrmNode = getTextByPathList(warpObj["slideLayoutTables"], [
         "idxTable",
@@ -107,7 +107,7 @@ export function processPicNode(
   }
   //Audio
   const audioNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:audioFile"]);
-  let audioRid, audioFile, audioFileExt, audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
+  let audioRid, audioFile, audioFileExt, _audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
   let audioPlayerFlag = false;
   let audioObjc;
   // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
