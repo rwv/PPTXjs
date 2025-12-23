@@ -79,7 +79,7 @@ export function processGraphicFrameNode(
         isFirstBr
       );
       break;
-    case "http://schemas.openxmlformats.org/presentationml/2006/ole":
+    case "http://schemas.openxmlformats.org/presentationml/2006/ole": {
       //result = genDiagram(node, warpObj, source, sType);
       let oleObjNode = getTextByPathList(node, [
         "a:graphic",
@@ -110,6 +110,7 @@ export function processGraphicFrameNode(
         );
       }
       break;
+    }
     default:
   }
 
