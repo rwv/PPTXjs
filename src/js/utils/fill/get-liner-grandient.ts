@@ -169,7 +169,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
       ];
     case "lgCheck":
-    case "smCheck":
+    case "smCheck": {
       let checkSize = "";
       let checkPos = "";
       if (prst === "lgCheck") {
@@ -196,6 +196,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
         checkSize,
         checkPos,
       ];
+    }
     case "dashUpDiag":
       return [
         "repeating-linear-gradient(152deg, #" +
@@ -335,7 +336,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
         "0 0, 2px 2px",
       ];
     case "zigZag":
-    case "wave":
+    case "wave": {
       let waveSize = "";
       if (prst === "zigZag") waveSize = "0";
       else waveSize = "1px";
@@ -361,8 +362,9 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
+    }
     case "lgConfetti":
-    case "smConfetti":
+    case "smConfetti": {
       let confettiSize = "";
       if (prst === "lgConfetti") confettiSize = "4px 4px";
       else confettiSize = "2px 2px";
@@ -384,6 +386,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         confettiSize,
       ];
+    }
     case "plaid":
       return [
         "linear-gradient(0deg, transparent, transparent 25%, #" +
@@ -449,7 +452,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
     case "pct80":
     case "pct90":
     case "trellis":
-    case "divot":
+    case "divot": {
       let px_pr_ary;
       switch (prst) {
         case "pct5":
@@ -493,7 +496,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           px_pr_ary = ["1px", "100%", "2px 2px"];
           break;
       }
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       return [
         "radial-gradient(#" +
           fgColor +
@@ -502,12 +504,12 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ", transparent " +
           px_pr_ary[1] +
           ")," +
-          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           "#" +
           bgColor +
           ";",
         px_pr_ary[2],
       ];
+    }
     default:
       return [0, 0];
   }
