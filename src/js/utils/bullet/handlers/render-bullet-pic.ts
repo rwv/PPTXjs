@@ -25,7 +25,7 @@ export function renderBulletPic(
 
   if (buPicId !== undefined) {
     const imgPath = warpObj["slideResObj"][buPicId]["target"];
-    const imgArrayBuffer = warpObj["zip"].file(imgPath).asArrayBuffer();
+    const imgArrayBuffer = warpObj["archive"].readAsArrayBuffer(imgPath);
     const imgExt = imgPath.split(".").pop();
     const imgMimeType = getMimeType(imgExt);
     buImg =

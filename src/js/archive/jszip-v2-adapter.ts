@@ -40,14 +40,4 @@ export class JSZipV2Adapter implements PptxArchive {
     }
     return file.asText();
   }
-
-  /**
-   * Get raw JSZip instance for legacy code migration
-   * @deprecated This method exists only for gradual migration.
-   * New code should use PptxArchive interface methods instead.
-   * Will be removed once all code is migrated.
-   */
-  getRawZip(): any {
-    return this.zip;
-  }
 }

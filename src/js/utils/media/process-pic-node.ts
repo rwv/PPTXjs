@@ -46,8 +46,8 @@ export function processPicNode(
 
   //console.log("processPicNode imgName:", imgName);
   const imgFileExt = extractFileExtension(imgName).toLowerCase();
-  const zip = warpObj["zip"];
-  const imgArrayBuffer = zip.file(imgName).asArrayBuffer();
+  const archive = warpObj["archive"];
+  const imgArrayBuffer = archive.readAsArrayBuffer(imgName);
   let mimeType = "";
   let xfrmNode = node["p:spPr"]["a:xfrm"];
   if (xfrmNode === undefined) {
@@ -94,7 +94,7 @@ export function processPicNode(
     } else {
       vdoFileExt = extractFileExtension(vdoFile).toLowerCase();
       if (vdoFileExt == "mp4" || vdoFileExt == "webm" || vdoFileExt == "ogg") {
-        uInt8Array = zip.file(vdoFile).asArrayBuffer();
+        uInt8Array = archive.readAsArrayBuffer(vdoFile);
         vdoMimeType = getMimeType(vdoFileExt);
         blob = new Blob([uInt8Array], {
           type: vdoMimeType,
@@ -116,7 +116,7 @@ export function processPicNode(
     audioFile = resObj[audioRid]["target"];
     audioFileExt = extractFileExtension(audioFile).toLowerCase();
     if (audioFileExt == "mp3" || audioFileExt == "wav" || audioFileExt == "ogg") {
-      uInt8ArrayAudio = zip.file(audioFile).asArrayBuffer();
+      uInt8ArrayAudio = archive.readAsArrayBuffer(audioFile);
       blobAudio = new Blob([uInt8ArrayAudio]);
       audioBlob = URL.createObjectURL(blobAudio);
       const cx = parseInt(xfrmNode["a:ext"]["attrs"]["cx"]) * 20;
