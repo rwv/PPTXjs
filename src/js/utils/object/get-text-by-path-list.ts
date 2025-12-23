@@ -11,7 +11,7 @@
  * getTextByPathList(obj, ['a', 'b', 'c']); // 'value'
  * getTextByPathList(obj, ['a', 'x', 'y']); // undefined
  */
-export function getTextByPathList(node: any, path: any): any {
+export function getTextByPathList(node: any, path: (string | number)[]): any {
   if (path.constructor !== Array) {
     throw Error("Error of path type! path is not array.");
   }
@@ -20,7 +20,7 @@ export function getTextByPathList(node: any, path: any): any {
     return undefined;
   }
 
-  const length = path.length;
+  const length: number = path.length;
   for (let i = 0; i < length; i++) {
     node = node[path[i]];
     if (node === undefined) {
