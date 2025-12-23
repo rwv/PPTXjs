@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color";
 import { getTableBorders } from "../border";
@@ -35,14 +36,14 @@ import { getTableRowStyle, getTableStyleById } from "./helpers";
  * @returns HTML string for the table
  */
 export function genTable(
-  node: any,
-  warpObj: any,
+  node: PptxNode,
+  warpObj: WarpObject,
   tableStyles: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor
 ): string {
   const order = node["attrs"]["order"];
   const tableNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl"]);
@@ -129,7 +130,7 @@ export function genTable(
   //if (trNodes.constructor === Array) {
   //multi rows
   let _totalrowSpan = 0;
-  let rowSpanAry: any = [];
+  let rowSpanAry: any[] = [];
   for (let i = 0; i < trNodes.length; i++) {
     //////////////rows Style ////////////Amir
     const rowHeightParam = trNodes[i]["attrs"]["h"];
