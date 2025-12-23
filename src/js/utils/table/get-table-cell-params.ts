@@ -95,8 +95,7 @@ export function getTableCellParams(
   ); //tableStyles
 
   if (total_col_width !== 0 /*&& row_idx === 0*/) {
-    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-    colWidth = parseInt(total_col_width) * slideFactor;
+    colWidth = Number(total_col_width) * slideFactor;
     colStyl += "width:" + colWidth + "px;";
   }
 
