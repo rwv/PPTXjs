@@ -115,11 +115,9 @@ export function genTextBody(
     let cssName = "";
 
     if (styleText in styleTable) {
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       cssName = styleTable[styleText]["name"];
     } else {
       cssName = "_css_" + (Object.keys(styleTable).length + 1);
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       styleTable[styleText] = {
         name: cssName,
         text: styleText,
@@ -162,7 +160,6 @@ export function genTextBody(
     );
     const isBullate =
       buText_ary[0] !== undefined && buText_ary[0] !== null && buText_ary[0] !== "" ? true : false;
-    // @ts-expect-error TS(2365): Operator '+' cannot be applied to types 'string | ... Remove this comment to see the full error message
     const bu_width =
       buText_ary[1] !== undefined && buText_ary[1] !== null && isBullate
         ? buText_ary[1] + buText_ary[2]
@@ -250,7 +247,6 @@ export function genTextBody(
       }
     }
 
-    // @ts-expect-error TS(2363): The right-hand side of an arithmetic operation mus... Remove this comment to see the full error message
     prg_width_node = parseInt(prg_width_node) * slideFactor - bu_width - mrgin_val;
     if (isBullate) {
       //get prg_width_node if there is a bulltes

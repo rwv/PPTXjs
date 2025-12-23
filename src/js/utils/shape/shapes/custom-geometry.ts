@@ -148,7 +148,6 @@ export function renderCustomGeometry(
       });
 
       //console.log("cubicBezToNodes: ", cubicBezToPtNodesAry)
-      // @ts-expect-error TS(7006): Parameter 'key2' implicitly has an 'any' type.
       cubicBezToPtNodesAry.forEach(function (key2) {
         //console.log("cubicBezToPtNodesAry: key2 : ", key2)
         const nodeObj = {};
@@ -232,7 +231,6 @@ export function renderCustomGeometry(
     // console.log("custShapType >> multiSapeAry: ", multiSapeAry);
 
     multiSapeAry.sort(function (a, b) {
-      // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
       return a.order - b.order;
     });
 
@@ -242,12 +240,9 @@ export function renderCustomGeometry(
     const _isClose = false;
     let d = "";
     while (k < multiSapeAry.length) {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (multiSapeAry[k].type === "movto") {
         //start point
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const spX = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const spY = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
         // if (d === "") {
         //     d = "M" + spX + "," + spY;
@@ -271,34 +266,21 @@ export function renderCustomGeometry(
 
         d += " M" + spX + "," + spY;
 
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type === "lnto") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Lx = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Ly = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
         d += " L" + Lx + "," + Ly;
 
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type === "cubicBezTo") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cy2 = parseInt(multiSapeAry[k].cubBzPt[1].y) * cY; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY; //slideFactor;
         d += " C" + Cx1 + "," + Cy1 + " " + Cx2 + "," + Cy2 + " " + Cx3 + "," + Cy3;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type === "arcTo") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const hR = parseInt(multiSapeAry[k].hR) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const wR = parseInt(multiSapeAry[k].wR) * cY; //slideFactor;
         const stAng = parseInt(multiSapeAry[k].stAng) / 60000;
         const swAng = parseInt(multiSapeAry[k].swAng) / 60000;
@@ -307,11 +289,9 @@ export function renderCustomGeometry(
         const endAng = stAng + swAng;
 
         d += shapeArc(wR, hR, wR, hR, stAng, endAng, false);
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type === "quadBezTo") {
         console.log("custShapType: quadBezTo - TODO");
 
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type === "close") {
         // result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
         //     "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";

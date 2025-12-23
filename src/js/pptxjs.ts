@@ -175,10 +175,8 @@ registerDivs2Slides();
       //s = readXmlFile(zip, 'ppt/tableStyles.xml');
       //var slidesHeight = $("#" + divId + " .slide").height();
       for (let i = 0; i < rslt_ary.length; i++) {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         switch (rslt_ary[i]["type"]) {
           case "slide":
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             $result.append(rslt_ary[i]["data"]);
             break;
           case "pptx-thumb":
@@ -189,7 +187,6 @@ registerDivs2Slides();
             break;
           case "globalCSS":
             //console.log(rslt_ary[i]["data"])
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             $result.append("<style>" + rslt_ary[i]["data"] + "</style>");
             break;
           case "ExecutionTime":
@@ -208,7 +205,6 @@ registerDivs2Slides();
             break;
           case "progress-update":
             //console.log(rslt_ary[i]["data"]); //update progress bar - TODO
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             updateProgressBar(rslt_ary[i]["data"]);
             break;
           default:

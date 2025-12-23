@@ -103,7 +103,6 @@ export function processShapeEffects(
       svg_css_shadow += "do-nothing: " + svgCssName + ";";
     }
 
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     styleTable[svg_css_shadow] = {
       name: effectsClassName,
       text: svg_css_shadow,
@@ -122,7 +121,6 @@ export function processShapeEffects(
     (tailEndNodeAttrs !== undefined &&
       (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow"))
   ) {
-    // @ts-expect-error TS(2339): Property 'color' does not exist on type 'string | ... Remove this comment to see the full error message
     const triangleMarker =
       "<marker id='markerTriangle_" +
       shpId +

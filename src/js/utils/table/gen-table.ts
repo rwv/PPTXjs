@@ -93,7 +93,6 @@ export function genTable(
   let tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:tblBg", "a:fillRef"]);
   //console.log( "thisTblStyle:", thisTblStyle, "warpObj:", warpObj)
   if (tbl_bgFillschemeClr !== undefined) {
-    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
     tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpObj);
   }
   if (tbl_bgFillschemeClr === undefined) {
@@ -103,7 +102,6 @@ export function genTable(
       "a:fill",
       "a:solidFill",
     ]);
-    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
     tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpObj);
   }
   if (tbl_bgcolor !== "") {

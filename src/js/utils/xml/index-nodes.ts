@@ -8,7 +8,6 @@ import { getTextByPathList } from "../object";
  */
 export function indexNodes(content: any): { idTable: any; idxTable: any; typeTable: any } {
   const keys = Object.keys(content);
-  // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
   const spTreeNode = content[keys[0]]["p:cSld"]["p:spTree"];
 
   const idTable = {};
@@ -30,15 +29,12 @@ export function indexNodes(content: any): { idTable: any; idxTable: any; typeTab
         const type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
 
         if (id !== undefined) {
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           idTable[id] = targetNode[i];
         }
         if (idx !== undefined) {
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           idxTable[idx] = targetNode[i];
         }
         if (type !== undefined) {
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           typeTable[type] = targetNode[i];
         }
       }
@@ -49,15 +45,12 @@ export function indexNodes(content: any): { idTable: any; idxTable: any; typeTab
       const type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
 
       if (id !== undefined) {
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         idTable[id] = targetNode;
       }
       if (idx !== undefined) {
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         idxTable[idx] = targetNode;
       }
       if (type !== undefined) {
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         typeTable[type] = targetNode;
       }
     }

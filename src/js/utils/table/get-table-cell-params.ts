@@ -234,11 +234,9 @@ export function getTableCellParams(
   let cssName = "";
   if (celFillColor !== undefined && celFillColor !== "") {
     if (celFillColor in styleTable) {
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       cssName = styleTable[celFillColor]["name"];
     } else {
       cssName = "_tbl_cell_css_" + (Object.keys(styleTable).length + 1);
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       styleTable[celFillColor] = {
         name: cssName,
         text: celFillColor,

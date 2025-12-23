@@ -33,7 +33,6 @@ export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, _i
     Object.keys(duotone).forEach(function (clr_type) {
       if (clr_type !== "attrs") {
         const obj = {};
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         obj[clr_type] = duotone[clr_type];
         clr_ary.push(getSolidFill(obj, undefined, phClr, warpObj));
       }
