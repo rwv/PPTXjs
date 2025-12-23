@@ -74,11 +74,11 @@ export function processPPTX(
   readXmlFile: any,
   genGlobalCSS: any
 ): any[] {
-  var post_ary = [];
-  var dateBefore = new Date();
+  const post_ary = [];
+  const dateBefore = new Date();
 
   if (zip.file("docProps/thumbnail.jpeg") !== null) {
-    var pptxThumbImg = base64ArrayBuffer(zip.file("docProps/thumbnail.jpeg").asArrayBuffer());
+    const pptxThumbImg = base64ArrayBuffer(zip.file("docProps/thumbnail.jpeg").asArrayBuffer());
     post_ary.push({
       type: "pptx-thumb",
       data: pptxThumbImg,
@@ -86,13 +86,13 @@ export function processPPTX(
     });
   }
 
-  var filesInfo = getContentTypes(zip);
-  var slideSize = getSlideSizeAndSetDefaultTextStyle(zip, slideFactor, settings);
-  var app_verssion = slideSize.appVersion;
-  var defaultTextStyle = slideSize.defaultTextStyle;
-  var slideWidth = slideSize.width;
-  var slideHeight = slideSize.height;
-  var tableStyles = readXmlFile(zip, "ppt/tableStyles.xml");
+  const filesInfo = getContentTypes(zip);
+  const slideSize = getSlideSizeAndSetDefaultTextStyle(zip, slideFactor, settings);
+  const app_verssion = slideSize.appVersion;
+  const defaultTextStyle = slideSize.defaultTextStyle;
+  const slideWidth = slideSize.width;
+  const slideHeight = slideSize.height;
+  const tableStyles = readXmlFile(zip, "ppt/tableStyles.xml");
   //console.log("slideSize: ", slideSize)
   post_ary.push({
     type: "slideSize",
@@ -100,28 +100,28 @@ export function processPPTX(
     slide_num: 0,
   });
 
-  var numOfSlides = filesInfo["slides"].length;
-  for (var i = 0; i < numOfSlides; i++) {
-    var filename = filesInfo["slides"][i];
-    var filename_no_path = "";
-    var filename_no_path_ary = [];
+  const numOfSlides = filesInfo["slides"].length;
+  for (let i = 0; i < numOfSlides; i++) {
+    const filename = filesInfo["slides"][i];
+    let filename_no_path = "";
+    let filename_no_path_ary = [];
     if (filename.indexOf("/") != -1) {
       filename_no_path_ary = filename.split("/");
       filename_no_path = filename_no_path_ary.pop();
     } else {
       filename_no_path = filename;
     }
-    var filename_no_path_no_ext = "";
+    let filename_no_path_no_ext = "";
     if (filename_no_path.indexOf(".") != -1) {
-      var filename_no_path_no_ext_ary = filename_no_path.split(".");
-      var slide_ext = filename_no_path_no_ext_ary.pop();
+      const filename_no_path_no_ext_ary = filename_no_path.split(".");
+      const slide_ext = filename_no_path_no_ext_ary.pop();
       filename_no_path_no_ext = filename_no_path_no_ext_ary.join(".");
     }
-    var slide_number = 1;
+    let slide_number = 1;
     if (filename_no_path_no_ext != "" && filename_no_path.indexOf("slide") != -1) {
       slide_number = Number(filename_no_path_no_ext.substr(5));
     }
-    var slideHtml = processSingleSlide(
+    const slideHtml = processSingleSlide(
       zip,
       filename,
       i,
@@ -170,7 +170,7 @@ export function processPPTX(
     data: genGlobalCSS(styleTable, settings, slideWidth),
   });
 
-  var dateAfter = new Date();
+  const dateAfter = new Date();
   post_ary.push({
     type: "ExecutionTime",
     // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message

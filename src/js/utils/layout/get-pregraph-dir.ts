@@ -24,13 +24,13 @@ export function getPregraphDir(
   type: any,
   warpObj: any
 ): string {
-  var rtl = getTextByPathList(node, ["a:pPr", "attrs", "rtl"]);
+  let rtl = getTextByPathList(node, ["a:pPr", "attrs", "rtl"]);
   //console.log("getPregraphDir node:", node, "textBodyNode", textBodyNode, "rtl:", rtl, "idx", idx, "type", type, "warpObj", warpObj)
 
   if (rtl === undefined) {
-    var layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
-    var pPrNodeLaout = layoutMasterNode.nodeLaout;
-    var pPrNodeMaster = layoutMasterNode.nodeMaster;
+    const layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
+    const pPrNodeLaout = layoutMasterNode.nodeLaout;
+    const pPrNodeMaster = layoutMasterNode.nodeMaster;
     rtl = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
     if (rtl === undefined && type != "shape") {
       rtl = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);

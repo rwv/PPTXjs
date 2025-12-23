@@ -7,10 +7,10 @@
  * @returns CSS text string
  */
 export function genGlobalCSS(styleTable: any, settings: any, slideWidth: number): string {
-  var cssText = "";
+  let cssText = "";
   //console.log("styleTable: ", styleTable)
-  for (var key in styleTable) {
-    var tagname = "";
+  for (const key in styleTable) {
+    const tagname = "";
     // if (settings.slideMode && settings.slideType == "revealjs") {
     //     tagname = "section";
     // } else {

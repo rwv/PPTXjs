@@ -28,12 +28,12 @@ export function processPicNode(
   settings: any
 ): string {
   //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
-  var rtrnData = "";
-  var mediaPicFlag = false;
-  var order = node["attrs"]["order"];
+  let rtrnData = "";
+  let mediaPicFlag = false;
+  const order = node["attrs"]["order"];
 
-  var rid = node["p:blipFill"]["a:blip"]["attrs"]["r:embed"];
-  var resObj;
+  const rid = node["p:blipFill"]["a:blip"]["attrs"]["r:embed"];
+  let resObj;
   if (source == "slideMasterBg") {
     resObj = warpObj["masterResObj"];
   } else if (source == "slideLayoutBg") {
@@ -42,17 +42,17 @@ export function processPicNode(
     //imgName = warpObj["slideResObj"][rid]["target"];
     resObj = warpObj["slideResObj"];
   }
-  var imgName = resObj[rid]["target"];
+  const imgName = resObj[rid]["target"];
 
   //console.log("processPicNode imgName:", imgName);
-  var imgFileExt = extractFileExtension(imgName).toLowerCase();
-  var zip = warpObj["zip"];
-  var imgArrayBuffer = zip.file(imgName).asArrayBuffer();
-  var mimeType = "";
-  var xfrmNode = node["p:spPr"]["a:xfrm"];
+  const imgFileExt = extractFileExtension(imgName).toLowerCase();
+  const zip = warpObj["zip"];
+  const imgArrayBuffer = zip.file(imgName).asArrayBuffer();
+  let mimeType = "";
+  let xfrmNode = node["p:spPr"]["a:xfrm"];
   if (xfrmNode === undefined) {
-    var idx = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "idx"]);
-    var type = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "type"]);
+    const idx = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "idx"]);
+    const type = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "type"]);
     if (idx !== undefined) {
       xfrmNode = getTextByPathList(warpObj["slideLayoutTables"], [
         "idxTable",
@@ -63,14 +63,14 @@ export function processPicNode(
     }
   }
   ///////////////////////////////////////Amir//////////////////////////////
-  var rotate = 0;
-  var rotateNode = getTextByPathList(node, ["p:spPr", "a:xfrm", "attrs", "rot"]);
+  let rotate = 0;
+  const rotateNode = getTextByPathList(node, ["p:spPr", "a:xfrm", "attrs", "rot"]);
   if (rotateNode !== undefined) {
     rotate = angleToDegrees(rotateNode);
   }
   //video
-  var vdoNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:videoFile"]);
-  var vdoRid,
+  const vdoNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:videoFile"]);
+  let vdoRid,
     vdoFile,
     vdoFileExt,
     vdoMimeType,
@@ -79,12 +79,12 @@ export function processPicNode(
     vdoBlob,
     mediaSupportFlag = false,
     isVdeoLink = false;
-  var mediaProcess = settings.mediaProcess;
+  const mediaProcess = settings.mediaProcess;
   // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
   if ((vdoNode !== undefined) & mediaProcess) {
     vdoRid = vdoNode["attrs"]["r:link"];
     vdoFile = resObj[vdoRid]["target"];
-    var checkIfLink = isVideoLink(vdoFile);
+    const checkIfLink = isVideoLink(vdoFile);
     if (checkIfLink) {
       vdoFile = escapeHtml(vdoFile);
       //vdoBlob = vdoFile;
@@ -106,10 +106,10 @@ export function processPicNode(
     }
   }
   //Audio
-  var audioNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:audioFile"]);
-  var audioRid, audioFile, audioFileExt, audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
-  var audioPlayerFlag = false;
-  var audioObjc;
+  const audioNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:audioFile"]);
+  let audioRid, audioFile, audioFileExt, audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
+  let audioPlayerFlag = false;
+  let audioObjc;
   // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
   if ((audioNode !== undefined) & mediaProcess) {
     audioRid = audioNode["attrs"]["r:link"];
@@ -119,10 +119,10 @@ export function processPicNode(
       uInt8ArrayAudio = zip.file(audioFile).asArrayBuffer();
       blobAudio = new Blob([uInt8ArrayAudio]);
       audioBlob = URL.createObjectURL(blobAudio);
-      var cx = parseInt(xfrmNode["a:ext"]["attrs"]["cx"]) * 20;
-      var cy = xfrmNode["a:ext"]["attrs"]["cy"];
-      var x = parseInt(xfrmNode["a:off"]["attrs"]["x"]) / 2.5;
-      var y = xfrmNode["a:off"]["attrs"]["y"];
+      const cx = parseInt(xfrmNode["a:ext"]["attrs"]["cx"]) * 20;
+      const cy = xfrmNode["a:ext"]["attrs"]["cy"];
+      const x = parseInt(xfrmNode["a:off"]["attrs"]["x"]) / 2.5;
+      const y = xfrmNode["a:off"]["attrs"]["y"];
       audioObjc = {
         "a:ext": {
           attrs: {

@@ -16,18 +16,18 @@ export function getSlideSizeAndSetDefaultTextStyle(
 ): { width: number; height: number; appVersion: number; defaultTextStyle: any } {
   //get app version
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var app = readXmlFile(zip, "docProps/app.xml");
-  var app_verssion_str = app["Properties"]["AppVersion"];
-  var app_verssion = parseInt(app_verssion_str);
+  const app = readXmlFile(zip, "docProps/app.xml");
+  const app_verssion_str = app["Properties"]["AppVersion"];
+  const app_verssion = parseInt(app_verssion_str);
   console.log("create by Office PowerPoint app verssion: ", app_verssion_str);
 
   //get slide dimensions
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var content = readXmlFile(zip, "ppt/presentation.xml");
-  var sldSzAttrs = content["p:presentation"]["p:sldSz"]["attrs"];
-  var sldSzWidth = parseInt(sldSzAttrs["cx"]);
-  var sldSzHeight = parseInt(sldSzAttrs["cy"]);
-  var sldSzType = sldSzAttrs["type"];
+  const content = readXmlFile(zip, "ppt/presentation.xml");
+  const sldSzAttrs = content["p:presentation"]["p:sldSz"]["attrs"];
+  const sldSzWidth = parseInt(sldSzAttrs["cx"]);
+  const sldSzHeight = parseInt(sldSzAttrs["cy"]);
+  const sldSzType = sldSzAttrs["type"];
   console.log("Presentation size type: ", sldSzType);
 
   //1 inches  = 96px = 2.54cm
@@ -64,10 +64,10 @@ export function getSlideSizeAndSetDefaultTextStyle(
   //console.log("scaleX: ", scaleX, "scaleY:", scaleY)
   //slideFactor = slideFactor * scaleX;
 
-  var defaultTextStyle = content["p:presentation"]["p:defaultTextStyle"];
+  const defaultTextStyle = content["p:presentation"]["p:defaultTextStyle"];
 
-  var slideWidth = (sldSzWidth * slideFactor + settings.incSlide.width) | 0; // * scaleX;//parseInt(sldSzAttrs["cx"]) * 96 / 914400;
-  var slideHeight = (sldSzHeight * slideFactor + settings.incSlide.height) | 0; // * scaleY;//parseInt(sldSzAttrs["cy"]) * 96 / 914400;
+  const slideWidth = (sldSzWidth * slideFactor + settings.incSlide.width) | 0; // * scaleX;//parseInt(sldSzAttrs["cx"]) * 96 / 914400;
+  const slideHeight = (sldSzHeight * slideFactor + settings.incSlide.height) | 0; // * scaleY;//parseInt(sldSzAttrs["cy"]) * 96 / 914400;
 
   return {
     width: slideWidth,

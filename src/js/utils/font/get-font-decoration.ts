@@ -12,9 +12,9 @@
  */
 export function getFontDecoration(node: any, type: any, slideMasterTextStyles: any): string {
   if (node["a:rPr"] !== undefined) {
-    var underLine =
+    const underLine =
       node["a:rPr"]["attrs"]["u"] !== undefined ? node["a:rPr"]["attrs"]["u"] : "none";
-    var strikethrough =
+    const strikethrough =
       node["a:rPr"]["attrs"]["strike"] !== undefined
         ? node["a:rPr"]["attrs"]["strike"]
         : "noStrike";

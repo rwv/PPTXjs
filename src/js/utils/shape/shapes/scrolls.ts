@@ -71,7 +71,7 @@ function createPath(d: string, ctx: ScrollShapeContext): string {
 function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -79,20 +79,20 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
     "attrs",
     "fmla",
   ]);
-  var refr = slideFactor;
-  var adj = 12500 * refr;
+  const refr = slideFactor;
+  let adj = 12500 * refr;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * refr;
   }
-  var d_val;
-  var cnstVal1 = 25000 * refr;
-  var cnstVal2 = 100000 * refr;
-  var ss = Math.min(w, h);
-  var t = 0,
+  let d_val;
+  const cnstVal1 = 25000 * refr;
+  const cnstVal2 = 100000 * refr;
+  const ss = Math.min(w, h);
+  const t = 0,
     l = 0,
     b = h,
     r = w;
-  var a, ch, ch2, ch4;
+  let a, ch, ch2, ch4;
   a = adj < 0 ? 0 : adj > cnstVal1 ? cnstVal1 : adj;
   ch = (ss * a) / cnstVal2;
   ch2 = ch / 2;

@@ -30,18 +30,18 @@ export function processCxnSpNode(
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
 ): string {
-  var id = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["id"];
-  var name = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["name"];
-  var idx =
+  const id = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["id"];
+  const name = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["name"];
+  const idx =
     node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined
       ? undefined
       : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["idx"];
-  var type =
+  const type =
     node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined
       ? undefined
       : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["type"];
   // <p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
-  var order = node["attrs"]["order"];
+  const order = node["attrs"]["order"];
 
   return genShape(
     node,

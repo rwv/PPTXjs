@@ -79,7 +79,7 @@ function createPath(d: string, ctx: BracketShapeContext): string {
 function renderBracePair(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -87,14 +87,14 @@ function renderBracePair(ctx: BracketShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 8333 * slideFactor;
-  var cnstVal1 = 25000 * slideFactor;
-  var cnstVal2 = 50000 * slideFactor;
-  var cnstVal3 = 100000 * slideFactor;
+  let adj = 8333 * slideFactor;
+  const cnstVal1 = 25000 * slideFactor;
+  const cnstVal2 = 50000 * slideFactor;
+  const cnstVal3 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var vc = h / 2,
+  let vc = h / 2,
     cd = 360,
     cd2 = 180,
     cd4 = 90,
@@ -110,7 +110,7 @@ function renderBracePair(ctx: BracketShapeContext): string {
   if (adj < 0) a = 0;
   else if (adj > cnstVal1) a = cnstVal1;
   else a = adj;
-  var minWH = Math.min(w, h);
+  const minWH = Math.min(w, h);
   x1 = (minWH * a) / cnstVal3;
   x2 = (minWH * a) / cnstVal2;
   x3 = w - x2;
@@ -119,7 +119,7 @@ function renderBracePair(ctx: BracketShapeContext): string {
   y3 = vc + x1;
   y4 = h - x1;
 
-  var d =
+  const d =
     "M" +
     x2 +
     "," +
@@ -162,15 +162,15 @@ function renderBracePair(ctx: BracketShapeContext): string {
 function renderLeftBrace(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 8333 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -180,7 +180,7 @@ function renderLeftBrace(ctx: BracketShapeContext): string {
       }
     }
   }
-  var vc = h / 2,
+  let vc = h / 2,
     cd2 = 180,
     cd4 = 90,
     c3d4 = 270,
@@ -196,12 +196,12 @@ function renderLeftBrace(ctx: BracketShapeContext): string {
   if (adj2 < 0) a2 = 0;
   else if (adj2 > cnstVal2) a2 = cnstVal2;
   else a2 = adj2;
-  var minWH = Math.min(w, h);
+  const minWH = Math.min(w, h);
   q1 = cnstVal2 - a2;
   if (q1 < a2) q2 = q1;
   else q2 = a2;
   q3 = q2 / 2;
-  var maxAdj1 = (q3 * h) / minWH;
+  const maxAdj1 = (q3 * h) / minWH;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > maxAdj1) a1 = maxAdj1;
   else a1 = adj1;
@@ -210,7 +210,7 @@ function renderLeftBrace(ctx: BracketShapeContext): string {
   y2 = y3 - y1;
   y4 = y3 + y1;
 
-  var d =
+  const d =
     "M" +
     w +
     "," +
@@ -237,15 +237,15 @@ function renderLeftBrace(ctx: BracketShapeContext): string {
 function renderRightBrace(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 8333 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -255,7 +255,7 @@ function renderRightBrace(ctx: BracketShapeContext): string {
       }
     }
   }
-  var vc = h / 2,
+  let vc = h / 2,
     cd = 360,
     cd2 = 180,
     cd4 = 90,
@@ -272,12 +272,12 @@ function renderRightBrace(ctx: BracketShapeContext): string {
   if (adj2 < 0) a2 = 0;
   else if (adj2 > cnstVal2) a2 = cnstVal2;
   else a2 = adj2;
-  var minWH = Math.min(w, h);
+  const minWH = Math.min(w, h);
   q1 = cnstVal2 - a2;
   if (q1 < a2) q2 = q1;
   else q2 = a2;
   q3 = q2 / 2;
-  var maxAdj1 = (q3 * h) / minWH;
+  const maxAdj1 = (q3 * h) / minWH;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > maxAdj1) a1 = maxAdj1;
   else a1 = adj1;
@@ -286,7 +286,7 @@ function renderRightBrace(ctx: BracketShapeContext): string {
   y2 = y3 - y1;
   y4 = h - y1;
 
-  var d =
+  const d =
     "M" +
     0 +
     "," +
@@ -313,7 +313,7 @@ function renderRightBrace(ctx: BracketShapeContext): string {
 function renderBracketPair(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -321,13 +321,13 @@ function renderBracketPair(ctx: BracketShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 16667 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  let adj = 16667 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var r = w,
+  let r = w,
     b = h,
     cd2 = 180,
     cd4 = 90,
@@ -343,7 +343,7 @@ function renderBracketPair(ctx: BracketShapeContext): string {
   x2 = r - x1;
   y2 = b - x1;
 
-  var d =
+  const d =
     shapeArc(x1, x1, x1, x1, c3d4, cd2, false) +
     shapeArc(x1, y2, x1, x1, cd2, cd4, false).replace("M", "L") +
     shapeArc(x2, x1, x1, x1, c3d4, c3d4 + cd4, false) +
@@ -358,7 +358,7 @@ function renderBracketPair(ctx: BracketShapeContext): string {
 function renderLeftBracket(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -366,14 +366,14 @@ function renderLeftBracket(ctx: BracketShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 8333 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
-  var maxAdj = (cnstVal1 * h) / Math.min(w, h);
+  let adj = 8333 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
+  const maxAdj = (cnstVal1 * h) / Math.min(w, h);
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var r = w,
+  let r = w,
     b = h,
     cd2 = 180,
     cd4 = 90,
@@ -388,7 +388,7 @@ function renderLeftBracket(ctx: BracketShapeContext): string {
   if (y1 > w) y1 = w;
   y2 = b - y1;
 
-  var d =
+  const d =
     "M" +
     r +
     "," +
@@ -413,7 +413,7 @@ function renderLeftBracket(ctx: BracketShapeContext): string {
 function renderRightBracket(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -421,14 +421,14 @@ function renderRightBracket(ctx: BracketShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 8333 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
-  var maxAdj = (cnstVal1 * h) / Math.min(w, h);
+  let adj = 8333 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
+  const maxAdj = (cnstVal1 * h) / Math.min(w, h);
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var cd = 360,
+  let cd = 360,
     cd2 = 180,
     cd4 = 90,
     c3d4 = 270,
@@ -443,7 +443,7 @@ function renderRightBracket(ctx: BracketShapeContext): string {
   y2 = h - y1;
   y3 = w - y1;
 
-  var d =
+  const d =
     "M" +
     0 +
     "," +

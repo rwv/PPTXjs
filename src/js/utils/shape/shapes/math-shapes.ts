@@ -79,14 +79,14 @@ function createPath(d: string, ctx: MathShapeContext): string {
 function renderMathShape(ctx: MathShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1, adj1;
-  var sAdj2, adj2;
-  var sAdj3, adj3;
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1, adj1;
+  let sAdj2, adj2;
+  let sAdj3, adj3;
   if (shapAdjst_ary !== undefined) {
     if (shapAdjst_ary.constructor === Array) {
-      for (var i = 0; i < shapAdjst_ary.length; i++) {
-        var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+      for (let i = 0; i < shapAdjst_ary.length; i++) {
+        const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
         if (sAdj_name == "adj1") {
           sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
           adj1 = parseInt(sAdj1.substr(4));
@@ -103,11 +103,11 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       adj1 = parseInt(sAdj1.substr(4));
     }
   }
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
-  var cnstVal3 = 200000 * slideFactor;
-  var dVal;
-  var hc = w / 2,
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
+  const cnstVal3 = 200000 * slideFactor;
+  let dVal;
+  const hc = w / 2,
     vc = h / 2,
     hd2 = h / 2;
 
@@ -176,7 +176,7 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       yC2,
       yC3,
       yC4;
-    var angVal1 = (70 * Math.PI) / 180,
+    const angVal1 = (70 * Math.PI) / 180,
       angVal2 = (110 * Math.PI) / 180;
     var cnstVal4 = 73490 * slideFactor;
     a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
@@ -374,12 +374,12 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
     x1 = hc - dx1;
     x3 = hc + dx1;
     x2 = hc - rad;
-    var cd4 = 90,
+    const cd4 = 90,
       c3d4 = 270;
-    var cX1 = hc - Math.cos((c3d4 * Math.PI) / 180) * rad;
-    var cY1 = y1 - Math.sin((c3d4 * Math.PI) / 180) * rad;
-    var cX2 = hc - Math.cos(Math.PI / 2) * rad;
-    var cY2 = y5 - Math.sin(Math.PI / 2) * rad;
+    const cX1 = hc - Math.cos((c3d4 * Math.PI) / 180) * rad;
+    const cY1 = y1 - Math.sin((c3d4 * Math.PI) / 180) * rad;
+    const cX2 = hc - Math.cos(Math.PI / 2) * rad;
+    const cY2 = y5 - Math.sin(Math.PI / 2) * rad;
     dVal =
       "M" +
       hc +

@@ -50,28 +50,28 @@ export function processSpNode(
    *  966 </xsd:complexType>
    */
 
-  var id = getTextByPathList(node, ["p:nvSpPr", "p:cNvPr", "attrs", "id"]);
-  var name = getTextByPathList(node, ["p:nvSpPr", "p:cNvPr", "attrs", "name"]);
-  var idx =
+  const id = getTextByPathList(node, ["p:nvSpPr", "p:cNvPr", "attrs", "id"]);
+  const name = getTextByPathList(node, ["p:nvSpPr", "p:cNvPr", "attrs", "name"]);
+  const idx =
     getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "idx"]) === undefined
       ? undefined
       : getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "idx"]);
-  var type =
+  let type =
     getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]) === undefined
       ? undefined
       : getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
-  var order = getTextByPathList(node, ["attrs", "order"]);
-  var isUserDrawnBg;
+  const order = getTextByPathList(node, ["attrs", "order"]);
+  let isUserDrawnBg;
   if (source == "slideLayoutBg" || source == "slideMasterBg") {
-    var userDrawn = getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "attrs", "userDrawn"]);
+    const userDrawn = getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "attrs", "userDrawn"]);
     if (userDrawn == "1") {
       isUserDrawnBg = true;
     } else {
       isUserDrawnBg = false;
     }
   }
-  var slideLayoutSpNode = undefined;
-  var slideMasterSpNode = undefined;
+  let slideLayoutSpNode = undefined;
+  let slideMasterSpNode = undefined;
 
   if (idx !== undefined) {
     slideLayoutSpNode = warpObj["slideLayoutTables"]["idxTable"][idx];

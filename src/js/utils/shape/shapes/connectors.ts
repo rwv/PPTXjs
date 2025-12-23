@@ -93,7 +93,7 @@ function getMarkerAttrs(ctx: ConnectorContext): string {
 function renderBentConnector2(ctx: ConnectorContext): string {
   const { w, h } = ctx;
 
-  var d = "M " + w + " 0 L " + w + " " + h + " L 0 " + h;
+  const d = "M " + w + " 0 L " + w + " " + h + " L 0 " + h;
 
   return `<path d='${d}' ${getStrokeAttrs(ctx)} fill='none' ${getMarkerAttrs(ctx)}/>`;
 }
@@ -104,7 +104,7 @@ function renderBentConnector2(ctx: ConnectorContext): string {
 function renderBentConnector3(ctx: ConnectorContext): string {
   const { node, w, h } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -112,7 +112,7 @@ function renderBentConnector3(ctx: ConnectorContext): string {
     "attrs",
     "fmla",
   ]);
-  var shapAdjst_val = 0.5;
+  let shapAdjst_val = 0.5;
   if (shapAdjst !== undefined) {
     shapAdjst_val = parseInt(shapAdjst.substr(4)) / 100000;
 

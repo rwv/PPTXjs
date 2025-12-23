@@ -14,35 +14,35 @@ import { escapeHtml } from "../string/escape-html";
 import tinycolor from "tinycolor2";
 
 export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: any): string {
-  var pic_dim = getBase64ImageDimensions(fill);
-  var width = pic_dim?.[0];
-  var height = pic_dim?.[1];
+  const pic_dim = getBase64ImageDimensions(fill);
+  const width = pic_dim?.[0];
+  const height = pic_dim?.[1];
 
-  var blipFillNode = node["p:spPr"]["a:blipFill"];
-  var tileNode = getTextByPathList(blipFillNode, ["a:tile", "attrs"]);
-  var sx: number | undefined;
-  var sy: number | undefined;
+  const blipFillNode = node["p:spPr"]["a:blipFill"];
+  const tileNode = getTextByPathList(blipFillNode, ["a:tile", "attrs"]);
+  let sx: number | undefined;
+  let sy: number | undefined;
 
   if (tileNode !== undefined && tileNode["sx"] !== undefined && width && height) {
     sx = (parseInt(tileNode["sx"]) / 100000) * width;
     sy = (parseInt(tileNode["sy"]) / 100000) * height;
   }
 
-  var blipNode = node["p:spPr"]["a:blipFill"]["a:blip"];
-  var tialphaModFixNode = getTextByPathList(blipNode, ["a:alphaModFix", "attrs"]);
-  var imgOpacity = "";
+  const blipNode = node["p:spPr"]["a:blipFill"]["a:blip"];
+  const tialphaModFixNode = getTextByPathList(blipNode, ["a:alphaModFix", "attrs"]);
+  let imgOpacity = "";
 
   if (
     tialphaModFixNode !== undefined &&
     tialphaModFixNode["amt"] !== undefined &&
     tialphaModFixNode["amt"] != ""
   ) {
-    var amt = parseInt(tialphaModFixNode["amt"]) / 100000;
-    var opacity = amt;
+    const amt = parseInt(tialphaModFixNode["amt"]) / 100000;
+    const opacity = amt;
     imgOpacity = "opacity='" + opacity + "'";
   }
 
-  var ptrn: string;
+  let ptrn: string;
   if (sx !== undefined && sx != 0) {
     ptrn =
       '<pattern id="imgPtrn_' +
@@ -59,18 +59,18 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
       '"  patternContentUnits="objectBoundingBox"  width="1" height="1">';
   }
 
-  var duotoneNode = getTextByPathList(blipNode, ["a:duotone"]);
-  var fillterNode = "";
-  var filterUrl = "";
+  const duotoneNode = getTextByPathList(blipNode, ["a:duotone"]);
+  let fillterNode = "";
+  let filterUrl = "";
 
   if (duotoneNode !== undefined) {
-    var clr_ary: any[] = [];
+    const clr_ary: any[] = [];
     Object.keys(duotoneNode).forEach(function (clr_type) {
       if (clr_type != "attrs") {
-        var obj: any = {};
+        const obj: any = {};
         obj[clr_type] = duotoneNode[clr_type];
-        var hexClr = getSolidFill(obj, undefined, undefined, warpObj);
-        var color = tinycolor("#" + hexClr);
+        const hexClr = getSolidFill(obj, undefined, undefined, warpObj);
+        const color = tinycolor("#" + hexClr);
         clr_ary.push(color.toRgb());
       }
     });

@@ -17,7 +17,7 @@ export function renderBulletNumeric(
   buNum: string,
   lvl: number
 ): string {
-  var bullet =
+  let bullet =
     "<div style='height: 100%;" +
     marLStr +
     marRStr +

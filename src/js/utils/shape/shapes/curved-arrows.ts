@@ -81,18 +81,18 @@ function createPath(d: string, ctx: CurvedArrowContext): string {
 function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 25000 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = 50000 * slideFactor;
-  var sAdj3,
+  let sAdj3,
     adj3 = 25000 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -105,7 +105,7 @@ function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
       }
     }
   }
-  var vc = h / 2,
+  const vc = h / 2,
     hc = w / 2,
     wd2 = w / 2,
     r = w,
@@ -115,8 +115,8 @@ function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
     c3d4 = 270,
     cd2 = 180,
     cd4 = 90;
-  var ss = Math.min(w, h);
-  var maxAdj2,
+  const ss = Math.min(w, h);
+  let maxAdj2,
     a2,
     a1,
     th,
@@ -190,19 +190,19 @@ function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
   x6 = r - aw2;
   y1 = b - ah;
   swAng = Math.atan(dx / ah);
-  var swAngDeg = (swAng * 180) / Math.PI;
+  const swAngDeg = (swAng * 180) / Math.PI;
   mswAng = -swAngDeg;
   iy = b - idy;
   ix = (wR + x3) / 2;
   q12 = th / 2;
   dang2 = Math.atan(q12 / idy);
-  var dang2Deg = (dang2 * 180) / Math.PI;
+  const dang2Deg = (dang2 * 180) / Math.PI;
   stAng = c3d4 + swAngDeg;
   stAng2 = c3d4 - dang2Deg;
   swAng2 = dang2Deg - cd4;
   swAng3 = cd4 + dang2Deg;
 
-  var d_val =
+  const d_val =
     "M" +
     x6 +
     "," +
@@ -246,18 +246,18 @@ function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
 function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 25000 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = 50000 * slideFactor;
-  var sAdj3,
+  let sAdj3,
     adj3 = 25000 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -270,7 +270,7 @@ function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
       }
     }
   }
-  var vc = h / 2,
+  const vc = h / 2,
     hc = w / 2,
     hd2 = h / 2,
     r = w,
@@ -280,8 +280,8 @@ function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
     c3d4 = 270,
     cd2 = 180,
     cd4 = 90;
-  var ss = Math.min(w, h);
-  var maxAdj2,
+  const ss = Math.min(w, h);
+  let maxAdj2,
     a2,
     a1,
     th,
@@ -362,13 +362,13 @@ function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
   swAng2 = dang2 - swAng;
   swAng3 = swAng + dang2;
   stAng3 = -dang2;
-  var swAngDg, swAng2Dg, swAng3Dg, stAng3dg;
+  let swAngDg, swAng2Dg, swAng3Dg, stAng3dg;
   swAngDg = (swAng * 180) / Math.PI;
   swAng2Dg = (swAng2 * 180) / Math.PI;
   swAng3Dg = (swAng3 * 180) / Math.PI;
   stAng3dg = (stAng3 * 180) / Math.PI;
 
-  var d_val =
+  const d_val =
     "M" +
     r +
     "," +
@@ -417,18 +417,18 @@ function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
 function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 25000 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = 50000 * slideFactor;
-  var sAdj3,
+  let sAdj3,
     adj3 = 25000 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -441,7 +441,7 @@ function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
       }
     }
   }
-  var vc = h / 2,
+  const vc = h / 2,
     hc = w / 2,
     hd2 = h / 2,
     r = w,
@@ -451,8 +451,8 @@ function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
     c3d4 = 270,
     cd2 = 180,
     cd4 = 90;
-  var ss = Math.min(w, h);
-  var maxAdj2,
+  const ss = Math.min(w, h);
+  let maxAdj2,
     a2,
     a1,
     th,
@@ -536,13 +536,13 @@ function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
   swAng3 = Math.PI / 2 + dang2;
   stAng3 = Math.PI - dang2;
 
-  var stAngDg, mswAngDg, swAngDg, swAng2dg;
+  let stAngDg, mswAngDg, swAngDg, swAng2dg;
   stAngDg = (stAng * 180) / Math.PI;
   mswAngDg = (mswAng * 180) / Math.PI;
   swAngDg = (swAng * 180) / Math.PI;
   swAng2dg = (swAng2 * 180) / Math.PI;
 
-  var d_val =
+  const d_val =
     "M" +
     l +
     "," +
@@ -589,18 +589,18 @@ function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
 function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 25000 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = 50000 * slideFactor;
-  var sAdj3,
+  let sAdj3,
     adj3 = 25000 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -613,7 +613,7 @@ function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
       }
     }
   }
-  var vc = h / 2,
+  const vc = h / 2,
     hc = w / 2,
     wd2 = w / 2,
     r = w,
@@ -623,8 +623,8 @@ function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
     c3d4 = 270,
     cd2 = 180,
     cd4 = 90;
-  var ss = Math.min(w, h);
-  var maxAdj2,
+  const ss = Math.min(w, h);
+  let maxAdj2,
     a2,
     a1,
     th,
@@ -710,13 +710,13 @@ function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
   swAng3 = swAng + dang2;
   stAng2 = Math.PI / 2 - dang2;
 
-  var stAng2dg, swAng2dg, swAngDg, stAng3dg;
+  let stAng2dg, swAng2dg, swAngDg, stAng3dg;
   stAng2dg = (stAng2 * 180) / Math.PI;
   swAng2dg = (swAng2 * 180) / Math.PI;
   stAng3dg = (stAng3 * 180) / Math.PI;
   swAngDg = (swAng * 180) / Math.PI;
 
-  var d_val =
+  const d_val =
     shapeArc(wR, 0, wR, h, stAng2dg, stAng2dg + swAng2dg, false) +
     " L" +
     x5 +
@@ -759,15 +759,15 @@ function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
 function renderSwooshArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var refr = slideFactor;
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const refr = slideFactor;
+  let sAdj1,
     adj1 = 25000 * refr;
-  var sAdj2,
+  let sAdj2,
     adj2 = 16667 * refr;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
@@ -777,15 +777,15 @@ function renderSwooshArrow(ctx: CurvedArrowContext): string {
       }
     }
   }
-  var cnstVal1 = 1 * refr;
-  var cnstVal2 = 70000 * refr;
-  var cnstVal3 = 75000 * refr;
-  var cnstVal4 = 100000 * refr;
-  var ss = Math.min(w, h);
-  var ssd8 = ss / 8;
-  var hd6 = h / 6;
+  const cnstVal1 = 1 * refr;
+  const cnstVal2 = 70000 * refr;
+  const cnstVal3 = 75000 * refr;
+  const cnstVal4 = 100000 * refr;
+  const ss = Math.min(w, h);
+  const ssd8 = ss / 8;
+  const hd6 = h / 6;
 
-  var a1,
+  let a1,
     maxAdj2,
     a2,
     ad1,
@@ -837,7 +837,7 @@ function renderSwooshArrow(ctx: CurvedArrowContext): string {
   yP2 = yF + dy5;
   xP2 = w / 4;
 
-  var dVal =
+  const dVal =
     "M" +
     0 +
     "," +
@@ -885,20 +885,20 @@ function renderSwooshArrow(ctx: CurvedArrowContext): string {
 function renderCircularArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 12500 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = ((1142319 / 60000) * Math.PI) / 180;
-  var sAdj3,
+  let sAdj3,
     adj3 = ((20457681 / 60000) * Math.PI) / 180;
-  var sAdj4,
+  let sAdj4,
     adj4 = ((10800000 / 60000) * Math.PI) / 180;
-  var sAdj5,
+  let sAdj5,
     adj5 = 12500 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -917,7 +917,7 @@ function renderCircularArrow(ctx: CurvedArrowContext): string {
       }
     }
   }
-  var vc = h / 2,
+  const vc = h / 2,
     hc = w / 2,
     r = w,
     b = h,
@@ -925,8 +925,8 @@ function renderCircularArrow(ctx: CurvedArrowContext): string {
     t = 0,
     wd2 = w / 2,
     hd2 = h / 2;
-  var ss = Math.min(w, h);
-  var a5,
+  const ss = Math.min(w, h);
+  let a5,
     maxAdj1,
     a1,
     enAng,
@@ -1103,12 +1103,12 @@ function renderCircularArrow(ctx: CurvedArrowContext): string {
     sw0,
     sw1,
     swAng;
-  var cnstVal1 = 25000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
-  var rdAngVal1 = ((1 / 60000) * Math.PI) / 180;
-  var rdAngVal2 = ((21599999 / 60000) * Math.PI) / 180;
-  var rdAngVal3 = 2 * Math.PI;
-  var cd2 = 180;
+  const cnstVal1 = 25000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
+  const rdAngVal1 = ((1 / 60000) * Math.PI) / 180;
+  const rdAngVal2 = ((21599999 / 60000) * Math.PI) / 180;
+  const rdAngVal3 = 2 * Math.PI;
+  const cd2 = 180;
 
   a5 = adj5 < 0 ? 0 : adj5 > cnstVal1 ? cnstVal1 : adj5;
   maxAdj1 = a5 * 2;
@@ -1299,13 +1299,13 @@ function renderCircularArrow(ctx: CurvedArrowContext): string {
   sw1 = sw0 + rdAngVal3;
   swAng = sw0 > 0 ? sw0 : sw1;
 
-  var strtAng = (stAng * 180) / Math.PI;
-  var endAng = strtAng + (swAng * 180) / Math.PI;
-  var stiAng = (istAng * 180) / Math.PI;
-  var swiAng = (iswAng * 180) / Math.PI;
-  var ediAng = stiAng + swiAng;
+  const strtAng = (stAng * 180) / Math.PI;
+  const endAng = strtAng + (swAng * 180) / Math.PI;
+  const stiAng = (istAng * 180) / Math.PI;
+  const swiAng = (iswAng * 180) / Math.PI;
+  const ediAng = stiAng + swiAng;
 
-  var d_val =
+  const d_val =
     shapeArc(w / 2, h / 2, rw1, rh1, strtAng, endAng, false) +
     " L" +
     xGp +
@@ -1334,20 +1334,20 @@ function renderCircularArrow(ctx: CurvedArrowContext): string {
 function renderLeftCircularArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 12500 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = ((-1142319 / 60000) * Math.PI) / 180;
-  var sAdj3,
+  let sAdj3,
     adj3 = ((1142319 / 60000) * Math.PI) / 180;
-  var sAdj4,
+  let sAdj4,
     adj4 = ((10800000 / 60000) * Math.PI) / 180;
-  var sAdj5,
+  let sAdj5,
     adj5 = 12500 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -1366,7 +1366,7 @@ function renderLeftCircularArrow(ctx: CurvedArrowContext): string {
       }
     }
   }
-  var vc = h / 2,
+  const vc = h / 2,
     hc = w / 2,
     r = w,
     b = h,
@@ -1374,14 +1374,14 @@ function renderLeftCircularArrow(ctx: CurvedArrowContext): string {
     t = 0,
     wd2 = w / 2,
     hd2 = h / 2;
-  var ss = Math.min(w, h);
-  var cnstVal1 = 25000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
-  var rdAngVal1 = ((1 / 60000) * Math.PI) / 180;
-  var rdAngVal2 = ((21599999 / 60000) * Math.PI) / 180;
-  var rdAngVal3 = 2 * Math.PI;
-  var cd2 = 180;
-  var a5,
+  const ss = Math.min(w, h);
+  const cnstVal1 = 25000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
+  const rdAngVal1 = ((1 / 60000) * Math.PI) / 180;
+  const rdAngVal2 = ((21599999 / 60000) * Math.PI) / 180;
+  const rdAngVal3 = 2 * Math.PI;
+  const cd2 = 180;
+  let a5,
     maxAdj1,
     a1,
     enAng,
@@ -1761,13 +1761,13 @@ function renderLeftCircularArrow(ctx: CurvedArrowContext): string {
   swAng = sw0 > 0 ? sw1 : sw0;
   stAng0 = stAng + swAng;
 
-  var strtAng = (stAng0 * 180) / Math.PI;
-  var endAng = (stAng * 180) / Math.PI;
-  var stiAng = (istAng * 180) / Math.PI;
-  var swiAng = (iswAng * 180) / Math.PI;
-  var ediAng = stiAng + swiAng;
+  const strtAng = (stAng0 * 180) / Math.PI;
+  const endAng = (stAng * 180) / Math.PI;
+  const stiAng = (istAng * 180) / Math.PI;
+  const swiAng = (iswAng * 180) / Math.PI;
+  const ediAng = stiAng + swiAng;
 
-  var d_val =
+  const d_val =
     "M" +
     xE +
     "," +

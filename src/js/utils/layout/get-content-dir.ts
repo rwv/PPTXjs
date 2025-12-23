@@ -19,7 +19,7 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  */
 export function getContentDir(node: any, type: any, warpObj: any): string {
   return "content";
-  var defRtl = getTextByPathList(node, ["p:txBody", "a:lstStyle", "a:defPPr", "attrs", "rtl"]);
+  const defRtl = getTextByPathList(node, ["p:txBody", "a:lstStyle", "a:defPPr", "attrs", "rtl"]);
   if (defRtl !== undefined) {
     if (defRtl == "1") {
       return "content-rtl";
@@ -35,7 +35,7 @@ export function getContentDir(node: any, type: any, warpObj: any): string {
   //         return "content";
   //     }
   // }
-  var rtlCol = getTextByPathList(node, ["p:txBody", "a:bodyPr", "attrs", "rtlCol"]);
+  const rtlCol = getTextByPathList(node, ["p:txBody", "a:bodyPr", "attrs", "rtlCol"]);
   if (rtlCol !== undefined) {
     if (rtlCol == "1") {
       return "content-rtl";
@@ -48,8 +48,8 @@ export function getContentDir(node: any, type: any, warpObj: any): string {
   if (type === undefined) {
     return "content";
   }
-  var slideMasterTextStyles = warpObj["slideMasterTextStyles"];
-  var dirLoc = "";
+  const slideMasterTextStyles = warpObj["slideMasterTextStyles"];
+  let dirLoc = "";
 
   switch (type) {
     case "title":
@@ -67,7 +67,7 @@ export function getContentDir(node: any, type: any, warpObj: any): string {
       dirLoc = "p:otherStyle";
   }
   if (slideMasterTextStyles !== undefined && dirLoc !== "") {
-    var dirVal = getTextByPathList(slideMasterTextStyles[dirLoc], ["a:lvl1pPr", "attrs", "rtl"]);
+    const dirVal = getTextByPathList(slideMasterTextStyles[dirLoc], ["a:lvl1pPr", "attrs", "rtl"]);
     if (dirVal == "1") {
       return "content-rtl";
     }

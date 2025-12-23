@@ -22,13 +22,13 @@ export function renderBulletChar(
   isRTL: boolean,
   font_val: number
 ): string {
-  var typefaceNode = getTextByPathList(pPrNode, ["a:buFont", "attrs", "typeface"]);
-  var typeface = "";
+  const typefaceNode = getTextByPathList(pPrNode, ["a:buFont", "attrs", "typeface"]);
+  let typeface = "";
   if (typefaceNode !== undefined) {
     typeface = "font-family: " + typefaceNode;
   }
 
-  var bullet =
+  let bullet =
     "<div style='height: 100%;" +
     typeface +
     ";" +
@@ -64,12 +64,12 @@ export function renderBulletChar(
       bullet += bultColor[0] + ";";
     } else if (color_tye == "gradient") {
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-      var colorAry = bultColor[0].color;
+      const colorAry = bultColor[0].color;
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-      var rot = bultColor[0].rot;
+      const rot = bultColor[0].rot;
 
       bullet += "background: linear-gradient(" + rot + "deg,";
-      for (var i = 0; i < colorAry.length; i++) {
+      for (let i = 0; i < colorAry.length; i++) {
         if (i == colorAry.length - 1) {
           bullet += "#" + colorAry[i] + ");";
         } else {
@@ -99,8 +99,8 @@ export function renderBulletChar(
 
   // IE11 compatibility check
   // @ts-expect-error TS(2339): Property 'MSInputMethodContext' does not exist on type 'Window & typeof globalThis'.
-  var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
-  var htmlBu = buChar;
+  const isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+  let htmlBu = buChar;
 
   if (!isIE11) {
     // IE11 does not support unicode

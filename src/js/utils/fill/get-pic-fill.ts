@@ -16,9 +16,9 @@ import { base64ArrayBuffer } from "../media/base64-array-buffer";
  * @returns Base64 data URL of the image, or undefined if not found
  */
 export function getPicFill(type: any, node: any, warpObj: any) {
-  var img;
-  var rId = node["a:blip"]["attrs"]["r:embed"];
-  var imgPath;
+  let img;
+  const rId = node["a:blip"]["attrs"]["r:embed"];
+  let imgPath;
   if (type == "slideBg" || type == "slide") {
     imgPath = getTextByPathList(warpObj, ["slideResObj", rId, "target"]);
   } else if (type == "slideLayoutBg") {
@@ -37,12 +37,12 @@ export function getPicFill(type: any, node: any, warpObj: any) {
   if (img === undefined) {
     imgPath = escapeHtml(imgPath);
 
-    var imgExt = imgPath.split(".").pop();
+    const imgExt = imgPath.split(".").pop();
     if (imgExt == "xml") {
       return undefined;
     }
-    var imgArrayBuffer = warpObj["zip"].file(imgPath).asArrayBuffer();
-    var imgMimeType = getMimeType(imgExt);
+    const imgArrayBuffer = warpObj["zip"].file(imgPath).asArrayBuffer();
+    const imgMimeType = getMimeType(imgExt);
     img = "data:" + imgMimeType + ";base64," + base64ArrayBuffer(imgArrayBuffer);
     setTextByPathList(warpObj, ["loaded-images", imgPath], img);
   }

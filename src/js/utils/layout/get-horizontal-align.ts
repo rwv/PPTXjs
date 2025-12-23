@@ -30,19 +30,19 @@ export function getHorizontalAlign(
   prg_dir: any,
   warpObj: any
 ): string {
-  var algn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
+  let algn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
   if (algn === undefined) {
     //var layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
     // var pPrNodeLaout = layoutMasterNode.nodeLaout;
     // var pPrNodeMaster = layoutMasterNode.nodeMaster;
-    var lvlIdx = 1;
-    var lvlNode = getTextByPathList(node, ["a:pPr", "attrs", "lvl"]);
+    let lvlIdx = 1;
+    const lvlNode = getTextByPathList(node, ["a:pPr", "attrs", "lvl"]);
     if (lvlNode !== undefined) {
       lvlIdx = parseInt(lvlNode) + 1;
     }
-    var lvlStr = "a:lvl" + lvlIdx + "pPr";
+    const lvlStr = "a:lvl" + lvlIdx + "pPr";
 
-    var lstStyle = textBodyNode["a:lstStyle"];
+    const lstStyle = textBodyNode["a:lstStyle"];
     algn = getTextByPathList(lstStyle, [lvlStr, "attrs", "algn"]);
 
     if (algn === undefined && idx !== undefined) {

@@ -95,7 +95,7 @@ function renderRtTriangle(ctx: PolygonShapeContext): string {
 function renderTriangle(ctx: PolygonShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -103,11 +103,11 @@ function renderTriangle(ctx: PolygonShapeContext, shapType: string): string {
     "attrs",
     "fmla",
   ]);
-  var shapAdjst_val = 0.5;
+  let shapAdjst_val = 0.5;
   if (shapAdjst !== undefined) {
     shapAdjst_val = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var tranglRott = "";
+  let tranglRott = "";
   if (shapType == "flowChartMerge") {
     tranglRott = `transform='rotate(180 ${w / 2},${h / 2})'`;
   }
@@ -120,7 +120,7 @@ function renderTriangle(ctx: PolygonShapeContext, shapType: string): string {
 function renderDiamond(ctx: PolygonShapeContext, shapType: string): string {
   const { w, h } = ctx;
 
-  var result = ` <polygon points='${w / 2} 0,0 ${h / 2},${w / 2} ${h},${w} ${h / 2}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
+  let result = ` <polygon points='${w / 2} 0,0 ${h / 2},${w / 2} ${h},${w} ${h / 2}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
   if (shapType == "flowChartSort") {
     result += ` <polyline points='0 ${h / 2},${w} ${h / 2}' fill='none' ${getStrokeAttrs(ctx)} />`;
   }
@@ -133,7 +133,7 @@ function renderDiamond(ctx: PolygonShapeContext, shapType: string): string {
 function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -141,14 +141,14 @@ function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
     "attrs",
     "fmla",
   ]);
-  var adjst_val = 0.2;
-  var max_adj_const = 0.7407;
+  let adjst_val = 0.2;
+  const max_adj_const = 0.7407;
   if (shapAdjst !== undefined) {
-    var adjst = parseInt(shapAdjst.substr(4)) * slideFactor;
+    const adjst = parseInt(shapAdjst.substr(4)) * slideFactor;
     adjst_val = (adjst * 0.5) / max_adj_const;
   }
-  var cnstVal = 0;
-  var tranglRott = "";
+  let cnstVal = 0;
+  let tranglRott = "";
   if (shapType == "flowChartManualOperation") {
     tranglRott = `transform='rotate(180 ${w / 2},${h / 2})'`;
   }
@@ -165,7 +165,7 @@ function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
 function renderParallelogram(ctx: PolygonShapeContext): string {
   const { node, w, h } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -173,15 +173,15 @@ function renderParallelogram(ctx: PolygonShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adjst_val = 0.25;
-  var max_adj_const;
+  let adjst_val = 0.25;
+  let max_adj_const;
   if (w > h) {
     max_adj_const = w / h;
   } else {
     max_adj_const = h / w;
   }
   if (shapAdjst !== undefined) {
-    var adjst = parseInt(shapAdjst.substr(4)) / 100000;
+    const adjst = parseInt(shapAdjst.substr(4)) / 100000;
     adjst_val = adjst / max_adj_const;
   }
   return ` <polygon points='${adjst_val * w} 0,0 ${h},${(1 - adjst_val) * w} ${h},${w} 0' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
@@ -201,7 +201,7 @@ function renderPentagon(ctx: PolygonShapeContext): string {
 function renderHexagon(ctx: PolygonShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -209,15 +209,15 @@ function renderHexagon(ctx: PolygonShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 25000 * slideFactor;
-  var vf = 115470 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
-  var angVal1 = (60 * Math.PI) / 180;
+  let adj = 25000 * slideFactor;
+  const vf = 115470 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
+  const angVal1 = (60 * Math.PI) / 180;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var maxAdj,
+  let maxAdj,
     a,
     shd2,
     x1,
@@ -227,7 +227,7 @@ function renderHexagon(ctx: PolygonShapeContext): string {
     y2,
     vc = h / 2,
     hd2 = h / 2;
-  var ss = Math.min(w, h);
+  const ss = Math.min(w, h);
   maxAdj = (cnstVal1 * w) / ss;
   a = adj < 0 ? 0 : adj > maxAdj ? maxAdj : adj;
   shd2 = (hd2 * vf) / cnstVal2;
@@ -237,7 +237,7 @@ function renderHexagon(ctx: PolygonShapeContext): string {
   y1 = vc - dy1;
   y2 = vc + dy1;
 
-  var d =
+  const d =
     "M" +
     0 +
     "," +
@@ -281,7 +281,7 @@ function renderHeptagon(ctx: PolygonShapeContext): string {
 function renderOctagon(ctx: PolygonShapeContext): string {
   const { node, w, h } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -289,11 +289,11 @@ function renderOctagon(ctx: PolygonShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj1 = 0.25;
+  let adj1 = 0.25;
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) / 100000;
   }
-  var adj2 = 1 - adj1;
+  const adj2 = 1 - adj1;
   return ` <polygon points='${adj1 * w} 0,0 ${adj1 * h},0 ${adj2 * h},${adj1 * w} ${h},${adj2 * w} ${h},${w} ${adj2 * h},${w} ${adj1 * h},${adj2 * w} 0' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }
 

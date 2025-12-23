@@ -77,14 +77,14 @@ export function processSingleSlide(
   // Read relationship filename of the slide (Get slideLayoutXX.xml)
   // @sldFileName: ppt/slides/slide1.xml
   // @resName: ppt/slides/_rels/slide1.xml.rels
-  var resName = sldFileName.replace("slides/slide", "slides/_rels/slide") + ".rels";
+  const resName = sldFileName.replace("slides/slide", "slides/_rels/slide") + ".rels";
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var resContent = readXmlFile(zip, resName);
-  var RelationshipArray = resContent["Relationships"]["Relationship"];
+  const resContent = readXmlFile(zip, resName);
+  let RelationshipArray = resContent["Relationships"]["Relationship"];
   //console.log("RelationshipArray: " , RelationshipArray)
-  var layoutFilename = "";
-  var diagramFilename = "";
-  var slideResObj = {};
+  let layoutFilename = "";
+  let diagramFilename = "";
+  const slideResObj = {};
   if (RelationshipArray.constructor === Array) {
     for (var i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
@@ -123,9 +123,9 @@ export function processSingleSlide(
   //console.log(slideResObj);
   // Open slideLayoutXX.xml
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var slideLayoutContent = readXmlFile(zip, layoutFilename);
-  var slideLayoutTables = indexNodes(slideLayoutContent);
-  var sldLayoutClrOvr = getTextByPathList(slideLayoutContent, [
+  const slideLayoutContent = readXmlFile(zip, layoutFilename);
+  const slideLayoutTables = indexNodes(slideLayoutContent);
+  const sldLayoutClrOvr = getTextByPathList(slideLayoutContent, [
     "p:sldLayout",
     "p:clrMapOvr",
     "a:overrideClrMapping",
@@ -140,13 +140,13 @@ export function processSingleSlide(
   // Read slide master filename of the slidelayout (Get slideMasterXX.xml)
   // @resName: ppt/slideLayouts/slideLayout1.xml
   // @masterName: ppt/slideLayouts/_rels/slideLayout1.xml.rels
-  var slideLayoutResFilename =
+  const slideLayoutResFilename =
     layoutFilename.replace("slideLayouts/slideLayout", "slideLayouts/_rels/slideLayout") + ".rels";
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var slideLayoutResContent = readXmlFile(zip, slideLayoutResFilename);
+  const slideLayoutResContent = readXmlFile(zip, slideLayoutResFilename);
   RelationshipArray = slideLayoutResContent["Relationships"]["Relationship"];
-  var masterFilename = "";
-  var layoutResObj = {};
+  let masterFilename = "";
+  const layoutResObj = {};
   if (RelationshipArray.constructor === Array) {
     for (var i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
@@ -169,19 +169,22 @@ export function processSingleSlide(
   }
   // Open slideMasterXX.xml
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var slideMasterContent = readXmlFile(zip, masterFilename);
-  var slideMasterTextStyles = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:txStyles"]);
-  var slideMasterTables = indexNodes(slideMasterContent);
+  const slideMasterContent = readXmlFile(zip, masterFilename);
+  const slideMasterTextStyles = getTextByPathList(slideMasterContent, [
+    "p:sldMaster",
+    "p:txStyles",
+  ]);
+  const slideMasterTables = indexNodes(slideMasterContent);
 
   /////////////////Amir/////////////
   //Open slideMasterXX.xml.rels
-  var slideMasterResFilename =
+  const slideMasterResFilename =
     masterFilename.replace("slideMasters/slideMaster", "slideMasters/_rels/slideMaster") + ".rels";
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var slideMasterResContent = readXmlFile(zip, slideMasterResFilename);
+  const slideMasterResContent = readXmlFile(zip, slideMasterResFilename);
   RelationshipArray = slideMasterResContent["Relationships"]["Relationship"];
   var themeFilename = "";
-  var masterResObj = {};
+  const masterResObj = {};
   if (RelationshipArray.constructor === Array) {
     for (var i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
@@ -204,16 +207,16 @@ export function processSingleSlide(
   }
   //console.log(themeFilename)
   //Load Theme file
-  var themeResObj = {};
+  const themeResObj = {};
   if (themeFilename !== undefined) {
-    var themeName = themeFilename.split("/").pop();
+    const themeName = themeFilename.split("/").pop();
     // @ts-expect-error TS(2769): No overload matches this call.
-    var themeResFileName = themeFilename.replace(themeName, "_rels/" + themeName) + ".rels";
+    const themeResFileName = themeFilename.replace(themeName, "_rels/" + themeName) + ".rels";
     //console.log("themeFilename: ", themeFilename, ", themeName: ", themeName, ", themeResFileName: ", themeResFileName)
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     var themeContent = readXmlFile(zip, themeFilename);
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-    var themeResContent = readXmlFile(zip, themeResFileName);
+    const themeResContent = readXmlFile(zip, themeResFileName);
     if (themeResContent !== null) {
       var relationshipArray = themeResContent["Relationships"]["Relationship"];
       if (relationshipArray !== undefined) {
@@ -244,23 +247,23 @@ export function processSingleSlide(
     }
   }
   //Load diagram file
-  var diagramResObj = {};
-  var digramFileContent = {};
+  const diagramResObj = {};
+  let digramFileContent = {};
   if (diagramFilename !== undefined) {
-    var diagName = diagramFilename.split("/").pop();
+    const diagName = diagramFilename.split("/").pop();
     // @ts-expect-error TS(2769): No overload matches this call.
-    var diagramResFileName = diagramFilename.replace(diagName, "_rels/" + diagName) + ".rels";
+    const diagramResFileName = diagramFilename.replace(diagName, "_rels/" + diagName) + ".rels";
     //console.log("diagramFilename: ", diagramFilename, ", themeName: ", themeName, ", diagramResFileName: ", diagramResFileName)
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     digramFileContent = readXmlFile(zip, diagramFilename);
     if (digramFileContent !== null && digramFileContent !== undefined && digramFileContent != "") {
-      var digramFileContentObjToStr = JSON.stringify(digramFileContent);
+      let digramFileContentObjToStr = JSON.stringify(digramFileContent);
       digramFileContentObjToStr = digramFileContentObjToStr.replace(/dsp:/g, "p:");
       digramFileContent = JSON.parse(digramFileContentObjToStr);
     }
 
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-    var digramResContent = readXmlFile(zip, diagramResFileName);
+    const digramResContent = readXmlFile(zip, diagramResFileName);
     if (digramResContent !== null) {
       var relationshipArray = digramResContent["Relationships"]["Relationship"];
       var themeFilename = "";
@@ -290,9 +293,9 @@ export function processSingleSlide(
   }
   //console.log("diagramResObj: " , diagramResObj)
   // =====< Step 3 >=====
-  var slideContent = readXmlFile(zip, sldFileName, true, app_verssion);
-  var nodes = slideContent["p:sld"]["p:cSld"]["p:spTree"];
-  var warpObj = {
+  const slideContent = readXmlFile(zip, sldFileName, true, app_verssion);
+  const nodes = slideContent["p:sld"]["p:cSld"]["p:spTree"];
+  const warpObj = {
     zip: zip,
     slideLayoutContent: slideLayoutContent,
     slideLayoutTables: slideLayoutTables,
@@ -309,7 +312,7 @@ export function processSingleSlide(
     diagramResObj: diagramResObj,
     defaultTextStyle: defaultTextStyle,
   };
-  var bgResult = "";
+  let bgResult = "";
   if (processFullTheme === true) {
     bgResult = getBackground(
       warpObj,
@@ -337,7 +340,7 @@ export function processSingleSlide(
     );
   }
 
-  var bgColor = "";
+  let bgColor = "";
   // @ts-expect-error TS(2367): This condition will always return 'false' since th... Remove this comment to see the full error message
   if (processFullTheme == "colorsAndImageOnly") {
     // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
@@ -364,7 +367,7 @@ export function processSingleSlide(
       "'>";
   }
   result += bgResult;
-  for (var nodeKey in nodes) {
+  for (const nodeKey in nodes) {
     if (nodes[nodeKey].constructor === Array) {
       for (var i = 0; i < nodes[nodeKey].length; i++) {
         result += processNodesInSlide(

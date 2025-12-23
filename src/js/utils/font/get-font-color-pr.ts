@@ -32,8 +32,8 @@ export function getFontColorPr(
   warpObj: any,
   slideFactor: number
 ): [any, any, string, string] {
-  var rPrNode = getTextByPathList(node, ["a:rPr"]);
-  var filTyp,
+  const rPrNode = getTextByPathList(node, ["a:rPr"]);
+  let filTyp,
     color,
     textBordr,
     colorType = "",
@@ -68,7 +68,7 @@ export function getFontColorPr(
     getTextByPathList(lstStyle, ["a:lvl" + lvl + "pPr", "a:defRPr"]) !== undefined
   ) {
     // lstStyle
-    var lstStyledefRPr = getTextByPathList(lstStyle, ["a:lvl" + lvl + "pPr", "a:defRPr"]);
+    const lstStyledefRPr = getTextByPathList(lstStyle, ["a:lvl" + lvl + "pPr", "a:defRPr"]);
     filTyp = getFillType(lstStyledefRPr);
     if (filTyp == "SOLID_FILL") {
       var solidFillNode = lstStyledefRPr["a:solidFill"];
@@ -93,7 +93,7 @@ export function getFontColorPr(
   }
 
   if (color === undefined) {
-    var sPstyle = getTextByPathList(pNode, ["p:style", "a:fontRef"]);
+    const sPstyle = getTextByPathList(pNode, ["p:style", "a:fontRef"]);
     if (sPstyle !== undefined) {
       color = getSolidFill(sPstyle, undefined, undefined, warpObj);
       if (color !== undefined) {
@@ -115,12 +115,12 @@ export function getFontColorPr(
   }
 
   if (color === undefined) {
-    var layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
-    var pPrNodeLaout = layoutMasterNode.nodeLaout;
-    var pPrNodeMaster = layoutMasterNode.nodeMaster;
+    const layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
+    const pPrNodeLaout = layoutMasterNode.nodeLaout;
+    const pPrNodeMaster = layoutMasterNode.nodeMaster;
 
     if (pPrNodeLaout !== undefined) {
-      var defRpRLaout = getTextByPathList(pPrNodeLaout, ["a:defRPr", "a:solidFill"]);
+      const defRpRLaout = getTextByPathList(pPrNodeLaout, ["a:defRPr", "a:solidFill"]);
       if (defRpRLaout !== undefined) {
         color = getSolidFill(defRpRLaout, undefined, undefined, warpObj);
         var highlightNode = getTextByPathList(pPrNodeLaout, ["a:defRPr", "a:highlight"]);
@@ -132,7 +132,7 @@ export function getFontColorPr(
     }
     if (color === undefined) {
       if (pPrNodeMaster !== undefined) {
-        var defRprMaster = getTextByPathList(pPrNodeMaster, ["a:defRPr", "a:solidFill"]);
+        const defRprMaster = getTextByPathList(pPrNodeMaster, ["a:defRPr", "a:solidFill"]);
         if (defRprMaster !== undefined) {
           color = getSolidFill(defRprMaster, undefined, undefined, warpObj);
           var highlightNode = getTextByPathList(pPrNodeMaster, ["a:defRPr", "a:highlight"]);
@@ -145,18 +145,18 @@ export function getFontColorPr(
     }
   }
 
-  var txtEffects: string[] = [];
-  var txtEffObj: any = {};
+  const txtEffects: string[] = [];
+  const txtEffObj: any = {};
 
   // textBordr
-  var txtBrdrNode = getTextByPathList(node, ["a:rPr", "a:ln"]);
+  const txtBrdrNode = getTextByPathList(node, ["a:rPr", "a:ln"]);
   textBordr = "";
   if (txtBrdrNode !== undefined && txtBrdrNode["a:noFill"] === undefined) {
-    var txBrd = getBorder(node, pNode, false, "text", warpObj);
+    const txBrd = getBorder(node, pNode, false, "text", warpObj);
     if (typeof txBrd === "string") {
-      var txBrdAry = txBrd.split(" ");
-      var brdSize = parseInt(txBrdAry[0].substring(0, txBrdAry[0].indexOf("px"))) + "px";
-      var brdClr = txBrdAry[2];
+      const txBrdAry = txBrd.split(" ");
+      const brdSize = parseInt(txBrdAry[0].substring(0, txBrdAry[0].indexOf("px"))) + "px";
+      const brdClr = txBrdAry[2];
       if (colorType == "solid") {
         textBordr =
           "-" +
@@ -183,11 +183,11 @@ export function getFontColorPr(
   }
 
   // glow
-  var txtGlowNode = getTextByPathList(node, ["a:rPr", "a:effectLst", "a:glow"]);
-  var oGlowStr = "";
+  const txtGlowNode = getTextByPathList(node, ["a:rPr", "a:effectLst", "a:glow"]);
+  let oGlowStr = "";
   if (txtGlowNode !== undefined) {
-    var glowClr = getSolidFill(txtGlowNode, undefined, undefined, warpObj);
-    var rad = txtGlowNode["attrs"]["rad"] ? txtGlowNode["attrs"]["rad"] * slideFactor : 0;
+    const glowClr = getSolidFill(txtGlowNode, undefined, undefined, warpObj);
+    const rad = txtGlowNode["attrs"]["rad"] ? txtGlowNode["attrs"]["rad"] * slideFactor : 0;
     oGlowStr =
       "0 0 " +
       rad +
@@ -241,22 +241,22 @@ export function getFontColorPr(
   }
 
   // shadow
-  var txtShadow = getTextByPathList(node, ["a:rPr", "a:effectLst", "a:outerShdw"]);
-  var oShadowStr = "";
+  const txtShadow = getTextByPathList(node, ["a:rPr", "a:effectLst", "a:outerShdw"]);
+  let oShadowStr = "";
   if (txtShadow !== undefined) {
-    var shadowClr = getSolidFill(txtShadow, undefined, undefined, warpObj);
-    var outerShdwAttrs = txtShadow["attrs"];
-    var algn = outerShdwAttrs["algn"];
-    var dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
-    var dist = parseInt(outerShdwAttrs["dist"]) * slideFactor;
-    var rotWithShape = outerShdwAttrs["rotWithShape"];
-    var blurRad = outerShdwAttrs["blurRad"]
+    const shadowClr = getSolidFill(txtShadow, undefined, undefined, warpObj);
+    const outerShdwAttrs = txtShadow["attrs"];
+    const algn = outerShdwAttrs["algn"];
+    const dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
+    const dist = parseInt(outerShdwAttrs["dist"]) * slideFactor;
+    const rotWithShape = outerShdwAttrs["rotWithShape"];
+    const blurRad = outerShdwAttrs["blurRad"]
       ? parseInt(outerShdwAttrs["blurRad"]) * slideFactor + "px"
       : "";
-    var sx = outerShdwAttrs["sx"] ? parseInt(outerShdwAttrs["sx"]) / 100000 : 1;
-    var sy = outerShdwAttrs["sy"] ? parseInt(outerShdwAttrs["sy"]) / 100000 : 1;
-    var vx = dist * Math.sin((dir * Math.PI) / 180);
-    var hx = dist * Math.cos((dir * Math.PI) / 180);
+    const sx = outerShdwAttrs["sx"] ? parseInt(outerShdwAttrs["sx"]) / 100000 : 1;
+    const sy = outerShdwAttrs["sy"] ? parseInt(outerShdwAttrs["sy"]) / 100000 : 1;
+    const vx = dist * Math.sin((dir * Math.PI) / 180);
+    const hx = dist * Math.cos((dir * Math.PI) / 180);
 
     if (!isNaN(vx) && !isNaN(hx)) {
       oShadowStr = hx + "px " + vx + "px " + blurRad + " #" + shadowClr;
@@ -270,7 +270,7 @@ export function getFontColorPr(
     }
   }
 
-  var text_effcts = "",
+  let text_effcts = "",
     txt_effects: any;
   if (colorType == "solid") {
     if (txtEffects.length > 0) {

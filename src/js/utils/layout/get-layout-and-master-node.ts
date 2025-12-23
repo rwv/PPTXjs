@@ -22,11 +22,11 @@ export function getLayoutAndMasterNode(
   type: any,
   warpObj: any
 ): { nodeLaout: any; nodeMaster: any } {
-  var pPrNodeLaout, pPrNodeMaster;
-  var pPrNode = node["a:pPr"];
+  let pPrNodeLaout, pPrNodeMaster;
+  const pPrNode = node["a:pPr"];
   //lvl
-  var lvl = 1;
-  var lvlNode = getTextByPathList(pPrNode, ["attrs", "lvl"]);
+  let lvl = 1;
+  const lvlNode = getTextByPathList(pPrNode, ["attrs", "lvl"]);
   if (lvlNode !== undefined) {
     lvl = parseInt(lvlNode) + 1;
   }
@@ -55,7 +55,7 @@ export function getLayoutAndMasterNode(
   }
   if (type !== undefined) {
     //slidelayout
-    var lvlStr = "a:lvl" + lvl + "pPr";
+    const lvlStr = "a:lvl" + lvl + "pPr";
     if (pPrNodeLaout === undefined) {
       pPrNodeLaout = getTextByPathList(warpObj, [
         "slideLayoutTables",

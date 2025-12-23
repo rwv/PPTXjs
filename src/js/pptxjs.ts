@@ -35,22 +35,22 @@ registerDivs2Slides();
 (function ($) {
   $.fn.pptxToHtml = function (options: any) {
     //var worker;
-    var $result = $(this);
-    var divId = $result.attr("id");
+    const $result = $(this);
+    const divId = $result.attr("id");
 
-    var isDone = false;
+    let isDone = false;
 
-    var MsgQueue = new Array();
+    const MsgQueue = new Array();
 
-    var chartID = 0;
+    const chartID = 0;
 
-    var rtl_langs_array = ["he-IL", "ar-AE", "ar-SA", "dv-MV", "fa-IR", "ur-PK"];
+    const rtl_langs_array = ["he-IL", "ar-AE", "ar-SA", "dv-MV", "fa-IR", "ur-PK"];
 
-    var slideFactor = 96 / 914400;
-    var fontSizeFactor = 4 / 3.2;
-    var isSlideMode = false;
-    var styleTable = {};
-    var settings = $.extend(
+    const slideFactor = 96 / 914400;
+    const fontSizeFactor = 4 / 3.2;
+    let isSlideMode = false;
+    const styleTable = {};
+    const settings = $.extend(
       true,
       {
         // These are the defaults.
@@ -115,7 +115,7 @@ registerDivs2Slides();
     if (settings.keyBoardShortCut) {
       $(document).bind("keydown", function (event: any) {
         event.preventDefault();
-        var key = event.keyCode;
+        const key = event.keyCode;
         console.log(key, isDone);
         if (key == 116 && !isSlideMode) {
           //F5
@@ -148,10 +148,10 @@ registerDivs2Slides();
     if (settings.fileInputId != "") {
       $("#" + settings.fileInputId).on("change", function (evt: any) {
         $result.html("");
-        var file = evt.target.files[0];
+        const file = evt.target.files[0];
         // var fileName = file[0].name;
         //var fileSize = file[0].size;
-        var fileType = file.type;
+        const fileType = file.type;
         if (
           fileType == "application/vnd.openxmlformats-officedocument.presentationml.presentation"
         ) {
@@ -173,9 +173,9 @@ registerDivs2Slides();
         return;
       }
       // @ts-expect-error TS(2304): Cannot find name 'JSZip'.
-      var zip: JsZip = new JSZip();
+      let zip: JsZip = new JSZip();
       zip = zip.load(file);
-      var rslt_ary = processPPTX(
+      const rslt_ary = processPPTX(
         zip,
         slideFactor,
         settings,
@@ -205,7 +205,7 @@ registerDivs2Slides();
       );
       //s = readXmlFile(zip, 'ppt/tableStyles.xml');
       //var slidesHeight = $("#" + divId + " .slide").height();
-      for (var i = 0; i < rslt_ary.length; i++) {
+      for (let i = 0; i < rslt_ary.length; i++) {
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         switch (rslt_ary[i]["type"]) {
           case "slide":
@@ -256,20 +256,20 @@ registerDivs2Slides();
         }
       }
 
-      var sScale = settings.slidesScale;
-      var trnsfrmScl = "";
+      const sScale = settings.slidesScale;
+      let trnsfrmScl = "";
       if (sScale != "") {
-        var numsScale = parseInt(sScale);
+        const numsScale = parseInt(sScale);
         var scaleVal = numsScale / 100;
         if (settings.slideMode && settings.slideType != "revealjs") {
           trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
         }
       }
 
-      var slidesHeight = $("#" + divId + " .slide").height();
-      var numOfSlides = $("#" + divId + " .slide").length;
+      const slidesHeight = $("#" + divId + " .slide").height();
+      const numOfSlides = $("#" + divId + " .slide").length;
       // @ts-expect-error TS(2454): Variable 'scaleVal' is used before being assigned.
-      var sScaleVal = sScale != "" ? scaleVal : 1;
+      const sScaleVal = sScale != "" ? scaleVal : 1;
       //console.log("slidesHeight: " + slidesHeight + "\nnumOfSlides: " + numOfSlides + "\nScale: " + sScaleVal)
 
       $("#all_slides_warpper").attr({

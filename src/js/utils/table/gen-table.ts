@@ -44,31 +44,31 @@ export function genTable(
   slideFactor: number,
   fontSizeFactor: number
 ): string {
-  var order = node["attrs"]["order"];
-  var tableNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl"]);
-  var xfrmNode = getTextByPathList(node, ["p:xfrm"]);
+  const order = node["attrs"]["order"];
+  const tableNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl"]);
+  const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
   /////////////////////////////////////////Amir////////////////////////////////////////////////
-  var getTblPr = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl", "a:tblPr"]);
-  var getColsGrid = getTextByPathList(node, [
+  const getTblPr = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl", "a:tblPr"]);
+  const getColsGrid = getTextByPathList(node, [
     "a:graphic",
     "a:graphicData",
     "a:tbl",
     "a:tblGrid",
     "a:gridCol",
   ]);
-  var tblDir = "";
+  let tblDir = "";
   if (getTblPr !== undefined) {
-    var isRTL = getTblPr["attrs"]["rtl"];
+    const isRTL = getTblPr["attrs"]["rtl"];
     tblDir = isRTL == 1 ? "dir=rtl" : "dir=ltr";
   }
-  var firstRowAttr = getTblPr["attrs"]["firstRow"]; //associated element <a:firstRow> in the table styles
-  var firstColAttr = getTblPr["attrs"]["firstCol"]; //associated element <a:firstCol> in the table styles
-  var lastRowAttr = getTblPr["attrs"]["lastRow"]; //associated element <a:lastRow> in the table styles
-  var lastColAttr = getTblPr["attrs"]["lastCol"]; //associated element <a:lastCol> in the table styles
-  var bandRowAttr = getTblPr["attrs"]["bandRow"]; //associated element <a:band1H>, <a:band2H> in the table styles
-  var bandColAttr = getTblPr["attrs"]["bandCol"]; //associated element <a:band1V>, <a:band2V> in the table styles
+  const firstRowAttr = getTblPr["attrs"]["firstRow"]; //associated element <a:firstRow> in the table styles
+  const firstColAttr = getTblPr["attrs"]["firstCol"]; //associated element <a:firstCol> in the table styles
+  const lastRowAttr = getTblPr["attrs"]["lastRow"]; //associated element <a:lastRow> in the table styles
+  const lastColAttr = getTblPr["attrs"]["lastCol"]; //associated element <a:lastCol> in the table styles
+  const bandRowAttr = getTblPr["attrs"]["bandRow"]; //associated element <a:band1H>, <a:band2H> in the table styles
+  const bandColAttr = getTblPr["attrs"]["bandCol"]; //associated element <a:band1V>, <a:band2V> in the table styles
   //console.log("getTblPr: ", getTblPr);
-  var tblStylAttrObj = {
+  const tblStylAttrObj = {
     isFrstRowAttr: firstRowAttr !== undefined && firstRowAttr == "1" ? 1 : 0,
     isFrstColAttr: firstColAttr !== undefined && firstColAttr == "1" ? 1 : 0,
     isLstRowAttr: lastRowAttr !== undefined && lastRowAttr == "1" ? 1 : 0,
@@ -77,20 +77,20 @@ export function genTable(
     isBandColAttr: bandColAttr !== undefined && bandColAttr == "1" ? 1 : 0,
   };
 
-  var tbleStyleId = getTblPr["a:tableStyleId"];
-  var thisTblStyle = getTableStyleById(tbleStyleId, tableStyles, tblStylAttrObj);
+  const tbleStyleId = getTblPr["a:tableStyleId"];
+  const thisTblStyle = getTableStyleById(tbleStyleId, tableStyles, tblStylAttrObj);
   if (thisTblStyle !== undefined) {
     warpObj["thisTbiStyle"] = thisTblStyle;
   }
-  var tblStyl = getTextByPathList(thisTblStyle, ["a:wholeTbl", "a:tcStyle"]);
-  var tblBorderStyl = getTextByPathList(tblStyl, ["a:tcBdr"]);
-  var tbl_borders = "";
+  const tblStyl = getTextByPathList(thisTblStyle, ["a:wholeTbl", "a:tcStyle"]);
+  const tblBorderStyl = getTextByPathList(tblStyl, ["a:tcBdr"]);
+  let tbl_borders = "";
   if (tblBorderStyl !== undefined) {
     tbl_borders = getTableBorders(tblBorderStyl, warpObj);
   }
-  var tbl_bgcolor = "";
-  var tbl_opacity = 1;
-  var tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:tblBg", "a:fillRef"]);
+  let tbl_bgcolor = "";
+  const tbl_opacity = 1;
+  let tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:tblBg", "a:fillRef"]);
   //console.log( "thisTblStyle:", thisTblStyle, "warpObj:", warpObj)
   if (tbl_bgFillschemeClr !== undefined) {
     // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
@@ -110,7 +110,7 @@ export function genTable(
     tbl_bgcolor = "background-color: #" + tbl_bgcolor + ";";
   }
   ////////////////////////////////////////////////////////////////////////////////////////////
-  var tableHtml =
+  let tableHtml =
     "<table " +
     tblDir +
     " style='border-collapse: collapse;" +
@@ -124,29 +124,29 @@ export function genTable(
     tbl_bgcolor +
     "'>";
 
-  var trNodes = tableNode["a:tr"];
+  let trNodes = tableNode["a:tr"];
   if (trNodes.constructor !== Array) {
     trNodes = [trNodes];
   }
   //if (trNodes.constructor === Array) {
   //multi rows
-  var totalrowSpan = 0;
-  var rowSpanAry: any = [];
-  for (var i = 0; i < trNodes.length; i++) {
+  let totalrowSpan = 0;
+  let rowSpanAry: any = [];
+  for (let i = 0; i < trNodes.length; i++) {
     //////////////rows Style ////////////Amir
-    var rowHeightParam = trNodes[i]["attrs"]["h"];
-    var rowHeight = 0;
-    var rowsStyl = "";
+    const rowHeightParam = trNodes[i]["attrs"]["h"];
+    let rowHeight = 0;
+    let rowsStyl = "";
     if (rowHeightParam !== undefined) {
       rowHeight = parseInt(rowHeightParam) * slideFactor;
       rowsStyl += "height:" + rowHeight + "px;";
     }
     // Get row styling based on position and table style attributes
     const rowStyle = getTableRowStyle(i, trNodes.length, tblStylAttrObj, thisTblStyle, warpObj);
-    var fillColor = rowStyle.fillColor;
-    var row_borders = rowStyle.row_borders;
-    var fontClrPr = rowStyle.fontClrPr;
-    var fontWeight = rowStyle.fontWeight;
+    const fillColor = rowStyle.fillColor;
+    const row_borders = rowStyle.row_borders;
+    const fontClrPr = rowStyle.fontClrPr;
+    const fontWeight = rowStyle.fontWeight;
     rowsStyl += row_borders !== undefined ? row_borders : "";
     rowsStyl += fontClrPr !== undefined ? " color: #" + fontClrPr + ";" : "";
     rowsStyl += fontWeight != "" ? " font-weight:" + fontWeight + ";" : "";
@@ -157,17 +157,17 @@ export function genTable(
     tableHtml += "<tr style='" + rowsStyl + "'>";
     ////////////////////////////////////////////////
 
-    var tcNodes = trNodes[i]["a:tc"];
+    const tcNodes = trNodes[i]["a:tc"];
     if (tcNodes !== undefined) {
       if (tcNodes.constructor === Array) {
         //multi columns
-        var j = 0;
+        let j = 0;
         if (rowSpanAry.length == 0) {
           rowSpanAry = Array.apply(null, Array(tcNodes.length)).map(function () {
             return 0;
           });
         }
-        var totalColSpan = 0;
+        let totalColSpan = 0;
         while (j < tcNodes.length) {
           if (rowSpanAry[j] == 0 && totalColSpan == 0) {
             var a_sorce;
@@ -242,7 +242,7 @@ export function genTable(
             var colStyl = cellParmAry[1];
             var cssName = cellParmAry[2];
             var rowSpan = cellParmAry[3];
-            var colSpan = cellParmAry[4];
+            const colSpan = cellParmAry[4];
 
             if (rowSpan !== undefined) {
               totalrowSpan++;

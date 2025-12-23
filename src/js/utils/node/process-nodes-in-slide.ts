@@ -65,7 +65,7 @@ export function processNodesInSlide(
   genChart: any,
   genDiagram: any
 ): string {
-  var result = "";
+  let result = "";
 
   switch (nodeKey) {
     case "p:sp": // Shape, Text

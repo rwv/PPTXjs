@@ -11,12 +11,12 @@ import type { JsZip } from "../../types/jszip";
  */
 export function getContentTypes(zip: JsZip) {
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var ContentTypesJson = readXmlFile(zip, "[Content_Types].xml");
+  const ContentTypesJson = readXmlFile(zip, "[Content_Types].xml");
 
-  var subObj = ContentTypesJson["Types"]["Override"];
-  var slidesLocArray = [];
-  var slideLayoutsLocArray = [];
-  for (var i = 0; i < subObj.length; i++) {
+  const subObj = ContentTypesJson["Types"]["Override"];
+  const slidesLocArray = [];
+  const slideLayoutsLocArray = [];
+  for (let i = 0; i < subObj.length; i++) {
     switch (subObj[i]["attrs"]["ContentType"]) {
       case "application/vnd.openxmlformats-officedocument.presentationml.slide+xml":
         slidesLocArray.push(subObj[i]["attrs"]["PartName"].substr(1));

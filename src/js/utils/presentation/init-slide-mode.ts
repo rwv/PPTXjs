@@ -7,10 +7,10 @@
 export function initSlideMode(divId: any, settings: any): void {
   //console.log(settings.slideType)
   if (settings.slideType == "" || settings.slideType == "divs2slidesjs") {
-    var slidesHeight = $("#" + divId + " .slide").height();
+    const slidesHeight = $("#" + divId + " .slide").height();
     $("#" + divId + " .slide").hide();
     setTimeout(function () {
-      var slideConf = settings.slideModeConfig;
+      const slideConf = settings.slideModeConfig;
       $(".slides-loadnig-msg").remove();
       $("#" + divId).divs2slides({
         first: slideConf.first,
@@ -28,17 +28,17 @@ export function initSlideMode(divId: any, settings: any): void {
         transitionTime: slideConf.transitionTime,
       });
 
-      var sScale = settings.slidesScale;
-      var trnsfrmScl = "";
+      const sScale = settings.slidesScale;
+      let trnsfrmScl = "";
       if (sScale != "") {
-        var numsScale = parseInt(sScale);
+        const numsScale = parseInt(sScale);
         var scaleVal = numsScale / 100;
         trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
       }
 
-      var numOfSlides = 1;
+      const numOfSlides = 1;
       // @ts-expect-error TS(2454): Variable 'scaleVal' is used before being assigned.
-      var sScaleVal = sScale != "" ? scaleVal : 1;
+      const sScaleVal = sScale != "" ? scaleVal : 1;
       //console.log(slidesHeight);
       $("#all_slides_warpper").attr({
         style: trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px",
@@ -46,7 +46,7 @@ export function initSlideMode(divId: any, settings: any): void {
     }, 1500);
   } else if (settings.slideType == "revealjs") {
     $(".slides-loadnig-msg").remove();
-    var revealjsPath = "";
+    let revealjsPath = "";
     if (settings.revealjsPath != "") {
       revealjsPath = settings.revealjsPath;
     } else {

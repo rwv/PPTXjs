@@ -7,23 +7,23 @@ import { getTextByPathList } from "../object";
  * @returns Object with idTable, idxTable, and typeTable lookup maps
  */
 export function indexNodes(content: any): { idTable: any; idxTable: any; typeTable: any } {
-  var keys = Object.keys(content);
+  const keys = Object.keys(content);
   // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
-  var spTreeNode = content[keys[0]]["p:cSld"]["p:spTree"];
+  const spTreeNode = content[keys[0]]["p:cSld"]["p:spTree"];
 
-  var idTable = {};
-  var idxTable = {};
-  var typeTable = {};
+  const idTable = {};
+  const idxTable = {};
+  const typeTable = {};
 
-  for (var key in spTreeNode) {
+  for (const key in spTreeNode) {
     if (key == "p:nvGrpSpPr" || key == "p:grpSpPr") {
       continue;
     }
 
-    var targetNode = spTreeNode[key];
+    const targetNode = spTreeNode[key];
 
     if (targetNode.constructor === Array) {
-      for (var i = 0; i < targetNode.length; i++) {
+      for (let i = 0; i < targetNode.length; i++) {
         var nvSpPrNode = targetNode[i]["p:nvSpPr"];
         var id = getTextByPathList(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
         var idx = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);

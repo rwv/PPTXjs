@@ -55,8 +55,8 @@ export function processGraphicFrameNode(
   processSpNode: any,
   genShape: any
 ): string | [string, any] {
-  var result = "";
-  var graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
+  let result = "";
+  const graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
 
   switch (graphicTypeUri) {
     case "http://schemas.openxmlformats.org/drawingml/2006/table":

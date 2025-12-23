@@ -81,17 +81,17 @@ function createPath(d: string, ctx: RibbonContext): string {
 function renderLeftRightRibbon(ctx: RibbonContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var refr = slideFactor;
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const refr = slideFactor;
+  let sAdj1,
     adj1 = 50000 * refr;
-  var sAdj2,
+  let sAdj2,
     adj2 = 50000 * refr;
-  var sAdj3,
+  let sAdj3,
     adj3 = 16667 * refr;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
@@ -104,13 +104,13 @@ function renderLeftRightRibbon(ctx: RibbonContext): string {
       }
     }
   }
-  var d_val;
-  var cnstVal1 = 33333 * refr;
-  var cnstVal2 = 100000 * refr;
-  var cnstVal3 = 200000 * refr;
-  var cnstVal4 = 400000 * refr;
-  var ss = Math.min(w, h);
-  var a3,
+  let d_val;
+  const cnstVal1 = 33333 * refr;
+  const cnstVal2 = 100000 * refr;
+  const cnstVal3 = 200000 * refr;
+  const cnstVal4 = 400000 * refr;
+  const ss = Math.min(w, h);
+  let a3,
     maxAdj1,
     a1,
     w1,
@@ -244,14 +244,14 @@ function renderLeftRightRibbon(ctx: RibbonContext): string {
 function renderRibbon(ctx: RibbonContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 16667 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = 50000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -261,21 +261,21 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
       }
     }
   }
-  var d_val;
-  var cnstVal1 = 25000 * slideFactor;
-  var cnstVal2 = 33333 * slideFactor;
-  var cnstVal3 = 75000 * slideFactor;
-  var cnstVal4 = 100000 * slideFactor;
-  var cnstVal5 = 200000 * slideFactor;
-  var cnstVal6 = 400000 * slideFactor;
-  var hc = w / 2,
+  let d_val;
+  const cnstVal1 = 25000 * slideFactor;
+  const cnstVal2 = 33333 * slideFactor;
+  const cnstVal3 = 75000 * slideFactor;
+  const cnstVal4 = 100000 * slideFactor;
+  const cnstVal5 = 200000 * slideFactor;
+  const cnstVal6 = 400000 * slideFactor;
+  const hc = w / 2,
     t = 0,
     l = 0,
     b = h,
     r = w,
     wd8 = w / 8,
     wd32 = w / 32;
-  var a1, a2, x10, dx2, x2, x9, x3, x8, x5, x6, x4, x7, y1, y2, y4, y3, hR, y6;
+  let a1, a2, x10, dx2, x2, x9, x3, x8, x5, x6, x4, x7, y1, y2, y4, y3, hR, y6;
   a1 = adj1 < 0 ? 0 : adj1 > cnstVal2 ? cnstVal2 : adj1;
   a2 = adj2 < cnstVal1 ? cnstVal1 : adj2 > cnstVal3 ? cnstVal3 : adj2;
   x10 = r - wd8;
@@ -290,7 +290,7 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
   x7 = x6 + wd32;
   hR = (h * a1) / cnstVal6;
   if (shapType == "ribbon2") {
-    var dy1, dy2, y7;
+    let dy1, dy2, y7;
     dy1 = (h * a1) / cnstVal5;
     y1 = b - dy1;
     dy2 = (h * a1) / cnstVal4;
@@ -401,7 +401,7 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
       "," +
       y7;
   } else if (shapType == "ribbon") {
-    var y5;
+    let y5;
     y1 = (h * a1) / cnstVal5;
     y2 = (h * a1) / cnstVal4;
     y4 = b - y2;
@@ -515,14 +515,14 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
 function renderWave(ctx: RibbonContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = shapType == "doubleWave" ? 6250 * slideFactor : 12500 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = 0;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -532,11 +532,11 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
       }
     }
   }
-  var d_val;
-  var cnstVal2 = -10000 * slideFactor;
-  var cnstVal3 = 50000 * slideFactor;
-  var cnstVal4 = 100000 * slideFactor;
-  var hc = w / 2,
+  let d_val;
+  const cnstVal2 = -10000 * slideFactor;
+  const cnstVal3 = 50000 * slideFactor;
+  const cnstVal4 = 100000 * slideFactor;
+  const hc = w / 2,
     t = 0,
     l = 0,
     b = h,
@@ -544,7 +544,7 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
     wd8 = w / 8,
     wd32 = w / 32;
   if (shapType == "doubleWave") {
-    var cnstVal1 = 12500 * slideFactor;
+    const cnstVal1 = 12500 * slideFactor;
     var a1,
       a2,
       y1,
@@ -661,7 +661,7 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
       y4 +
       " z";
   } else if (shapType == "wave") {
-    var cnstVal5 = 20000 * slideFactor;
+    const cnstVal5 = 20000 * slideFactor;
     var a1, a2, y1, dy2, y2, y3, y4, y5, y6, of2, dx2, x2, dx5, x5, dx3, x3, x4, x6, x10, x7, x8;
     a1 = adj1 < 0 ? 0 : adj1 > cnstVal5 ? cnstVal5 : adj1;
     a2 = adj2 < cnstVal2 ? cnstVal2 : adj2 > cnstVal4 ? cnstVal4 : adj2;
@@ -730,16 +730,16 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
 function renderEllipseRibbon(ctx: RibbonContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 25000 * slideFactor;
-  var sAdj2,
+  let sAdj2,
     adj2 = 50000 * slideFactor;
-  var sAdj3,
+  let sAdj3,
     adj3 = 12500 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -752,18 +752,18 @@ function renderEllipseRibbon(ctx: RibbonContext, shapType: string): string {
       }
     }
   }
-  var d_val;
-  var cnstVal1 = 25000 * slideFactor;
-  var cnstVal3 = 75000 * slideFactor;
-  var cnstVal4 = 100000 * slideFactor;
-  var cnstVal5 = 200000 * slideFactor;
-  var hc = w / 2,
+  let d_val;
+  const cnstVal1 = 25000 * slideFactor;
+  const cnstVal3 = 75000 * slideFactor;
+  const cnstVal4 = 100000 * slideFactor;
+  const cnstVal5 = 200000 * slideFactor;
+  const hc = w / 2,
     t = 0,
     l = 0,
     b = h,
     r = w,
     wd8 = w / 8;
-  var a1,
+  let a1,
     a2,
     q10,
     q11,
