@@ -21,8 +21,8 @@ import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
 export function getPregraphDir(
   node: PptxNode,
   textBodyNode: PptxNode,
-  idx: any,
-  type: any,
+  idx: number | undefined,
+  type: string,
   warpObj: WarpObject
 ): string {
   let rtl = getTextByPathList(node, ["a:pPr", "attrs", "rtl"]);

@@ -16,9 +16,9 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  */
 export function getFontType(
   node: PptxNode,
-  type: any,
+  type: string,
   warpObj: WarpObject,
-  pFontStyle: any
+  pFontStyle: PptxNode
 ): string {
   let typeface = getTextByPathList(node, ["a:rPr", "a:latin", "attrs", "typeface"]);
 
