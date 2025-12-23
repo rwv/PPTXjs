@@ -45,7 +45,7 @@ export function genDiagram(
   isFirstBr: { value: boolean }
 ): string {
   //console.log(warpObj)
-  //readXmlFile(zip, sldFileName)
+  //readXmlFile(archive, sldFileName)
   /**files define the diagram:
    * 1-colors#.xml,
    * 2-data#.xml,
@@ -55,7 +55,7 @@ export function genDiagram(
    */
   ///get colors#.xml, data#.xml , layout#.xml , quickStyle#.xml
   const order = node["attrs"]["order"];
-  const archive = warpObj["archive"] ?? warpObj["zip"];
+  const archive = warpObj["archive"];
   const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
   const dgmRelIds = getTextByPathList(node, ["a:graphic", "a:graphicData", "dgm:relIds", "attrs"]);
   //console.log(dgmRelIds)
@@ -86,7 +86,7 @@ export function genDiagram(
   // }
   // var dgmDrwFile = "";
   // if (dgmDrwFileName != "") {
-  //     dgmDrwFile = readXmlFile(zip, dgmDrwFileName);
+  //     dgmDrwFile = readXmlFile(archive, dgmDrwFileName);
   // }
   // var dgmDrwSpArray = getTextByPathList(dgmDrwFile, ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
   //var dgmDrwSpArray = getTextByPathList(warpObj["digramFileContent"], ["dsp:drawing", "dsp:spTree", "dsp:sp"]);

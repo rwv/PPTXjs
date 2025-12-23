@@ -41,7 +41,7 @@ export function getPicFill(type: any, node: any, warpObj: any) {
     if (imgExt === "xml") {
       return undefined;
     }
-    const imgArrayBuffer = warpObj["zip"].file(imgPath).asArrayBuffer();
+    const imgArrayBuffer = warpObj["archive"].readAsArrayBuffer(imgPath);
     const imgMimeType = getMimeType(imgExt);
     img = "data:" + imgMimeType + ";base64," + base64ArrayBuffer(imgArrayBuffer);
     setTextByPathList(warpObj, ["loaded-images", imgPath], img);

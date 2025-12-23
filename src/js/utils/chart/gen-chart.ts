@@ -35,9 +35,7 @@ export function genChart(
 
   const rid = node["a:graphic"]["a:graphicData"]["c:chart"]["attrs"]["r:id"];
   const refName = warpObj["slideResObj"][rid]["target"];
-  const archive = warpObj["archive"] ?? warpObj["zip"];
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const content = readXmlFile(archive, refName);
+  const content = readXmlFile(warpObj["archive"], refName);
   const plotArea = getTextByPathList(content, ["c:chartSpace", "c:chart", "c:plotArea"]);
 
   let chartData = null;
