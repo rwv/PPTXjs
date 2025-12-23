@@ -82,7 +82,7 @@ export function getBackground(
     "'>";
   const node_ph_type_ary = [];
   if (nodesSldLayout !== undefined) {
-    for (let nodeKey in nodesSldLayout) {
+    for (const nodeKey in nodesSldLayout) {
       if (nodesSldLayout[nodeKey].constructor === Array) {
         for (let i = 0; i < nodesSldLayout[nodeKey].length; i++) {
           const ph_type = getTextByPathList(nodesSldLayout[nodeKey][i], [
@@ -149,7 +149,7 @@ export function getBackground(
     }
   }
   if (nodesSldMaster !== undefined && (showMasterSp === "1" || showMasterSp === undefined)) {
-    for (let nodeKey in nodesSldMaster) {
+    for (const nodeKey in nodesSldMaster) {
       if (nodesSldMaster[nodeKey].constructor === Array) {
         for (let i = 0; i < nodesSldMaster[nodeKey].length; i++) {
           const ph_type = getTextByPathList(nodesSldMaster[nodeKey][i], [

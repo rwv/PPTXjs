@@ -2,7 +2,6 @@ import { getTextByPathList } from "../object";
 import { getFontColorPr, getFontSize } from "../font";
 import { getLayoutAndMasterNode } from "../layout";
 import { getSolidFill } from "../color";
-import { getHtmlBullet } from "./get-html-bullet";
 import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handlers";
 
 /**
@@ -42,7 +41,7 @@ export function genBuChar(
 ): string | [string, number, number] {
   //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
   ///////////////////////////////////////Amir///////////////////////////////
-  const sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
+  const _sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
   const lstStyle = textBodyNode["a:lstStyle"];
 
   let rNode = getTextByPathList(node, ["a:r"]);

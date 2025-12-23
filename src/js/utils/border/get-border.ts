@@ -15,7 +15,7 @@ import { getGradientFill } from "../fill/get-gradient-fill";
 import { getPatternFill } from "../fill/get-pattern-fill";
 
 export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, warpObj: any) {
-  let cssText, lineNode, subNodeTxt;
+  let cssText, lineNode, _subNodeTxt;
 
   if (bType === "shape") {
     cssText = "border: ";

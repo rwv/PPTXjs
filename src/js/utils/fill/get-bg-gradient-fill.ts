@@ -25,7 +25,7 @@ export function getBgGradientFill(
     const pos_ary: string[] = [];
 
     for (let i = 0; i < gsLst.length; i++) {
-      let lo_tint;
+      let _lo_tint;
       let lo_color = "";
       lo_color = getSolidFill(
         gsLst[i],

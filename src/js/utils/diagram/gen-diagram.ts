@@ -51,7 +51,7 @@ export function genDiagram(
    * 5-drawing#.xml, which Microsoft added as an extension for persisting diagram layout information.
    */
   ///get colors#.xml, data#.xml , layout#.xml , quickStyle#.xml
-  const order = node["attrs"]["order"];
+  const _order = node["attrs"]["order"];
   const archive = warpObj["archive"];
   const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
   const dgmRelIds = getTextByPathList(node, ["a:graphic", "a:graphicData", "dgm:relIds", "attrs"]);
@@ -66,14 +66,14 @@ export function genDiagram(
     dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
   //console.log("dgmClrFileName: " , dgmClrFileName,", dgmDataFileName: ",dgmDataFileName,", dgmLayoutFileName: ",dgmLayoutFileName,", dgmQuickStyleFileName: ",dgmQuickStyleFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const dgmClr = readXmlFile(archive, dgmClrFileName);
+  const _dgmClr = readXmlFile(archive, dgmClrFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const dgmData = readXmlFile(archive, dgmDataFileName);
+  const _dgmData = readXmlFile(archive, dgmDataFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const dgmLayout = readXmlFile(archive, dgmLayoutFileName);
+  const _dgmLayout = readXmlFile(archive, dgmLayoutFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  const dgmQuickStyle = readXmlFile(archive, dgmQuickStyleFileName);
-  //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
+  const _dgmQuickStyle = readXmlFile(archive, dgmQuickStyleFileName);
+  //console.log(_dgmClr,_dgmData,_dgmLayout,_dgmQuickStyle)
   ///get drawing#.xml
   // var dgmDrwFileName = "";
   // var dataModelExt = getTextByPathList(dgmData, ["dgm:dataModel", "dgm:extLst", "a:ext", "dsp:dataModelExt", "attrs"]);
