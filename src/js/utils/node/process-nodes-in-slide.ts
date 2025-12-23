@@ -123,7 +123,7 @@ export function processNodesInSlide(
       );
       break;
     case "p:grpSp":
-      result = processGroupSpNode(nodeValue, warpObj, source, slideFactor, processNodesInSlide);
+      result = processGroupSpNode(nodeValue, warpObj, source, slideFactor);
       break;
     case "mc:AlternateContent": //Equations and formulas as Image
       //console.log("mc:AlternateContent nodeValue:" , nodeValue , "nodes:",nodes, "sType:",sType)
@@ -132,8 +132,7 @@ export function processNodesInSlide(
         mcFallbackNode,
         warpObj,
         source,
-        slideFactor,
-        processNodesInSlide
+        slideFactor
       );
       break;
     default:

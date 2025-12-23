@@ -103,7 +103,7 @@ export function processGraphicFrameNode(
       }
       //console.log("node:", node, "oleObjNode:", oleObjNode)
       if (oleObjNode !== undefined) {
-        result = processGroupSpNode(oleObjNode, warpObj, source, slideFactor, processNodesInSlide);
+        result = processGroupSpNode(oleObjNode, warpObj, source, slideFactor);
       }
       break;
     default:
