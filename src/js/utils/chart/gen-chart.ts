@@ -8,6 +8,7 @@
  * @param slideFactor - Conversion factor from PPTX units to pixels
  * @returns Tuple of [HTML string, updated chartID]
  */
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object";
 import { getPosition } from "../layout/get-position";
 import { getSize } from "../layout/get-size";
@@ -15,8 +16,8 @@ import { readXmlFile } from "../xml/read-xml-file";
 import { extractChartData } from "./extract-chart-data";
 
 export function genChart(
-  node: any,
-  warpObj: any,
+  node: PptxNode,
+  warpObj: WarpObject,
   chartID: number,
   MsgQueue: any[],
   slideFactor: number

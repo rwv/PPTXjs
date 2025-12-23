@@ -25,10 +25,10 @@ import { getPicFill } from "./get-pic-fill";
  */
 export function getBgPicFill(
   bgPr: PptxNode,
-  sorce: any,
+  sorce: string,
   warpObj: WarpObject,
   phClr: any,
-  _index: any
+  _index: number | undefined
 ): string {
   const picFillBase64 = getPicFill(sorce, bgPr["a:blipFill"], warpObj);
   const ordr = bgPr["attrs"]["order"];
