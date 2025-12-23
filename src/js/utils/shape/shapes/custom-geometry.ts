@@ -239,12 +239,10 @@ export function renderCustomGeometry(
         // }
 
         d += " M" + spX + "," + spY;
-
       } else if (multiSapeAry[k].type === "lnto") {
         const Lx = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
         const Ly = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
         d += " L" + Lx + "," + Ly;
-
       } else if (multiSapeAry[k].type === "cubicBezTo") {
         const Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX; //slideFactor;
         const Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY; //slideFactor;
@@ -265,7 +263,6 @@ export function renderCustomGeometry(
         d += shapeArc(wR, hR, wR, hR, stAng, endAng, false);
       } else if (multiSapeAry[k].type === "quadBezTo") {
         console.log("custShapType: quadBezTo - TODO");
-
       } else if (multiSapeAry[k].type === "close") {
         // result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
         //     "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";

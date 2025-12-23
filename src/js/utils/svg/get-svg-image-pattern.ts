@@ -14,7 +14,12 @@ import { getBase64ImageDimensions } from "../media/get-base64-image-dimensions";
 import { escapeHtml } from "../string/escape-html";
 import tinycolor from "tinycolor2";
 
-export function getSvgImagePattern(node: PptxNode, fill: any, shpId: any, warpObj: WarpObject): string {
+export function getSvgImagePattern(
+  node: PptxNode,
+  fill: any,
+  shpId: any,
+  warpObj: WarpObject
+): string {
   const pic_dim = getBase64ImageDimensions(fill);
   const width = pic_dim?.[0];
   const height = pic_dim?.[1];

@@ -305,7 +305,10 @@ export function genTable(
         let a_sorce;
         if (tblStylAttrObj["isFrstColAttr"] === 1 && !(tblStylAttrObj["isLstRowAttr"] === 1)) {
           a_sorce = "a:firstCol";
-        } else if (tblStylAttrObj["isBandColAttr"] === 1 && !(tblStylAttrObj["isLstRowAttr"] === 1)) {
+        } else if (
+          tblStylAttrObj["isBandColAttr"] === 1 &&
+          !(tblStylAttrObj["isLstRowAttr"] === 1)
+        ) {
           let aBandNode = getTextByPathList(thisTblStyle, ["a:band2V"]);
           if (aBandNode === undefined) {
             aBandNode = getTextByPathList(thisTblStyle, ["a:band1V"]);

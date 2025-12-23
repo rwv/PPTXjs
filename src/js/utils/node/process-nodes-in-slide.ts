@@ -87,7 +87,8 @@ export function processNodesInSlide(
     case "p:pic": // Picture
       result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
       break;
-    case "p:graphicFrame": { // Chart, Diagram, Table
+    case "p:graphicFrame": {
+      // Chart, Diagram, Table
       const graphicResult = processGraphicFrameNode(
         nodeValue,
         warpObj,
@@ -127,7 +128,8 @@ export function processNodesInSlide(
         settings
       );
       break;
-    case "mc:AlternateContent": { //Equations and formulas as Image
+    case "mc:AlternateContent": {
+      //Equations and formulas as Image
       //console.log("mc:AlternateContent nodeValue:" , nodeValue , "nodes:",nodes, "sType:",sType)
       const mcFallbackNode = getTextByPathList(nodeValue, ["mc:Fallback"]);
       result = processGroupSpNode(

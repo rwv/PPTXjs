@@ -25,10 +25,7 @@ import type { tNode } from "txml/txml";
  * @param options.simplify - If truthy, simplify the output and add order attributes
  * @returns Parsed XML structure
  */
-export function tXml(
-  content: string,
-  options?: { simplify?: number | boolean }
-): any {
+export function tXml(content: string, options?: { simplify?: number | boolean }): any {
   const parsed = parse(content);
 
   if (options?.simplify) {
@@ -62,10 +59,7 @@ export function tXml(
 
         // Add order attribute to object-type results
         if (typeof kids === "object" && !Array.isArray(kids)) {
-          if (
-            child.attributes &&
-            Object.keys(child.attributes as object).length > 0
-          ) {
+          if (child.attributes && Object.keys(child.attributes as object).length > 0) {
             // Merge original attributes with order
             kids.attrs = { ...(child.attributes as object), order: order };
           } else {
@@ -99,11 +93,4 @@ tXml.getElementById = getElementById;
 tXml.getElementsByClassName = getElementsByClassName;
 
 // Named exports for modern ES module usage
-export {
-  parse,
-  filter,
-  stringify,
-  toContentString,
-  getElementById,
-  getElementsByClassName,
-};
+export { parse, filter, stringify, toContentString, getElementById, getElementsByClassName };

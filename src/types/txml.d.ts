@@ -22,24 +22,12 @@ declare module "txml" {
 
   export function parse(S: string, options?: TParseOptions): (tNode | string)[];
   export function simplify(children: tNode[]): any;
-  export function simplifyLostLess(
-    children: tNode[],
-    parentAttributes?: object
-  ): any;
-  export function filter(
-    children: any,
-    f: Function,
-    dept?: number,
-    path?: string
-  ): any[];
+  export function simplifyLostLess(children: tNode[], parentAttributes?: object): any;
+  export function filter(children: any, f: Function, dept?: number, path?: string): any[];
   export function stringify(O: tNode): string;
   export function toContentString(tDom: any): string;
   export function getElementById(S: any, id: any, simplified: any): any;
-  export function getElementsByClassName(
-    S: any,
-    classname: any,
-    simplified: any
-  ): any;
+  export function getElementsByClassName(S: any, classname: any, simplified: any): any;
 }
 
 declare module "txml/txml" {
@@ -61,22 +49,10 @@ declare module "txml/txml" {
 
   export function parse(S: string, options?: TParseOptions): (tNode | string)[];
   export function simplify(children: tNode[]): any;
-  export function simplifyLostLess(
-    children: tNode[],
-    parentAttributes?: object
-  ): any;
-  export function filter(
-    children: any,
-    f: Function,
-    dept?: number,
-    path?: string
-  ): any[];
+  export function simplifyLostLess(children: tNode[], parentAttributes?: object): any;
+  export function filter(children: any, f: Function, dept?: number, path?: string): any[];
   export function stringify(O: tNode): string;
   export function toContentString(tDom: any): string;
   export function getElementById(S: any, id: any, simplified: any): any;
-  export function getElementsByClassName(
-    S: any,
-    classname: any,
-    simplified: any
-  ): any;
+  export function getElementsByClassName(S: any, classname: any, simplified: any): any;
 }
