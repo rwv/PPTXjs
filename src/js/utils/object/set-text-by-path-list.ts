@@ -1,7 +1,9 @@
+import type { PptxNode, PathList } from "../../types";
+
 /**
  * Set value in nested object by path array, creating intermediate objects as needed
  *
- * @param node - The object to modify
+ * @param node - The object to modify (typically a PPTX XML node)
  * @param path - Array of keys representing the path to set the value
  * @param value - The value to set at the path
  * @returns undefined if node is undefined
@@ -12,7 +14,7 @@
  * setTextByPathList(obj, ['a', 'b', 'c'], 'value');
  * // obj is now { a: { b: { c: 'value' } } }
  */
-export function setTextByPathList(node: any, path: (string | number)[], value: any): any {
+export function setTextByPathList(node: PptxNode, path: PathList, value: any): void {
   if (path.constructor !== Array) {
     throw Error("Error of path type! path is not array.");
   }
@@ -22,7 +24,7 @@ export function setTextByPathList(node: any, path: (string | number)[], value: a
   }
 
   Reflect.defineProperty(node, "set", {
-    value: function (parts: (string | number)[], value: any) {
+    value: function (parts: PathList, value: any) {
       let obj: any = this;
       const len: number = parts.length;
       for (let i = 0; i < len; i++) {
