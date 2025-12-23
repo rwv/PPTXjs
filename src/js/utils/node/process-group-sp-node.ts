@@ -20,13 +20,29 @@ import { processNodesInSlide } from "./process-nodes-in-slide";
  * @param warpObj - Warp object containing slide resources
  * @param source - Source context
  * @param slideFactor - EMU to pixel conversion factor
+ * @param tableStyles - Table styles from presentation
+ * @param isFirstBr - Object {value: boolean} for line break state
+ * @param styleTable - CSS style table
+ * @param rtlLangsArray - RTL language codes
+ * @param fontSizeFactor - Font size scaling factor
+ * @param chartID - Chart ID counter
+ * @param MsgQueue - Message queue for chart processing
+ * @param settings - Plugin settings
  * @returns HTML string for the group
  */
 export function processGroupSpNode(
   node: any,
   warpObj: any,
   source: any,
-  slideFactor: number
+  slideFactor: number,
+  tableStyles: any,
+  isFirstBr: { value: boolean },
+  styleTable: any,
+  rtlLangsArray: string[],
+  fontSizeFactor: number,
+  chartID: any,
+  MsgQueue: any,
+  settings: any
 ): string {
   //console.log("processGroupSpNode: node: ", node)
   const xfrmNode = getTextByPathList(node, ["p:grpSpPr", "a:xfrm"]);
@@ -103,11 +119,43 @@ export function processGroupSpNode(
     if (node[nodeKey].constructor === Array) {
       for (let i = 0; i < node[nodeKey].length; i++) {
         // @ts-expect-error TS(2454): Variable 'sType' is used before being assigned.
-        result += processNodesInSlide(nodeKey, node[nodeKey][i], node, warpObj, source, sType);
+        result += processNodesInSlide(
+          nodeKey,
+          node[nodeKey][i],
+          node,
+          warpObj,
+          source,
+          sType,
+          tableStyles,
+          isFirstBr,
+          styleTable,
+          rtlLangsArray,
+          slideFactor,
+          fontSizeFactor,
+          chartID,
+          MsgQueue,
+          settings
+        );
       }
     } else {
       // @ts-expect-error TS(2454): Variable 'sType' is used before being assigned.
-      result += processNodesInSlide(nodeKey, node[nodeKey], node, warpObj, source, sType);
+      result += processNodesInSlide(
+        nodeKey,
+        node[nodeKey],
+        node,
+        warpObj,
+        source,
+        sType,
+        tableStyles,
+        isFirstBr,
+        styleTable,
+        rtlLangsArray,
+        slideFactor,
+        fontSizeFactor,
+        chartID,
+        MsgQueue,
+        settings
+      );
     }
   }
 

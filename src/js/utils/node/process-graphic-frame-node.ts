@@ -29,6 +29,7 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @param fontSizeFactor - Font size scaling factor
  * @param chartID - Chart ID counter object (modified in place)
  * @param MsgQueue - Message queue for chart processing
+ * @param settings - Plugin settings
  * @returns HTML string for the graphic frame content
  */
 export function processGraphicFrameNode(
@@ -43,7 +44,8 @@ export function processGraphicFrameNode(
   slideFactor: number,
   fontSizeFactor: number,
   chartID: { value: number },
-  MsgQueue: any
+  MsgQueue: any,
+  settings: any
 ): string {
   let result = "";
   const chartIdRef = chartID ?? { value: 0 };
@@ -93,7 +95,20 @@ export function processGraphicFrameNode(
       }
       //console.log("node:", node, "oleObjNode:", oleObjNode)
       if (oleObjNode !== undefined) {
-        result = processGroupSpNode(oleObjNode, warpObj, source, slideFactor);
+        result = processGroupSpNode(
+          oleObjNode,
+          warpObj,
+          source,
+          slideFactor,
+          tableStyles,
+          isFirstBr,
+          styleTable,
+          rtlLangsArray,
+          fontSizeFactor,
+          chartID,
+          MsgQueue,
+          settings
+        );
       }
       break;
     default:
