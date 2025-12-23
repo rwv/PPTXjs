@@ -61,8 +61,13 @@ interface Divs2SlidesSettings {
   transitionTime: number /** transition time in seconds */;
 }
 
-(function ($) {
-  var orginalMainDivWidth,
+/**
+ * Register divs2slides jQuery plugin
+ * This function should be called once to add the .divs2slides() method to jQuery
+ */
+export function registerDivs2Slides() {
+  (function ($) {
+    var orginalMainDivWidth,
     orginalMainDivHeight,
     orginalSlidesWarpperScale,
     orginalSlideTop,
@@ -580,4 +585,5 @@ interface Divs2SlidesSettings {
     }
     pptxjslideObj.init();
   };
-})(jQuery);
+  })(jQuery);
+}

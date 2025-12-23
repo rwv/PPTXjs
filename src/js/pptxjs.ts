@@ -27,6 +27,10 @@ import { getBackground, processSingleSlide } from "./utils/slide";
 import { processPPTX } from "./utils/pptx";
 import { readXmlFile, getContentTypes, getSlideSizeAndSetDefaultTextStyle } from "./utils/xml";
 import type { JsZip } from "./types/jszip";
+import { registerDivs2Slides } from "./divs2slides";
+
+// Register divs2slides jQuery plugin
+registerDivs2Slides();
 
 (function ($) {
   $.fn.pptxToHtml = function (options: any) {
@@ -100,11 +104,6 @@ import type { JsZip } from "./types/jszip";
             .html("<span style='text-align: center;'>Loading... (1%)</span>")
         )
     );
-    if (settings.slideMode) {
-      if (!jQuery().divs2slides) {
-        jQuery.getScript("./js/divs2slides.js");
-      }
-    }
     if (settings.jsZipV2 !== false) {
       jQuery.getScript(settings.jsZipV2);
       if (localStorage.getItem("isPPTXjsReLoaded") !== "yes") {
