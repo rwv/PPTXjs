@@ -194,10 +194,8 @@ export function renderCustomGeometry(
         const clsAttrs = closeNode[key]["attrs"];
         //var clsAttrs = closeNode["attrs"];
         const clsOrder = clsAttrs["order"];
-        const ptObj = {};
-        // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+        const ptObj: any = {};
         ptObj.type = "close";
-        // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
         ptObj.order = clsOrder;
         multiSapeAry.push(ptObj);
       });

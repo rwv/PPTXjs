@@ -1,3 +1,5 @@
+/// <reference path="../types/jszip.d.ts" />
+
 import { PptxArchive } from "./pptx-archive";
 
 /**
@@ -16,7 +18,6 @@ export class JSZipV2Adapter implements PptxArchive {
    * @param data - PPTX file as ArrayBuffer
    */
   constructor(data: ArrayBuffer) {
-    // @ts-expect-error - JSZip v2 is loaded globally via script tag
     this.zip = new JSZip();
     this.zip.load(data);
   }

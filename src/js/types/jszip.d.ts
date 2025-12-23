@@ -8,7 +8,7 @@
 /**
  * Represents a file in the JSZip archive
  */
-export interface JSZipFile {
+interface JSZipFile {
   /**
    * Get the file content as text
    */
@@ -46,7 +46,7 @@ export interface JSZipFile {
 /**
  * JSZip v2.x interface
  */
-export interface JsZip {
+interface JsZip {
   /**
    * Get a file from the archive
    * @param path - Path to the file
@@ -106,3 +106,11 @@ export interface JsZip {
    */
   remove(path: string): JsZip;
 }
+
+/**
+ * JSZip v2 global constructor
+ * JSZip v2.x is loaded via script tag and exposes a global JSZip constructor
+ */
+declare const JSZip: {
+  new (): JsZip;
+};
