@@ -48,6 +48,9 @@ export function renderCustomGeometry(
 ): string {
   let result = "";
 
+  // Extract xfrm node from slideLayoutSpNode for position/size calculations
+  const slideLayoutXfrmNode = getTextByPathList(slideLayoutSpNode, ["p:spPr", "a:xfrm"]);
+
   //custGeom here - Amir ///////////////////////////////////////////////////////
   //http://officeopenxml.com/drwSp-custGeom.php
   const pathLstNode = getTextByPathList(custShapType, ["a:pathLst"]);
