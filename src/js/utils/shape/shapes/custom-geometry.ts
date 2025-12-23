@@ -51,25 +51,25 @@ export function renderCustomGeometry(
 
   //custGeom here - Amir ///////////////////////////////////////////////////////
   //http://officeopenxml.com/drwSp-custGeom.php
-  var pathLstNode = getTextByPathList(custShapType, ["a:pathLst"]);
-  var pathNodes = getTextByPathList(pathLstNode, ["a:path"]);
+  const pathLstNode = getTextByPathList(custShapType, ["a:pathLst"]);
+  const pathNodes = getTextByPathList(pathLstNode, ["a:path"]);
   //var pathNode = getTextByPathList(pathLstNode, ["a:path", "attrs"]);
-  var maxX = parseInt(pathNodes["attrs"]["w"]); // * slideFactor;
-  var maxY = parseInt(pathNodes["attrs"]["h"]); // * slideFactor;
-  var cX = (1 / maxX) * w;
-  var cY = (1 / maxY) * h;
+  const maxX = parseInt(pathNodes["attrs"]["w"]); // * slideFactor;
+  const maxY = parseInt(pathNodes["attrs"]["h"]); // * slideFactor;
+  const cX = (1 / maxX) * w;
+  const cY = (1 / maxY) * h;
   //console.log("w = "+w+"\nh = "+h+"\nmaxX = "+maxX +"\nmaxY = " + maxY);
   //cheke if it is close shape
 
   //console.log("custShapType : ", custShapType, ", pathLstNode: ", pathLstNode, ", node: ", node);//, ", y:", y, ", w:", w, ", h:", h);
 
-  var moveToNode = getTextByPathList(pathNodes, ["a:moveTo"]);
-  var total_shapes = moveToNode.length;
+  let moveToNode = getTextByPathList(pathNodes, ["a:moveTo"]);
+  const total_shapes = moveToNode.length;
 
-  var lnToNodes = pathNodes["a:lnTo"]; //total a:pt : 1
-  var cubicBezToNodes = pathNodes["a:cubicBezTo"]; //total a:pt : 3
-  var arcToNodes = pathNodes["a:arcTo"]; //total a:pt : 0?1? ; attrs: ~4 ()
-  var closeNode = getTextByPathList(pathNodes, ["a:close"]); //total a:pt : 0
+  const lnToNodes = pathNodes["a:lnTo"]; //total a:pt : 1
+  let cubicBezToNodes = pathNodes["a:cubicBezTo"]; //total a:pt : 3
+  const arcToNodes = pathNodes["a:arcTo"]; //total a:pt : 0?1? ; attrs: ~4 ()
+  let closeNode = getTextByPathList(pathNodes, ["a:close"]); //total a:pt : 0
   //quadBezTo //total a:pt : 2 - TODO
   //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
   if (!Array.isArray(moveToNode)) {
@@ -77,21 +77,21 @@ export function renderCustomGeometry(
   }
   //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
 
-  var multiSapeAry = [];
+  const multiSapeAry = [];
   if (moveToNode.length > 0) {
     //a:moveTo
     Object.keys(moveToNode).forEach(function (key) {
-      var moveToPtNode = moveToNode[key]["a:pt"];
+      const moveToPtNode = moveToNode[key]["a:pt"];
       if (moveToPtNode !== undefined) {
         Object.keys(moveToPtNode).forEach(function (key2) {
-          var ptObj = {};
-          var moveToNoPt = moveToPtNode[key2];
+          const ptObj = {};
+          const moveToNoPt = moveToPtNode[key2];
           // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-          var spX = moveToNoPt[("attrs", "x")]; //parseInt(moveToNoPt["attrs", "x"]) * slideFactor;
+          const spX = moveToNoPt[("attrs", "x")]; //parseInt(moveToNoPt["attrs", "x"]) * slideFactor;
           // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-          var spY = moveToNoPt[("attrs", "y")]; //parseInt(moveToNoPt["attrs", "y"]) * slideFactor;
+          const spY = moveToNoPt[("attrs", "y")]; //parseInt(moveToNoPt["attrs", "y"]) * slideFactor;
           // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-          var ptOrdr = moveToNoPt[("attrs", "order")];
+          const ptOrdr = moveToNoPt[("attrs", "order")];
           // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
           ptObj.type = "movto";
           // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
@@ -108,17 +108,17 @@ export function renderCustomGeometry(
     //a:lnTo
     if (lnToNodes !== undefined) {
       Object.keys(lnToNodes).forEach(function (key) {
-        var lnToPtNode = lnToNodes[key]["a:pt"];
+        const lnToPtNode = lnToNodes[key]["a:pt"];
         if (lnToPtNode !== undefined) {
           Object.keys(lnToPtNode).forEach(function (key2) {
-            var ptObj = {};
-            var lnToNoPt = lnToPtNode[key2];
+            const ptObj = {};
+            const lnToNoPt = lnToPtNode[key2];
             // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-            var ptX = lnToNoPt[("attrs", "x")];
+            const ptX = lnToNoPt[("attrs", "x")];
             // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-            var ptY = lnToNoPt[("attrs", "y")];
+            const ptY = lnToNoPt[("attrs", "y")];
             // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-            var ptOrdr = lnToNoPt[("attrs", "order")];
+            const ptOrdr = lnToNoPt[("attrs", "order")];
             // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
             ptObj.type = "lnto";
             // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
@@ -135,7 +135,7 @@ export function renderCustomGeometry(
     }
     //a:cubicBezTo
     if (cubicBezToNodes !== undefined) {
-      var cubicBezToPtNodesAry: any = [];
+      const cubicBezToPtNodesAry: any = [];
       //console.log("cubicBezToNodes: ", cubicBezToNodes, ", is arry: ", Array.isArray(cubicBezToNodes))
       if (!Array.isArray(cubicBezToNodes)) {
         cubicBezToNodes = [cubicBezToNodes];
@@ -149,14 +149,14 @@ export function renderCustomGeometry(
       // @ts-expect-error TS(7006): Parameter 'key2' implicitly has an 'any' type.
       cubicBezToPtNodesAry.forEach(function (key2) {
         //console.log("cubicBezToPtNodesAry: key2 : ", key2)
-        var nodeObj = {};
+        const nodeObj = {};
         // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
         nodeObj.type = "cubicBezTo";
         // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
         nodeObj.order = key2[0]["attrs"]["order"];
-        var pts_ary: any = [];
+        const pts_ary: any = [];
         key2.forEach(function (pt: any) {
-          var pt_obj = {
+          const pt_obj = {
             x: pt["attrs"]["x"],
             y: pt["attrs"]["y"],
           };
@@ -169,21 +169,21 @@ export function renderCustomGeometry(
     }
     //a:arcTo
     if (arcToNodes !== undefined) {
-      var arcToNodesAttrs = arcToNodes["attrs"];
-      var arcOrder = arcToNodesAttrs["order"];
+      const arcToNodesAttrs = arcToNodes["attrs"];
+      const arcOrder = arcToNodesAttrs["order"];
       var hR = arcToNodesAttrs["hR"];
       var wR = arcToNodesAttrs["wR"];
       var stAng = arcToNodesAttrs["stAng"];
       var swAng = arcToNodesAttrs["swAng"];
-      var shftX = 0;
-      var shftY = 0;
-      var arcToPtNode = getTextByPathList(arcToNodes, ["a:pt", "attrs"]);
+      let shftX = 0;
+      let shftY = 0;
+      const arcToPtNode = getTextByPathList(arcToNodes, ["a:pt", "attrs"]);
       if (arcToPtNode !== undefined) {
         shftX = arcToPtNode["x"];
         shftY = arcToPtNode["y"];
         //console.log("shftX: ",shftX," shftY: ",shftY)
       }
-      var ptObj = {};
+      const ptObj = {};
       // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
       ptObj.type = "arcTo";
       // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
@@ -215,10 +215,10 @@ export function renderCustomGeometry(
       // });
       Object.keys(closeNode).forEach(function (key) {
         //console.log("custShapType >> closeNode: key: ", key);
-        var clsAttrs = closeNode[key]["attrs"];
+        const clsAttrs = closeNode[key]["attrs"];
         //var clsAttrs = closeNode["attrs"];
-        var clsOrder = clsAttrs["order"];
-        var ptObj = {};
+        const clsOrder = clsAttrs["order"];
+        const ptObj = {};
         // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
         ptObj.type = "close";
         // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
@@ -236,17 +236,17 @@ export function renderCustomGeometry(
 
     //console.log("custShapType >>sorted  multiSapeAry: ");
     //console.log(multiSapeAry);
-    var k = 0;
-    var isClose = false;
-    var d = "";
+    let k = 0;
+    const isClose = false;
+    let d = "";
     while (k < multiSapeAry.length) {
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (multiSapeAry[k].type == "movto") {
         //start point
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var spX = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
+        const spX = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var spY = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
+        const spY = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
         // if (d == "") {
         //     d = "M" + spX + "," + spY;
         // } else {
@@ -272,25 +272,25 @@ export function renderCustomGeometry(
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type == "lnto") {
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var Lx = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
+        const Lx = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var Ly = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
+        const Ly = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
         d += " L" + Lx + "," + Ly;
 
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type == "cubicBezTo") {
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX; //slideFactor;
+        const Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX; //slideFactor;
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY; //slideFactor;
+        const Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY; //slideFactor;
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX; //slideFactor;
+        const Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX; //slideFactor;
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var Cy2 = parseInt(multiSapeAry[k].cubBzPt[1].y) * cY; //slideFactor;
+        const Cy2 = parseInt(multiSapeAry[k].cubBzPt[1].y) * cY; //slideFactor;
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX; //slideFactor;
+        const Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX; //slideFactor;
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY; //slideFactor;
+        const Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY; //slideFactor;
         d += " C" + Cx1 + "," + Cy1 + " " + Cx2 + "," + Cy2 + " " + Cx3 + "," + Cy3;
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type == "arcTo") {
@@ -302,7 +302,7 @@ export function renderCustomGeometry(
         var swAng = parseInt(multiSapeAry[k].swAng) / 60000;
         //var shftX = parseInt(multiSapeAry[k].shftX) * slideFactor;
         //var shftY = parseInt(multiSapeAry[k].shftY) * slideFactor;
-        var endAng = stAng + swAng;
+        const endAng = stAng + swAng;
 
         d += shapeArc(wR, hR, wR, hR, stAng, endAng, false);
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.

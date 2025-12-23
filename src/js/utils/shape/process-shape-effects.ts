@@ -64,22 +64,22 @@ export function processShapeEffects(
   //"a:extLst"?
   //////////////////////////////outerShdw///////////////////////////////////////////
   //not support sizing the shadow
-  var outerShdwNode = getTextByPathList(node, ["p:spPr", "a:effectLst", "a:outerShdw"]);
+  const outerShdwNode = getTextByPathList(node, ["p:spPr", "a:effectLst", "a:outerShdw"]);
   if (outerShdwNode !== undefined) {
-    var chdwClrNode = getSolidFill(outerShdwNode, undefined, undefined, warpObj);
-    var outerShdwAttrs = outerShdwNode["attrs"];
+    const chdwClrNode = getSolidFill(outerShdwNode, undefined, undefined, warpObj);
+    const outerShdwAttrs = outerShdwNode["attrs"];
 
     //var algn = outerShdwAttrs["algn"];
-    var dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
-    var dist = parseInt(outerShdwAttrs["dist"]) * slideFactor; //(px) //* (3 / 4); //(pt)
+    const dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
+    const dist = parseInt(outerShdwAttrs["dist"]) * slideFactor; //(px) //* (3 / 4); //(pt)
     //var rotWithShape = outerShdwAttrs["rotWithShape"];
-    var blurRad = outerShdwAttrs["blurRad"]
+    const blurRad = outerShdwAttrs["blurRad"]
       ? parseInt(outerShdwAttrs["blurRad"]) * slideFactor
       : ""; //+ "px"
     //var sx = (outerShdwAttrs["sx"]) ? (parseInt(outerShdwAttrs["sx"]) / 100000) : 1;
     //var sy = (outerShdwAttrs["sy"]) ? (parseInt(outerShdwAttrs["sy"]) / 100000) : 1;
-    var vx = dist * Math.sin((dir * Math.PI) / 180);
-    var hx = dist * Math.cos((dir * Math.PI) / 180);
+    const vx = dist * Math.sin((dir * Math.PI) / 180);
+    const hx = dist * Math.cos((dir * Math.PI) / 180);
     //SVG
     //var oShadowId = "outerhadow_" + shpId;
     //oShadowSvgUrlStr = "filter='url(#" + oShadowId+")'";
@@ -96,7 +96,7 @@ export function processShapeEffects(
     //result += shadowFilterStr;
 
     //css:
-    var svg_css_shadow =
+    let svg_css_shadow =
       "filter:drop-shadow(" + hx + "px " + vx + "px " + blurRad + "px #" + chdwClrNode + ");";
 
     if (svg_css_shadow in styleTable) {
@@ -112,8 +112,8 @@ export function processShapeEffects(
   ////////////////////////////////////////////////////////////////////////////////////////
 
   // Arrow/triangle markers for line ends
-  var headEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]);
-  var tailEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]);
+  const headEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]);
+  const tailEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]);
   // type: none, triangle, stealth, diamond, oval, arrow
 
   if (
@@ -123,7 +123,7 @@ export function processShapeEffects(
       (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow"))
   ) {
     // @ts-expect-error TS(2339): Property 'color' does not exist on type 'string | ... Remove this comment to see the full error message
-    var triangleMarker =
+    const triangleMarker =
       "<marker id='markerTriangle_" +
       shpId +
       "' viewBox='0 0 10 10' refX='1' refY='5' markerWidth='5' markerHeight='5' stroke='" +

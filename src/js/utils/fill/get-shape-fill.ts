@@ -27,8 +27,8 @@ export function getShapeFill(
   // p:spPr/ [a:noFill, solidFill, gradFill, blipFill, pattFill, grpFill]
   // From slide
   // Fill Type:
-  var fillType = getFillType(getTextByPathList(node, ["p:spPr"]));
-  var fillColor;
+  const fillType = getFillType(getTextByPathList(node, ["p:spPr"]));
+  let fillColor;
 
   if (fillType == "NO_FILL") {
     return isSvgMode ? "none" : "";
@@ -48,8 +48,8 @@ export function getShapeFill(
 
   // 2. drawingML namespace
   if (fillColor === undefined) {
-    var clrName = getTextByPathList(node, ["p:style", "a:fillRef"]);
-    var idx = parseInt(getTextByPathList(node, ["p:style", "a:fillRef", "attrs", "idx"]));
+    const clrName = getTextByPathList(node, ["p:style", "a:fillRef"]);
+    const idx = parseInt(getTextByPathList(node, ["p:style", "a:fillRef", "attrs", "idx"]));
     if (idx == 0 || idx == 1000) {
       // no fill
       return isSvgMode ? "none" : "";
@@ -63,11 +63,11 @@ export function getShapeFill(
 
   // 3. is group fill
   if (fillColor === undefined) {
-    var grpFill = getTextByPathList(node, ["p:spPr", "a:grpFill"]);
+    const grpFill = getTextByPathList(node, ["p:spPr", "a:grpFill"]);
     if (grpFill !== undefined) {
       // get parent fill style
-      var grpShpFill = pNode["p:grpSpPr"];
-      var spShpNode = { "p:spPr": grpShpFill };
+      const grpShpFill = pNode["p:grpSpPr"];
+      const spShpNode = { "p:spPr": grpShpFill };
       return getShapeFill(spShpNode, node, isSvgMode, warpObj, source);
     } else if (fillType == "NO_FILL") {
       return isSvgMode ? "none" : "";
@@ -79,11 +79,11 @@ export function getShapeFill(
       if (isSvgMode) {
         return fillColor;
       } else {
-        var colorAry = fillColor.color;
-        var rot = fillColor.rot;
+        const colorAry = fillColor.color;
+        const rot = fillColor.rot;
 
-        var bgcolor = "background: linear-gradient(" + rot + "deg,";
-        for (var i = 0; i < colorAry.length; i++) {
+        let bgcolor = "background: linear-gradient(" + rot + "deg,";
+        for (let i = 0; i < colorAry.length; i++) {
           if (i == colorAry.length - 1) {
             bgcolor += "#" + colorAry[i] + ");";
           } else {
@@ -99,7 +99,7 @@ export function getShapeFill(
         return "background-image:url(" + fillColor + ");";
       }
     } else if (fillType == "PATTERN_FILL") {
-      var bgPtrn = "",
+      let bgPtrn = "",
         bgSize = "",
         bgPos = "";
       bgPtrn = fillColor[0];
@@ -112,7 +112,7 @@ export function getShapeFill(
       return "background: " + bgPtrn + ";" + bgSize + bgPos;
     } else {
       if (isSvgMode) {
-        var color = tinycolor(fillColor);
+        const color = tinycolor(fillColor);
         fillColor = color.toRgbString();
         return fillColor;
       } else {

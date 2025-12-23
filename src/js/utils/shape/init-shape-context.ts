@@ -75,21 +75,21 @@ export function initShapeContext(
 ): ShapeContext | null {
   //var dltX = 0;
   //var dltY = 0;
-  var xfrmList = ["p:spPr", "a:xfrm"];
-  var slideXfrmNode = getTextByPathList(node, xfrmList);
-  var slideLayoutXfrmNode = getTextByPathList(slideLayoutSpNode, xfrmList);
-  var slideMasterXfrmNode = getTextByPathList(slideMasterSpNode, xfrmList);
+  const xfrmList = ["p:spPr", "a:xfrm"];
+  const slideXfrmNode = getTextByPathList(node, xfrmList);
+  const slideLayoutXfrmNode = getTextByPathList(slideLayoutSpNode, xfrmList);
+  const slideMasterXfrmNode = getTextByPathList(slideMasterSpNode, xfrmList);
 
-  var shpId = getTextByPathList(node, ["attrs", "order"]);
+  const shpId = getTextByPathList(node, ["attrs", "order"]);
   //console.log("shpId: ",shpId)
-  var shapType = getTextByPathList(node, ["p:spPr", "a:prstGeom", "attrs", "prst"]);
+  const shapType = getTextByPathList(node, ["p:spPr", "a:prstGeom", "attrs", "prst"]);
 
   //custGeom - Amir
-  var custShapType = getTextByPathList(node, ["p:spPr", "a:custGeom"]);
+  const custShapType = getTextByPathList(node, ["p:spPr", "a:custGeom"]);
 
-  var isFlipV = false;
-  var isFlipH = false;
-  var flip = "";
+  let isFlipV = false;
+  let isFlipH = false;
+  let flip = "";
   if (getTextByPathList(slideXfrmNode, ["attrs", "flipV"]) === "1") {
     isFlipV = true;
   }
@@ -105,13 +105,13 @@ export function initShapeContext(
   }
   /////////////////////////Amir////////////////////////
   //rotate
-  var rotate = angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
+  const rotate = angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
 
   //console.log("genShape rotate: " + rotate);
-  var txtRotate;
-  var txtXframeNode = getTextByPathList(node, ["p:txXfrm"]);
+  let txtRotate;
+  const txtXframeNode = getTextByPathList(node, ["p:txXfrm"]);
   if (txtXframeNode !== undefined) {
-    var txtXframeRot = getTextByPathList(txtXframeNode, ["attrs", "rot"]);
+    const txtXframeRot = getTextByPathList(txtXframeNode, ["attrs", "rot"]);
     if (txtXframeRot !== undefined) {
       txtRotate = angleToDegrees(txtXframeRot) + 90;
     }
@@ -120,20 +120,20 @@ export function initShapeContext(
   }
   //////////////////////////////////////////////////
   if (shapType !== undefined || custShapType !== undefined /*&& slideXfrmNode !== undefined*/) {
-    var off = getTextByPathList(slideXfrmNode, ["a:off", "attrs"]);
-    var x = parseInt(off["x"]) * slideFactor;
-    var y = parseInt(off["y"]) * slideFactor;
+    const off = getTextByPathList(slideXfrmNode, ["a:off", "attrs"]);
+    const x = parseInt(off["x"]) * slideFactor;
+    const y = parseInt(off["y"]) * slideFactor;
 
-    var ext = getTextByPathList(slideXfrmNode, ["a:ext", "attrs"]);
-    var w = parseInt(ext["cx"]) * slideFactor;
-    var h = parseInt(ext["cy"]) * slideFactor;
+    const ext = getTextByPathList(slideXfrmNode, ["a:ext", "attrs"]);
+    const w = parseInt(ext["cx"]) * slideFactor;
+    const h = parseInt(ext["cy"]) * slideFactor;
 
-    var svgCssName =
+    const svgCssName =
       "_svg_css_" + (Object.keys(styleTable).length + 1) + "_" + Math.floor(Math.random() * 1001);
     //console.log("name:", name, "svgCssName: ", svgCssName)
-    var effectsClassName = svgCssName + "_effects";
+    const effectsClassName = svgCssName + "_effects";
 
-    var svgHeader =
+    const svgHeader =
       "<svg class='drawing " +
       svgCssName +
       " " +
@@ -160,14 +160,14 @@ export function initShapeContext(
       ";" +
       "'>";
 
-    var defsContent = "";
+    let defsContent = "";
 
     // Fill Color
-    var fillColor = getShapeFill(node, pNode, true, warpObj, source);
+    let fillColor = getShapeFill(node, pNode, true, warpObj, source);
     //console.log("genShape: fillColor: ", fillColor)
-    var grndFillFlg = false;
-    var imgFillFlg = false;
-    var clrFillType = getFillType(getTextByPathList(node, ["p:spPr"]));
+    let grndFillFlg = false;
+    let imgFillFlg = false;
+    let clrFillType = getFillType(getTextByPathList(node, ["p:spPr"]));
     if (clrFillType == "GROUP_FILL") {
       clrFillType = getFillType(getTextByPathList(pNode, ["p:grpSpPr"]));
     }
@@ -178,20 +178,20 @@ export function initShapeContext(
     /////////////////////////////////////////
     if (clrFillType == "GRADIENT_FILL") {
       grndFillFlg = true;
-      var color_arry = fillColor.color;
-      var angl = fillColor.rot + 90;
-      var svgGrdnt = getSvgGradient(w, h, angl, color_arry, shpId);
+      const color_arry = fillColor.color;
+      const angl = fillColor.rot + 90;
+      const svgGrdnt = getSvgGradient(w, h, angl, color_arry, shpId);
       //fill="url(#linGrd)"
       //console.log("genShape: svgGrdnt: ", svgGrdnt)
       defsContent += svgGrdnt;
     } else if (clrFillType == "PIC_FILL") {
       imgFillFlg = true;
-      var svgBgImg = getSvgImagePattern(node, fillColor, shpId, warpObj);
+      const svgBgImg = getSvgImagePattern(node, fillColor, shpId, warpObj);
       //fill="url(#imgPtrn)"
       //console.log(svgBgImg)
       defsContent += svgBgImg;
     } else if (clrFillType == "PATTERN_FILL") {
-      var styleText = fillColor;
+      let styleText = fillColor;
       if (styleText in styleTable) {
         styleText += "do-nothing: " + svgCssName + ";";
       }
@@ -219,7 +219,7 @@ export function initShapeContext(
       }
     }
     // Border Color
-    var border = getBorder(node, pNode, true, "shape", warpObj);
+    const border = getBorder(node, pNode, true, "shape", warpObj);
 
     return {
       slideXfrmNode,

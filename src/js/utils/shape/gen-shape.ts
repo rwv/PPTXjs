@@ -140,7 +140,7 @@ export function genShape(
     border,
   } = context;
 
-  var result = context.svgHeader;
+  let result = context.svgHeader;
   result += "<defs>";
   result += context.defsContent;
 

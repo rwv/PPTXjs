@@ -12,16 +12,16 @@ import { angleToDegrees } from "../layout/angle-to-degrees";
  * @returns Object with color array and rotation angle for CSS gradient
  */
 export function getGradientFill(node: any, warpObj: any) {
-  var gsLst = node["a:gsLst"]["a:gs"];
-  var color_ary = [];
-  var tint_ary = [];
-  for (var i = 0; i < gsLst.length; i++) {
+  const gsLst = node["a:gsLst"]["a:gs"];
+  const color_ary = [];
+  const tint_ary = [];
+  for (let i = 0; i < gsLst.length; i++) {
     var lo_tint;
-    var lo_color = getSolidFill(gsLst[i], undefined, undefined, warpObj);
+    const lo_color = getSolidFill(gsLst[i], undefined, undefined, warpObj);
     color_ary[i] = lo_color;
   }
-  var lin = node["a:lin"];
-  var rot = 0;
+  const lin = node["a:lin"];
+  let rot = 0;
   if (lin !== undefined) {
     rot = angleToDegrees(lin["attrs"]["ang"]) + 90;
   }

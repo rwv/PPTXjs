@@ -60,16 +60,16 @@ export function genSpanElement(
   fontSizeFactor: number
 ): string {
   //https://codepen.io/imdunn/pen/GRgwaye ?
-  var text_style = "";
-  var lstStyle = textBodyNode["a:lstStyle"];
-  var slideMasterTextStyles = warpObj["slideMasterTextStyles"];
+  let text_style = "";
+  const lstStyle = textBodyNode["a:lstStyle"];
+  const slideMasterTextStyles = warpObj["slideMasterTextStyles"];
 
-  var text = node["a:t"];
+  let text = node["a:t"];
   //var text_count = text.length;
 
-  var openElemnt = "<span"; //"<bdi";
-  var closeElemnt = "</span>"; // "</bdi>";
-  var styleText = "";
+  const openElemnt = "<span"; //"<bdi";
+  const closeElemnt = "</span>"; // "</bdi>";
+  let styleText = "";
   if (text === undefined && node["type"] !== undefined) {
     if (isFirstBr.value) {
       //openElemnt = "<br";
@@ -100,39 +100,39 @@ export function genSpanElement(
     // }
   }
 
-  var pPrNode = pNode["a:pPr"];
+  const pPrNode = pNode["a:pPr"];
   //lvl
-  var lvl = 1;
-  var lvlNode = getTextByPathList(pPrNode, ["attrs", "lvl"]);
+  let lvl = 1;
+  const lvlNode = getTextByPathList(pPrNode, ["attrs", "lvl"]);
   if (lvlNode !== undefined) {
     lvl = parseInt(lvlNode) + 1;
   }
   //console.log("genSpanElement node: ", node, "rIndex: ", rIndex, ", pNode: ", pNode, ",pPrNode: ", pPrNode, "pFontStyle:", pFontStyle, ", idx: ", idx, "type:", type, warpObj);
-  var layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
-  var pPrNodeLaout = layoutMasterNode.nodeLaout;
-  var pPrNodeMaster = layoutMasterNode.nodeMaster;
+  const layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
+  const pPrNodeLaout = layoutMasterNode.nodeLaout;
+  const pPrNodeMaster = layoutMasterNode.nodeMaster;
 
   //Language
-  var lang = getTextByPathList(node, ["a:rPr", "attrs", "lang"]);
-  var isRtlLan = lang !== undefined && rtlLangsArray.indexOf(lang) !== -1 ? true : false;
+  const lang = getTextByPathList(node, ["a:rPr", "attrs", "lang"]);
+  const isRtlLan = lang !== undefined && rtlLangsArray.indexOf(lang) !== -1 ? true : false;
   //rtl
-  var getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
+  let getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
   if (getRtlVal === undefined) {
     getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
     if (getRtlVal === undefined && type != "shape") {
       getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
     }
   }
-  var isRTL = false;
-  var dirStr = "ltr";
+  let isRTL = false;
+  let dirStr = "ltr";
   if (getRtlVal !== undefined && getRtlVal == "1") {
     isRTL = true;
     dirStr = "rtl";
   }
 
-  var linkID = getTextByPathList(node, ["a:rPr", "a:hlinkClick", "attrs", "r:id"]);
-  var linkTooltip = "";
-  var defLinkClr;
+  const linkID = getTextByPathList(node, ["a:rPr", "a:hlinkClick", "attrs", "r:id"]);
+  let linkTooltip = "";
+  let defLinkClr;
   if (linkID !== undefined) {
     linkTooltip = getTextByPathList(node, ["a:rPr", "a:hlinkClick", "attrs", "tooltip"]);
     if (linkTooltip !== undefined) {
@@ -140,8 +140,8 @@ export function genSpanElement(
     }
     defLinkClr = getSchemeColorFromTheme("a:hlink", undefined, undefined, warpObj);
 
-    var linkClrNode = getTextByPathList(node, ["a:rPr", "a:solidFill"]); // getTextByPathList(node, ["a:rPr", "a:solidFill"]);
-    var rPrlinkClr = getSolidFill(linkClrNode, undefined, undefined, warpObj);
+    const linkClrNode = getTextByPathList(node, ["a:rPr", "a:solidFill"]); // getTextByPathList(node, ["a:rPr", "a:solidFill"]);
+    const rPrlinkClr = getSolidFill(linkClrNode, undefined, undefined, warpObj);
 
     //console.log("genSpanElement defLinkClr: ", defLinkClr, "rPrlinkClr:", rPrlinkClr)
     if (rPrlinkClr !== undefined && rPrlinkClr != "") {
@@ -150,8 +150,18 @@ export function genSpanElement(
   }
   /////////////////////////////////////////////////////////////////////////////////////
   //getFontColor
-  var fontClrPr = getFontColorPr(node, pNode, lstStyle, pFontStyle, lvl, idx, type, warpObj, slideFactor);
-  var fontClrType = fontClrPr[2];
+  const fontClrPr = getFontColorPr(
+    node,
+    pNode,
+    lstStyle,
+    pFontStyle,
+    lvl,
+    idx,
+    type,
+    warpObj,
+    slideFactor
+  );
+  const fontClrType = fontClrPr[2];
   //console.log("genSpanElement fontClrPr: ", fontClrPr, "linkID", linkID);
   if (fontClrType == "solid") {
     if (linkID === undefined && fontClrPr[0] !== undefined && fontClrPr[0] != "") {
@@ -193,12 +203,12 @@ export function genSpanElement(
       //     "-webkit-text-stroke: " + fontClrPr[1].border + ";";
     } else if (fontClrType == "gradient") {
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-      var colorAry = fontClrPr[0].color;
+      const colorAry = fontClrPr[0].color;
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-      var rot = fontClrPr[0].rot;
+      const rot = fontClrPr[0].rot;
 
       styleText += "background: linear-gradient(" + rot + "deg,";
-      for (var i = 0; i < colorAry.length; i++) {
+      for (let i = 0; i < colorAry.length; i++) {
         if (i == colorAry.length - 1) {
           styleText += "#" + colorAry[i] + ");";
         } else {
@@ -223,7 +233,7 @@ export function genSpanElement(
       styleText += "filter: " + fontClrPr[1].effcts + ";";
     }
   }
-  var font_size = getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);
+  const font_size = getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);
   //text_style += "font-size:" + font_size + ";"
 
   text_style +=
@@ -285,7 +295,7 @@ export function genSpanElement(
   //if (rNodeLength == 1 || rIndex == 0 ){
   //styleText += "display: table-cell;white-space: nowrap;";
   //}
-  var highlight = getTextByPathList(node, ["a:rPr", "a:highlight"]);
+  const highlight = getTextByPathList(node, ["a:rPr", "a:highlight"]);
   if (highlight !== undefined) {
     styleText +=
       "background-color:#" + getSolidFill(highlight, undefined, undefined, warpObj) + ";";
@@ -293,7 +303,7 @@ export function genSpanElement(
   }
 
   //letter-spacing:
-  var spcNode = getTextByPathList(node, ["a:rPr", "attrs", "spc"]);
+  let spcNode = getTextByPathList(node, ["a:rPr", "attrs", "spc"]);
   if (spcNode === undefined) {
     spcNode = getTextByPathList(pPrNodeLaout, ["a:defRPr", "attrs", "spc"]);
     if (spcNode === undefined) {
@@ -301,12 +311,12 @@ export function genSpanElement(
     }
   }
   if (spcNode !== undefined) {
-    var ltrSpc = parseInt(spcNode) / 100; //pt
+    const ltrSpc = parseInt(spcNode) / 100; //pt
     styleText += "letter-spacing: " + ltrSpc + "px;"; // + "pt;";
   }
 
   //Text Cap Types
-  var capNode = getTextByPathList(node, ["a:rPr", "attrs", "cap"]);
+  let capNode = getTextByPathList(node, ["a:rPr", "attrs", "cap"]);
   if (capNode === undefined) {
     capNode = getTextByPathList(pPrNodeLaout, ["a:defRPr", "attrs", "cap"]);
     if (capNode === undefined) {
@@ -319,7 +329,7 @@ export function genSpanElement(
   //styleText += "word-break: break-word;";
   //console.log("genSpanElement node: ", node, ", capNode: ", capNode, ",pPrNodeLaout: ", pPrNodeLaout, ", pPrNodeMaster: ", pPrNodeMaster, "warpObj:", warpObj);
 
-  var cssName = "";
+  let cssName = "";
 
   if (styleText in styleTable) {
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -332,13 +342,13 @@ export function genSpanElement(
       text: styleText,
     };
   }
-  var linkColorSyle = "";
+  let linkColorSyle = "";
   if (fontClrType == "solid" && linkID !== undefined) {
     linkColorSyle = "style='color: inherit;'";
   }
 
   if (linkID !== undefined && linkID != "") {
-    var linkURL = warpObj["slideResObj"][linkID]["target"];
+    let linkURL = warpObj["slideResObj"][linkID]["target"];
     linkURL = escapeHtml(linkURL);
     return (
       openElemnt +

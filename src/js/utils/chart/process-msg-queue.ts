@@ -8,7 +8,7 @@ import { processSingleMsg } from "./process-single-msg";
  */
 export function processMsgQueue(queue: any): boolean {
   let anySucceeded = false;
-  for (var i = 0; i < queue.length; i++) {
+  for (let i = 0; i < queue.length; i++) {
     if (processSingleMsg(queue[i].data)) {
       anySucceeded = true;
     }

@@ -23,17 +23,17 @@ import { getPicFill } from "./get-pic-fill";
  * @returns CSS background style string with z-index
  */
 export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, index: any): string {
-  var bgcolor;
-  var picFillBase64 = getPicFill(sorce, bgPr["a:blipFill"], warpObj);
-  var ordr = bgPr["attrs"]["order"];
-  var aBlipNode = bgPr["a:blipFill"]["a:blip"];
+  let bgcolor;
+  const picFillBase64 = getPicFill(sorce, bgPr["a:blipFill"], warpObj);
+  const ordr = bgPr["attrs"]["order"];
+  const aBlipNode = bgPr["a:blipFill"]["a:blip"];
 
-  var duotone = getTextByPathList(aBlipNode, ["a:duotone"]);
+  const duotone = getTextByPathList(aBlipNode, ["a:duotone"]);
   if (duotone !== undefined) {
-    var clr_ary = [];
+    const clr_ary = [];
     Object.keys(duotone).forEach(function (clr_type) {
       if (clr_type != "attrs") {
-        var obj = {};
+        const obj = {};
         // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         obj[clr_type] = duotone[clr_type];
         clr_ary.push(getSolidFill(obj, undefined, phClr, warpObj));
@@ -41,33 +41,33 @@ export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, in
     });
   }
 
-  var aphaModFixNode = getTextByPathList(aBlipNode, ["a:alphaModFix", "attrs"]);
-  var imgOpacity = "";
+  const aphaModFixNode = getTextByPathList(aBlipNode, ["a:alphaModFix", "attrs"]);
+  let imgOpacity = "";
   if (
     aphaModFixNode !== undefined &&
     aphaModFixNode["amt"] !== undefined &&
     aphaModFixNode["amt"] != ""
   ) {
-    var amt = parseInt(aphaModFixNode["amt"]) / 100000;
+    const amt = parseInt(aphaModFixNode["amt"]) / 100000;
     imgOpacity = "opacity:" + amt + ";";
   }
 
-  var tileNode = getTextByPathList(bgPr, ["a:blipFill", "a:tile", "attrs"]);
-  var prop_style = "";
+  const tileNode = getTextByPathList(bgPr, ["a:blipFill", "a:tile", "attrs"]);
+  let prop_style = "";
   if (tileNode !== undefined && tileNode["sx"] !== undefined) {
-    var sx = parseInt(tileNode["sx"]) / 100000;
-    var sy = parseInt(tileNode["sy"]) / 100000;
-    var tx = parseInt(tileNode["tx"]) / 100000;
-    var ty = parseInt(tileNode["ty"]) / 100000;
-    var algn = tileNode["algn"];
-    var flip = tileNode["flip"];
+    const sx = parseInt(tileNode["sx"]) / 100000;
+    const sy = parseInt(tileNode["sy"]) / 100000;
+    const tx = parseInt(tileNode["tx"]) / 100000;
+    const ty = parseInt(tileNode["ty"]) / 100000;
+    const algn = tileNode["algn"];
+    const flip = tileNode["flip"];
 
     prop_style += "background-repeat: round;";
   }
 
-  var stretch = getTextByPathList(bgPr, ["a:blipFill", "a:stretch"]);
+  const stretch = getTextByPathList(bgPr, ["a:blipFill", "a:stretch"]);
   if (stretch !== undefined) {
-    var fillRect = getTextByPathList(stretch, ["a:fillRect", "attrs"]);
+    const fillRect = getTextByPathList(stretch, ["a:fillRect", "attrs"]);
     prop_style += "background-repeat: no-repeat;";
     prop_style += "background-position: center;";
     if (fillRect !== undefined) {

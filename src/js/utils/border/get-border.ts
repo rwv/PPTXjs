@@ -15,7 +15,7 @@ import { getGradientFill } from "../fill/get-gradient-fill";
 import { getPatternFill } from "../fill/get-pattern-fill";
 
 export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, warpObj: any) {
-  var cssText, lineNode, subNodeTxt;
+  let cssText, lineNode, subNodeTxt;
 
   if (bType == "shape") {
     cssText = "border: ";
@@ -25,7 +25,7 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
     lineNode = node["a:rPr"]["a:ln"];
   }
 
-  var is_noFill = getTextByPathList(lineNode, ["a:noFill"]);
+  const is_noFill = getTextByPathList(lineNode, ["a:noFill"]);
   if (is_noFill !== undefined) {
     return "hidden";
   }
@@ -33,7 +33,7 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
   if (lineNode == undefined) {
     var lnRefNode = getTextByPathList(node, ["p:style", "a:lnRef"]);
     if (lnRefNode !== undefined) {
-      var lnIdx = getTextByPathList(lnRefNode, ["attrs", "idx"]);
+      const lnIdx = getTextByPathList(lnRefNode, ["attrs", "idx"]);
       lineNode =
         warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:lnStyleLst"][
           "a:ln"
@@ -46,10 +46,10 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
     lineNode = node;
   }
 
-  var borderColor;
-  var borderWidth: number | undefined;
-  var borderType: string | undefined;
-  var strokeDasharray = "0";
+  let borderColor;
+  let borderWidth: number | undefined;
+  let borderType: string | undefined;
+  let strokeDasharray = "0";
 
   if (lineNode !== undefined) {
     // Border width: 1pt = 12700, default = 0.75pt
@@ -115,7 +115,7 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
         strokeDasharray = "0";
     }
     // Border color
-    var fillTyp = getFillType(lineNode);
+    const fillTyp = getFillType(lineNode);
     if (fillTyp == "NO_FILL") {
       borderColor = isSvgMode ? "none" : "";
     } else if (fillTyp == "SOLID_FILL") {

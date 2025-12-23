@@ -17,23 +17,23 @@ export function getBgGradientFill(
   slideMasterContent: any,
   warpObj: any
 ): string {
-  var bgcolor = "";
+  let bgcolor = "";
   if (bgPr !== undefined) {
-    var grdFill = bgPr["a:gradFill"];
-    var gsLst = grdFill["a:gsLst"]["a:gs"];
-    var color_ary: string[] = [];
-    var pos_ary: string[] = [];
+    const grdFill = bgPr["a:gradFill"];
+    const gsLst = grdFill["a:gsLst"]["a:gs"];
+    const color_ary: string[] = [];
+    const pos_ary: string[] = [];
 
     for (var i = 0; i < gsLst.length; i++) {
       var lo_tint;
-      var lo_color = "";
+      let lo_color = "";
       lo_color = getSolidFill(
         gsLst[i],
         slideMasterContent["p:sldMaster"]["p:clrMap"]["attrs"],
         phClr,
         warpObj
       );
-      var pos = getTextByPathList(gsLst[i], ["attrs", "pos"]);
+      const pos = getTextByPathList(gsLst[i], ["attrs", "pos"]);
       if (pos !== undefined) {
         pos_ary[i] = pos / 1000 + "%";
       } else {
@@ -43,8 +43,8 @@ export function getBgGradientFill(
     }
 
     // get rotation
-    var lin = grdFill["a:lin"];
-    var rot = 90;
+    const lin = grdFill["a:lin"];
+    let rot = 90;
     if (lin !== undefined) {
       rot = angleToDegrees(lin["attrs"]["ang"]);
       rot = rot + 90;

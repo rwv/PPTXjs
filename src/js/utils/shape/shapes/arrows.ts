@@ -277,12 +277,12 @@ function renderQuadArrow(ctx: ArrowShapeContext): string {
   const vc = h / 2,
     hc = w / 2;
   const minWH = Math.min(w, h);
-  let a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
   const maxAdj1 = 2 * a2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const q1 = cnstVal2 - maxAdj1;
   const maxAdj3 = q1 / 2;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
 
   const x1 = (minWH * a3) / cnstVal2;
   const dx2 = (minWH * a2) / cnstVal2;
@@ -331,12 +331,12 @@ function renderLeftRightUpArrow(ctx: ArrowShapeContext): string {
 
   const hc = w / 2;
   const minWH = Math.min(w, h);
-  let a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
   const maxAdj1 = 2 * a2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const q1 = cnstVal2 - maxAdj1;
   const maxAdj3 = q1 / 2;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
 
   const x1 = (minWH * a3) / cnstVal2;
   const dx2 = (minWH * a2) / cnstVal2;
@@ -384,11 +384,11 @@ function renderLeftUpArrow(ctx: ArrowShapeContext): string {
   }
 
   const minWH = Math.min(w, h);
-  let a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
   const maxAdj1 = 2 * a2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const maxAdj3 = cnstVal2 - maxAdj1;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
 
   const x1 = (minWH * a3) / cnstVal2;
   const dx2 = (minWH * a2) / cnstVal1;
@@ -435,9 +435,9 @@ function renderBentUpArrow(ctx: ArrowShapeContext): string {
   }
 
   const minWH = Math.min(w, h);
-  let a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
-  let a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
-  let a3 = adj3;
+  const a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
+  const a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
+  const a3 = adj3;
 
   const y1 = (minWH * a3) / cnstVal2;
   const dx1 = (minWH * a2) / cnstVal1;
@@ -485,10 +485,10 @@ function renderBentArrow(ctx: ArrowShapeContext): string {
   }
 
   const minWH = Math.min(w, h);
-  let a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
   const maxAdj1 = 2 * a2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
-  let a3 = adj3 < 0 ? 0 : adj3 > cnstVal1 ? cnstVal1 : adj3;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a3 = adj3 < 0 ? 0 : adj3 > cnstVal1 ? cnstVal1 : adj3;
 
   const th = (minWH * a1) / cnstVal2;
   const aw2 = (minWH * a2) / cnstVal2;
@@ -499,7 +499,7 @@ function renderBentArrow(ctx: ArrowShapeContext): string {
   const bh = h - dh2;
   const bs = Math.min(bw, bh);
   const maxAdj4 = (cnstVal2 * bs) / minWH;
-  let a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
+  const a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
   const bd = (minWH * a4) / cnstVal2;
   const bd3 = bd - th;
   const bd2 = bd3 > 0 ? bd3 : 0;
@@ -554,16 +554,16 @@ function renderUturnArrow(ctx: ArrowShapeContext): string {
   }
 
   const minWH = Math.min(w, h);
-  let a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > cnstVal1 ? cnstVal1 : adj2;
   const maxAdj1 = 2 * a2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const q2 = (a1 * minWH) / h;
   const q3 = cnstVal2 - q2;
   const maxAdj3 = (q3 * h) / minWH;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
   const q1 = a3 + a1;
   const minAdj5 = (q1 * minWH) / h;
-  let a5 = adj5 < minAdj5 ? minAdj5 : adj5 > cnstVal2 ? cnstVal2 : adj5;
+  const a5 = adj5 < minAdj5 ? minAdj5 : adj5 > cnstVal2 ? cnstVal2 : adj5;
 
   const th = (minWH * a1) / cnstVal2;
   const aw2 = (minWH * a2) / cnstVal2;
@@ -576,7 +576,7 @@ function renderUturnArrow(ctx: ArrowShapeContext): string {
   const bw = x9 / 2;
   const bs = Math.min(bw, y4);
   const maxAdj4 = (cnstVal2 * bs) / minWH;
-  let a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
+  const a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
   const bd = (minWH * a4) / cnstVal2;
   const bd3 = bd - th;
   const bd2 = bd3 > 0 ? bd3 : 0;
@@ -626,8 +626,8 @@ function renderStripedRightArrow(ctx: ArrowShapeContext): string {
   const vc = h / 2;
   const minWH = Math.min(w, h);
   const maxAdj2 = (cnstVal3 * w) / minWH;
-  let a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
-  let a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
   const x4 = (minWH * 5) / 32;
   const dx5 = (minWH * a2) / cnstVal1;
   const x5 = w - dx5;
@@ -671,8 +671,8 @@ function renderNotchedRightArrow(ctx: ArrowShapeContext): string {
   const hd2 = vc;
   const minWH = Math.min(w, h);
   const maxAdj2 = (cnstVal1 * w) / minWH;
-  let a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
-  let a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
   const dx2 = (minWH * a2) / cnstVal1;
   const x2 = w - dx2;
   const dy1 = (h * a1) / cnstVal2;
@@ -722,14 +722,14 @@ function renderRightArrowCallout(ctx: ArrowShapeContext): string {
   const vc = h / 2;
   const ss = Math.min(w, h);
   const maxAdj2 = (cnstVal1 * h) / ss;
-  let a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
   const maxAdj1 = a2 * 2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const maxAdj3 = (cnstVal2 * w) / ss;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
   const q2 = (a3 * ss) / w;
   const maxAdj4 = cnstVal2 - q2;
-  let a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
+  const a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
   const dy1 = (ss * a2) / cnstVal2;
   const dy2 = (ss * a1) / cnstVal3;
   const y1 = vc - dy1;
@@ -778,14 +778,14 @@ function renderDownArrowCallout(ctx: ArrowShapeContext): string {
   const hc = w / 2;
   const ss = Math.min(w, h);
   const maxAdj2 = (cnstVal1 * w) / ss;
-  let a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
   const maxAdj1 = a2 * 2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const maxAdj3 = (cnstVal2 * h) / ss;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
   const q2 = (a3 * ss) / h;
   const maxAdj4 = cnstVal2 - q2;
-  let a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
+  const a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
   const dx1 = (ss * a2) / cnstVal2;
   const dx2 = (ss * a1) / cnstVal3;
   const x1 = hc - dx1;
@@ -834,14 +834,14 @@ function renderLeftArrowCallout(ctx: ArrowShapeContext): string {
   const vc = h / 2;
   const ss = Math.min(w, h);
   const maxAdj2 = (cnstVal1 * h) / ss;
-  let a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
   const maxAdj1 = a2 * 2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const maxAdj3 = (cnstVal2 * w) / ss;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
   const q2 = (a3 * ss) / w;
   const maxAdj4 = cnstVal2 - q2;
-  let a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
+  const a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
   const dy1 = (ss * a2) / cnstVal2;
   const dy2 = (ss * a1) / cnstVal3;
   const y1 = vc - dy1;
@@ -889,14 +889,14 @@ function renderUpArrowCallout(ctx: ArrowShapeContext): string {
   const hc = w / 2;
   const ss = Math.min(w, h);
   const maxAdj2 = (cnstVal1 * w) / ss;
-  let a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
   const maxAdj1 = a2 * 2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const maxAdj3 = (cnstVal2 * h) / ss;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
   const q2 = (a3 * ss) / h;
   const maxAdj4 = cnstVal2 - q2;
-  let a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
+  const a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
   const dx1 = (ss * a2) / cnstVal2;
   const dx2 = (ss * a1) / cnstVal3;
   const x1 = hc - dx1;
@@ -945,14 +945,14 @@ function renderLeftRightArrowCallout(ctx: ArrowShapeContext): string {
   const hc = w / 2;
   const ss = Math.min(w, h);
   const maxAdj2 = (cnstVal1 * h) / ss;
-  let a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
   const maxAdj1 = a2 * 2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const maxAdj3 = (cnstVal1 * w) / ss;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
   const q2 = (a3 * ss) / hc;
   const maxAdj4 = cnstVal2 - q2;
-  let a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
+  const a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
   const dy1 = (ss * a2) / cnstVal2;
   const dy2 = (ss * a1) / cnstVal3;
   const y1 = vc - dy1;
@@ -1003,14 +1003,14 @@ function renderQuadArrowCallout(ctx: ArrowShapeContext): string {
   const hc = w / 2;
   const ss = Math.min(w, h);
   const maxAdj2 = (cnstVal1 * ss) / ss;
-  let a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
   const maxAdj1 = a2 * 2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const maxAdj3 = cnstVal1 - a2;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
   const q2 = a3 * 2;
   const maxAdj4 = cnstVal2 - q2;
-  let a4 = adj4 < a1 ? a1 : adj4 > maxAdj4 ? maxAdj4 : adj4;
+  const a4 = adj4 < a1 ? a1 : adj4 > maxAdj4 ? maxAdj4 : adj4;
   const dy1 = (ss * a2) / cnstVal2;
   const dy2 = (ss * a1) / cnstVal3;
   const y1 = vc - dy1;
@@ -1071,14 +1071,14 @@ function renderUpDownArrowCallout(ctx: ArrowShapeContext): string {
   const hc = w / 2;
   const ss = Math.min(w, h);
   const maxAdj2 = (cnstVal1 * w) / ss;
-  let a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
   const maxAdj1 = a2 * 2;
-  let a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
   const maxAdj3 = (cnstVal1 * h) / ss;
-  let a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+  const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
   const q2 = (a3 * ss) / vc;
   const maxAdj4 = cnstVal2 - q2;
-  let a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
+  const a4 = adj4 < 0 ? 0 : adj4 > maxAdj4 ? maxAdj4 : adj4;
   const dx1 = (ss * a2) / cnstVal2;
   const dx2 = (ss * a1) / cnstVal3;
   const x1 = hc - dx1;

@@ -6,7 +6,7 @@
  * @returns Alphabetic string representation
  */
 export function alphaNumeric(num: number | string, upperLower: "upperCase" | "lowerCase"): string {
-  let numValue = Number(num) - 1;
+  const numValue = Number(num) - 1;
   let aNum = "";
 
   if (upperLower === "upperCase") {

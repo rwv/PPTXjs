@@ -89,15 +89,15 @@ function createPath(d: string, ctx: CalloutContext): string {
 function renderWedgeEllipseCallout(ctx: CalloutContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var refr = slideFactor;
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const refr = slideFactor;
+  let sAdj1,
     adj1 = -20833 * refr;
-  var sAdj2,
+  let sAdj2,
     adj2 = 62500 * refr;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
@@ -107,11 +107,11 @@ function renderWedgeEllipseCallout(ctx: CalloutContext): string {
       }
     }
   }
-  var d_val;
-  var cnstVal1 = 100000 * slideFactor;
-  var angVal1 = (11 * Math.PI) / 180;
-  var ss = Math.min(w, h);
-  var dxPos,
+  let d_val;
+  const cnstVal1 = 100000 * slideFactor;
+  const angVal1 = (11 * Math.PI) / 180;
+  const ss = Math.min(w, h);
+  let dxPos,
     dyPos,
     xPos,
     yPos,
@@ -184,15 +184,15 @@ function renderWedgeEllipseCallout(ctx: CalloutContext): string {
 function renderWedgeRectCallout(ctx: CalloutContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var refr = slideFactor;
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const refr = slideFactor;
+  let sAdj1,
     adj1 = -20833 * refr;
-  var sAdj2,
+  let sAdj2,
     adj2 = 62500 * refr;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
@@ -202,9 +202,9 @@ function renderWedgeRectCallout(ctx: CalloutContext): string {
       }
     }
   }
-  var d_val;
-  var cnstVal1 = 100000 * slideFactor;
-  var dxPos,
+  let d_val;
+  const cnstVal1 = 100000 * slideFactor;
+  let dxPos,
     dyPos,
     xPos,
     yPos,
@@ -351,17 +351,17 @@ function renderWedgeRectCallout(ctx: CalloutContext): string {
 function renderWedgeRoundRectCallout(ctx: CalloutContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var refr = slideFactor;
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const refr = slideFactor;
+  let sAdj1,
     adj1 = -20833 * refr;
-  var sAdj2,
+  let sAdj2,
     adj2 = 62500 * refr;
-  var sAdj3,
+  let sAdj3,
     adj3 = 16667 * refr;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
@@ -374,10 +374,10 @@ function renderWedgeRoundRectCallout(ctx: CalloutContext): string {
       }
     }
   }
-  var d_val;
-  var cnstVal1 = 100000 * slideFactor;
-  var ss = Math.min(w, h);
-  var dxPos,
+  let d_val;
+  const cnstVal1 = 100000 * slideFactor;
+  const ss = Math.min(w, h);
+  let dxPos,
     dyPos,
     xPos,
     yPos,
@@ -529,27 +529,27 @@ function renderWedgeRoundRectCallout(ctx: CalloutContext): string {
 function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var refr = slideFactor;
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const refr = slideFactor;
+  let sAdj1,
     adj1 = 18750 * refr;
-  var sAdj2,
+  let sAdj2,
     adj2 = -8333 * refr;
-  var sAdj3,
+  let sAdj3,
     adj3 = 18750 * refr;
-  var sAdj4,
+  let sAdj4,
     adj4 = -16667 * refr;
-  var sAdj5,
+  let sAdj5,
     adj5 = 100000 * refr;
-  var sAdj6,
+  let sAdj6,
     adj6 = -16667 * refr;
-  var sAdj7,
+  let sAdj7,
     adj7 = 112963 * refr;
-  var sAdj8,
+  let sAdj8,
     adj8 = -8333 * refr;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
@@ -577,9 +577,9 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
       }
     }
   }
-  var d_val;
-  var cnstVal1 = 100000 * refr;
-  var isBorder = true;
+  let d_val;
+  const cnstVal1 = 100000 * refr;
+  let isBorder = true;
 
   switch (shapType) {
     case "borderCallout1":

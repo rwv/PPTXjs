@@ -37,10 +37,10 @@ export function getFontSize(
 ): string {
   // if(type == "sldNum")
   //console.log("getFontSize node:", node, "lstStyle", lstStyle, "lvl:", lvl, 'type:', type, "warpObj:", warpObj)
-  var lstStyle = textBodyNode !== undefined ? textBodyNode["a:lstStyle"] : undefined;
-  var lvlpPr = "a:lvl" + lvl + "pPr";
-  var fontSize: number | undefined = undefined;
-  var sz, kern;
+  const lstStyle = textBodyNode !== undefined ? textBodyNode["a:lstStyle"] : undefined;
+  const lvlpPr = "a:lvl" + lvl + "pPr";
+  let fontSize: number | undefined = undefined;
+  let sz, kern;
   if (node["a:rPr"] !== undefined) {
     fontSize = parseInt(node["a:rPr"]["attrs"]["sz"]) / 100;
   }
@@ -57,10 +57,10 @@ export function getFontSize(
     fontSize = parseInt(sz) / 100;
   }
   //a:spAutoFit
-  var isAutoFit = false;
-  var isKerning = false;
+  let isAutoFit = false;
+  let isKerning = false;
   if (textBodyNode !== undefined) {
-    var spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:spAutoFit"]);
+    const spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:spAutoFit"]);
     // if (spAutoFitNode === undefined) {
     //     spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:normAutofit"]);
     // }
@@ -215,16 +215,16 @@ export function getFontSize(
     }
   }
 
-  var baseline = getTextByPathList(node, ["a:rPr", "attrs", "baseline"]);
+  const baseline = getTextByPathList(node, ["a:rPr", "attrs", "baseline"]);
   if (baseline !== undefined && !isNaN(fontSize)) {
-    var baselineVl = parseInt(baseline) / 100000;
+    const baselineVl = parseInt(baseline) / 100000;
     //fontSize -= 10;
     // fontSize = fontSize * baselineVl;
     fontSize -= baselineVl;
   }
 
   if (!isNaN(fontSize)) {
-    var normAutofit = getTextByPathList(textBodyNode, [
+    const normAutofit = getTextByPathList(textBodyNode, [
       "a:bodyPr",
       "a:normAutofit",
       "attrs",

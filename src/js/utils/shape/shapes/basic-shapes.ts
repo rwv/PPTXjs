@@ -489,7 +489,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           "' />";
       } else if (shapType == "flowChartSummingJunction") {
         // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
-        var iDx,
+        let iDx,
           idy,
           il,
           ir,
@@ -499,7 +499,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           vc = h / 2,
           wd2 = w / 2,
           hd2 = h / 2;
-        var angVal = Math.PI / 4;
+        const angVal = Math.PI / 4;
         iDx = wd2 * Math.cos(angVal);
         idy = hd2 * Math.sin(angVal);
         il = hc - iDx;
@@ -567,7 +567,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           }
         }
       } else if (shapAdjst_ary !== undefined && shapAdjst_ary.constructor !== Array) {
-        var sAdj = getTextByPathList(shapAdjst_ary, ["attrs", "fmla"]);
+        const sAdj = getTextByPathList(shapAdjst_ary, ["attrs", "fmla"]);
         sAdj1_val = parseInt(sAdj.substr(4)) / 50000;
         sAdj2_val = 0;
       }

@@ -91,7 +91,7 @@ function createPath(d: string, ctx: MiscSymbolContext, transform?: string): stri
 
 function renderMoon(ctx: MiscSymbolContext): string {
   const { node, w, h } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -99,15 +99,15 @@ function renderMoon(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 0.5;
+  let adj = 0.5;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) / 100000;
   }
-  var hd2 = h / 2;
-  var cd2 = 180;
-  var cd4 = 90;
-  var adj2 = (1 - adj) * w;
-  var d =
+  const hd2 = h / 2;
+  const cd2 = 180;
+  const cd4 = 90;
+  const adj2 = (1 - adj) * w;
+  const d =
     "M" +
     w +
     "," +
@@ -120,26 +120,26 @@ function renderMoon(ctx: MiscSymbolContext): string {
 
 function renderCorner(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1_val = 50000 * slideFactor;
-  var sAdj2_val = 50000 * slideFactor;
-  var cnsVal = 100000 * slideFactor;
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1_val = 50000 * slideFactor;
+  let sAdj2_val = 50000 * slideFactor;
+  const cnsVal = 100000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
-        var sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+        const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = parseInt(sAdj1.substr(4)) * slideFactor;
       } else if (sAdj_name == "adj2") {
-        var sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+        const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj2_val = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     }
   }
-  var minWH = Math.min(w, h);
-  var maxAdj1 = (cnsVal * h) / minWH;
-  var maxAdj2 = (cnsVal * w) / minWH;
-  var a1, a2, x1, dy1, y1;
+  const minWH = Math.min(w, h);
+  const maxAdj1 = (cnsVal * h) / minWH;
+  const maxAdj2 = (cnsVal * w) / minWH;
+  let a1, a2, x1, dy1, y1;
   if (sAdj1_val < 0) a1 = 0;
   else if (sAdj1_val > maxAdj1) a1 = maxAdj1;
   else a1 = sAdj1_val;
@@ -149,7 +149,7 @@ function renderCorner(ctx: MiscSymbolContext): string {
   x1 = (minWH * a2) / cnsVal;
   dy1 = (minWH * a1) / cnsVal;
   y1 = h - dy1;
-  var d =
+  const d =
     "M0,0 L" +
     x1 +
     ",0 L" +
@@ -172,7 +172,7 @@ function renderCorner(ctx: MiscSymbolContext): string {
 
 function renderDiagStripe(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -180,32 +180,32 @@ function renderDiagStripe(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var sAdj1_val = 50000 * slideFactor;
-  var cnsVal = 100000 * slideFactor;
+  let sAdj1_val = 50000 * slideFactor;
+  const cnsVal = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
     sAdj1_val = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var a1, x2, y2;
+  let a1, x2, y2;
   if (sAdj1_val < 0) a1 = 0;
   else if (sAdj1_val > cnsVal) a1 = cnsVal;
   else a1 = sAdj1_val;
   x2 = (w * a1) / cnsVal;
   y2 = (h * a1) / cnsVal;
-  var d = "M0," + y2 + " L" + x2 + ",0 L" + w + ",0 L0," + h + " z";
+  const d = "M0," + y2 + " L" + x2 + ",0 L" + w + ",0 L0," + h + " z";
   return createPath(d, ctx);
 }
 
 function renderGear(ctx: MiscSymbolContext, shapType: string): string {
   const { w, h, setTxtRotate } = ctx;
   if (setTxtRotate) setTxtRotate(0);
-  var gearNum = shapType.substr(4);
-  var d = shapeGear(w, h / 3.5, parseInt(gearNum));
+  const gearNum = shapType.substr(4);
+  const d = shapeGear(w, h / 3.5, parseInt(gearNum));
   return createPath(d, ctx, `rotate(20,${(3 / 7) * h},${(3 / 7) * h})`);
 }
 
 function renderPlus(ctx: MiscSymbolContext): string {
   const { node, w, h } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -213,17 +213,17 @@ function renderPlus(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj1 = 0.25;
+  let adj1 = 0.25;
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) / 100000;
   }
-  var adj2 = 1 - adj1;
+  const adj2 = 1 - adj1;
   return ` <polygon points='${adj1 * w} 0,${adj1 * w} ${adj1 * h},0 ${adj1 * h},0 ${adj2 * h},${adj1 * w} ${adj2 * h},${adj1 * w} ${h},${adj2 * w} ${h},${adj2 * w} ${adj2 * h},${w} ${adj2 * h},${w} ${adj1 * h},${adj2 * w} ${adj1 * h},${adj2 * w} 0' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }
 
 function renderTeardrop(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -231,13 +231,13 @@ function renderTeardrop(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj1 = 100000 * slideFactor;
-  var cnsVal1 = adj1;
-  var cnsVal2 = 200000 * slideFactor;
+  let adj1 = 100000 * slideFactor;
+  const cnsVal1 = adj1;
+  const cnsVal2 = 200000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var a1, r2, tw, th, sw, sh, dx1, dy1, x1, y1, x2, y2, rd45;
+  let a1, r2, tw, th, sw, sh, dx1, dy1, x1, y1, x2, y2, rd45;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > cnsVal2) a1 = cnsVal2;
   else a1 = adj1;
@@ -253,7 +253,7 @@ function renderTeardrop(ctx: MiscSymbolContext): string {
   y1 = h / 2 - dy1;
   x2 = (w / 2 + x1) / 2;
   y2 = (h / 2 + y1) / 2;
-  var d_val =
+  const d_val =
     shapeArc(w / 2, h / 2, w / 2, h / 2, 180, 270, false) +
     "Q " +
     x2 +
@@ -277,7 +277,7 @@ function renderTeardrop(ctx: MiscSymbolContext): string {
 
 function renderPlaque(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -285,20 +285,20 @@ function renderPlaque(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj1 = 16667 * slideFactor;
-  var cnsVal1 = 50000 * slideFactor;
-  var cnsVal2 = 100000 * slideFactor;
+  let adj1 = 16667 * slideFactor;
+  const cnsVal1 = 50000 * slideFactor;
+  const cnsVal2 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var a1, x1, x2, y2;
+  let a1, x1, x2, y2;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > cnsVal1) a1 = cnsVal1;
   else a1 = adj1;
   x1 = (a1 * Math.min(w, h)) / cnsVal2;
   x2 = w - x1;
   y2 = h - x1;
-  var d_val =
+  const d_val =
     "M0," +
     x1 +
     shapeArc(0, 0, x1, x1, 90, 0, false).replace("M", "L") +
@@ -322,7 +322,7 @@ function renderPlaque(ctx: MiscSymbolContext): string {
 
 function renderSun(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -330,17 +330,17 @@ function renderSun(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var refr = slideFactor;
-  var adj1 = 25000 * refr;
-  var cnstVal1 = 12500 * refr;
-  var cnstVal2 = 46875 * refr;
+  const refr = slideFactor;
+  let adj1 = 25000 * refr;
+  const cnstVal1 = 12500 * refr;
+  const cnstVal2 = 46875 * refr;
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) * refr;
   }
-  var a1 = adj1 < cnstVal1 ? cnstVal1 : adj1 > cnstVal2 ? cnstVal2 : adj1;
-  var cnstVa3 = 50000 * refr;
-  var cnstVa4 = 100000 * refr;
-  var g0 = cnstVa3 - a1,
+  const a1 = adj1 < cnstVal1 ? cnstVal1 : adj1 > cnstVal2 ? cnstVal2 : adj1;
+  const cnstVa3 = 50000 * refr;
+  const cnstVa4 = 100000 * refr;
+  const g0 = cnstVa3 - a1,
     g1 = (g0 * (30274 * refr)) / (32768 * refr),
     g2 = (g0 * (12540 * refr)) / (32768 * refr),
     g3 = g1 + cnstVa3,
@@ -387,7 +387,7 @@ function renderSun(ctx: MiscSymbolContext): string {
     y17 = (h * g17) / cnstVa4,
     y18 = (h * g18) / cnstVa4;
 
-  var d_val =
+  const d_val =
     "M" +
     w +
     "," +
@@ -499,14 +499,14 @@ function renderSun(ctx: MiscSymbolContext): string {
 
 function renderHeart(ctx: MiscSymbolContext): string {
   const { w, h } = ctx;
-  var dx1 = (w * 49) / 48,
+  const dx1 = (w * 49) / 48,
     dx2 = (w * 10) / 48,
     x1 = w / 2 - dx1,
     x2 = w / 2 - dx2,
     x3 = w / 2 + dx2,
     x4 = w / 2 + dx1,
     y1 = -h / 3;
-  var d_val =
+  const d_val =
     "M" +
     w / 2 +
     "," +
@@ -541,7 +541,7 @@ function renderHeart(ctx: MiscSymbolContext): string {
 
 function renderLightningBolt(ctx: MiscSymbolContext): string {
   const { w, h } = ctx;
-  var x1 = (w * 5022) / 21600,
+  const x1 = (w * 5022) / 21600,
     x2 = (w * 11050) / 21600,
     x3 = (w * 8472) / 21600,
     x4 = (w * 8757) / 21600,
@@ -563,7 +563,7 @@ function renderLightningBolt(ctx: MiscSymbolContext): string {
     y9 = (h * 8382) / 21600,
     y10 = (h * 14277) / 21600,
     y11 = (h * 14915) / 21600;
-  var d_val =
+  const d_val =
     "M" +
     x3 +
     ",0 L" +
@@ -610,7 +610,7 @@ function renderLightningBolt(ctx: MiscSymbolContext): string {
 
 function renderCube(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -618,18 +618,18 @@ function renderCube(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var refr = slideFactor;
-  var adj = 25000 * refr;
+  const refr = slideFactor;
+  let adj = 25000 * refr;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * refr;
   }
-  var cnstVal2 = 100000 * refr;
-  var ss = Math.min(w, h);
-  var a = adj < 0 ? 0 : adj > cnstVal2 ? cnstVal2 : adj;
-  var y1 = (ss * a) / cnstVal2;
-  var y4 = h - y1;
-  var x4 = w - y1;
-  var d_val =
+  const cnstVal2 = 100000 * refr;
+  const ss = Math.min(w, h);
+  const a = adj < 0 ? 0 : adj > cnstVal2 ? cnstVal2 : adj;
+  const y1 = (ss * a) / cnstVal2;
+  const y4 = h - y1;
+  const x4 = w - y1;
+  const d_val =
     "M0," +
     y1 +
     " L" +
@@ -673,7 +673,7 @@ function renderCube(ctx: MiscSymbolContext): string {
 
 function renderBevel(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -681,19 +681,19 @@ function renderBevel(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var refr = slideFactor;
-  var adj = 12500 * refr;
+  const refr = slideFactor;
+  let adj = 12500 * refr;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * refr;
   }
-  var cnstVal1 = 50000 * refr;
-  var cnstVal2 = 100000 * refr;
-  var ss = Math.min(w, h);
-  var a = adj < 0 ? 0 : adj > cnstVal1 ? cnstVal1 : adj;
-  var x1 = (ss * a) / cnstVal2;
-  var x2 = w - x1;
-  var y2 = h - x1;
-  var d_val =
+  const cnstVal1 = 50000 * refr;
+  const cnstVal2 = 100000 * refr;
+  const ss = Math.min(w, h);
+  const a = adj < 0 ? 0 : adj > cnstVal1 ? cnstVal1 : adj;
+  const x1 = (ss * a) / cnstVal2;
+  const x2 = w - x1;
+  const y2 = h - x1;
+  const d_val =
     "M0,0 L" +
     w +
     ",0 L" +
@@ -749,7 +749,7 @@ function renderBevel(ctx: MiscSymbolContext): string {
 
 function renderFoldedCorner(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -757,22 +757,22 @@ function renderFoldedCorner(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var refr = slideFactor;
-  var adj = 16667 * refr;
+  const refr = slideFactor;
+  let adj = 16667 * refr;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * refr;
   }
-  var cnstVal1 = 50000 * refr;
-  var cnstVal2 = 100000 * refr;
-  var ss = Math.min(w, h);
-  var a = adj < 0 ? 0 : adj > cnstVal1 ? cnstVal1 : adj;
-  var dy2 = (ss * a) / cnstVal2;
-  var dy1 = dy2 / 5;
-  var x1 = w - dy2;
-  var x2 = x1 + dy1;
-  var y2 = h - dy2;
-  var y1 = y2 + dy1;
-  var d_val =
+  const cnstVal1 = 50000 * refr;
+  const cnstVal2 = 100000 * refr;
+  const ss = Math.min(w, h);
+  const a = adj < 0 ? 0 : adj > cnstVal1 ? cnstVal1 : adj;
+  const dy2 = (ss * a) / cnstVal2;
+  const dy1 = dy2 / 5;
+  const x1 = w - dy2;
+  const x2 = x1 + dy1;
+  const y2 = h - dy2;
+  const y1 = y2 + dy1;
+  const d_val =
     "M" +
     x1 +
     "," +
@@ -802,7 +802,7 @@ function renderFoldedCorner(ctx: MiscSymbolContext): string {
 
 function renderCloud(ctx: MiscSymbolContext): string {
   const { w, h } = ctx;
-  var x0 = (w * 3900) / 43200,
+  const x0 = (w * 3900) / 43200,
     x1 = (w * 4693) / 43200,
     x2 = (w * 6928) / 43200,
     x3 = (w * 16478) / 43200,
@@ -814,7 +814,7 @@ function renderCloud(ctx: MiscSymbolContext): string {
     x9 = (w * 22141) / 43200,
     x10 = (w * 14000) / 43200,
     x11 = (w * 4127) / 43200;
-  var y0 = (h * 14370) / 43200,
+  const y0 = (h * 14370) / 43200,
     y1 = (h * 26177) / 43200,
     y2 = (h * 34899) / 43200,
     y3 = (h * 39090) / 43200,
@@ -826,7 +826,7 @@ function renderCloud(ctx: MiscSymbolContext): string {
     y9 = (h * 4720) / 43200,
     y10 = (h * 5192) / 43200,
     y11 = (h * 15789) / 43200;
-  var rX1 = (w * 6753) / 43200,
+  const rX1 = (w * 6753) / 43200,
     rY1 = (h * 9190) / 43200,
     rX2 = (w * 5333) / 43200,
     rY2 = (h * 7267) / 43200,
@@ -849,7 +849,7 @@ function renderCloud(ctx: MiscSymbolContext): string {
     rY11 = (h * 5945) / 43200,
     rX12 = (w * 6928) / 43200,
     rY12 = (h * 9407) / 43200;
-  var d =
+  const d =
     shapeArc(x11, y11, rX12, rY12, 122, 180, false) +
     shapeArc(x0, y0, rX11, rY11, 122, 182, false).replace("M", "L") +
     shapeArc(x1, y7, rX10, rY10, 142, 232, false).replace("M", "L") +
@@ -869,7 +869,7 @@ function renderCloud(ctx: MiscSymbolContext): string {
 
 function renderSmileyFace(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -877,35 +877,35 @@ function renderSmileyFace(ctx: MiscSymbolContext): string {
     "attrs",
     "fmla",
   ]);
-  var refr = slideFactor;
-  var adj = 4653 * refr;
+  const refr = slideFactor;
+  let adj = 4653 * refr;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * refr;
   }
-  var cnstVal1 = 50000 * refr;
-  var cnstVal2 = 100000 * refr;
-  var cnstVal3 = 4653 * refr;
-  var ss = Math.min(w, h);
-  var wd2 = w / 2,
+  const cnstVal1 = 50000 * refr;
+  const cnstVal2 = 100000 * refr;
+  const cnstVal3 = 4653 * refr;
+  const ss = Math.min(w, h);
+  const wd2 = w / 2,
     hd2 = h / 2;
-  var a = adj < -cnstVal3 ? -cnstVal3 : adj > cnstVal3 ? cnstVal3 : adj;
-  var x1 = (w * 4969) / 21699,
+  const a = adj < -cnstVal3 ? -cnstVal3 : adj > cnstVal3 ? cnstVal3 : adj;
+  const x1 = (w * 4969) / 21699,
     x2 = (w * 6215) / 21600,
     x3 = (w * 13135) / 21600,
     x4 = (w * 16640) / 21600;
-  var y1 = (h * 7570) / 21600,
+  const y1 = (h * 7570) / 21600,
     y3 = (h * 16515) / 21600;
-  var dy2 = (h * a) / cnstVal2;
-  var y2 = y3 - dy2;
-  var y4 = y3 + dy2;
-  var dy3 = (h * a) / cnstVal1;
-  var y5 = y4 + dy3;
-  var wR = (w * 1125) / 21600,
+  const dy2 = (h * a) / cnstVal2;
+  const y2 = y3 - dy2;
+  const y4 = y3 + dy2;
+  const dy3 = (h * a) / cnstVal1;
+  const y5 = y4 + dy3;
+  const wR = (w * 1125) / 21600,
     hR = (h * 1125) / 21600;
-  var cX1 = x2 - wR * Math.cos(Math.PI);
-  var cY1 = y1 - hR * Math.sin(Math.PI);
-  var cX2 = x3 - wR * Math.cos(Math.PI);
-  var d_val =
+  const cX1 = x2 - wR * Math.cos(Math.PI);
+  const cY1 = y1 - hR * Math.sin(Math.PI);
+  const cX2 = x3 - wR * Math.cos(Math.PI);
+  const d_val =
     shapeArc(cX1, cY1, wR, hR, 180, 540, false) +
     shapeArc(cX2, cY1, wR, hR, 180, 540, false) +
     " M" +

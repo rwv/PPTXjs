@@ -25,14 +25,7 @@ export async function loadPPTXjs(document: Document) {
   ]);
 
   // Load JavaScript files in sequential order (important for dependencies)
-  const scripts = [
-    jqueryMinJs,
-    jqueryFullscreenJs,
-    jszipMinJs,
-    d3MinJs,
-    nvD3MinJs,
-    pptxjsJs,
-  ];
+  const scripts = [jqueryMinJs, jqueryFullscreenJs, jszipMinJs, d3MinJs, nvD3MinJs, pptxjsJs];
 
   // Load scripts sequentially
   for (const scriptSrc of scripts) {

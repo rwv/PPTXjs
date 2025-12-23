@@ -10,7 +10,6 @@ export async function getPageElementsFromPPTX(file: Blob) {
   element.id = elementID;
   document.body.appendChild(element);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).$(`#${elementID}`).pptxToHtml({
     pptxFileUrl: url,
     slidesScale: "100%",

@@ -20,14 +20,14 @@ export function renderBulletPic(
   bultSize: string,
   isRTL: boolean
 ): string {
-  var buPicId = getTextByPathList(buPic, ["a:blip", "attrs", "r:embed"]);
-  var buImg;
+  const buPicId = getTextByPathList(buPic, ["a:blip", "attrs", "r:embed"]);
+  let buImg;
 
   if (buPicId !== undefined) {
-    var imgPath = warpObj["slideResObj"][buPicId]["target"];
-    var imgArrayBuffer = warpObj["zip"].file(imgPath).asArrayBuffer();
-    var imgExt = imgPath.split(".").pop();
-    var imgMimeType = getMimeType(imgExt);
+    const imgPath = warpObj["slideResObj"][buPicId]["target"];
+    const imgArrayBuffer = warpObj["zip"].file(imgPath).asArrayBuffer();
+    const imgExt = imgPath.split(".").pop();
+    const imgMimeType = getMimeType(imgExt);
     buImg =
       "<img src='data:" +
       imgMimeType +
@@ -40,7 +40,7 @@ export function renderBulletPic(
     buImg = "&#8227;";
   }
 
-  var bullet =
+  let bullet =
     "<div style='height: 100%;" +
     marLStr +
     marRStr +

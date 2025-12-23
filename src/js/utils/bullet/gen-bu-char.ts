@@ -42,19 +42,19 @@ export function genBuChar(
 ): string | [string, number, number] {
   //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
   ///////////////////////////////////////Amir///////////////////////////////
-  var sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
-  var lstStyle = textBodyNode["a:lstStyle"];
+  const sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
+  const lstStyle = textBodyNode["a:lstStyle"];
 
-  var rNode = getTextByPathList(node, ["a:r"]);
+  let rNode = getTextByPathList(node, ["a:r"]);
   if (rNode !== undefined && rNode.constructor === Array) {
     rNode = rNode[0]; //bullet only to first "a:r"
   }
-  var lvl = parseInt(getTextByPathList(node["a:pPr"], ["attrs", "lvl"])) + 1;
+  let lvl = parseInt(getTextByPathList(node["a:pPr"], ["attrs", "lvl"])) + 1;
   if (isNaN(lvl)) {
     lvl = 1;
   }
-  var lvlStr = "a:lvl" + lvl + "pPr";
-  var dfltBultColor, dfltBultSize, bultColor, bultSize, color_tye;
+  const lvlStr = "a:lvl" + lvl + "pPr";
+  let dfltBultColor, dfltBultSize, bultColor, bultSize, color_tye;
 
   if (rNode !== undefined) {
     dfltBultColor = getFontColorPr(
@@ -75,28 +75,28 @@ export function genBuChar(
   }
   //console.log("Bullet Size: " + bultSize);
 
-  var bullet = "",
+  let bullet = "",
     marRStr = "",
     marLStr = "",
     margin_val = 0,
     font_val = 0;
   /////////////////////////////////////////////////////////////////
 
-  var pPrNode = node["a:pPr"];
-  var BullNONE = getTextByPathList(pPrNode, ["a:buNone"]);
+  let pPrNode = node["a:pPr"];
+  let BullNONE = getTextByPathList(pPrNode, ["a:buNone"]);
   if (BullNONE !== undefined) {
     return "";
   }
 
-  var buType = "TYPE_NONE";
+  let buType = "TYPE_NONE";
 
-  var layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
-  var pPrNodeLaout = layoutMasterNode.nodeLaout;
-  var pPrNodeMaster = layoutMasterNode.nodeMaster;
+  const layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
+  const pPrNodeLaout = layoutMasterNode.nodeLaout;
+  const pPrNodeMaster = layoutMasterNode.nodeMaster;
 
-  var buChar = getTextByPathList(pPrNode, ["a:buChar", "attrs", "char"]);
-  var buNum = getTextByPathList(pPrNode, ["a:buAutoNum", "attrs", "type"]);
-  var buPic = getTextByPathList(pPrNode, ["a:buBlip"]);
+  let buChar = getTextByPathList(pPrNode, ["a:buChar", "attrs", "char"]);
+  let buNum = getTextByPathList(pPrNode, ["a:buAutoNum", "attrs", "type"]);
+  let buPic = getTextByPathList(pPrNode, ["a:buBlip"]);
   if (buChar !== undefined) {
     buType = "TYPE_BULLET";
   }
@@ -107,7 +107,7 @@ export function genBuChar(
     buType = "TYPE_BULPIC";
   }
 
-  var buFontSize = getTextByPathList(pPrNode, ["a:buSzPts", "attrs", "val"]);
+  let buFontSize = getTextByPathList(pPrNode, ["a:buSzPts", "attrs", "val"]);
   if (buFontSize === undefined) {
     buFontSize = getTextByPathList(pPrNode, ["a:buSzPct", "attrs", "val"]);
     if (buFontSize !== undefined) {
@@ -124,7 +124,7 @@ export function genBuChar(
   }
 
   //get definde bullet COLOR
-  var buClrNode = getTextByPathList(pPrNode, ["a:buClr"]);
+  let buClrNode = getTextByPathList(pPrNode, ["a:buClr"]);
 
   if (buChar === undefined && buNum === undefined && buPic === undefined) {
     if (lstStyle !== undefined) {
@@ -196,19 +196,19 @@ export function genBuChar(
     }
   }
   //rtl
-  var getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
+  let getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
   if (getRtlVal === undefined) {
     getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
     if (getRtlVal === undefined && type != "shape") {
       getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
     }
   }
-  var isRTL = false;
+  let isRTL = false;
   if (getRtlVal !== undefined && getRtlVal == "1") {
     isRTL = true;
   }
   //align
-  var alignNode = getTextByPathList(pPrNode, ["attrs", "algn"]); //"l" | "ctr" | "r" | "just" | "justLow" | "dist" | "thaiDist
+  let alignNode = getTextByPathList(pPrNode, ["attrs", "algn"]); //"l" | "ctr" | "r" | "just" | "justLow" | "dist" | "thaiDist
   if (alignNode === undefined) {
     alignNode = getTextByPathList(pPrNodeLaout, ["attrs", "algn"]);
     if (alignNode === undefined) {
@@ -216,19 +216,19 @@ export function genBuChar(
     }
   }
   //indent?
-  var indentNode = getTextByPathList(pPrNode, ["attrs", "indent"]);
+  let indentNode = getTextByPathList(pPrNode, ["attrs", "indent"]);
   if (indentNode === undefined) {
     indentNode = getTextByPathList(pPrNodeLaout, ["attrs", "indent"]);
     if (indentNode === undefined) {
       indentNode = getTextByPathList(pPrNodeMaster, ["attrs", "indent"]);
     }
   }
-  var indent = 0;
+  let indent = 0;
   if (indentNode !== undefined) {
     indent = parseInt(indentNode) * slideFactor;
   }
   //marL
-  var marLNode = getTextByPathList(pPrNode, ["attrs", "marL"]);
+  let marLNode = getTextByPathList(pPrNode, ["attrs", "marL"]);
   if (marLNode === undefined) {
     marLNode = getTextByPathList(pPrNodeLaout, ["attrs", "marL"]);
     if (marLNode === undefined) {
@@ -237,7 +237,7 @@ export function genBuChar(
   }
   //console.log("genBuChar() isRTL", isRTL, "alignNode:", alignNode)
   if (marLNode !== undefined) {
-    var marginLeft = parseInt(marLNode) * slideFactor;
+    const marginLeft = parseInt(marLNode) * slideFactor;
     if (isRTL) {
       // && alignNode == "r") {
       marLStr = "padding-right:"; // "margin-right: ";
@@ -249,7 +249,7 @@ export function genBuChar(
   }
 
   //marR?
-  var marRNode = getTextByPathList(pPrNode, ["attrs", "marR"]);
+  let marRNode = getTextByPathList(pPrNode, ["attrs", "marR"]);
   if (marRNode === undefined && marLNode === undefined) {
     //need to check if this posble - TODO
     marRNode = getTextByPathList(pPrNodeLaout, ["attrs", "marR"]);
@@ -258,7 +258,7 @@ export function genBuChar(
     }
   }
   if (marRNode !== undefined) {
-    var marginRight = parseInt(marRNode) * slideFactor;
+    const marginRight = parseInt(marRNode) * slideFactor;
     if (isRTL) {
       // && alignNode == "r") {
       marLStr = "padding-right:"; // "margin-right: ";
@@ -285,7 +285,7 @@ export function genBuChar(
       buClrNode = getTextByPathList(pPrNodeMaster, ["a:buClr"]);
     }
   }
-  var defBultColor;
+  let defBultColor;
   if (buClrNode !== undefined) {
     defBultColor = getSolidFill(buClrNode, undefined, undefined, warpObj);
   } else {

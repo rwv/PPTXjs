@@ -13,7 +13,7 @@
  * @returns Fill type as string constant
  */
 export function getFillType(node: any): string {
-  var fillType = "";
+  let fillType = "";
   if (node["a:noFill"] !== undefined) {
     fillType = "NO_FILL";
   }

@@ -24,31 +24,31 @@ export function getPregraphMargn(
     return ["", 0];
   }
 
-  var marLStr = "",
+  let marLStr = "",
     marRStr = "",
     maginVal = 0;
-  var pPrNode = pNode["a:pPr"];
-  var layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
-  var pPrNodeLaout = layoutMasterNode.nodeLaout;
-  var pPrNodeMaster = layoutMasterNode.nodeMaster;
+  const pPrNode = pNode["a:pPr"];
+  const layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
+  const pPrNodeLaout = layoutMasterNode.nodeLaout;
+  const pPrNodeMaster = layoutMasterNode.nodeMaster;
 
   // rtl
-  var getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
+  let getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
   if (getRtlVal === undefined) {
     getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
     if (getRtlVal === undefined && type != "shape") {
       getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
     }
   }
-  var isRTL = false;
-  var dirStr = "ltr";
+  let isRTL = false;
+  let dirStr = "ltr";
   if (getRtlVal !== undefined && getRtlVal == "1") {
     isRTL = true;
     dirStr = "rtl";
   }
 
   // align
-  var alignNode = getTextByPathList(pPrNode, ["attrs", "algn"]);
+  let alignNode = getTextByPathList(pPrNode, ["attrs", "algn"]);
   if (alignNode === undefined) {
     alignNode = getTextByPathList(pPrNodeLaout, ["attrs", "algn"]);
     if (alignNode === undefined) {
@@ -57,27 +57,27 @@ export function getPregraphMargn(
   }
 
   // indent
-  var indentNode = getTextByPathList(pPrNode, ["attrs", "indent"]);
+  let indentNode = getTextByPathList(pPrNode, ["attrs", "indent"]);
   if (indentNode === undefined) {
     indentNode = getTextByPathList(pPrNodeLaout, ["attrs", "indent"]);
     if (indentNode === undefined) {
       indentNode = getTextByPathList(pPrNodeMaster, ["attrs", "indent"]);
     }
   }
-  var indent = 0;
+  let indent = 0;
   if (indentNode !== undefined) {
     indent = parseInt(indentNode) * slideFactor;
   }
 
   // marL
-  var marLNode = getTextByPathList(pPrNode, ["attrs", "marL"]);
+  let marLNode = getTextByPathList(pPrNode, ["attrs", "marL"]);
   if (marLNode === undefined) {
     marLNode = getTextByPathList(pPrNodeLaout, ["attrs", "marL"]);
     if (marLNode === undefined) {
       marLNode = getTextByPathList(pPrNodeMaster, ["attrs", "marL"]);
     }
   }
-  var marginLeft = 0;
+  let marginLeft = 0;
   if (marLNode !== undefined) {
     marginLeft = parseInt(marLNode) * slideFactor;
   }
@@ -98,7 +98,7 @@ export function getPregraphMargn(
   }
 
   // marR
-  var marRNode = getTextByPathList(pPrNode, ["attrs", "marR"]);
+  let marRNode = getTextByPathList(pPrNode, ["attrs", "marR"]);
   if (marRNode === undefined && marLNode === undefined) {
     marRNode = getTextByPathList(pPrNodeLaout, ["attrs", "marR"]);
     if (marRNode === undefined) {
@@ -106,7 +106,7 @@ export function getPregraphMargn(
     }
   }
   if (marRNode !== undefined && isBullate) {
-    var marginRight = parseInt(marRNode) * slideFactor;
+    const marginRight = parseInt(marRNode) * slideFactor;
     if (isRTL) {
       marRStr = "padding-right: ";
     } else {

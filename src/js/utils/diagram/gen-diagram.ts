@@ -54,29 +54,29 @@ export function genDiagram(
    * 5-drawing#.xml, which Microsoft added as an extension for persisting diagram layout information.
    */
   ///get colors#.xml, data#.xml , layout#.xml , quickStyle#.xml
-  var order = node["attrs"]["order"];
-  var zip = warpObj["zip"];
-  var xfrmNode = getTextByPathList(node, ["p:xfrm"]);
-  var dgmRelIds = getTextByPathList(node, ["a:graphic", "a:graphicData", "dgm:relIds", "attrs"]);
+  const order = node["attrs"]["order"];
+  const zip = warpObj["zip"];
+  const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
+  const dgmRelIds = getTextByPathList(node, ["a:graphic", "a:graphicData", "dgm:relIds", "attrs"]);
   //console.log(dgmRelIds)
-  var dgmClrFileId = dgmRelIds["r:cs"];
-  var dgmDataFileId = dgmRelIds["r:dm"];
-  var dgmLayoutFileId = dgmRelIds["r:lo"];
-  var dgmQuickStyleFileId = dgmRelIds["r:qs"];
-  var dgmClrFileName = warpObj["slideResObj"][dgmClrFileId].target,
+  const dgmClrFileId = dgmRelIds["r:cs"];
+  const dgmDataFileId = dgmRelIds["r:dm"];
+  const dgmLayoutFileId = dgmRelIds["r:lo"];
+  const dgmQuickStyleFileId = dgmRelIds["r:qs"];
+  const dgmClrFileName = warpObj["slideResObj"][dgmClrFileId].target,
     dgmDataFileName = warpObj["slideResObj"][dgmDataFileId].target,
     dgmLayoutFileName = warpObj["slideResObj"][dgmLayoutFileId].target;
   // @ts-expect-error TS(2304): Cannot find name 'dgmQuickStyleFileName'.
   dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
   //console.log("dgmClrFileName: " , dgmClrFileName,", dgmDataFileName: ",dgmDataFileName,", dgmLayoutFileName: ",dgmLayoutFileName,", dgmQuickStyleFileName: ",dgmQuickStyleFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var dgmClr = readXmlFile(zip, dgmClrFileName);
+  const dgmClr = readXmlFile(zip, dgmClrFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var dgmData = readXmlFile(zip, dgmDataFileName);
+  const dgmData = readXmlFile(zip, dgmDataFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var dgmLayout = readXmlFile(zip, dgmLayoutFileName);
+  const dgmLayout = readXmlFile(zip, dgmLayoutFileName);
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var dgmQuickStyle = readXmlFile(zip, dgmQuickStyleFileName);
+  const dgmQuickStyle = readXmlFile(zip, dgmQuickStyleFileName);
   //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
   ///get drawing#.xml
   // var dgmDrwFileName = "";
@@ -91,16 +91,16 @@ export function genDiagram(
   // }
   // var dgmDrwSpArray = getTextByPathList(dgmDrwFile, ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
   //var dgmDrwSpArray = getTextByPathList(warpObj["digramFileContent"], ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
-  var dgmDrwSpArray = getTextByPathList(warpObj["digramFileContent"], [
+  const dgmDrwSpArray = getTextByPathList(warpObj["digramFileContent"], [
     "p:drawing",
     "p:spTree",
     "p:sp",
   ]);
-  var rslt = "";
+  let rslt = "";
   if (dgmDrwSpArray !== undefined) {
-    var dgmDrwSpArrayLen = dgmDrwSpArray.length;
-    for (var i = 0; i < dgmDrwSpArrayLen; i++) {
-      var dspSp = dgmDrwSpArray[i];
+    const dgmDrwSpArrayLen = dgmDrwSpArray.length;
+    for (let i = 0; i < dgmDrwSpArrayLen; i++) {
+      const dspSp = dgmDrwSpArray[i];
       // var dspSpObjToStr = JSON.stringify(dspSp);
       // var pSpStr = dspSpObjToStr.replace(/dsp:/g, "p:");
       // var pSpStrToObj = JSON.parse(pSpStr);

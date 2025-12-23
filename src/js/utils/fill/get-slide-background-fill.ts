@@ -12,13 +12,13 @@ import { getBgGradientFill } from "./get-bg-gradient-fill";
 import { getBgPicFill } from "./get-bg-pic-fill";
 
 export function getSlideBackgroundFill(warpObj: any, index: any): string | undefined {
-  var slideContent = warpObj["slideContent"];
-  var slideLayoutContent = warpObj["slideLayoutContent"];
-  var slideMasterContent = warpObj["slideMasterContent"];
+  const slideContent = warpObj["slideContent"];
+  const slideLayoutContent = warpObj["slideLayoutContent"];
+  const slideMasterContent = warpObj["slideMasterContent"];
 
-  var bgPr = getTextByPathList(slideContent, ["p:sld", "p:cSld", "p:bg", "p:bgPr"]);
-  var bgRef = getTextByPathList(slideContent, ["p:sld", "p:cSld", "p:bg", "p:bgRef"]);
-  var bgcolor: string | undefined;
+  let bgPr = getTextByPathList(slideContent, ["p:sld", "p:cSld", "p:bg", "p:bgPr"]);
+  let bgRef = getTextByPathList(slideContent, ["p:sld", "p:cSld", "p:bg", "p:bgRef"]);
+  let bgcolor: string | undefined;
 
   if (bgPr !== undefined) {
     var bgFillTyp = getFillType(bgPr);
@@ -92,10 +92,10 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
       var sortblAry: any[] = [];
 
       Object.keys(bgFillLst).forEach(function (key) {
-        var bgFillLstTyp = bgFillLst[key];
+        const bgFillLstTyp = bgFillLst[key];
         if (key != "attrs") {
           if (bgFillLstTyp.constructor === Array) {
-            for (var i = 0; i < bgFillLstTyp.length; i++) {
+            for (let i = 0; i < bgFillLstTyp.length; i++) {
               var obj: any = {};
               obj[key] = bgFillLstTyp[i];
               obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
@@ -176,10 +176,10 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
         var sortblAry: any[] = [];
 
         Object.keys(bgFillLst).forEach(function (key) {
-          var bgFillLstTyp = bgFillLst[key];
+          const bgFillLstTyp = bgFillLst[key];
           if (key != "attrs") {
             if (bgFillLstTyp.constructor === Array) {
-              for (var i = 0; i < bgFillLstTyp.length; i++) {
+              for (let i = 0; i < bgFillLstTyp.length; i++) {
                 var obj: any = {};
                 obj[key] = bgFillLstTyp[i];
                 obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
@@ -221,7 +221,7 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
       bgPr = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:cSld", "p:bg", "p:bgPr"]);
       bgRef = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:cSld", "p:bg", "p:bgRef"]);
 
-      var clrMap = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:clrMap", "attrs"]);
+      const clrMap = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:clrMap", "attrs"]);
 
       if (bgPr !== undefined) {
         var bgFillTyp = getFillType(bgPr);
@@ -252,10 +252,10 @@ export function getSlideBackgroundFill(warpObj: any, index: any): string | undef
           var sortblAry: any[] = [];
 
           Object.keys(bgFillLst).forEach(function (key) {
-            var bgFillLstTyp = bgFillLst[key];
+            const bgFillLstTyp = bgFillLst[key];
             if (key != "attrs") {
               if (bgFillLstTyp.constructor === Array) {
-                for (var i = 0; i < bgFillLstTyp.length; i++) {
+                for (let i = 0; i < bgFillLstTyp.length; i++) {
                   var obj: any = {};
                   obj[key] = bgFillLstTyp[i];
                   obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];

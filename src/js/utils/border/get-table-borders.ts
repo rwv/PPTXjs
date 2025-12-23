@@ -8,7 +8,7 @@
 import { getBorder } from "./get-border";
 
 export function getTableBorders(node: any, warpObj: any): string {
-  var borderStyle = "";
+  let borderStyle = "";
 
   if (node["a:bottom"] !== undefined) {
     var obj = {

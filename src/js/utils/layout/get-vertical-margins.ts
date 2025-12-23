@@ -43,23 +43,23 @@ export function getVerticalMargins(
   //console.log("getVerticalMargins ", pNode, type,idx, warpObj)
   //var lstStyle = textBodyNode["a:lstStyle"];
   var lvl = 1;
-  var spcBefNode = getTextByPathList(pNode, ["a:pPr", "a:spcBef", "a:spcPts", "attrs", "val"]);
-  var spcAftNode = getTextByPathList(pNode, ["a:pPr", "a:spcAft", "a:spcPts", "attrs", "val"]);
-  var lnSpcNode = getTextByPathList(pNode, ["a:pPr", "a:lnSpc", "a:spcPct", "attrs", "val"]);
-  var lnSpcNodeType = "Pct";
+  let spcBefNode = getTextByPathList(pNode, ["a:pPr", "a:spcBef", "a:spcPts", "attrs", "val"]);
+  let spcAftNode = getTextByPathList(pNode, ["a:pPr", "a:spcAft", "a:spcPts", "attrs", "val"]);
+  let lnSpcNode = getTextByPathList(pNode, ["a:pPr", "a:lnSpc", "a:spcPct", "attrs", "val"]);
+  let lnSpcNodeType = "Pct";
   if (lnSpcNode === undefined) {
     lnSpcNode = getTextByPathList(pNode, ["a:pPr", "a:lnSpc", "a:spcPts", "attrs", "val"]);
     if (lnSpcNode !== undefined) {
       lnSpcNodeType = "Pts";
     }
   }
-  var lvlNode = getTextByPathList(pNode, ["a:pPr", "attrs", "lvl"]);
+  const lvlNode = getTextByPathList(pNode, ["a:pPr", "attrs", "lvl"]);
   if (lvlNode !== undefined) {
     lvl = parseInt(lvlNode) + 1;
   }
-  var fontSize;
+  let fontSize;
   if (getTextByPathList(pNode, ["a:r"]) !== undefined) {
-    var fontSizeStr = getFontSize(
+    const fontSizeStr = getFontSize(
       pNode["a:r"],
       textBodyNode,
       undefined,
@@ -99,7 +99,7 @@ export function getVerticalMargins(
   // if(spcAftNode !== undefined){
   //     //check in layout and then in master
   // }
-  var isInLayoutOrMaster = true;
+  let isInLayoutOrMaster = true;
   if (type == "shape" || type == "textBox") {
     isInLayoutOrMaster = false;
   }
@@ -109,7 +109,7 @@ export function getVerticalMargins(
   ) {
     //check in layout
     if (idx !== undefined) {
-      var laypPrNode = getTextByPathList(warpObj, [
+      const laypPrNode = getTextByPathList(warpObj, [
         "slideLayoutTables",
         "idxTable",
         idx,
@@ -170,8 +170,8 @@ export function getVerticalMargins(
   ) {
     //check in master
     //slideMasterTextStyles
-    var slideMasterTextStyles = warpObj["slideMasterTextStyles"];
-    var dirLoc = "";
+    const slideMasterTextStyles = warpObj["slideMasterTextStyles"];
+    let dirLoc = "";
     // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
     var lvl = "a:lvl" + lvl + "pPr";
     switch (type) {
@@ -196,7 +196,7 @@ export function getVerticalMargins(
     // if (type == "shape" || type == "textBox") {
     //     lvl = "a:lvl1pPr";
     // }
-    var inLvlNode = getTextByPathList(slideMasterTextStyles, [dirLoc, lvl]);
+    const inLvlNode = getTextByPathList(slideMasterTextStyles, [dirLoc, lvl]);
     if (inLvlNode !== undefined) {
       if (spcBefNode === undefined) {
         spcBefNode = getTextByPathList(inLvlNode, ["a:spcBef", "a:spcPts", "attrs", "val"]);
@@ -243,10 +243,10 @@ export function getVerticalMargins(
       }
     }
   }
-  var spcBefor = 0,
+  let spcBefor = 0,
     spcAfter = 0,
     spcLines = 0;
-  var marginTopBottomStr = "";
+  let marginTopBottomStr = "";
   if (spcBefNode !== undefined) {
     spcBefor = parseInt(spcBefNode) / 100;
   }
@@ -258,10 +258,10 @@ export function getVerticalMargins(
     if (lnSpcNodeType == "Pts") {
       marginTopBottomStr += "padding-top: " + (parseInt(lnSpcNode) / 100 - fontSize) + "px;"; //+ "pt;";
     } else {
-      var fct = parseInt(lnSpcNode) / 100000;
+      const fct = parseInt(lnSpcNode) / 100000;
       spcLines = fontSize * (fct - 1) - fontSize; // fontSize *
-      var pTop = fct > 1 ? spcLines : 0;
-      var pBottom = fct > 1 ? fontSize : 0;
+      const pTop = fct > 1 ? spcLines : 0;
+      const pBottom = fct > 1 ? fontSize : 0;
       // marginTopBottomStr += "padding-top: " + spcLines + "pt;";
       // marginTopBottomStr += "padding-bottom: " + pBottom + "pt;";
       marginTopBottomStr += "padding-top: " + pBottom + "px;"; // + "pt;";

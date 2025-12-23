@@ -21,9 +21,9 @@ export function genChart(
   MsgQueue: any[],
   slideFactor: number
 ): [string, number] {
-  var order = node["attrs"]["order"];
-  var xfrmNode = getTextByPathList(node, ["p:xfrm"]);
-  var result =
+  const order = node["attrs"]["order"];
+  const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
+  const result =
     "<div id='chart" +
     chartID +
     "' class='block content' style='" +
@@ -33,14 +33,14 @@ export function genChart(
     order +
     ";'></div>";
 
-  var rid = node["a:graphic"]["a:graphicData"]["c:chart"]["attrs"]["r:id"];
-  var refName = warpObj["slideResObj"][rid]["target"];
+  const rid = node["a:graphic"]["a:graphicData"]["c:chart"]["attrs"]["r:id"];
+  const refName = warpObj["slideResObj"][rid]["target"];
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-  var content = readXmlFile(warpObj["zip"], refName);
-  var plotArea = getTextByPathList(content, ["c:chartSpace", "c:chart", "c:plotArea"]);
+  const content = readXmlFile(warpObj["zip"], refName);
+  const plotArea = getTextByPathList(content, ["c:chartSpace", "c:chart", "c:plotArea"]);
 
-  var chartData = null;
-  for (var key in plotArea) {
+  let chartData = null;
+  for (const key in plotArea) {
     switch (key) {
       case "c:lineChart":
         chartData = {

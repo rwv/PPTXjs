@@ -85,8 +85,8 @@ function createPath(d: string, ctx: ArcShapeContext, transform?: string): string
 function renderPieArcShape(ctx: ArcShapeContext, shapType: string): string {
   const { node, w, h } = ctx;
 
-  var shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var adj1, adj2, H, shapAdjst1, shapAdjst2, isClose;
+  const shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let adj1, adj2, H, shapAdjst1, shapAdjst2, isClose;
   if (shapType == "pie") {
     adj1 = 0;
     adj2 = 270;
@@ -117,7 +117,7 @@ function renderPieArcShape(ctx: ArcShapeContext, shapType: string): string {
       adj2 = parseInt(shapAdjst2.substr(4)) / 60000;
     }
   }
-  var pieVals = shapePie(H, w, adj1, adj2, isClose);
+  const pieVals = shapePie(H, w, adj1, adj2, isClose);
   return createPath(pieVals[0], ctx, pieVals[1]);
 }
 
@@ -127,14 +127,14 @@ function renderPieArcShape(ctx: ArcShapeContext, shapType: string): string {
 function renderChord(ctx: ArcShapeContext): string {
   const { node, w, h } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     sAdj1_val = 45;
-  var sAdj2,
+  let sAdj2,
     sAdj2_val = 270;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = parseInt(sAdj1.substr(4)) / 60000;
@@ -144,9 +144,9 @@ function renderChord(ctx: ArcShapeContext): string {
       }
     }
   }
-  var hR = h / 2;
-  var wR = w / 2;
-  var d_val = shapeArc(wR, hR, wR, hR, sAdj1_val, sAdj2_val, true);
+  const hR = h / 2;
+  const wR = w / 2;
+  const d_val = shapeArc(wR, hR, wR, hR, sAdj1_val, sAdj2_val, true);
   return `<path d='${d_val}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }
 
@@ -156,7 +156,7 @@ function renderChord(ctx: ArcShapeContext): string {
 function renderFrame(ctx: ArcShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -164,20 +164,20 @@ function renderFrame(ctx: ArcShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj1 = 12500 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  let adj1 = 12500 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var a1, x1, x4, y4;
+  let a1, x1, x4, y4;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > cnstVal1) a1 = cnstVal1;
   else a1 = adj1;
   x1 = (Math.min(w, h) * a1) / cnstVal2;
   x4 = w - x1;
   y4 = h - x1;
-  var d =
+  const d =
     "M" +
     0 +
     "," +
@@ -221,7 +221,7 @@ function renderFrame(ctx: ArcShapeContext): string {
 function renderDonut(ctx: ArcShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -229,20 +229,20 @@ function renderDonut(ctx: ArcShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 25000 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  let adj = 25000 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var a, dr, iwd2, ihd2;
+  let a, dr, iwd2, ihd2;
   if (adj < 0) a = 0;
   else if (adj > cnstVal1) a = cnstVal1;
   else a = adj;
   dr = (Math.min(w, h) * a) / cnstVal2;
   iwd2 = w / 2 - dr;
   ihd2 = h / 2 - dr;
-  var d =
+  const d =
     "M" +
     0 +
     "," +
@@ -270,7 +270,7 @@ function renderDonut(ctx: ArcShapeContext): string {
 function renderNoSmoking(ctx: ArcShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -278,13 +278,13 @@ function renderNoSmoking(ctx: ArcShapeContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 18750 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  let adj = 18750 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var a, dr, iwd2, ihd2, ang, ct, st, m, n, drd2, dang, dang2, swAng, stAng1, stAng2;
+  let a, dr, iwd2, ihd2, ang, ct, st, m, n, drd2, dang, dang2, swAng, stAng1, stAng2;
   if (adj < 0) a = 0;
   else if (adj > cnstVal1) a = cnstVal1;
   else a = adj;
@@ -302,7 +302,7 @@ function renderNoSmoking(ctx: ArcShapeContext): string {
   swAng = -Math.PI + dang2;
   stAng1 = ang - dang;
   stAng2 = stAng1 - Math.PI;
-  var ct1, st1, m1, n1, dx1, dy1, x1, y1, x2, y2;
+  let ct1, st1, m1, n1, dx1, dy1, x1, y1, x2, y2;
   ct1 = ihd2 * Math.cos(stAng1);
   st1 = iwd2 * Math.sin(stAng1);
   m1 = Math.sqrt(ct1 * ct1 + st1 * st1);
@@ -313,10 +313,10 @@ function renderNoSmoking(ctx: ArcShapeContext): string {
   y1 = h / 2 + dy1;
   x2 = w / 2 - dx1;
   y2 = h / 2 - dy1;
-  var stAng1deg = (stAng1 * 180) / Math.PI;
-  var stAng2deg = (stAng2 * 180) / Math.PI;
-  var swAng2deg = (swAng * 180) / Math.PI;
-  var d =
+  const stAng1deg = (stAng1 * 180) / Math.PI;
+  const stAng2deg = (stAng2 * 180) / Math.PI;
+  const swAng2deg = (swAng * 180) / Math.PI;
+  const d =
     "M" +
     0 +
     "," +
@@ -348,15 +348,15 @@ function renderNoSmoking(ctx: ArcShapeContext): string {
 function renderHalfFrame(ctx: ArcShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     sAdj1_val = 3.5;
-  var sAdj2,
+  let sAdj2,
     sAdj2_val = 3.5;
-  var cnsVal = 100000 * slideFactor;
+  const cnsVal = 100000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = parseInt(sAdj1.substr(4)) * slideFactor;
@@ -366,25 +366,25 @@ function renderHalfFrame(ctx: ArcShapeContext): string {
       }
     }
   }
-  var minWH = Math.min(w, h);
-  var maxAdj2 = (cnsVal * w) / minWH;
-  var a1, a2;
+  const minWH = Math.min(w, h);
+  const maxAdj2 = (cnsVal * w) / minWH;
+  let a1, a2;
   if (sAdj2_val < 0) a2 = 0;
   else if (sAdj2_val > maxAdj2) a2 = maxAdj2;
   else a2 = sAdj2_val;
-  var x1 = (minWH * a2) / cnsVal;
-  var g1 = (h * x1) / w;
-  var g2 = h - g1;
-  var maxAdj1 = (cnsVal * g2) / minWH;
+  const x1 = (minWH * a2) / cnsVal;
+  const g1 = (h * x1) / w;
+  const g2 = h - g1;
+  const maxAdj1 = (cnsVal * g2) / minWH;
   if (sAdj1_val < 0) a1 = 0;
   else if (sAdj1_val > maxAdj1) a1 = maxAdj1;
   else a1 = sAdj1_val;
-  var y1 = (minWH * a1) / cnsVal;
-  var dx2 = (y1 * w) / h;
-  var x2 = w - dx2;
-  var dy2 = (x1 * h) / w;
-  var y2 = h - dy2;
-  var d =
+  const y1 = (minWH * a1) / cnsVal;
+  const dx2 = (y1 * w) / h;
+  const x2 = w - dx2;
+  const dy2 = (x1 * h) / w;
+  const y2 = h - dy2;
+  const d =
     "M0,0" +
     " L" +
     w +
@@ -415,18 +415,18 @@ function renderHalfFrame(ctx: ArcShapeContext): string {
 function renderBlockArc(ctx: ArcShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  var sAdj1,
+  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  let sAdj1,
     adj1 = 180;
-  var sAdj2,
+  let sAdj2,
     adj2 = 0;
-  var sAdj3,
+  let sAdj3,
     adj3 = 25000 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 100000 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 100000 * slideFactor;
   if (shapAdjst_ary !== undefined) {
-    for (var i = 0; i < shapAdjst_ary.length; i++) {
-      var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+    for (let i = 0; i < shapAdjst_ary.length; i++) {
+      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
       if (sAdj_name == "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) / 60000;
@@ -440,8 +440,8 @@ function renderBlockArc(ctx: ArcShapeContext): string {
     }
   }
 
-  var stAng, istAng, a3, sw11, sw12, swAng, iswAng;
-  var cd1 = 360;
+  let stAng, istAng, a3, sw11, sw12, swAng, iswAng;
+  const cd1 = 360;
   if (adj1 < 0) stAng = 0;
   else if (adj1 > cd1) stAng = cd1;
   else stAng = adj1;
@@ -459,10 +459,10 @@ function renderBlockArc(ctx: ArcShapeContext): string {
   swAng = sw11 > 0 ? sw11 : sw12;
   iswAng = -swAng;
 
-  var endAng = stAng + swAng;
-  var iendAng = istAng + iswAng;
+  const endAng = stAng + swAng;
+  const iendAng = istAng + iswAng;
 
-  var wt1, ht1, dx1, dy1, x1, y1, stRd, istRd, wd2, hd2, hc, vc;
+  let wt1, ht1, dx1, dy1, x1, y1, stRd, istRd, wd2, hd2, hc, vc;
   stRd = (stAng * Math.PI) / 180;
   istRd = (istAng * Math.PI) / 180;
   wd2 = w / 2;
@@ -488,7 +488,7 @@ function renderBlockArc(ctx: ArcShapeContext): string {
     x1 = hc + dx1;
     y1 = vc + dy1;
   }
-  var dr, iwd2, ihd2, wt2, ht2, dx2, dy2, x2, y2;
+  let dr, iwd2, ihd2, wt2, ht2, dx2, dy2, x2, y2;
   dr = (Math.min(w, h) * a3) / cnstVal2;
   iwd2 = wd2 - dr;
   ihd2 = hd2 - dr;
@@ -508,7 +508,7 @@ function renderBlockArc(ctx: ArcShapeContext): string {
     x2 = hc - dx2;
     y2 = vc - dy2;
   }
-  var d =
+  const d =
     "M" +
     x1 +
     "," +

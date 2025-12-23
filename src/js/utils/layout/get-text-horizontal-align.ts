@@ -22,18 +22,18 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  */
 export function getTextHorizontalAlign(node: any, pNode: any, type: any, warpObj: any): string {
   //console.log("getTextHorizontalAlign: type: ", type, ", node: ", node)
-  var getAlgn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
+  let getAlgn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
   if (getAlgn === undefined) {
     getAlgn = getTextByPathList(pNode, ["a:pPr", "attrs", "algn"]);
   }
   if (getAlgn === undefined) {
     if (type == "title" || type == "ctrTitle" || type == "subTitle") {
-      var lvlIdx = 1;
-      var lvlNode = getTextByPathList(pNode, ["a:pPr", "attrs", "lvl"]);
+      let lvlIdx = 1;
+      const lvlNode = getTextByPathList(pNode, ["a:pPr", "attrs", "lvl"]);
       if (lvlNode !== undefined) {
         lvlIdx = parseInt(lvlNode) + 1;
       }
-      var lvlStr = "a:lvl" + lvlIdx + "pPr";
+      const lvlStr = "a:lvl" + lvlIdx + "pPr";
       getAlgn = getTextByPathList(warpObj, [
         "slideLayoutTables",
         "typeTable",
@@ -96,7 +96,7 @@ export function getTextHorizontalAlign(node: any, pNode: any, type: any, warpObj
     }
   }
 
-  var align = "inherit";
+  let align = "inherit";
   if (getAlgn !== undefined) {
     switch (getAlgn) {
       case "l":

@@ -64,24 +64,32 @@ export function getBackground(
   genDiagram: any
 ): string {
   //var rslt = "";
-  var slideContent = warpObj["slideContent"];
-  var slideLayoutContent = warpObj["slideLayoutContent"];
-  var slideMasterContent = warpObj["slideMasterContent"];
+  const slideContent = warpObj["slideContent"];
+  const slideLayoutContent = warpObj["slideLayoutContent"];
+  const slideMasterContent = warpObj["slideMasterContent"];
 
-  var nodesSldLayout = getTextByPathList(slideLayoutContent, ["p:sldLayout", "p:cSld", "p:spTree"]);
-  var nodesSldMaster = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:cSld", "p:spTree"]);
+  const nodesSldLayout = getTextByPathList(slideLayoutContent, [
+    "p:sldLayout",
+    "p:cSld",
+    "p:spTree",
+  ]);
+  const nodesSldMaster = getTextByPathList(slideMasterContent, [
+    "p:sldMaster",
+    "p:cSld",
+    "p:spTree",
+  ]);
   // console.log("slideContent : ", slideContent)
   // console.log("slideLayoutContent : ", slideLayoutContent)
   // console.log("slideMasterContent : ", slideMasterContent)
   //console.log("warpObj : ", warpObj)
-  var showMasterSp = getTextByPathList(slideLayoutContent, [
+  const showMasterSp = getTextByPathList(slideLayoutContent, [
     "p:sldLayout",
     "attrs",
     "showMasterSp",
   ]);
   //console.log("slideLayoutContent : ", slideLayoutContent, ", showMasterSp: ", showMasterSp)
-  var bgColor = getSlideBackgroundFill(warpObj, index);
-  var result =
+  const bgColor = getSlideBackgroundFill(warpObj, index);
+  let result =
     "<div class='slide-background-" +
     index +
     "' style='width:" +
@@ -91,7 +99,7 @@ export function getBackground(
     "px;" +
     bgColor +
     "'>";
-  var node_ph_type_ary = [];
+  const node_ph_type_ary = [];
   if (nodesSldLayout !== undefined) {
     for (var nodeKey in nodesSldLayout) {
       if (nodesSldLayout[nodeKey].constructor === Array) {

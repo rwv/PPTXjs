@@ -14,15 +14,15 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns Font family name or "inherit"
  */
 export function getFontType(node: any, type: any, warpObj: any, pFontStyle: any): string {
-  var typeface = getTextByPathList(node, ["a:rPr", "a:latin", "attrs", "typeface"]);
+  let typeface = getTextByPathList(node, ["a:rPr", "a:latin", "attrs", "typeface"]);
 
   if (typeface === undefined) {
-    var fontIdx = "";
-    var fontGrup = "";
+    let fontIdx = "";
+    let fontGrup = "";
     if (pFontStyle !== undefined) {
       fontIdx = getTextByPathList(pFontStyle, ["attrs", "idx"]);
     }
-    var fontSchemeNode = getTextByPathList(warpObj["themeContent"], [
+    const fontSchemeNode = getTextByPathList(warpObj["themeContent"], [
       "a:theme",
       "a:themeElements",
       "a:fontScheme",

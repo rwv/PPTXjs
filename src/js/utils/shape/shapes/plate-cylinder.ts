@@ -73,7 +73,7 @@ function getStrokeAttrs(ctx: PlateCylinderContext): string {
 function renderHomePlate(ctx: PlateCylinderContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -81,17 +81,17 @@ function renderHomePlate(ctx: PlateCylinderContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 50000 * slideFactor;
-  var cnstVal1 = 100000 * slideFactor;
+  let adj = 50000 * slideFactor;
+  const cnstVal1 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var a,
+  let a,
     x1,
     dx1,
     maxAdj,
     vc = h / 2;
-  var minWH = Math.min(w, h);
+  const minWH = Math.min(w, h);
   maxAdj = (cnstVal1 * w) / minWH;
   if (adj < 0) a = 0;
   else if (adj > maxAdj) a = maxAdj;
@@ -99,7 +99,7 @@ function renderHomePlate(ctx: PlateCylinderContext): string {
   dx1 = (minWH * a) / cnstVal1;
   x1 = w - dx1;
 
-  var d_val =
+  const d_val =
     "M" +
     0 +
     "," +
@@ -131,7 +131,7 @@ function renderHomePlate(ctx: PlateCylinderContext): string {
 function renderChevron(ctx: PlateCylinderContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -139,17 +139,17 @@ function renderChevron(ctx: PlateCylinderContext): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 50000 * slideFactor;
-  var cnstVal1 = 100000 * slideFactor;
+  let adj = 50000 * slideFactor;
+  const cnstVal1 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var a,
+  let a,
     x1,
     x2,
     maxAdj,
     vc = h / 2;
-  var minWH = Math.min(w, h);
+  const minWH = Math.min(w, h);
   maxAdj = (cnstVal1 * w) / minWH;
   if (adj < 0) a = 0;
   else if (adj > maxAdj) a = maxAdj;
@@ -157,7 +157,7 @@ function renderChevron(ctx: PlateCylinderContext): string {
   x1 = (minWH * a) / cnstVal1;
   x2 = w - x1;
 
-  var d_val =
+  const d_val =
     "M" +
     0 +
     "," +
@@ -197,7 +197,7 @@ function renderChevron(ctx: PlateCylinderContext): string {
 function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  var shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -205,14 +205,14 @@ function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
     "attrs",
     "fmla",
   ]);
-  var adj = 25000 * slideFactor;
-  var cnstVal1 = 50000 * slideFactor;
-  var cnstVal2 = 200000 * slideFactor;
+  let adj = 25000 * slideFactor;
+  const cnstVal1 = 50000 * slideFactor;
+  const cnstVal2 = 200000 * slideFactor;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  var ss = Math.min(w, h);
-  var maxAdj, a, y1, y2, y3, dVal;
+  const ss = Math.min(w, h);
+  let maxAdj, a, y1, y2, y3, dVal;
 
   if (shapType == "flowChartMagneticDisk" || shapType == "flowChartMagneticDrum") {
     adj = 50000 * slideFactor;
@@ -223,10 +223,10 @@ function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
   y1 = (ss * a) / cnstVal2;
   y2 = y1 + y1;
   y3 = h - y1;
-  var cd2 = 180,
+  const cd2 = 180,
     wd2 = w / 2;
 
-  var tranglRott = "";
+  let tranglRott = "";
   if (shapType == "flowChartMagneticDrum") {
     tranglRott = `transform='rotate(90 ${w / 2},${h / 2})'`;
   }

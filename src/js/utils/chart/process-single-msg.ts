@@ -5,13 +5,13 @@
  * @returns True if chart was successfully rendered, false otherwise
  */
 export function processSingleMsg(d: any): boolean {
-  var chartID = d.chartID;
-  var chartType = d.chartType;
-  var chartData = d.chartData;
+  const chartID = d.chartID;
+  const chartType = d.chartType;
+  const chartData = d.chartData;
 
-  var data = [];
+  let data = [];
 
-  var chart = null;
+  let chart = null;
   switch (chartType) {
     case "lineChart":
       data = chartData;
@@ -46,9 +46,9 @@ export function processSingleMsg(d: any): boolean {
       });
       break;
     case "scatterChart":
-      for (var i = 0; i < chartData.length; i++) {
-        var arr = [];
-        for (var j = 0; j < chartData[i].length; j++) {
+      for (let i = 0; i < chartData.length; i++) {
+        const arr = [];
+        for (let j = 0; j < chartData[i].length; j++) {
           arr.push({ x: j, y: chartData[i][j] });
         }
         data.push({ key: "data" + (i + 1), values: arr });
