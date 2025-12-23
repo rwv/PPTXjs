@@ -1,5 +1,6 @@
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
+import { processNodesInSlide } from "../node";
 
 /**
  * Generate slide background HTML from layout and master
@@ -27,16 +28,6 @@ import { getSlideBackgroundFill } from "../fill";
  * @param chartID - Chart ID counter
  * @param MsgQueue - Message queue for chart processing
  * @param settings - Plugin settings
- * @param processNodesInSlide - processNodesInSlide function
- * @param processSpNode - processSpNode function
- * @param processCxnSpNode - processCxnSpNode function
- * @param processPicNode - processPicNode function
- * @param processGraphicFrameNode - processGraphicFrameNode function
- * @param processGroupSpNode - processGroupSpNode function
- * @param genShape - genShape function
- * @param genTable - genTable function
- * @param genChart - genChart function
- * @param genDiagram - genDiagram function
  * @returns HTML string for slide background
  */
 export function getBackground(
@@ -51,17 +42,7 @@ export function getBackground(
   fontSizeFactor: number,
   chartID: any,
   MsgQueue: any,
-  settings: any,
-  processNodesInSlide: any,
-  processSpNode: any,
-  processCxnSpNode: any,
-  processPicNode: any,
-  processGraphicFrameNode: any,
-  processGroupSpNode: any,
-  genShape: any,
-  genTable: any,
-  genChart: any,
-  genDiagram: any
+  settings: any
 ): string {
   //var rslt = "";
   const slideContent = warpObj["slideContent"];

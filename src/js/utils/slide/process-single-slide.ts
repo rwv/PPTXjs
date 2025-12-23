@@ -321,17 +321,7 @@ export function processSingleSlide(
       fontSizeFactor,
       chartID,
       MsgQueue,
-      settings,
-      processNodesInSlide,
-      processSpNode,
-      processCxnSpNode,
-      processPicNode,
-      processGraphicFrameNode,
-      processGroupSpNode,
-      genShape,
-      genTable,
-      genChart,
-      genDiagram
+      settings
     );
   }
 
