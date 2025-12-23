@@ -30,9 +30,9 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
 export function getFontSize(
   node: PptxNode,
   textBodyNode: PptxNode,
-  pFontStyle: any,
-  lvl: any,
-  type: any,
+  pFontStyle: PptxNode,
+  lvl: number,
+  type: string,
   warpObj: WarpObject,
   fontSizeFactor: FontSizeFactor
 ): string {

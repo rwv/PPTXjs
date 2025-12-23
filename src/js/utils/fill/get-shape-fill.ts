@@ -20,9 +20,9 @@ import tinycolor from "tinycolor2";
 export function getShapeFill(
   node: PptxNode,
   pNode: PptxNode,
-  isSvgMode: any,
+  isSvgMode: boolean,
   warpObj: WarpObject,
-  source: any
+  source: string
 ): any {
   // 1. presentationML
   // p:spPr/ [a:noFill, solidFill, gradFill, blipFill, pattFill, grpFill]
