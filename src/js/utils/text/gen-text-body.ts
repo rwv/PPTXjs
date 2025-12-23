@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import {
   getVerticalMargins,
@@ -39,19 +40,19 @@ import { genSpanElement } from "./gen-span-element";
  * @returns HTML string for the text body
  */
 export function genTextBody(
-  textBodyNode: any,
-  spNode: any,
-  slideLayoutSpNode: any,
-  slideMasterSpNode: any,
+  textBodyNode: PptxNode,
+  spNode: PptxNode,
+  slideLayoutSpNode: PptxNode,
+  slideMasterSpNode: PptxNode,
   type: any,
   idx: any,
-  warpObj: any,
-  tbl_col_width: any,
+  warpObj: WarpObject,
+  tbl_col_width: number | undefined,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor
 ): string {
   let text = "";
   const _slideMasterTextStyles = warpObj["slideMasterTextStyles"];

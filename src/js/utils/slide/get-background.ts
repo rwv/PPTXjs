@@ -1,3 +1,4 @@
+import type { WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
 import { processNodesInSlide } from "../node";
@@ -31,15 +32,15 @@ import { processNodesInSlide } from "../node";
  * @returns HTML string for slide background
  */
 export function getBackground(
-  warpObj: any,
-  slideSize: any,
-  index: any,
+  warpObj: WarpObject,
+  slideSize: { width: number; height: number },
+  index: number,
   tableStyles: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number,
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor,
   chartID: any,
   MsgQueue: any,
   settings: any

@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color";
 import { getShapeFill } from "../fill";
@@ -32,18 +33,18 @@ import { genTextBody } from "../text";
  * @returns Array [text, colStyl, cssName, rowSpan, colSpan]
  */
 export function getTableCellParams(
-  tcNodes: any,
+  tcNodes: PptxNode,
   getColsGrid: any,
-  row_idx: any,
-  col_idx: any,
+  row_idx: number,
+  col_idx: number,
   thisTblStyle: any,
-  cellSource: any,
-  warpObj: any,
+  cellSource: string | undefined,
+  warpObj: WarpObject,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor
 ): [string, string, string, any, any] {
   //thisTblStyle["a:band1V"] => thisTblStyle[cellSource]
   //text, cell-width, cell-borders,
