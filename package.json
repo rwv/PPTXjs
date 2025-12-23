@@ -11,7 +11,9 @@
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
     "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,js,json,md}\""
+    "format:check": "prettier --check \"src/**/*.{ts,js,json,md}\"",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,7 @@
     "tinycolor2": "^1.6.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/d3": "^3.5.53",
@@ -33,9 +36,13 @@
     "@types/jszip": "^3.4.1",
     "@types/nvd3": "^1.8.45",
     "@types/tinycolor2": "^1.4.6",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
     "@vitest/browser": "^4.0.16",
     "@vitest/browser-playwright": "^4.0.16",
     "esbuild": "^0.27.2",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
     "jscodeshift": "^17.3.0",
     "playwright": "^1.57.0",
     "prettier": "^3.7.4",
