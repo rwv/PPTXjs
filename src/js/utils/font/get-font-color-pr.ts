@@ -246,15 +246,15 @@ export function getFontColorPr(
   if (txtShadow !== undefined) {
     const shadowClr = getSolidFill(txtShadow, undefined, undefined, warpObj);
     const outerShdwAttrs = txtShadow["attrs"];
-    const algn = outerShdwAttrs["algn"];
+    const _algn = outerShdwAttrs["algn"];
     const dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
     const dist = parseInt(outerShdwAttrs["dist"]) * slideFactor;
-    const rotWithShape = outerShdwAttrs["rotWithShape"];
+    const _rotWithShape = outerShdwAttrs["rotWithShape"];
     const blurRad = outerShdwAttrs["blurRad"]
       ? parseInt(outerShdwAttrs["blurRad"]) * slideFactor + "px"
       : "";
-    const sx = outerShdwAttrs["sx"] ? parseInt(outerShdwAttrs["sx"]) / 100000 : 1;
-    const sy = outerShdwAttrs["sy"] ? parseInt(outerShdwAttrs["sy"]) / 100000 : 1;
+    const _sx = outerShdwAttrs["sx"] ? parseInt(outerShdwAttrs["sx"]) / 100000 : 1;
+    const _sy = outerShdwAttrs["sy"] ? parseInt(outerShdwAttrs["sy"]) / 100000 : 1;
     const vx = dist * Math.sin((dir * Math.PI) / 180);
     const hx = dist * Math.cos((dir * Math.PI) / 180);
 

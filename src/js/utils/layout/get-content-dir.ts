@@ -1,4 +1,4 @@
-import { getTextByPathList } from "../object/get-text-by-path-list";
+// import { getTextByPathList } from "../object/get-text-by-path-list"; // Unused - RTL logic disabled
 
 /**
  * Determines content text direction (RTL/LTR) for a PPTX node
@@ -17,7 +17,7 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @param warpObj - Container object with master slide text styles
  * @returns CSS class name for content direction (currently always "content")
  */
-export function getContentDir(node: any, type: any, warpObj: any): string {
+export function getContentDir(_node: any, _type: any, _warpObj: any): string {
   // NOTE: RTL (Right-to-Left) detection logic is currently disabled.
   // The early return below bypasses all RTL checks, always returning "content" (LTR).
   // To enable RTL support, comment out the line below and uncomment the logic beneath it.
