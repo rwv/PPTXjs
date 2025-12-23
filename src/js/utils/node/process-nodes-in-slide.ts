@@ -112,14 +112,7 @@ export function processNodesInSlide(
         slideFactor,
         fontSizeFactor,
         chartID,
-        MsgQueue,
-        genTable,
-        genChart,
-        genDiagram,
-        processGroupSpNode,
-        processNodesInSlide,
-        processSpNode,
-        genShape
+        MsgQueue
       );
       break;
     case "p:grpSp":

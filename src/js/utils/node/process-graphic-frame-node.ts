@@ -1,4 +1,8 @@
 import { getTextByPathList } from "../object";
+import { genTable } from "../table";
+import { genChart } from "../chart";
+import { genDiagram } from "../diagram";
+import { processGroupSpNode } from "./process-group-sp-node";
 
 /**
  * Process graphic frame node (p:graphicFrame) to generate HTML
@@ -25,13 +29,6 @@ import { getTextByPathList } from "../object";
  * @param fontSizeFactor - Font size scaling factor
  * @param chartID - Chart ID counter (modified in place)
  * @param MsgQueue - Message queue for chart processing
- * @param genTable - genTable function
- * @param genChart - genChart function
- * @param genDiagram - genDiagram function
- * @param processGroupSpNode - processGroupSpNode function
- * @param processNodesInSlide - processNodesInSlide function
- * @param processSpNode - processSpNode function
- * @param genShape - genShape function
  * @returns HTML string or [HTML string, chartID] for charts
  */
 export function processGraphicFrameNode(
@@ -46,14 +43,7 @@ export function processGraphicFrameNode(
   slideFactor: number,
   fontSizeFactor: number,
   chartID: any,
-  MsgQueue: any,
-  genTable: any,
-  genChart: any,
-  genDiagram: any,
-  processGroupSpNode: any,
-  processNodesInSlide: any,
-  processSpNode: any,
-  genShape: any
+  MsgQueue: any
 ): string | [string, any] {
   let result = "";
   const graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
