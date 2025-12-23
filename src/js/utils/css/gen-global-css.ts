@@ -11,7 +11,7 @@ export function genGlobalCSS(styleTable: any, settings: any, slideWidth: number)
   //console.log("styleTable: ", styleTable)
   for (const key in styleTable) {
     const tagname = "";
-    // if (settings.slideMode && settings.slideType == "revealjs") {
+    // if (settings.slideMode && settings.slideType === "revealjs") {
     //     tagname = "section";
     // } else {
     //     tagname = "div";

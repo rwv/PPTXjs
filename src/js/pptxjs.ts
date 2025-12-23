@@ -104,16 +104,16 @@ registerDivs2Slides();
         event.preventDefault();
         const key = event.keyCode;
         console.log(key, isDone);
-        if (key == 116 && !isSlideMode) {
+        if (key === 116 && !isSlideMode) {
           //F5
           isSlideMode = true;
           initSlideMode(divId, settings);
-        } else if (key == 116 && isSlideMode) {
+        } else if (key === 116 && isSlideMode) {
           //exit slide mode - TODO
         }
       });
     }
-    if (settings.pptxFileUrl != "") {
+    if (settings.pptxFileUrl !== "") {
       // Use native fetch API to load PPTX file
       fetch(settings.pptxFileUrl)
         .then((response) => {
@@ -132,7 +132,7 @@ registerDivs2Slides();
     } else {
       $(".slides-loadnig-msg").remove();
     }
-    if (settings.fileInputId != "") {
+    if (settings.fileInputId !== "") {
       $("#" + settings.fileInputId).on("change", function (evt: any) {
         $result.html("");
         const file = evt.target.files[0];
@@ -140,7 +140,7 @@ registerDivs2Slides();
         //var fileSize = file[0].size;
         const fileType = file.type;
         if (
-          fileType == "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+          fileType === "application/vnd.openxmlformats-officedocument.presentationml.presentation"
         ) {
           file.arrayBuffer().then(function (arrayBuffer: any) {
             convertToHtml(arrayBuffer);
@@ -214,31 +214,31 @@ registerDivs2Slides();
           default:
         }
       }
-      if (!settings.slideMode || (settings.slideMode && settings.slideType == "revealjs")) {
+      if (!settings.slideMode || (settings.slideMode && settings.slideType === "revealjs")) {
         if (document.getElementById("all_slides_warpper") === null) {
           $("#" + divId + " .slide").wrapAll("<div id='all_slides_warpper' class='slides'></div>");
           //$("#" + divId + " .slides").wrap("<div class='reveal'></div>");
         }
 
-        if (settings.slideMode && settings.slideType == "revealjs") {
+        if (settings.slideMode && settings.slideType === "revealjs") {
           $("#" + divId).addClass("reveal");
         }
       }
 
       const sScale = settings.slidesScale;
       let trnsfrmScl = "";
-      if (sScale != "") {
+      let scaleVal = 1;
+      if (sScale !== "") {
         const numsScale = parseInt(sScale);
-        var scaleVal = numsScale / 100;
-        if (settings.slideMode && settings.slideType != "revealjs") {
+        scaleVal = numsScale / 100;
+        if (settings.slideMode && settings.slideType !== "revealjs") {
           trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
         }
       }
 
       const slidesHeight = $("#" + divId + " .slide").height();
       const numOfSlides = $("#" + divId + " .slide").length;
-      // @ts-expect-error TS(2454): Variable 'scaleVal' is used before being assigned.
-      const sScaleVal = sScale != "" ? scaleVal : 1;
+      const sScaleVal = sScale !== "" ? scaleVal : 1;
       //console.log("slidesHeight: " + slidesHeight + "\nnumOfSlides: " + numOfSlides + "\nScale: " + sScaleVal)
 
       $("#all_slides_warpper").attr({
@@ -248,6 +248,6 @@ registerDivs2Slides();
       //}
     }
 
-    var is_first_br = false;
+    const is_first_br = false;
   };
 })(jQuery);

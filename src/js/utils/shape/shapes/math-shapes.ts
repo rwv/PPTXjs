@@ -87,13 +87,13 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
     if (shapAdjst_ary.constructor === Array) {
       for (let i = 0; i < shapAdjst_ary.length; i++) {
         const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-        if (sAdj_name == "adj1") {
+        if (sAdj_name === "adj1") {
           sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
           adj1 = parseInt(sAdj1.substr(4));
-        } else if (sAdj_name == "adj2") {
+        } else if (sAdj_name === "adj2") {
           sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
           adj2 = parseInt(sAdj2.substr(4));
-        } else if (sAdj_name == "adj3") {
+        } else if (sAdj_name === "adj3") {
           sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
           adj3 = parseInt(sAdj3.substr(4));
         }
@@ -111,7 +111,7 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
     vc = h / 2,
     hd2 = h / 2;
 
-  if (shapType == "mathNotEqual") {
+  if (shapType === "mathNotEqual") {
     if (shapAdjst_ary === undefined) {
       adj1 = 23520 * slideFactor;
       adj2 = (110 * Math.PI) / 180;
@@ -121,7 +121,7 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       adj2 = ((adj2 / 60000) * Math.PI) / 180;
       adj3 = adj3 * slideFactor;
     }
-    var a1,
+    let a1,
       crAng,
       a2a1,
       maxAdj3,
@@ -178,7 +178,7 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       yC4;
     const angVal1 = (70 * Math.PI) / 180,
       angVal2 = (110 * Math.PI) / 180;
-    var cnstVal4 = 73490 * slideFactor;
+    const cnstVal4 = 73490 * slideFactor;
     a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
     crAng = adj2 < angVal1 ? angVal1 : adj2 > angVal2 ? angVal2 : adj2;
     a2a1 = a1 * 2;
@@ -317,7 +317,7 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       "," +
       y2 +
       " z";
-  } else if (shapType == "mathDivide") {
+  } else if (shapType === "mathDivide") {
     if (shapAdjst_ary === undefined) {
       adj1 = 23520 * slideFactor;
       adj2 = 5880 * slideFactor;
@@ -327,7 +327,7 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       adj2 = adj2 * slideFactor;
       adj3 = adj3 * slideFactor;
     }
-    var a1,
+    let a1,
       ma1,
       ma3h,
       ma3w,
@@ -349,9 +349,9 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       x1,
       x3,
       x2;
-    var cnstVal4 = 1000 * slideFactor;
-    var cnstVal5 = 36745 * slideFactor;
-    var cnstVal6 = 73490 * slideFactor;
+    const cnstVal4 = 1000 * slideFactor;
+    const cnstVal5 = 36745 * slideFactor;
+    const cnstVal6 = 73490 * slideFactor;
     a1 = adj1 < cnstVal4 ? cnstVal4 : adj1 > cnstVal5 ? cnstVal5 : adj1;
     ma1 = -a1;
     ma3h = (cnstVal6 + ma1) / 4;
@@ -410,7 +410,7 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       "," +
       y4 +
       " z";
-  } else if (shapType == "mathEqual") {
+  } else if (shapType === "mathEqual") {
     if (shapAdjst_ary === undefined) {
       adj1 = 23520 * slideFactor;
       adj2 = 11760 * slideFactor;
@@ -418,9 +418,9 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       adj1 = adj1 * slideFactor;
       adj2 = adj2 * slideFactor;
     }
-    var cnstVal5 = 36745 * slideFactor;
-    var cnstVal6 = 73490 * slideFactor;
-    var a1, a2a1, mAdj2, a2, dy1, dy2, dx1, y2, y3, y1, y4, x1, x2, yC1, yC2;
+    const cnstVal5 = 36745 * slideFactor;
+    const cnstVal6 = 73490 * slideFactor;
+    let a1, a2a1, mAdj2, a2, dy1, dy2, dx1, y2, y3, y1, y4, x1, x2, yC1, yC2;
 
     a1 = adj1 < 0 ? 0 : adj1 > cnstVal5 ? cnstVal5 : adj1;
     a2a1 = a1 * 2;
@@ -472,14 +472,14 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       "," +
       y4 +
       " z";
-  } else if (shapType == "mathMinus") {
+  } else if (shapType === "mathMinus") {
     if (shapAdjst_ary === undefined) {
       adj1 = 23520 * slideFactor;
     } else {
       adj1 = adj1 * slideFactor;
     }
-    var cnstVal6 = 73490 * slideFactor;
-    var a1, dy1, dx1, y1, y2, x1, x2;
+    const cnstVal6 = 73490 * slideFactor;
+    let a1, dy1, dx1, y1, y2, x1, x2;
     a1 = adj1 < 0 ? 0 : adj1 > cnstVal2 ? cnstVal2 : adj1;
     dy1 = (h * a1) / cnstVal3;
     dx1 = (w * cnstVal6) / cnstVal3;
@@ -506,14 +506,14 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       "," +
       y2 +
       " z";
-  } else if (shapType == "mathMultiply") {
+  } else if (shapType === "mathMultiply") {
     if (shapAdjst_ary === undefined) {
       adj1 = 23520 * slideFactor;
     } else {
       adj1 = adj1 * slideFactor;
     }
-    var cnstVal6 = 51965 * slideFactor;
-    var a1,
+    const cnstVal6 = 51965 * slideFactor;
+    let a1,
       th,
       a,
       sa,
@@ -544,7 +544,7 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       yI,
       xC2,
       yC3;
-    var ss = Math.min(w, h);
+    const ss = Math.min(w, h);
     a1 = adj1 < 0 ? 0 : adj1 > cnstVal6 ? cnstVal6 : adj1;
     th = (ss * a1) / cnstVal2;
     a = Math.atan(h / w);
@@ -627,15 +627,15 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       "," +
       vc +
       " z";
-  } else if (shapType == "mathPlus") {
+  } else if (shapType === "mathPlus") {
     if (shapAdjst_ary === undefined) {
       adj1 = 23520 * slideFactor;
     } else {
       adj1 = adj1 * slideFactor;
     }
-    var cnstVal6 = 73490 * slideFactor;
-    var ss = Math.min(w, h);
-    var a1, dx1, dy1, dx2, x1, x2, x3, x4, y1, y2, y3, y4;
+    const cnstVal6 = 73490 * slideFactor;
+    const ss = Math.min(w, h);
+    let a1, dx1, dy1, dx2, x1, x2, x3, x4, y1, y2, y3, y4;
 
     a1 = adj1 < 0 ? 0 : adj1 > cnstVal6 ? cnstVal6 : adj1;
     dx1 = (w * cnstVal6) / cnstVal3;

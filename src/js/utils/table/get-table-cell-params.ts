@@ -94,7 +94,7 @@ export function getTableCellParams(
     fontSizeFactor
   ); //tableStyles
 
-  if (total_col_width != 0 /*&& row_idx == 0*/) {
+  if (total_col_width !== 0 /*&& row_idx === 0*/) {
     // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
     colWidth = parseInt(total_col_width) * slideFactor;
     colStyl += "width:" + colWidth + "px;";
@@ -180,34 +180,34 @@ export function getTableCellParams(
   lin_bottom_left_to_top_right = getTextByPathList(tcNodes, ["a:tcPr", "a:lnBlToTr"]);
   lin_top_left_to_bottom_right = getTextByPathList(tcNodes, ["a:tcPr", "a:InTlToBr"]);
 
-  if (lin_bottm !== undefined && lin_bottm != "") {
+  if (lin_bottm !== undefined && lin_bottm !== "") {
     const bottom_line_border = getBorder(lin_bottm, undefined, false, "", warpObj);
-    if (bottom_line_border != "") {
+    if (bottom_line_border !== "") {
       colStyl += "border-bottom:" + bottom_line_border + ";";
     }
   }
-  if (lin_top !== undefined && lin_top != "") {
+  if (lin_top !== undefined && lin_top !== "") {
     const top_line_border = getBorder(lin_top, undefined, false, "", warpObj);
-    if (top_line_border != "") {
+    if (top_line_border !== "") {
       colStyl += "border-top: " + top_line_border + ";";
     }
   }
-  if (lin_left !== undefined && lin_left != "") {
+  if (lin_left !== undefined && lin_left !== "") {
     const left_line_border = getBorder(lin_left, undefined, false, "", warpObj);
-    if (left_line_border != "") {
+    if (left_line_border !== "") {
       colStyl += "border-left: " + left_line_border + ";";
     }
   }
-  if (lin_right !== undefined && lin_right != "") {
+  if (lin_right !== undefined && lin_right !== "") {
     const right_line_border = getBorder(lin_right, undefined, false, "", warpObj);
-    if (right_line_border != "") {
+    if (right_line_border !== "") {
       colStyl += "border-right:" + right_line_border + ";";
     }
   }
 
   //cell fill color custom
   const getCelFill = getTextByPathList(tcNodes, ["a:tcPr"]);
-  if (getCelFill !== undefined && getCelFill != "") {
+  if (getCelFill !== undefined && getCelFill !== "") {
     const cellObj = {
       "p:spPr": getCelFill,
     };
@@ -215,7 +215,7 @@ export function getTableCellParams(
   }
 
   //cell fill color theme
-  if (celFillColor == "" || celFillColor == "background-color: inherit;") {
+  if (celFillColor === "" || celFillColor === "background-color: inherit;") {
     let bgFillschemeClr;
     if (cellSource !== undefined)
       bgFillschemeClr = getTextByPathList(thisTblStyle, [
@@ -232,7 +232,7 @@ export function getTableCellParams(
     }
   }
   let cssName = "";
-  if (celFillColor !== undefined && celFillColor != "") {
+  if (celFillColor !== undefined && celFillColor !== "") {
     if (celFillColor in styleTable) {
       // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       cssName = styleTable[celFillColor]["name"];
@@ -250,11 +250,11 @@ export function getTableCellParams(
   // var borderStyl = getTextByPathList(thisTblStyle, [cellSource, "a:tcStyle", "a:tcBdr"]);
   // if (borderStyl !== undefined) {
   //     var local_col_borders = getTableBorders(borderStyl, warpObj);
-  //     if (local_col_borders != "") {
+  //     if (local_col_borders !== "") {
   //         col_borders = local_col_borders;
   //     }
   // }
-  // if (col_borders != "") {
+  // if (col_borders !== "") {
   //     colStyl += col_borders;
   // }
 
@@ -271,13 +271,13 @@ export function getTableCellParams(
     if (local_fontClrPr !== undefined) {
       colFontClrPr = local_fontClrPr;
     }
-    const local_fontWeight = getTextByPathList(rowTxtStyl, ["attrs", "b"]) == "on" ? "bold" : "";
+    const local_fontWeight = getTextByPathList(rowTxtStyl, ["attrs", "b"]) === "on" ? "bold" : "";
     if (local_fontWeight !== "") {
       colFontWeight = local_fontWeight;
     }
   }
   colStyl += colFontClrPr !== "" ? "color: #" + colFontClrPr + ";" : "";
-  colStyl += colFontWeight != "" ? " font-weight:" + colFontWeight + ";" : "";
+  colStyl += colFontWeight !== "" ? " font-weight:" + colFontWeight + ";" : "";
 
   return [text, colStyl, cssName, rowSpan, colSpan];
 }

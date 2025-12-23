@@ -87,17 +87,17 @@ function renderPieArcShape(ctx: ArcShapeContext, shapType: string): string {
 
   const shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
   let adj1, adj2, H, shapAdjst1, shapAdjst2, isClose;
-  if (shapType == "pie") {
+  if (shapType === "pie") {
     adj1 = 0;
     adj2 = 270;
     H = h;
     isClose = true;
-  } else if (shapType == "pieWedge") {
+  } else if (shapType === "pieWedge") {
     adj1 = 180;
     adj2 = 270;
     H = 2 * h;
     isClose = true;
-  } else if (shapType == "arc") {
+  } else if (shapType === "arc") {
     adj1 = 270;
     adj2 = 0;
     H = h;
@@ -135,10 +135,10 @@ function renderChord(ctx: ArcShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = parseInt(sAdj1.substr(4)) / 60000;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj2_val = parseInt(sAdj2.substr(4)) / 60000;
       }
@@ -357,10 +357,10 @@ function renderHalfFrame(ctx: ArcShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj2_val = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -427,13 +427,13 @@ function renderBlockArc(ctx: ArcShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) / 60000;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) / 60000;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }

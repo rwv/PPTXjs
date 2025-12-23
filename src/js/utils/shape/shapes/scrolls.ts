@@ -98,8 +98,8 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
   ch2 = ch / 2;
   ch4 = ch / 4;
 
-  if (shapType == "verticalScroll") {
-    var x3, x4, x6, x7, x5, y3, y4;
+  if (shapType === "verticalScroll") {
+    let x3, x4, x6, x7, x5, y3, y4;
     x3 = ch + ch2;
     x4 = ch + ch;
     x6 = r - ch;
@@ -171,8 +171,8 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       ch +
       "," +
       y3;
-  } else if (shapType == "horizontalScroll") {
-    var y3, y4, y6, y7, y5, x3, x4;
+  } else if (shapType === "horizontalScroll") {
+    let y3, y4, y6, y7, y5, x3, x4;
     y3 = ch + ch2;
     y4 = ch + ch;
     y6 = b - ch;

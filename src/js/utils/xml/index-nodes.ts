@@ -16,7 +16,7 @@ export function indexNodes(content: any): { idTable: any; idxTable: any; typeTab
   const typeTable = {};
 
   for (const key in spTreeNode) {
-    if (key == "p:nvGrpSpPr" || key == "p:grpSpPr") {
+    if (key === "p:nvGrpSpPr" || key === "p:grpSpPr") {
       continue;
     }
 
@@ -24,10 +24,10 @@ export function indexNodes(content: any): { idTable: any; idxTable: any; typeTab
 
     if (targetNode.constructor === Array) {
       for (let i = 0; i < targetNode.length; i++) {
-        var nvSpPrNode = targetNode[i]["p:nvSpPr"];
-        var id = getTextByPathList(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
-        var idx = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
-        var type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
+        const nvSpPrNode = targetNode[i]["p:nvSpPr"];
+        const id = getTextByPathList(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
+        const idx = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
+        const type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
 
         if (id !== undefined) {
           // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -43,10 +43,10 @@ export function indexNodes(content: any): { idTable: any; idxTable: any; typeTab
         }
       }
     } else {
-      var nvSpPrNode = targetNode["p:nvSpPr"];
-      var id = getTextByPathList(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
-      var idx = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
-      var type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
+      const nvSpPrNode = targetNode["p:nvSpPr"];
+      const id = getTextByPathList(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
+      const idx = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
+      const type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
 
       if (id !== undefined) {
         // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message

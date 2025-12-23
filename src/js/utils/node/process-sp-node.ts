@@ -61,9 +61,9 @@ export function processSpNode(
       : getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
   const order = getTextByPathList(node, ["attrs", "order"]);
   let isUserDrawnBg;
-  if (source == "slideLayoutBg" || source == "slideMasterBg") {
+  if (source === "slideLayoutBg" || source === "slideMasterBg") {
     const userDrawn = getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "attrs", "userDrawn"]);
-    if (userDrawn == "1") {
+    if (userDrawn === "1") {
       isUserDrawnBg = true;
     } else {
       isUserDrawnBg = false;
@@ -96,7 +96,7 @@ export function processSpNode(
     type = getTextByPathList(slideLayoutSpNode, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
     if (type === undefined) {
       //type = getTextByPathList(slideMasterSpNode, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
-      if (source == "diagramBg") {
+      if (source === "diagramBg") {
         type = "diagram";
       } else {
         type = "obj"; //default type

@@ -171,10 +171,10 @@ function renderLeftBrace(ctx: BracketShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -246,10 +246,10 @@ function renderRightBrace(ctx: BracketShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }

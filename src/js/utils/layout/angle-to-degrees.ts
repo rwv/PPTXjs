@@ -5,7 +5,7 @@
  * @returns Angle in degrees, or 0 if input is null/empty
  */
 export function angleToDegrees(angle: number | string | null): number {
-  if (angle === "" || angle == null) {
+  if (angle === "" || angle === null) {
     return 0;
   }
   const angleNum = typeof angle === "number" ? angle : parseFloat(angle);

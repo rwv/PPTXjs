@@ -98,10 +98,10 @@ function renderWedgeEllipseCallout(ctx: CalloutContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * refr;
       }
@@ -193,10 +193,10 @@ function renderWedgeRectCallout(ctx: CalloutContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * refr;
       }
@@ -362,13 +362,13 @@ function renderWedgeRoundRectCallout(ctx: CalloutContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * refr;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * refr;
       }
@@ -550,28 +550,28 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * refr;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * refr;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * refr;
-      } else if (sAdj_name == "adj5") {
+      } else if (sAdj_name === "adj5") {
         sAdj5 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj5 = parseInt(sAdj5.substr(4)) * refr;
-      } else if (sAdj_name == "adj6") {
+      } else if (sAdj_name === "adj6") {
         sAdj6 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj6 = parseInt(sAdj6.substr(4)) * refr;
-      } else if (sAdj_name == "adj7") {
+      } else if (sAdj_name === "adj7") {
         sAdj7 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj7 = parseInt(sAdj7.substr(4)) * refr;
-      } else if (sAdj_name == "adj8") {
+      } else if (sAdj_name === "adj8") {
         sAdj8 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj8 = parseInt(sAdj8.substr(4)) * refr;
       }
@@ -584,7 +584,7 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
   switch (shapType) {
     case "borderCallout1":
     case "callout1":
-      if (shapType == "borderCallout1") {
+      if (shapType === "borderCallout1") {
         isBorder = true;
       } else {
         isBorder = false;
@@ -629,7 +629,7 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
       break;
     case "borderCallout2":
     case "callout2":
-      if (shapType == "borderCallout2") {
+      if (shapType === "borderCallout2") {
         isBorder = true;
       } else {
         isBorder = false;
@@ -690,7 +690,7 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
       break;
     case "borderCallout3":
     case "callout3":
-      if (shapType == "borderCallout3") {
+      if (shapType === "borderCallout3") {
         isBorder = true;
       } else {
         isBorder = false;
@@ -764,7 +764,7 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
       break;
     case "accentBorderCallout1":
     case "accentCallout1":
-      if (shapType == "accentBorderCallout1") {
+      if (shapType === "accentBorderCallout1") {
         isBorder = true;
       } else {
         isBorder = false;
@@ -818,7 +818,7 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
       break;
     case "accentBorderCallout2":
     case "accentCallout2":
-      if (shapType == "accentBorderCallout2") {
+      if (shapType === "accentBorderCallout2") {
         isBorder = true;
       } else {
         isBorder = false;
@@ -885,7 +885,7 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
       break;
     case "accentBorderCallout3":
     case "accentCallout3":
-      if (shapType == "accentBorderCallout3") {
+      if (shapType === "accentBorderCallout3") {
         isBorder = true;
       } else {
         isBorder = false;

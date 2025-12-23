@@ -82,20 +82,20 @@ export function getBackground(
     "'>";
   const node_ph_type_ary = [];
   if (nodesSldLayout !== undefined) {
-    for (var nodeKey in nodesSldLayout) {
+    for (let nodeKey in nodesSldLayout) {
       if (nodesSldLayout[nodeKey].constructor === Array) {
-        for (var i = 0; i < nodesSldLayout[nodeKey].length; i++) {
-          var ph_type = getTextByPathList(nodesSldLayout[nodeKey][i], [
+        for (let i = 0; i < nodesSldLayout[nodeKey].length; i++) {
+          const ph_type = getTextByPathList(nodesSldLayout[nodeKey][i], [
             "p:nvSpPr",
             "p:nvPr",
             "p:ph",
             "attrs",
             "type",
           ]);
-          // if (ph_type !== undefined && ph_type != "pic") {
+          // if (ph_type !== undefined && ph_type !== "pic") {
           //     node_ph_type_ary.push(ph_type);
           // }
-          if (ph_type != "pic") {
+          if (ph_type !== "pic") {
             result += processNodesInSlide(
               nodeKey,
               nodesSldLayout[nodeKey][i],
@@ -116,17 +116,17 @@ export function getBackground(
           }
         }
       } else {
-        var ph_type = getTextByPathList(nodesSldLayout[nodeKey], [
+        const ph_type = getTextByPathList(nodesSldLayout[nodeKey], [
           "p:nvSpPr",
           "p:nvPr",
           "p:ph",
           "attrs",
           "type",
         ]);
-        // if (ph_type !== undefined && ph_type != "pic") {
+        // if (ph_type !== undefined && ph_type !== "pic") {
         //     node_ph_type_ary.push(ph_type);
         // }
-        if (ph_type != "pic") {
+        if (ph_type !== "pic") {
           result += processNodesInSlide(
             nodeKey,
             nodesSldLayout[nodeKey],
@@ -148,11 +148,11 @@ export function getBackground(
       }
     }
   }
-  if (nodesSldMaster !== undefined && (showMasterSp == "1" || showMasterSp === undefined)) {
-    for (var nodeKey in nodesSldMaster) {
+  if (nodesSldMaster !== undefined && (showMasterSp === "1" || showMasterSp === undefined)) {
+    for (let nodeKey in nodesSldMaster) {
       if (nodesSldMaster[nodeKey].constructor === Array) {
-        for (var i = 0; i < nodesSldMaster[nodeKey].length; i++) {
-          var ph_type = getTextByPathList(nodesSldMaster[nodeKey][i], [
+        for (let i = 0; i < nodesSldMaster[nodeKey].length; i++) {
+          const ph_type = getTextByPathList(nodesSldMaster[nodeKey][i], [
             "p:nvSpPr",
             "p:nvPr",
             "p:ph",
@@ -180,7 +180,7 @@ export function getBackground(
           //}
         }
       } else {
-        var ph_type = getTextByPathList(nodesSldMaster[nodeKey], [
+        const ph_type = getTextByPathList(nodesSldMaster[nodeKey], [
           "p:nvSpPr",
           "p:nvPr",
           "p:ph",

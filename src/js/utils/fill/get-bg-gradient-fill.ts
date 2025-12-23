@@ -24,8 +24,8 @@ export function getBgGradientFill(
     const color_ary: string[] = [];
     const pos_ary: string[] = [];
 
-    for (var i = 0; i < gsLst.length; i++) {
-      var lo_tint;
+    for (let i = 0; i < gsLst.length; i++) {
+      let lo_tint;
       let lo_color = "";
       lo_color = getSolidFill(
         gsLst[i],
@@ -51,8 +51,8 @@ export function getBgGradientFill(
     }
 
     bgcolor = "background: linear-gradient(" + rot + "deg,";
-    for (var i = 0; i < gsLst.length; i++) {
-      if (i == gsLst.length - 1) {
+    for (let i = 0; i < gsLst.length; i++) {
+      if (i === gsLst.length - 1) {
         bgcolor += color_ary[i] + " " + pos_ary[i] + ");";
       } else {
         bgcolor += color_ary[i] + " " + pos_ary[i] + ", ";

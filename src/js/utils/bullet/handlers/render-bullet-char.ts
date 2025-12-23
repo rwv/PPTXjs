@@ -39,30 +39,30 @@ export function renderBulletChar(
     ";";
 
   // Handle different color types
-  if (color_tye == "solid") {
-    if (bultColor[0] !== undefined && bultColor[0] != "") {
+  if (color_tye === "solid") {
+    if (bultColor[0] !== undefined && bultColor[0] !== "") {
       bullet += "color:#" + bultColor[0] + "; ";
     }
-    if (bultColor[1] !== undefined && bultColor[1] != "" && bultColor[1] != ";") {
+    if (bultColor[1] !== undefined && bultColor[1] !== "" && bultColor[1] !== ";") {
       bullet += "text-shadow:" + bultColor[1] + ";";
     }
-  } else if (color_tye == "pattern" || color_tye == "pic" || color_tye == "gradient") {
-    if (color_tye == "pattern") {
+  } else if (color_tye === "pattern" || color_tye === "pic" || color_tye === "gradient") {
+    if (color_tye === "pattern") {
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       bullet += "background:" + bultColor[0][0] + ";";
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-      if (bultColor[0][1] !== null && bultColor[0][1] !== undefined && bultColor[0][1] != "") {
+      if (bultColor[0][1] !== null && bultColor[0][1] !== undefined && bultColor[0][1] !== "") {
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         bullet += "background-size:" + bultColor[0][1] + ";";
       }
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-      if (bultColor[0][2] !== null && bultColor[0][2] !== undefined && bultColor[0][2] != "") {
+      if (bultColor[0][2] !== null && bultColor[0][2] !== undefined && bultColor[0][2] !== "") {
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         bullet += "background-position:" + bultColor[0][2] + ";";
       }
-    } else if (color_tye == "pic") {
+    } else if (color_tye === "pic") {
       bullet += bultColor[0] + ";";
-    } else if (color_tye == "gradient") {
+    } else if (color_tye === "gradient") {
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       const colorAry = bultColor[0].color;
       // @ts-expect-error TS(2532): Object is possibly 'undefined'.
@@ -70,7 +70,7 @@ export function renderBulletChar(
 
       bullet += "background: linear-gradient(" + rot + "deg,";
       for (let i = 0; i < colorAry.length; i++) {
-        if (i == colorAry.length - 1) {
+        if (i === colorAry.length - 1) {
           bullet += "#" + colorAry[i] + ");";
         } else {
           bullet += "#" + colorAry[i] + ", ";

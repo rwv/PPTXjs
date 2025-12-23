@@ -410,7 +410,7 @@ export function genShape(
 
     // TextBody
     if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
-      if (type != "diagram" && type != "textBox") {
+      if (type !== "diagram" && type !== "textBox") {
         type = "shape";
       }
       // @ts-expect-error TS(2554): Expected 8 arguments, but got 7.

@@ -48,13 +48,13 @@ export function getSlideSizeAndSetDefaultTextStyle(
   //     scaleXnodes = scaleLoc["a:sx"]["attrs"];
   //     var scaleXnodesN = scaleXnodes["n"];
   //     var scaleXnodesD = scaleXnodes["d"];
-  //     if (scaleXnodesN !== undefined && scaleXnodesD !== undefined && scaleXnodesN != 0){
+  //     if (scaleXnodesN !== undefined && scaleXnodesD !== undefined && scaleXnodesN !== 0){
   //         scaleX = parseInt(scaleXnodesD)/parseInt(scaleXnodesN);
   //     }
   //     scaleYnode = scaleLoc["a:sy"]["attrs"];
   //     var scaleYnodeN = scaleYnode["n"];
   //     var scaleYnodeD = scaleYnode["d"];
-  //     if (scaleYnodeN !== undefined && scaleYnodeD !== undefined && scaleYnodeN != 0) {
+  //     if (scaleYnodeN !== undefined && scaleYnodeD !== undefined && scaleYnodeN !== 0) {
   //         scaleY = parseInt(scaleYnodeD) / parseInt(scaleYnodeN) ;
   //     }
 

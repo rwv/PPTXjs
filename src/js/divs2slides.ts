@@ -82,7 +82,7 @@ export function registerDivs2Slides() {
         const divId = data.divId;
         const isInit = data.isInit;
         $("#" + divId + " .slide").hide();
-        if (data.slctdBgClr != false) {
+        if (data.slctdBgClr !== false) {
           const preBgClr = $(document.body).css("background-color");
           data.prevBgColor = preBgClr;
           $(document.body).css("background-color", data.slctdBgClr);
@@ -192,9 +192,9 @@ export function registerDivs2Slides() {
               opacity: 0.7,
             });
           });
-          if (data.slideCount == 1) {
+          if (data.slideCount === 1) {
             $("#" + divId + " #slides-prev").hide();
-          } else if (data.slideCount == data.totalSlides) {
+          } else if (data.slideCount === data.totalSlides) {
             $("#" + divId + " #slides-next").hide();
           } else {
             $("#" + divId + " #slides-next").show();
@@ -230,7 +230,7 @@ export function registerDivs2Slides() {
           } else {
             $("#slides-prev").hide();
           }
-          if (data.slideCount == data.totalSlides && !isLoop) {
+          if (data.slideCount === data.totalSlides && !isLoop) {
             $("#slides-next").hide();
           }
         }
@@ -243,7 +243,7 @@ export function registerDivs2Slides() {
           pptxjslideObj.gotoSlide(data.slideCount - 1);
         }
         if (!isAutoMode) {
-          if (data.slideCount == 1) {
+          if (data.slideCount === 1) {
             $("#slides-prev").hide();
           } else {
             $("#slides-prev").show();
@@ -258,7 +258,7 @@ export function registerDivs2Slides() {
         const slides = data.slides;
         const prevSlidNum = data.prevSlide;
         let transitionType = data.transition; /*"slid","fade","default" */
-        if (transitionType == "random") {
+        if (transitionType === "random") {
           const availableTransitionTypes = ["default", "fade", "slid"] as const;
           const randomIndex = Math.floor(Math.random() * availableTransitionTypes.length);
           transitionType = availableTransitionTypes[randomIndex];
@@ -268,19 +268,19 @@ export function registerDivs2Slides() {
           const nextSlide = $(slides[index]);
           if ($(slides[prevSlidNum]).is(":visible")) {
             //remove "index >= 1 &&" bugFix to ver. 1.2.1
-            if (transitionType == "default") {
+            if (transitionType === "default") {
               $(slides[prevSlidNum]).hide(transTime);
-            } else if (transitionType == "fade") {
+            } else if (transitionType === "fade") {
               $(slides[prevSlidNum]).fadeOut(transTime);
-            } else if (transitionType == "slid") {
+            } else if (transitionType === "slid") {
               $(slides[prevSlidNum]).slideUp(transTime);
             }
           }
-          if (transitionType == "default") {
+          if (transitionType === "default") {
             nextSlide.show(transTime);
-          } else if (transitionType == "fade") {
+          } else if (transitionType === "fade") {
             nextSlide.fadeIn(transTime);
-          } else if (transitionType == "slid") {
+          } else if (transitionType === "slid") {
             nextSlide.slideDown(transTime);
           }
           data.prevSlide = index;

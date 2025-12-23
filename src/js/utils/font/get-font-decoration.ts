@@ -19,11 +19,11 @@ export function getFontDecoration(node: any, type: any, slideMasterTextStyles: a
         ? node["a:rPr"]["attrs"]["strike"]
         : "noStrike";
 
-    if (underLine != "none" && strikethrough == "noStrike") {
+    if (underLine !== "none" && strikethrough === "noStrike") {
       return "underline";
-    } else if (underLine == "none" && strikethrough != "noStrike") {
+    } else if (underLine === "none" && strikethrough !== "noStrike") {
       return "line-through";
-    } else if (underLine != "none" && strikethrough != "noStrike") {
+    } else if (underLine !== "none" && strikethrough !== "noStrike") {
       return "underline line-through";
     } else {
       return "inherit";

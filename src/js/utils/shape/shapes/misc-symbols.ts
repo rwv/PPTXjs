@@ -127,10 +127,10 @@ function renderCorner(ctx: MiscSymbolContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj2_val = parseInt(sAdj2.substr(4)) * slideFactor;
       }

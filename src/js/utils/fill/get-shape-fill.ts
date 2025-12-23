@@ -30,19 +30,19 @@ export function getShapeFill(
   const fillType = getFillType(getTextByPathList(node, ["p:spPr"]));
   let fillColor;
 
-  if (fillType == "NO_FILL") {
+  if (fillType === "NO_FILL") {
     return isSvgMode ? "none" : "";
-  } else if (fillType == "SOLID_FILL") {
-    var shpFill = node["p:spPr"]["a:solidFill"];
+  } else if (fillType === "SOLID_FILL") {
+    const shpFill = node["p:spPr"]["a:solidFill"];
     fillColor = getSolidFill(shpFill, undefined, undefined, warpObj);
-  } else if (fillType == "GRADIENT_FILL") {
-    var shpFill = node["p:spPr"]["a:gradFill"];
+  } else if (fillType === "GRADIENT_FILL") {
+    const shpFill = node["p:spPr"]["a:gradFill"];
     fillColor = getGradientFill(shpFill, warpObj);
-  } else if (fillType == "PATTERN_FILL") {
-    var shpFill = node["p:spPr"]["a:pattFill"];
+  } else if (fillType === "PATTERN_FILL") {
+    const shpFill = node["p:spPr"]["a:pattFill"];
     fillColor = getPatternFill(shpFill, warpObj);
-  } else if (fillType == "PIC_FILL") {
-    var shpFill = node["p:spPr"]["a:blipFill"];
+  } else if (fillType === "PIC_FILL") {
+    const shpFill = node["p:spPr"]["a:blipFill"];
     fillColor = getPicFill(source, shpFill, warpObj);
   }
 
@@ -50,7 +50,7 @@ export function getShapeFill(
   if (fillColor === undefined) {
     const clrName = getTextByPathList(node, ["p:style", "a:fillRef"]);
     const idx = parseInt(getTextByPathList(node, ["p:style", "a:fillRef", "attrs", "idx"]));
-    if (idx == 0 || idx == 1000) {
+    if (idx === 0 || idx === 1000) {
       // no fill
       return isSvgMode ? "none" : "";
     } else if (idx > 0 && idx < 1000) {
@@ -69,13 +69,13 @@ export function getShapeFill(
       const grpShpFill = pNode["p:grpSpPr"];
       const spShpNode = { "p:spPr": grpShpFill };
       return getShapeFill(spShpNode, node, isSvgMode, warpObj, source);
-    } else if (fillType == "NO_FILL") {
+    } else if (fillType === "NO_FILL") {
       return isSvgMode ? "none" : "";
     }
   }
 
   if (fillColor !== undefined) {
-    if (fillType == "GRADIENT_FILL") {
+    if (fillType === "GRADIENT_FILL") {
       if (isSvgMode) {
         return fillColor;
       } else {
@@ -84,7 +84,7 @@ export function getShapeFill(
 
         let bgcolor = "background: linear-gradient(" + rot + "deg,";
         for (let i = 0; i < colorAry.length; i++) {
-          if (i == colorAry.length - 1) {
+          if (i === colorAry.length - 1) {
             bgcolor += "#" + colorAry[i] + ");";
           } else {
             bgcolor += "#" + colorAry[i] + ", ";
@@ -92,21 +92,21 @@ export function getShapeFill(
         }
         return bgcolor;
       }
-    } else if (fillType == "PIC_FILL") {
+    } else if (fillType === "PIC_FILL") {
       if (isSvgMode) {
         return fillColor;
       } else {
         return "background-image:url(" + fillColor + ");";
       }
-    } else if (fillType == "PATTERN_FILL") {
+    } else if (fillType === "PATTERN_FILL") {
       let bgPtrn = "",
         bgSize = "",
         bgPos = "";
       bgPtrn = fillColor[0];
-      if (fillColor[1] !== null && fillColor[1] !== undefined && fillColor[1] != "") {
+      if (fillColor[1] !== null && fillColor[1] !== undefined && fillColor[1] !== "") {
         bgSize = " background-size:" + fillColor[1] + ";";
       }
-      if (fillColor[2] !== null && fillColor[2] !== undefined && fillColor[2] != "") {
+      if (fillColor[2] !== null && fillColor[2] !== undefined && fillColor[2] !== "") {
         bgPos = " background-position:" + fillColor[2] + ";";
       }
       return "background: " + bgPtrn + ";" + bgSize + bgPos;

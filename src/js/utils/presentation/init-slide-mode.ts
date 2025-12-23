@@ -6,7 +6,7 @@
  */
 export function initSlideMode(divId: any, settings: any): void {
   //console.log(settings.slideType)
-  if (settings.slideType == "" || settings.slideType == "divs2slidesjs") {
+  if (settings.slideType === "" || settings.slideType === "divs2slidesjs") {
     const slidesHeight = $("#" + divId + " .slide").height();
     $("#" + divId + " .slide").hide();
     setTimeout(function () {
@@ -30,30 +30,30 @@ export function initSlideMode(divId: any, settings: any): void {
 
       const sScale = settings.slidesScale;
       let trnsfrmScl = "";
-      if (sScale != "") {
+      let scaleVal = 1;
+      if (sScale !== "") {
         const numsScale = parseInt(sScale);
-        var scaleVal = numsScale / 100;
+        scaleVal = numsScale / 100;
         trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
       }
 
       const numOfSlides = 1;
-      // @ts-expect-error TS(2454): Variable 'scaleVal' is used before being assigned.
-      const sScaleVal = sScale != "" ? scaleVal : 1;
+      const sScaleVal = sScale !== "" ? scaleVal : 1;
       //console.log(slidesHeight);
       $("#all_slides_warpper").attr({
         style: trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px",
       });
     }, 1500);
-  } else if (settings.slideType == "revealjs") {
+  } else if (settings.slideType === "revealjs") {
     $(".slides-loadnig-msg").remove();
     let revealjsPath = "";
-    if (settings.revealjsPath != "") {
+    if (settings.revealjsPath !== "") {
       revealjsPath = settings.revealjsPath;
     } else {
       revealjsPath = "./revealjs/reveal.js";
     }
     $.getScript(revealjsPath, function (response: any, status: any) {
-      if (status == "success") {
+      if (status === "success") {
         // $("section").removeClass("slide");
         // @ts-expect-error TS(2304): Cannot find name 'Reveal'.
         Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO

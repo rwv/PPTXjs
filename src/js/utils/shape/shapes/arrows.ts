@@ -99,10 +99,10 @@ function renderRightArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = 0.5 - parseInt(sAdj1.substr(4)) / 200000;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = 1 - sAdj2_val2 / max_sAdj2_const;
@@ -124,10 +124,10 @@ function renderLeftArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = 0.5 - parseInt(sAdj1.substr(4)) / 200000;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;
@@ -149,10 +149,10 @@ function renderDownArrow(ctx: ArrowShapeContext, shapType: string): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = parseInt(sAdj1.substr(4)) / 200000;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;
@@ -160,7 +160,7 @@ function renderDownArrow(ctx: ArrowShapeContext, shapType: string): string {
     }
   }
 
-  if (shapType == "flowChartOffpageConnector") {
+  if (shapType === "flowChartOffpageConnector") {
     sAdj1_val = 0.5;
     sAdj2_val = 0.212;
   }
@@ -179,10 +179,10 @@ function renderUpArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = parseInt(sAdj1.substr(4)) / 200000;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;
@@ -204,10 +204,10 @@ function renderLeftRightArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = 0.5 - parseInt(sAdj1.substr(4)) / 200000;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;
@@ -229,10 +229,10 @@ function renderUpDownArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         sAdj1_val = 0.5 - parseInt(sAdj1.substr(4)) / 200000;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;
@@ -261,13 +261,13 @@ function renderQuadArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
@@ -316,13 +316,13 @@ function renderLeftRightUpArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
@@ -370,13 +370,13 @@ function renderLeftUpArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
@@ -421,13 +421,13 @@ function renderBentUpArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
@@ -468,16 +468,16 @@ function renderBentArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         const sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -534,19 +534,19 @@ function renderUturnArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         const sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj5") {
+      } else if (sAdj_name === "adj5") {
         const sAdj5 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj5 = parseInt(sAdj5.substr(4)) * slideFactor;
       }
@@ -613,10 +613,10 @@ function renderStripedRightArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -657,10 +657,10 @@ function renderNotchedRightArrow(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -703,16 +703,16 @@ function renderRightArrowCallout(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         const sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -759,16 +759,16 @@ function renderDownArrowCallout(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         const sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -815,16 +815,16 @@ function renderLeftArrowCallout(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         const sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -870,16 +870,16 @@ function renderUpArrowCallout(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         const sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -925,16 +925,16 @@ function renderLeftRightArrowCallout(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         const sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -983,16 +983,16 @@ function renderQuadArrowCallout(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         const sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -1051,16 +1051,16 @@ function renderUpDownArrowCallout(ctx: ArrowShapeContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         const sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj4") {
+      } else if (sAdj_name === "adj4") {
         const sAdj4 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }

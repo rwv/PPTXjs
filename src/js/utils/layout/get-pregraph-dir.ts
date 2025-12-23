@@ -32,14 +32,14 @@ export function getPregraphDir(
     const pPrNodeLaout = layoutMasterNode.nodeLaout;
     const pPrNodeMaster = layoutMasterNode.nodeMaster;
     rtl = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
-    if (rtl === undefined && type != "shape") {
+    if (rtl === undefined && type !== "shape") {
       rtl = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
     }
   }
 
-  if (rtl == "1") {
+  if (rtl === "1") {
     return "pregraph-rtl";
-  } else if (rtl == "0") {
+  } else if (rtl === "0") {
     return "pregraph-ltr";
   }
   return "pregraph-inherit";
@@ -47,9 +47,9 @@ export function getPregraphDir(
   // var contentDir = getContentDir(type, warpObj);
   // console.log("getPregraphDir node:", node["a:r"], "rtl:", rtl, "idx", idx, "type", type, "contentDir:", contentDir)
 
-  // if (contentDir == "content"){
+  // if (contentDir === "content"){
   //     return "pregraph-ltr";
-  // } else if (contentDir == "content-rtl"){
+  // } else if (contentDir === "content-rtl"){
   //     return "pregraph-rtl";
   // }
   // return "";

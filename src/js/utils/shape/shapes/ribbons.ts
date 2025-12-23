@@ -92,13 +92,13 @@ function renderLeftRightRibbon(ctx: RibbonContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * refr;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * refr;
       }
@@ -252,10 +252,10 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -289,7 +289,7 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
   x4 = x5 - wd32;
   x7 = x6 + wd32;
   hR = (h * a1) / cnstVal6;
-  if (shapType == "ribbon2") {
+  if (shapType === "ribbon2") {
     let dy1, dy2, y7;
     dy1 = (h * a1) / cnstVal5;
     y1 = b - dy1;
@@ -400,7 +400,7 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
       x9 +
       "," +
       y7;
-  } else if (shapType == "ribbon") {
+  } else if (shapType === "ribbon") {
     let y5;
     y1 = (h * a1) / cnstVal5;
     y2 = (h * a1) / cnstVal4;
@@ -517,16 +517,16 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
 
   const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
   let sAdj1,
-    adj1 = shapType == "doubleWave" ? 6250 * slideFactor : 12500 * slideFactor;
+    adj1 = shapType === "doubleWave" ? 6250 * slideFactor : 12500 * slideFactor;
   let sAdj2,
     adj2 = 0;
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -543,9 +543,9 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
     r = w,
     wd8 = w / 8,
     wd32 = w / 32;
-  if (shapType == "doubleWave") {
+  if (shapType === "doubleWave") {
     const cnstVal1 = 12500 * slideFactor;
-    var a1,
+    let a1,
       a2,
       y1,
       dy2,
@@ -660,9 +660,9 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
       "," +
       y4 +
       " z";
-  } else if (shapType == "wave") {
+  } else if (shapType === "wave") {
     const cnstVal5 = 20000 * slideFactor;
-    var a1, a2, y1, dy2, y2, y3, y4, y5, y6, of2, dx2, x2, dx5, x5, dx3, x3, x4, x6, x10, x7, x8;
+    let a1, a2, y1, dy2, y2, y3, y4, y5, y6, of2, dx2, x2, dx5, x5, dx3, x3, x4, x6, x10, x7, x8;
     a1 = adj1 < 0 ? 0 : adj1 > cnstVal5 ? cnstVal5 : adj1;
     a2 = adj2 < cnstVal2 ? cnstVal2 : adj2 > cnstVal4 ? cnstVal4 : adj2;
     y1 = (h * a1) / cnstVal4;
@@ -740,13 +740,13 @@ function renderEllipseRibbon(ctx: RibbonContext, shapType: string): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
@@ -820,8 +820,8 @@ function renderEllipseRibbon(ctx: RibbonContext, shapType: string): string {
   cx4 = x2 / 2;
   q9 = f1 * cx4;
   cx5 = r - cx4;
-  if (shapType == "ellipseRibbon") {
-    var y1, cy1, y3, q6, q7, cy3, y2, y5, y6, cy4, cy6, y7, cy7, y8;
+  if (shapType === "ellipseRibbon") {
+    let y1, cy1, y3, q6, q7, cy3, y2, y5, y6, cy4, cy6, y7, cy7, y8;
     y1 = f1 * q2;
     cy1 = f1 * cx1;
     y3 = q5 + dy3;
@@ -951,8 +951,8 @@ function renderEllipseRibbon(ctx: RibbonContext, shapType: string): string {
       x4 +
       "," +
       y1;
-  } else if (shapType == "ellipseRibbon2") {
-    var u1,
+  } else if (shapType === "ellipseRibbon2") {
+    let u1,
       y1,
       cu1,
       cy1,

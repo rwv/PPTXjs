@@ -27,7 +27,7 @@ export function setTextByPathList(node: any, path: any, value: any): any {
       const len = parts.length;
       for (let i = 0; i < len; i++) {
         const p = parts[i];
-        if (obj[p] == null) {
+        if (obj[p] === null) {
           if (i === len - 1) {
             obj[p] = value;
           } else {

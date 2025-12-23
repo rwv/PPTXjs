@@ -73,7 +73,7 @@ export function processGroupSpNode(
       // var rdian = degreesToRadians(rotate);
       // rotX = cLin * Math.cos(rdian);
       // rotY = cLin * Math.sin(rdian);
-      if (rotate != 0) {
+      if (rotate !== 0) {
         top = y;
         left = x;
         width = cx;
@@ -85,7 +85,7 @@ export function processGroupSpNode(
   let grpStyle = "";
 
   // @ts-expect-error TS(2454): Variable 'rotStr' is used before being assigned.
-  if (rotStr !== undefined && rotStr != "") {
+  if (rotStr !== undefined && rotStr !== "") {
     grpStyle += rotStr;
   }
 

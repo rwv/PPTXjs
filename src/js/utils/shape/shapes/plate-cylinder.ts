@@ -214,7 +214,7 @@ function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
   const ss = Math.min(w, h);
   let maxAdj, a, y1, y2, y3, dVal;
 
-  if (shapType == "flowChartMagneticDisk" || shapType == "flowChartMagneticDrum") {
+  if (shapType === "flowChartMagneticDisk" || shapType === "flowChartMagneticDrum") {
     adj = 50000 * slideFactor;
   }
 
@@ -227,7 +227,7 @@ function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
     wd2 = w / 2;
 
   let tranglRott = "";
-  if (shapType == "flowChartMagneticDrum") {
+  if (shapType === "flowChartMagneticDrum") {
     tranglRott = `transform='rotate(90 ${w / 2},${h / 2})'`;
   }
 

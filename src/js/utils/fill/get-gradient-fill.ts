@@ -16,7 +16,7 @@ export function getGradientFill(node: any, warpObj: any) {
   const color_ary = [];
   const tint_ary = [];
   for (let i = 0; i < gsLst.length; i++) {
-    var lo_tint;
+    let lo_tint;
     const lo_color = getSolidFill(gsLst[i], undefined, undefined, warpObj);
     color_ary[i] = lo_color;
   }

@@ -67,13 +67,13 @@ export function getLayoutAndMasterNode(
       ]);
     }
     //masterlayout
-    if (type == "title" || type == "ctrTitle") {
+    if (type === "title" || type === "ctrTitle") {
       pPrNodeMaster = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:titleStyle", lvlStr]);
-    } else if (type == "body" || type == "obj" || type == "subTitle") {
+    } else if (type === "body" || type === "obj" || type === "subTitle") {
       pPrNodeMaster = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:bodyStyle", lvlStr]);
-    } else if (type == "shape" || type == "diagram") {
+    } else if (type === "shape" || type === "diagram") {
       pPrNodeMaster = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:otherStyle", lvlStr]);
-    } else if (type == "textBox") {
+    } else if (type === "textBox") {
       pPrNodeMaster = getTextByPathList(warpObj, ["defaultTextStyle", lvlStr]);
     } else {
       pPrNodeMaster = getTextByPathList(warpObj, [

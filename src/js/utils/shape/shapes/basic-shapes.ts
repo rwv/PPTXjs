@@ -87,7 +87,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
         border.strokeDasharray +
         "' />";
 
-      if (shapType == "flowChartPredefinedProcess") {
+      if (shapType === "flowChartPredefinedProcess") {
         // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
         result +=
           "<rect x='" +
@@ -103,7 +103,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           "' stroke-dasharray='" +
           border.strokeDasharray +
           "' />";
-      } else if (shapType == "flowChartInternalStorage") {
+      } else if (shapType === "flowChartInternalStorage") {
         // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
         result +=
           " <polyline points='" +
@@ -138,7 +138,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
       break;
     case "irregularSeal1":
     case "irregularSeal2":
-      if (shapType == "irregularSeal1") {
+      if (shapType === "irregularSeal1") {
         // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
         var d =
           "M" +
@@ -261,7 +261,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           "," +
           (h * 2295) / 21600 +
           " z";
-      } else if (shapType == "irregularSeal2") {
+      } else if (shapType === "irregularSeal2") {
         // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
         var d =
           "M" +
@@ -452,7 +452,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
         "' stroke-dasharray='" +
         border.strokeDasharray +
         "' />";
-      if (shapType == "flowChartOr") {
+      if (shapType === "flowChartOr") {
         // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
         result +=
           " <polyline points='" +
@@ -487,7 +487,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           "' stroke-dasharray='" +
           border.strokeDasharray +
           "' />";
-      } else if (shapType == "flowChartSummingJunction") {
+      } else if (shapType === "flowChartSummingJunction") {
         // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
         let iDx,
           idy,
@@ -558,10 +558,10 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
       if (shapAdjst_ary !== undefined && shapAdjst_ary.constructor === Array) {
         for (var i = 0; i < shapAdjst_ary.length; i++) {
           var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-          if (sAdj_name == "adj1") {
+          if (sAdj_name === "adj1") {
             sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
             sAdj1_val = parseInt(sAdj1.substr(4)) / 50000;
-          } else if (sAdj_name == "adj2") {
+          } else if (sAdj_name === "adj2") {
             sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
             sAdj2_val = parseInt(sAdj2.substr(4)) / 50000;
           }
@@ -605,7 +605,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           adjTyp = "cornr1";
           if (sAdj1_val === undefined) sAdj1_val = 0.33334;
           sAdj2_val = 0;
-          if (shapType == "flowChartPunchedCard") {
+          if (shapType === "flowChartPunchedCard") {
             // @ts-expect-error TS(2454): Variable 'w' is used before being assigned.
             tranglRott = "transform='translate(" + w + ",0) scale(-1,1)'";
           }
@@ -657,10 +657,10 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
       if (shapAdjst_ary !== undefined) {
         for (var i = 0; i < shapAdjst_ary.length; i++) {
           var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-          if (sAdj_name == "adj1") {
+          if (sAdj_name === "adj1") {
             sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
             sAdj1_val = parseInt(sAdj1.substr(4)) / 50000;
-          } else if (sAdj_name == "adj2") {
+          } else if (sAdj_name === "adj2") {
             sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
             sAdj2_val = parseInt(sAdj2.substr(4)) / 50000;
           }

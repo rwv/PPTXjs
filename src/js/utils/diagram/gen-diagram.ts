@@ -82,7 +82,7 @@ export function genDiagram(
   //     dgmDrwFileName = warpObj["slideResObj"][dgmDrwFileId]["target"];
   // }
   // var dgmDrwFile = "";
-  // if (dgmDrwFileName != "") {
+  // if (dgmDrwFileName !== "") {
   //     dgmDrwFile = readXmlFile(archive, dgmDrwFileName);
   // }
   // var dgmDrwSpArray = getTextByPathList(dgmDrwFile, ["dsp:drawing", "dsp:spTree", "dsp:sp"]);

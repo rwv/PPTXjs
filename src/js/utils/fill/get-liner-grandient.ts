@@ -170,14 +170,14 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
       ];
     case "lgCheck":
     case "smCheck":
-      var size = "";
-      var pos = "";
-      if (prst == "lgCheck") {
-        size = "8px 8px";
-        pos = "0 0, 4px 4px, 4px 4px, 8px 8px";
+      let checkSize = "";
+      let checkPos = "";
+      if (prst === "lgCheck") {
+        checkSize = "8px 8px";
+        checkPos = "0 0, 4px 4px, 4px 4px, 8px 8px";
       } else {
-        size = "4px 4px";
-        pos = "0 0, 2px 2px, 2px 2px, 4px 4px";
+        checkSize = "4px 4px";
+        checkPos = "0 0, 2px 2px, 2px 2px, 4px 4px";
       }
       return [
         "linear-gradient(45deg,  #" +
@@ -193,8 +193,8 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           "#" +
           bgColor +
           ";",
-        size,
-        pos,
+        checkSize,
+        checkPos,
       ];
     case "dashUpDiag":
       return [
@@ -336,19 +336,19 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
       ];
     case "zigZag":
     case "wave":
-      var size = "";
-      if (prst == "zigZag") size = "0";
-      else size = "1px";
+      let waveSize = "";
+      if (prst === "zigZag") waveSize = "0";
+      else waveSize = "1px";
       return [
         "linear-gradient(135deg,  #" +
           fgColor +
           " 25%, transparent 25%) 50px " +
-          size +
+          waveSize +
           ", " +
           "linear-gradient(225deg,  #" +
           fgColor +
           " 25%, transparent 25%) 50px " +
-          size +
+          waveSize +
           ", " +
           "linear-gradient(315deg,  #" +
           fgColor +
@@ -363,9 +363,9 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
       ];
     case "lgConfetti":
     case "smConfetti":
-      var size = "";
-      if (prst == "lgConfetti") size = "4px 4px";
-      else size = "2px 2px";
+      let confettiSize = "";
+      if (prst === "lgConfetti") confettiSize = "4px 4px";
+      else confettiSize = "2px 2px";
       return [
         "linear-gradient(135deg,  #" +
           fgColor +
@@ -382,7 +382,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           "#" +
           bgColor +
           ";",
-        size,
+        confettiSize,
       ];
     case "plaid":
       return [
@@ -450,7 +450,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
     case "pct90":
     case "trellis":
     case "divot":
-      var px_pr_ary;
+      let px_pr_ary;
       switch (prst) {
         case "pct5":
           px_pr_ary = ["0.3px", "10%", "2px 2px"];

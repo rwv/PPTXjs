@@ -108,7 +108,7 @@ function renderTriangle(ctx: PolygonShapeContext, shapType: string): string {
     shapAdjst_val = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
   let tranglRott = "";
-  if (shapType == "flowChartMerge") {
+  if (shapType === "flowChartMerge") {
     tranglRott = `transform='rotate(180 ${w / 2},${h / 2})'`;
   }
   return ` <polygon ${tranglRott} points='${w * shapAdjst_val} 0,0 ${h},${w} ${h}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
@@ -121,7 +121,7 @@ function renderDiamond(ctx: PolygonShapeContext, shapType: string): string {
   const { w, h } = ctx;
 
   let result = ` <polygon points='${w / 2} 0,0 ${h / 2},${w / 2} ${h},${w} ${h / 2}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
-  if (shapType == "flowChartSort") {
+  if (shapType === "flowChartSort") {
     result += ` <polyline points='0 ${h / 2},${w} ${h / 2}' fill='none' ${getStrokeAttrs(ctx)} />`;
   }
   return result;
@@ -149,10 +149,10 @@ function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
   }
   let cnstVal = 0;
   let tranglRott = "";
-  if (shapType == "flowChartManualOperation") {
+  if (shapType === "flowChartManualOperation") {
     tranglRott = `transform='rotate(180 ${w / 2},${h / 2})'`;
   }
-  if (shapType == "flowChartManualInput") {
+  if (shapType === "flowChartManualInput") {
     adjst_val = 0;
     cnstVal = h / 5;
   }

@@ -103,10 +103,10 @@ export function genTextBody(
     //rtlStr = "";//"dir='"+isRTL+"'";
     let styleText = "";
     const marginsVer = getVerticalMargins(pNode, textBodyNode, type, idx, warpObj, fontSizeFactor);
-    if (marginsVer != "") {
+    if (marginsVer !== "") {
       styleText = marginsVer;
     }
-    if (type == "body" || type == "obj" || type == "shape") {
+    if (type === "body" || type === "obj" || type === "shape") {
       styleText += "font-size: 0px;";
       //styleText += "line-height: 0;";
       styleText += "font-weight: 100;";
@@ -127,7 +127,7 @@ export function genTextBody(
     }
     //console.log("textBodyNode: ", textBodyNode["a:lstStyle"])
     let prg_width_node = getTextByPathList(spNode, ["p:spPr", "a:xfrm", "a:ext", "attrs", "cx"]);
-    var prg_height_node; // = getTextByPathList(spNode, ["p:spPr", "a:xfrm", "a:ext", "attrs", "cy"]);
+    let prg_height_node; // = getTextByPathList(spNode, ["p:spPr", "a:xfrm", "a:ext", "attrs", "cy"]);
     const sld_prg_width =
       prg_width_node !== undefined
         ? "width:" + parseInt(prg_width_node) * slideFactor + "px;"
@@ -161,7 +161,7 @@ export function genTextBody(
       fontSizeFactor
     );
     const isBullate =
-      buText_ary[0] !== undefined && buText_ary[0] !== null && buText_ary[0] != "" ? true : false;
+      buText_ary[0] !== undefined && buText_ary[0] !== null && buText_ary[0] !== "" ? true : false;
     // @ts-expect-error TS(2365): Operator '+' cannot be applied to types 'string | ... Remove this comment to see the full error message
     const bu_width =
       buText_ary[1] !== undefined && buText_ary[1] !== null && isBullate
@@ -172,7 +172,7 @@ export function genTextBody(
     const margin_ary = getPregraphMargn(pNode, idx, type, isBullate, warpObj, slideFactor);
     const margin = margin_ary[0];
     const mrgin_val = margin_ary[1];
-    if (prg_width_node === undefined && tbl_col_width !== undefined && prg_width_node != 0) {
+    if (prg_width_node === undefined && tbl_col_width !== undefined && prg_width_node !== 0) {
       //sorce : table text
       prg_width_node = tbl_col_width;
     }
@@ -182,7 +182,7 @@ export function genTextBody(
     let total_text_len = 0;
     if (rNode === undefined && pNode !== undefined) {
       // without r
-      var prgr_text = genSpanElement(
+      const prgr_text = genSpanElement(
         pNode,
         undefined,
         spNode,
@@ -201,7 +201,7 @@ export function genTextBody(
         fontSizeFactor
       );
       if (isBullate) {
-        var txt_obj = $(prgr_text)
+        const txt_obj = $(prgr_text)
           .css({
             position: "absolute",
             float: "left",
@@ -216,7 +216,7 @@ export function genTextBody(
     } else if (rNode !== undefined) {
       // with multi r
       for (let j = 0; j < rNode.length; j++) {
-        var prgr_text = genSpanElement(
+        const prgr_text = genSpanElement(
           rNode[j],
           j,
           pNode,
@@ -235,7 +235,7 @@ export function genTextBody(
           fontSizeFactor
         );
         if (isBullate) {
-          var txt_obj = $(prgr_text)
+          const txt_obj = $(prgr_text)
             .css({
               position: "absolute",
               float: "left",

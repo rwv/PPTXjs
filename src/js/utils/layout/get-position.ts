@@ -132,7 +132,7 @@ export function getPosition(
   } else {
     x = parseInt(off["x"] || "0") * slideFactor;
     y = parseInt(off["y"] || "0") * slideFactor;
-    // if (type == "body")  // Note: This was commented out with a bug (= instead of ==)
+    // if (type === "body")  // Note: This was commented out with a bug (= instead of === )
     //     console.log("getPosition: slideSpNode: ", slideSpNode, ", type: ", type, "x: ", x, "offX:", offX, "y:", y, "offY:", offY)
     return isNaN(x) || isNaN(y)
       ? ""

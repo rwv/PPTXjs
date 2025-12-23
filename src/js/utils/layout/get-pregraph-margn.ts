@@ -36,13 +36,13 @@ export function getPregraphMargn(
   let getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
   if (getRtlVal === undefined) {
     getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
-    if (getRtlVal === undefined && type != "shape") {
+    if (getRtlVal === undefined && type !== "shape") {
       getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
     }
   }
   let isRTL = false;
   let dirStr = "ltr";
-  if (getRtlVal !== undefined && getRtlVal == "1") {
+  if (getRtlVal !== undefined && getRtlVal === "1") {
     isRTL = true;
     dirStr = "rtl";
   }

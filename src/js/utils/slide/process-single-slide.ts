@@ -67,7 +67,7 @@ export function processSingleSlide(
   let diagramFilename = "";
   const slideResObj = {};
   if (RelationshipArray.constructor === Array) {
-    for (var i = 0; i < RelationshipArray.length; i++) {
+    for (let i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout":
           layoutFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
@@ -129,7 +129,7 @@ export function processSingleSlide(
   let masterFilename = "";
   const layoutResObj = {};
   if (RelationshipArray.constructor === Array) {
-    for (var i = 0; i < RelationshipArray.length; i++) {
+    for (let i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster":
           masterFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
@@ -164,10 +164,10 @@ export function processSingleSlide(
   // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const slideMasterResContent = readXmlFile(archive, slideMasterResFilename);
   RelationshipArray = slideMasterResContent["Relationships"]["Relationship"];
-  var themeFilename = "";
+  let themeFilename = "";
   const masterResObj = {};
   if (RelationshipArray.constructor === Array) {
-    for (var i = 0; i < RelationshipArray.length; i++) {
+    for (let i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme":
           themeFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
@@ -195,15 +195,15 @@ export function processSingleSlide(
     const themeResFileName = themeFilename.replace(themeName, "_rels/" + themeName) + ".rels";
     //console.log("themeFilename: ", themeFilename, ", themeName: ", themeName, ", themeResFileName: ", themeResFileName)
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
-    var themeContent = readXmlFile(archive, themeFilename);
+    const themeContent = readXmlFile(archive, themeFilename);
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     const themeResContent = readXmlFile(archive, themeResFileName);
     if (themeResContent !== null) {
-      var relationshipArray = themeResContent["Relationships"]["Relationship"];
+      const relationshipArray = themeResContent["Relationships"]["Relationship"];
       if (relationshipArray !== undefined) {
-        var themeFilename = "";
+        const themeFilename = "";
         if (relationshipArray.constructor === Array) {
-          for (var i = 0; i < relationshipArray.length; i++) {
+          for (let i = 0; i < relationshipArray.length; i++) {
             // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             themeResObj[relationshipArray[i]["attrs"]["Id"]] = {
               type: relationshipArray[i]["attrs"]["Type"].replace(
@@ -237,7 +237,7 @@ export function processSingleSlide(
     //console.log("diagramFilename: ", diagramFilename, ", themeName: ", themeName, ", diagramResFileName: ", diagramResFileName)
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     digramFileContent = readXmlFile(archive, diagramFilename);
-    if (digramFileContent !== null && digramFileContent !== undefined && digramFileContent != "") {
+    if (digramFileContent !== null && digramFileContent !== undefined && digramFileContent !== "") {
       let digramFileContentObjToStr = JSON.stringify(digramFileContent);
       digramFileContentObjToStr = digramFileContentObjToStr.replace(/dsp:/g, "p:");
       digramFileContent = JSON.parse(digramFileContentObjToStr);
@@ -246,10 +246,10 @@ export function processSingleSlide(
     // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     const digramResContent = readXmlFile(archive, diagramResFileName);
     if (digramResContent !== null) {
-      var relationshipArray = digramResContent["Relationships"]["Relationship"];
-      var themeFilename = "";
+      const relationshipArray = digramResContent["Relationships"]["Relationship"];
+      const themeFilename = "";
       if (relationshipArray.constructor === Array) {
-        for (var i = 0; i < relationshipArray.length; i++) {
+        for (let i = 0; i < relationshipArray.length; i++) {
           // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           diagramResObj[relationshipArray[i]["attrs"]["Id"]] = {
             type: relationshipArray[i]["attrs"]["Type"].replace(
@@ -317,8 +317,8 @@ export function processSingleSlide(
     bgColor = fillResult !== undefined ? fillResult : "";
   }
 
-  if (settings.slideMode && settings.slideType == "revealjs") {
-    var result =
+  if (settings.slideMode && settings.slideType === "revealjs") {
+    const result =
       "<section class='slide' style='width:" +
       slideSize.width +
       "px; height:" +
@@ -327,7 +327,7 @@ export function processSingleSlide(
       bgColor +
       "'>";
   } else {
-    var result =
+    const result =
       "<div class='slide' style='width:" +
       slideSize.width +
       "px; height:" +
@@ -339,7 +339,7 @@ export function processSingleSlide(
   result += bgResult;
   for (const nodeKey in nodes) {
     if (nodes[nodeKey].constructor === Array) {
-      for (var i = 0; i < nodes[nodeKey].length; i++) {
+      for (let i = 0; i < nodes[nodeKey].length; i++) {
         result += processNodesInSlide(
           nodeKey,
           nodes[nodeKey][i],
@@ -378,7 +378,7 @@ export function processSingleSlide(
       );
     }
   }
-  if (settings.slideMode && settings.slideType == "revealjs") {
+  if (settings.slideMode && settings.slideType === "revealjs") {
     return result + "</div></section>";
   } else {
     return result + "</div></div>";

@@ -168,15 +168,15 @@ export function initShapeContext(
     let grndFillFlg = false;
     let imgFillFlg = false;
     let clrFillType = getFillType(getTextByPathList(node, ["p:spPr"]));
-    if (clrFillType == "GROUP_FILL") {
+    if (clrFillType === "GROUP_FILL") {
       clrFillType = getFillType(getTextByPathList(pNode, ["p:grpSpPr"]));
     }
-    // if (clrFillType == "") {
+    // if (clrFillType === "") {
     //     var clrFillType = getFillType(getTextByPathList(node, ["p:style","a:fillRef"]));
     // }
     //console.log("genShape: fillColor: ", fillColor, ", clrFillType: ", clrFillType, ", node: ", node)
     /////////////////////////////////////////
-    if (clrFillType == "GRADIENT_FILL") {
+    if (clrFillType === "GRADIENT_FILL") {
       grndFillFlg = true;
       const color_arry = fillColor.color;
       const angl = fillColor.rot + 90;
@@ -184,13 +184,13 @@ export function initShapeContext(
       //fill="url(#linGrd)"
       //console.log("genShape: svgGrdnt: ", svgGrdnt)
       defsContent += svgGrdnt;
-    } else if (clrFillType == "PIC_FILL") {
+    } else if (clrFillType === "PIC_FILL") {
       imgFillFlg = true;
       const svgBgImg = getSvgImagePattern(node, fillColor, shpId, warpObj);
       //fill="url(#imgPtrn)"
       //console.log(svgBgImg)
       defsContent += svgBgImg;
-    } else if (clrFillType == "PATTERN_FILL") {
+    } else if (clrFillType === "PATTERN_FILL") {
       let styleText = fillColor;
       if (styleText in styleTable) {
         styleText += "do-nothing: " + svgCssName + ";";
@@ -204,15 +204,15 @@ export function initShapeContext(
       fillColor = "none";
     } else {
       if (
-        clrFillType != "SOLID_FILL" &&
-        clrFillType != "PATTERN_FILL" &&
-        (shapType == "arc" ||
-          shapType == "bracketPair" ||
-          shapType == "bracePair" ||
-          shapType == "leftBracket" ||
-          shapType == "leftBrace" ||
-          shapType == "rightBrace" ||
-          shapType == "rightBracket")
+        clrFillType !== "SOLID_FILL" &&
+        clrFillType !== "PATTERN_FILL" &&
+        (shapType === "arc" ||
+          shapType === "bracketPair" ||
+          shapType === "bracePair" ||
+          shapType === "leftBracket" ||
+          shapType === "leftBrace" ||
+          shapType === "rightBrace" ||
+          shapType === "rightBracket")
       ) {
         //Temp. solution  - TODO
         fillColor = "none";
