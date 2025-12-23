@@ -16,6 +16,7 @@
  * - 3D effects (a:scene3d, a:sp3d, bevel, extrusion, contour)
  */
 
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color";
 
@@ -30,11 +31,11 @@ export interface ShapeEffectsResult {
  * Process shape effects and generate SVG defs
  */
 export function processShapeEffects(
-  node: any,
-  shpId: any,
+  node: PptxNode,
+  shpId: string | number,
   svgCssName: string,
   border: any,
-  warpObj: any,
+  warpObj: WarpObject,
   slideFactor: number,
   styleTable: any
 ): ShapeEffectsResult {

@@ -1,3 +1,4 @@
+import type { PptxNode, WarpObject, SlideFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { getPosition } from "../layout/get-position";
 import { getSize } from "../layout/get-size";
@@ -20,11 +21,11 @@ import { escapeHtml } from "../string";
  * @returns HTML string for the picture/video/audio element
  */
 export function processPicNode(
-  node: any,
-  warpObj: any,
+  node: PptxNode,
+  warpObj: WarpObject,
   source: any,
   sType: any,
-  slideFactor: number,
+  slideFactor: SlideFactor,
   settings: any
 ): string {
   //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
