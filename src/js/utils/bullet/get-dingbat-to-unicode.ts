@@ -1,4 +1,4 @@
-import { dingbat_unicode } from "../../dingbat";
+import { dingbat_unicode } from "./dingbat-unicode-map";
 
 /**
  * Converts dingbat characters to Unicode code points
