@@ -70,18 +70,24 @@ export function renderCustomGeometry(
   imgFillFlg: boolean,
   grndFillFlg: boolean,
   fillColor: string,
-  border: any,
+  border:
+    | {
+        color: string;
+        width: string;
+        strokeDasharray: string;
+      }
+    | undefined,
   id: string | number,
   idx: number | undefined,
   type: string,
   name: string,
   order: string | number,
-  sType: any,
+  sType: string,
   txtRotate: number | undefined,
   warpObj: WarpObject,
   isUserDrawnBg: boolean | undefined,
   isFirstBr: { value: boolean },
-  styleTable: any,
+  styleTable: Record<string, { name: string; text: string }>,
   rtlLangsArray: string[],
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor
