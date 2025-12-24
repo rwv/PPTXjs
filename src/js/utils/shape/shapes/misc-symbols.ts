@@ -8,6 +8,7 @@
  * - cloud, cloudCallout, smileyFace
  */
 
+import type { PptxNode } from "../../../types";
 import { shapeArc } from "./helpers/arc";
 import { shapeGear } from "./helpers/gear";
 import { getTextByPathList } from "../../object";
@@ -16,7 +17,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering misc symbol shapes
  */
 export interface MiscSymbolContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;

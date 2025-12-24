@@ -7,6 +7,7 @@
  * - halfFrame, blockArc
  */
 
+import type { PptxNode } from "../../../types";
 import { shapeArc } from "./helpers/arc";
 import { shapePie } from "./helpers/pie";
 import { getTextByPathList } from "../../object";
@@ -15,7 +16,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering arc shapes
  */
 export interface ArcShapeContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;

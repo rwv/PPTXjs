@@ -8,6 +8,7 @@
  * - can, flowChartMagneticDisk, flowChartMagneticDrum
  */
 
+import type { PptxNode } from "../../../types";
 import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
 
@@ -15,7 +16,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering plate and cylinder shapes
  */
 export interface PlateCylinderContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;

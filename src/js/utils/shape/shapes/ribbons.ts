@@ -7,6 +7,7 @@
  * - ellipseRibbon, ellipseRibbon2
  */
 
+import type { PptxNode } from "../../../types";
 import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
 
@@ -14,7 +15,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering ribbon shapes
  */
 export interface RibbonContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;

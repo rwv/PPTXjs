@@ -5,6 +5,7 @@
  * - verticalScroll, horizontalScroll
  */
 
+import type { PptxNode } from "../../../types";
 import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
 
@@ -12,7 +13,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering scroll shapes
  */
 export interface ScrollShapeContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;
