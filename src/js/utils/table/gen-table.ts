@@ -130,7 +130,7 @@ export function genTable(
   //if (trNodes.constructor === Array) {
   //multi rows
   let _totalrowSpan = 0;
-  let rowSpanAry: any[] = [];
+  let rowSpanAry: number[] = [];
   for (let i = 0; i < trNodes.length; i++) {
     //////////////rows Style ////////////Amir
     const rowHeightParam = trNodes[i]["attrs"]["h"];

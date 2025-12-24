@@ -4,7 +4,7 @@
  * @param divId - Container div ID
  * @param settings - Settings object containing slideType and configuration
  */
-export function initSlideMode(divId: any, settings: any): void {
+export function initSlideMode(divId: string, settings: any): void {
   //console.log(settings.slideType)
   if (settings.slideType === "" || settings.slideType === "divs2slidesjs") {
     const slidesHeight = $("#" + divId + " .slide").height();
@@ -52,7 +52,7 @@ export function initSlideMode(divId: any, settings: any): void {
     } else {
       revealjsPath = "./revealjs/reveal.js";
     }
-    $.getScript(revealjsPath, function (_response: any, status: any) {
+    $.getScript(revealjsPath, function (_response: any, status: string) {
       if (status === "success") {
         // $("section").removeClass("slide");
         Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
