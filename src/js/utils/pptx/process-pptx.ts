@@ -39,7 +39,7 @@ export function processPPTX(
   archive: PptxArchive,
   slideFactor: SlideFactor,
   settings: any,
-  styleTable: any,
+  styleTable: Record<string, { name: string; text: string }>,
   rtlLangsArray: string[],
   fontSizeFactor: FontSizeFactor,
   chartID: any,
