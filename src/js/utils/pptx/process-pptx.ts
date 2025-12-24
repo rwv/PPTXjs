@@ -18,18 +18,18 @@
  *
  * @param archive - PPTX archive instance
  * @param slideFactor - EMU to pixel conversion factor
- * @param settings - Plugin settings
+ * @param settings - PPTXjs plugin settings
  * @param styleTable - Global CSS style table (modified in place)
  * @param rtlLangsArray - Array of RTL language codes
  * @param fontSizeFactor - Font size scaling factor
- * @param chartID - Chart ID counter (modified in place)
+ * @param chartID - Chart ID counter
  * @param MsgQueue - Message queue for chart processing
  * @param isFirstBr - Mutable object tracking first line break state
  * @returns Array of objects containing slides and metadata
  */
 
 import type { PptxArchive } from "../../archive/pptx-archive";
-import type { SlideFactor, FontSizeFactor } from "../../types";
+import type { SlideFactor, FontSizeFactor, PptxSettings } from "../../types";
 import { base64ArrayBuffer } from "../media";
 import { getContentTypes, getSlideSizeAndSetDefaultTextStyle, readXmlFile } from "../xml";
 import { processSingleSlide } from "../slide";
@@ -38,12 +38,12 @@ import { genGlobalCSS } from "../css";
 export function processPPTX(
   archive: PptxArchive,
   slideFactor: SlideFactor,
-  settings: any,
+  settings: PptxSettings,
   styleTable: Record<string, { name: string; text: string }>,
   rtlLangsArray: string[],
   fontSizeFactor: FontSizeFactor,
-  chartID: any,
-  MsgQueue: any,
+  chartID: number,
+  MsgQueue: any[],
   isFirstBr: { value: boolean }
 ): any[] {
   const post_ary = [];
