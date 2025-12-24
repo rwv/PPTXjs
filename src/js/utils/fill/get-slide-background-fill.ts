@@ -5,7 +5,7 @@
  * @param index - Slide index
  * @returns CSS background style string
  */
-import type { WarpObject } from "../../types";
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object";
 import { getFillType } from "./get-fill-type";
 import { getSolidFill } from "../color/get-solid-fill";
@@ -16,7 +16,7 @@ import { getBgPicFill } from "./get-bg-pic-fill";
  * Background fill list item with order tracking
  */
 interface BgFillItem {
-  [key: string]: any;
+  [key: string]: PptxNode | number | { order: number };
   idex: number;
   attrs: { order: number };
 }
