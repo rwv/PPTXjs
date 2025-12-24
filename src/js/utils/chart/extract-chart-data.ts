@@ -27,36 +27,36 @@ export function extractChartData(serNode: PptxNode) {
   }
 
   if (serNode["c:xVal"] !== undefined) {
-    let dataRow = new Array();
+    let dataRow: number[] = [];
     eachElement(
       serNode["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"],
-      function (innerNode: any, index: any) {
+      function (innerNode: PptxNode, _index: number) {
         dataRow.push(parseFloat(innerNode["c:v"]));
         return "";
       }
     );
     dataMat.push(dataRow);
-    dataRow = new Array();
+    dataRow = [];
     eachElement(
       serNode["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"],
-      function (innerNode: any, index: any) {
+      function (innerNode: PptxNode, _index: number) {
         dataRow.push(parseFloat(innerNode["c:v"]));
         return "";
       }
     );
     dataMat.push(dataRow);
   } else {
-    eachElement(serNode, function (innerNode: any, index: any) {
-      const dataRow = new Array();
+    eachElement(serNode, function (innerNode: PptxNode, index: number) {
+      const dataRow: Array<{ x: string; y: number }> = [];
       const colName =
         getTextByPathList(innerNode, ["c:tx", "c:strRef", "c:strCache", "c:pt", "c:v"]) || index;
 
       // Category (string or number)
-      const rowNames = {};
+      const rowNames: Record<string, string> = {};
       if (getTextByPathList(innerNode, ["c:cat", "c:strRef", "c:strCache", "c:pt"]) !== undefined) {
         eachElement(
           innerNode["c:cat"]["c:strRef"]["c:strCache"]["c:pt"],
-          function (innerNode: any, index: any) {
+          function (innerNode: PptxNode, _index: number) {
             rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
             return "";
           }
@@ -66,7 +66,7 @@ export function extractChartData(serNode: PptxNode) {
       ) {
         eachElement(
           innerNode["c:cat"]["c:numRef"]["c:numCache"]["c:pt"],
-          function (innerNode: any, index: any) {
+          function (innerNode: PptxNode, _index: number) {
             rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
             return "";
           }
@@ -77,7 +77,7 @@ export function extractChartData(serNode: PptxNode) {
       if (getTextByPathList(innerNode, ["c:val", "c:numRef", "c:numCache", "c:pt"]) !== undefined) {
         eachElement(
           innerNode["c:val"]["c:numRef"]["c:numCache"]["c:pt"],
-          function (innerNode: any, index: any) {
+          function (innerNode: PptxNode, _index: number) {
             dataRow.push({
               x: innerNode["attrs"]["idx"],
               y: parseFloat(innerNode["c:v"]),
