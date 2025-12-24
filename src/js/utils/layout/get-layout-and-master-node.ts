@@ -1,4 +1,4 @@
-import type { WarpObject } from "../../types";
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 
 /**
@@ -18,11 +18,11 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns Object with nodeLaout and nodeMaster properties
  */
 export function getLayoutAndMasterNode(
-  node: any,
-  idx: any,
-  type: any,
+  node: PptxNode,
+  idx: number | undefined,
+  type: string,
   warpObj: WarpObject
-): { nodeLaout: any; nodeMaster: any } {
+): { nodeLaout: PptxNode | undefined; nodeMaster: PptxNode | undefined } {
   let pPrNodeLaout, pPrNodeMaster;
   const pPrNode = node["a:pPr"];
   //lvl
