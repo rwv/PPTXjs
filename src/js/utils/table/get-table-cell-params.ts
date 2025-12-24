@@ -34,18 +34,18 @@ import { genTextBody } from "../text";
  */
 export function getTableCellParams(
   tcNodes: PptxNode,
-  getColsGrid: any,
+  getColsGrid: PptxNode,
   row_idx: number,
   col_idx: number,
-  thisTblStyle: any,
+  thisTblStyle: PptxNode,
   cellSource: string | undefined,
   warpObj: WarpObject,
   isFirstBr: { value: boolean },
-  styleTable: any,
+  styleTable: Record<string, { name: string; text: string }>,
   rtlLangsArray: string[],
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor
-): [string, string, string, any, any] {
+): [string, string, string, string | undefined, string | undefined] {
   //thisTblStyle["a:band1V"] => thisTblStyle[cellSource]
   //text, cell-width, cell-borders,
   //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpObj);//tableStyles
