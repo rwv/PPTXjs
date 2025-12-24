@@ -12,6 +12,15 @@ import { getSolidFill } from "../color/get-solid-fill";
 import { getBgGradientFill } from "./get-bg-gradient-fill";
 import { getBgPicFill } from "./get-bg-pic-fill";
 
+/**
+ * Background fill list item with order tracking
+ */
+interface BgFillItem {
+  [key: string]: any;
+  idex: number;
+  attrs: { order: number };
+}
+
 export function getSlideBackgroundFill(warpObj: WarpObject, index: number): string | undefined {
   const slideContent = warpObj["slideContent"];
   const slideLayoutContent = warpObj["slideLayoutContent"];
@@ -90,31 +99,33 @@ export function getSlideBackgroundFill(warpObj: WarpObject, index: number): stri
       const trueIdx = idx - 1000;
       const bgFillLst =
         warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
-      const sortblAry: any[] = [];
+      const sortblAry: BgFillItem[] = [];
 
       Object.keys(bgFillLst).forEach(function (key) {
         const bgFillLstTyp = bgFillLst[key];
         if (key !== "attrs") {
           if (bgFillLstTyp.constructor === Array) {
             for (let i = 0; i < bgFillLstTyp.length; i++) {
-              const obj: any = {};
+              const obj: BgFillItem = {
+                idex: bgFillLstTyp[i]["attrs"]["order"],
+                attrs: { order: bgFillLstTyp[i]["attrs"]["order"] },
+              };
               obj[key] = bgFillLstTyp[i];
-              obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
-              obj["attrs"] = { order: bgFillLstTyp[i]["attrs"]["order"] };
               sortblAry.push(obj);
             }
           } else {
-            const obj: any = {};
+            const obj: BgFillItem = {
+              idex: bgFillLstTyp["attrs"]["order"],
+              attrs: { order: bgFillLstTyp["attrs"]["order"] },
+            };
             obj[key] = bgFillLstTyp;
-            obj["idex"] = bgFillLstTyp["attrs"]["order"];
-            obj["attrs"] = { order: bgFillLstTyp["attrs"]["order"] };
             sortblAry.push(obj);
           }
         }
       });
 
       const sortByOrder = sortblAry.slice(0);
-      sortByOrder.sort(function (a: any, b: any) {
+      sortByOrder.sort(function (a: BgFillItem, b: BgFillItem) {
         return a.idex - b.idex;
       });
 
@@ -174,31 +185,33 @@ export function getSlideBackgroundFill(warpObj: WarpObject, index: number): stri
         const trueIdx = idx - 1000;
         const bgFillLst =
           warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
-        const sortblAry: any[] = [];
+        const sortblAry: BgFillItem[] = [];
 
         Object.keys(bgFillLst).forEach(function (key) {
           const bgFillLstTyp = bgFillLst[key];
           if (key !== "attrs") {
             if (bgFillLstTyp.constructor === Array) {
               for (let i = 0; i < bgFillLstTyp.length; i++) {
-                const obj: any = {};
+                const obj: BgFillItem = {
+                  idex: bgFillLstTyp[i]["attrs"]["order"],
+                  attrs: { order: bgFillLstTyp[i]["attrs"]["order"] },
+                };
                 obj[key] = bgFillLstTyp[i];
-                obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
-                obj["attrs"] = { order: bgFillLstTyp[i]["attrs"]["order"] };
                 sortblAry.push(obj);
               }
             } else {
-              const obj: any = {};
+              const obj: BgFillItem = {
+                idex: bgFillLstTyp["attrs"]["order"],
+                attrs: { order: bgFillLstTyp["attrs"]["order"] },
+              };
               obj[key] = bgFillLstTyp;
-              obj["idex"] = bgFillLstTyp["attrs"]["order"];
-              obj["attrs"] = { order: bgFillLstTyp["attrs"]["order"] };
               sortblAry.push(obj);
             }
           }
         });
 
         const sortByOrder = sortblAry.slice(0);
-        sortByOrder.sort(function (a: any, b: any) {
+        sortByOrder.sort(function (a: BgFillItem, b: BgFillItem) {
           return a.idex - b.idex;
         });
 
@@ -250,31 +263,33 @@ export function getSlideBackgroundFill(warpObj: WarpObject, index: number): stri
             warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"][
               "a:bgFillStyleLst"
             ];
-          const sortblAry: any[] = [];
+          const sortblAry: BgFillItem[] = [];
 
           Object.keys(bgFillLst).forEach(function (key) {
             const bgFillLstTyp = bgFillLst[key];
             if (key !== "attrs") {
               if (bgFillLstTyp.constructor === Array) {
                 for (let i = 0; i < bgFillLstTyp.length; i++) {
-                  const obj: any = {};
+                  const obj: BgFillItem = {
+                    idex: bgFillLstTyp[i]["attrs"]["order"],
+                    attrs: { order: bgFillLstTyp[i]["attrs"]["order"] },
+                  };
                   obj[key] = bgFillLstTyp[i];
-                  obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
-                  obj["attrs"] = { order: bgFillLstTyp[i]["attrs"]["order"] };
                   sortblAry.push(obj);
                 }
               } else {
-                const obj: any = {};
+                const obj: BgFillItem = {
+                  idex: bgFillLstTyp["attrs"]["order"],
+                  attrs: { order: bgFillLstTyp["attrs"]["order"] },
+                };
                 obj[key] = bgFillLstTyp;
-                obj["idex"] = bgFillLstTyp["attrs"]["order"];
-                obj["attrs"] = { order: bgFillLstTyp["attrs"]["order"] };
                 sortblAry.push(obj);
               }
             }
           });
 
           const sortByOrder = sortblAry.slice(0);
-          sortByOrder.sort(function (a: any, b: any) {
+          sortByOrder.sort(function (a: BgFillItem, b: BgFillItem) {
             return a.idex - b.idex;
           });
 
