@@ -1,4 +1,4 @@
-import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor, PptxSettings } from "../../types";
 import { getTextByPathList } from "../object";
 import { genTable } from "../table";
 import { genChart } from "../chart";
@@ -28,9 +28,9 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @param rtlLangsArray - RTL language codes
  * @param slideFactor - EMU to pixel conversion factor
  * @param fontSizeFactor - Font size scaling factor
- * @param chartID - Chart ID counter (modified in place)
+ * @param chartID - Chart ID counter
  * @param MsgQueue - Message queue for chart processing
- * @param settings - Plugin settings
+ * @param settings - PPTXjs plugin settings
  * @returns HTML string or [HTML string, chartID] for charts
  */
 export function processGraphicFrameNode(
@@ -44,10 +44,10 @@ export function processGraphicFrameNode(
   rtlLangsArray: string[],
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor,
-  chartID: any,
-  MsgQueue: any,
-  settings: any
-): string | [string, any] {
+  chartID: number,
+  MsgQueue: any[],
+  settings: PptxSettings
+): string | [string, number] {
   let result = "";
   let updatedChartID = chartID;
   const graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);

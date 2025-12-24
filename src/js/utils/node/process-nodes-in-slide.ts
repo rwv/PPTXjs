@@ -1,4 +1,4 @@
-import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor, PptxSettings } from "../../types";
 import { getTextByPathList } from "../object";
 import { processSpNode } from "./process-sp-node";
 import { processCxnSpNode } from "../shape/process-cxn-sp-node";
@@ -31,9 +31,9 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @param rtlLangsArray - RTL language codes
  * @param slideFactor - EMU to pixel conversion factor
  * @param fontSizeFactor - Font size scaling factor
- * @param chartID - Chart ID counter (modified in place)
+ * @param chartID - Chart ID counter
  * @param MsgQueue - Message queue for chart processing
- * @param settings - Plugin settings
+ * @param settings - PPTXjs plugin settings
  * @returns HTML string for the node
  */
 export function processNodesInSlide(
@@ -49,9 +49,9 @@ export function processNodesInSlide(
   rtlLangsArray: string[],
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor,
-  chartID: any,
-  MsgQueue: any,
-  settings: any
+  chartID: number,
+  MsgQueue: any[],
+  settings: PptxSettings
 ): string {
   let result = "";
 

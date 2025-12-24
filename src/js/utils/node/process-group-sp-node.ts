@@ -1,4 +1,4 @@
-import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor, PptxSettings } from "../../types";
 import { getTextByPathList } from "../object";
 import { angleToDegrees } from "../layout";
 import { processNodesInSlide } from "./process-nodes-in-slide";
@@ -28,7 +28,7 @@ import { processNodesInSlide } from "./process-nodes-in-slide";
  * @param fontSizeFactor - Font size scaling factor
  * @param chartID - Chart ID counter
  * @param MsgQueue - Message queue for chart processing
- * @param settings - Plugin settings
+ * @param settings - PPTXjs plugin settings
  * @returns HTML string for the group
  */
 export function processGroupSpNode(
@@ -41,9 +41,9 @@ export function processGroupSpNode(
   styleTable: Record<string, { name: string; text: string }>,
   rtlLangsArray: string[],
   fontSizeFactor: FontSizeFactor,
-  chartID: any,
-  MsgQueue: any,
-  settings: any
+  chartID: number,
+  MsgQueue: any[],
+  settings: PptxSettings
 ): string {
   //console.log("processGroupSpNode: node: ", node)
   const xfrmNode = getTextByPathList(node, ["p:grpSpPr", "a:xfrm"]);
