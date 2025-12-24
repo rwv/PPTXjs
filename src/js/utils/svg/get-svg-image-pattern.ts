@@ -12,12 +12,12 @@ import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color/get-solid-fill";
 import { getBase64ImageDimensions } from "../media/get-base64-image-dimensions";
 import { escapeHtml } from "../string/escape-html";
-import tinycolor from "tinycolor2";
+import tinycolor, { type ColorFormats } from "tinycolor2";
 
 export function getSvgImagePattern(
   node: PptxNode,
-  fill: any,
-  shpId: any,
+  fill: string,
+  shpId: string | number,
   warpObj: WarpObject
 ): string {
   const pic_dim = getBase64ImageDimensions(fill);
@@ -70,10 +70,10 @@ export function getSvgImagePattern(
   let filterUrl = "";
 
   if (duotoneNode !== undefined) {
-    const clr_ary: any[] = [];
+    const clr_ary: ColorFormats.RGB[] = [];
     Object.keys(duotoneNode).forEach(function (clr_type) {
       if (clr_type !== "attrs") {
-        const obj: any = {};
+        const obj: Record<string, any> = {};
         obj[clr_type] = duotoneNode[clr_type];
         const hexClr = getSolidFill(obj, undefined, undefined, warpObj);
         const color = tinycolor("#" + hexClr);
