@@ -10,11 +10,13 @@
  * @returns Table style definition with attached attribute flags, or undefined
  */
 
+import type { PptxNode } from "../../../types";
+
 export function getTableStyleById(
   styleId: string | undefined,
-  tableStyles: any,
-  tblStylAttrObj: any
-): any {
+  tableStyles: PptxNode,
+  tblStylAttrObj: Record<string, number>
+): PptxNode | undefined {
   if (styleId === undefined) {
     return undefined;
   }
@@ -24,7 +26,7 @@ export function getTableStyleById(
     return undefined;
   }
 
-  let foundStyle: any = undefined;
+  let foundStyle: PptxNode | undefined = undefined;
 
   // Handle array of styles
   if (Array.isArray(tbleStylList)) {
