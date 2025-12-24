@@ -121,3 +121,34 @@ export type VerticalAlign = "t" | "ctr" | "b" | "";
  * 水平对齐
  */
 export type HorizontalAlign = "l" | "ctr" | "r" | "just" | "dist" | "";
+
+/**
+ * 幻灯片尺寸
+ */
+export interface SlideSize {
+  width: number;
+  height: number;
+  appVersion?: any; // PPT application version (optional, complex structure)
+}
+
+/**
+ * PPTXjs插件设置
+ */
+export interface PptxSettings {
+  pptxFileUrl: string;
+  fileInputId: string;
+  slidesScale: string;
+  slideMode: boolean;
+  slideType: string; // "divs2slidesjs" | "revealjs"
+  revealjsPath: string;
+  keyBoardShortCut: boolean;
+  mediaProcess: boolean;
+  jsZipV2: boolean | string; // false or path to JSZip v2
+  themeProcess: boolean | string; // true | false | "colorsAndImageOnly"
+  incSlide: {
+    width: number;
+    height: number;
+  };
+  slideModeConfig: any; // Complex configuration object
+  revealjsConfig: any; // Reveal.js configuration object
+}

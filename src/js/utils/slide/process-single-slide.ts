@@ -12,7 +12,7 @@
  * @param archive - PPTX archive instance
  * @param sldFileName - Path to slide XML file (e.g., "ppt/slides/slide1.xml")
  * @param index - Slide index number (0-based)
- * @param slideSize - Object containing slide width and height
+ * @param slideSize - Slide dimensions with optional app version
  * @param defaultTextStyle - Default text styling from presentation
  * @param tableStyles - Table styles from presentation
  * @param isFirstBr - Mutable object tracking first line break state
@@ -20,14 +20,14 @@
  * @param rtlLangsArray - Array of RTL language codes
  * @param slideFactor - EMU to pixel conversion factor
  * @param fontSizeFactor - Font size scaling factor
- * @param chartID - Chart ID counter (modified in place)
+ * @param chartID - Chart ID counter
  * @param MsgQueue - Message queue for chart processing
- * @param settings - Plugin settings
+ * @param settings - PPTXjs plugin settings
  * @returns HTML string for the slide
  */
 
 import type { PptxArchive } from "../../archive/pptx-archive";
-import type { PptxNode, SlideFactor, FontSizeFactor } from "../../types";
+import type { PptxNode, SlideFactor, FontSizeFactor, SlideSize, PptxSettings } from "../../types";
 import { readXmlFile, indexNodes } from "../xml";
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
@@ -38,7 +38,7 @@ export function processSingleSlide(
   archive: PptxArchive,
   sldFileName: string,
   index: number,
-  slideSize: { width: number; height: number; appVersion?: any },
+  slideSize: SlideSize,
   defaultTextStyle: PptxNode,
   tableStyles: PptxNode,
   isFirstBr: { value: boolean },
@@ -46,9 +46,9 @@ export function processSingleSlide(
   rtlLangsArray: string[],
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor,
-  chartID: any,
-  MsgQueue: any,
-  settings: any
+  chartID: number,
+  MsgQueue: any[],
+  settings: PptxSettings
 ): string {
   /*
             self.postMessage({
