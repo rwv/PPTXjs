@@ -10,13 +10,14 @@
  * and remain in gen-shape.ts switch statement.
  */
 
+import type { PptxNode } from "../../../types";
 import { shapeArc } from "./helpers/arc";
 
 /**
  * Context for rendering flowchart shapes
  */
 export interface FlowchartShapeContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;

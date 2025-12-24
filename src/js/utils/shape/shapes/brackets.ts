@@ -6,6 +6,7 @@
  * - bracketPair, leftBracket, rightBracket
  */
 
+import type { PptxNode } from "../../../types";
 import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
 
@@ -13,7 +14,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering bracket shapes
  */
 export interface BracketShapeContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;

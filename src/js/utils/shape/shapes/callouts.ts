@@ -7,6 +7,7 @@
  * - accentBorderCallout1/2/3, accentCallout1/2/3
  */
 
+import type { PptxNode } from "../../../types";
 import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
 
@@ -14,7 +15,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering callout shapes
  */
 export interface CalloutContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;

@@ -9,13 +9,14 @@
  * - flowChartPreparation
  */
 
+import type { PptxNode } from "../../../types";
 import { getTextByPathList } from "../../object";
 
 /**
  * Context for rendering polygon shapes
  */
 export interface PolygonShapeContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;

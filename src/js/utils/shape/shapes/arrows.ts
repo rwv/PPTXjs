@@ -11,6 +11,7 @@
  * Note: downArrow also handles flowChartOffpageConnector
  */
 
+import type { PptxNode } from "../../../types";
 import { getTextByPathList } from "../../object";
 import { shapeArc } from "./helpers/arc";
 
@@ -18,7 +19,7 @@ import { shapeArc } from "./helpers/arc";
  * Context for rendering arrow shapes
  */
 export interface ArrowShapeContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;
