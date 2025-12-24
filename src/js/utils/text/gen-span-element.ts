@@ -216,11 +216,13 @@ export function genSpanElement(
     }
     styleText +=
       "-webkit-background-clip: text;" + "background-clip: text;" + "color: transparent;";
-    if (fontClrPr[1].border !== undefined && fontClrPr[1].border !== "") {
-      styleText += "-webkit-text-stroke: " + fontClrPr[1].border + ";";
-    }
-    if (fontClrPr[1].effcts !== undefined && fontClrPr[1].effcts !== "") {
-      styleText += "filter: " + fontClrPr[1].effcts + ";";
+    if (typeof fontClrPr[1] === "object") {
+      if (fontClrPr[1].border !== undefined && fontClrPr[1].border !== "") {
+        styleText += "-webkit-text-stroke: " + fontClrPr[1].border + ";";
+      }
+      if (fontClrPr[1].effcts !== undefined && fontClrPr[1].effcts !== "") {
+        styleText += "filter: " + fontClrPr[1].effcts + ";";
+      }
     }
   }
   const font_size = getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);

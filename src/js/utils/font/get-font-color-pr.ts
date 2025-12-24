@@ -25,14 +25,14 @@ import { getBorder } from "../border/get-border";
 export function getFontColorPr(
   node: PptxNode,
   pNode: PptxNode,
-  lstStyle: any,
-  pFontStyle: any,
+  lstStyle: PptxNode,
+  pFontStyle: PptxNode,
   lvl: number,
   idx: number | undefined,
-  type: any,
+  type: string,
   warpObj: WarpObject,
   slideFactor: SlideFactor
-): [any, any, string, string] {
+): [any, string | Record<string, string>, string, string] {
   const rPrNode = getTextByPathList(node, ["a:rPr"]);
   let filTyp,
     color,
@@ -147,7 +147,7 @@ export function getFontColorPr(
   }
 
   const txtEffects: string[] = [];
-  const txtEffObj: any = {};
+  const txtEffObj: Record<string, string> = {};
 
   // textBordr
   const txtBrdrNode = getTextByPathList(node, ["a:rPr", "a:ln"]);
@@ -272,7 +272,7 @@ export function getFontColorPr(
   }
 
   let text_effcts = "",
-    txt_effects: any;
+    txt_effects: string | Record<string, string>;
   if (colorType === "solid") {
     if (txtEffects.length > 0) {
       text_effcts = txtEffects.join(",");
