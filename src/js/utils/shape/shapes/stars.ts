@@ -6,13 +6,14 @@
  * - star10, star12, star16, star24, star32
  */
 
+import type { PptxNode } from "../../../types";
 import { getTextByPathList } from "../../object";
 
 /**
  * Context for rendering star shapes
  */
 export interface StarShapeContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;
@@ -59,7 +60,7 @@ function createPath(d: string, ctx: StarShapeContext): string {
 /**
  * Parse single adjustment value from shape node
  */
-function parseSingleAdj(node: any, defaultVal: number, slideFactor: number): number {
+function parseSingleAdj(node: PptxNode, defaultVal: number, slideFactor: number): number {
   const shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
   if (shapAdjst !== undefined) {
     const name = shapAdjst["attrs"]["name"];
@@ -74,7 +75,7 @@ function parseSingleAdj(node: any, defaultVal: number, slideFactor: number): num
  * Parse multiple adjustment values from shape node
  */
 function parseMultiAdj(
-  node: any,
+  node: PptxNode,
   defaults: { adj: number; hf?: number; vf?: number },
   slideFactor: number
 ): { adj: number; hf: number; vf: number } {
