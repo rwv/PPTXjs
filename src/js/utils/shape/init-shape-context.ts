@@ -17,14 +17,14 @@ import { getSvgGradient, getSvgImagePattern } from "../svg";
 
 export interface ShapeContext {
   /** Shape transform nodes */
-  slideXfrmNode: any;
-  slideLayoutXfrmNode: any;
-  slideMasterXfrmNode: any;
+  slideXfrmNode: PptxNode | undefined;
+  slideLayoutXfrmNode: PptxNode | undefined;
+  slideMasterXfrmNode: PptxNode | undefined;
 
   /** Shape IDs and types */
-  shpId: any;
-  shapType: any;
-  custShapType: any;
+  shpId: string;
+  shapType: string | undefined;
+  custShapType: PptxNode | undefined;
 
   /** Transform properties */
   rotate: number | undefined;
@@ -65,7 +65,7 @@ export function initShapeContext(
   slideMasterSpNode: PptxNode,
   id: string | number,
   idx: number | undefined,
-  type: any,
+  type: string,
   name: string,
   order: string | number,
   sType: any,
