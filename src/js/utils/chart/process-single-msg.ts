@@ -4,7 +4,14 @@
  * @param d - Chart configuration data containing chartID, chartType, and chartData
  * @returns True if chart was successfully rendered, false otherwise
  */
-export function processSingleMsg(d: any): boolean {
+
+interface ChartMessage {
+  chartID: string;
+  chartType: string;
+  chartData: any;
+}
+
+export function processSingleMsg(d: ChartMessage): boolean {
   const chartID = d.chartID;
   const chartType = d.chartType;
   const chartData = d.chartData;
@@ -16,14 +23,14 @@ export function processSingleMsg(d: any): boolean {
     case "lineChart":
       data = chartData;
       chart = nv.models.lineChart().useInteractiveGuideline(true);
-      chart.xAxis.tickFormat(function (d: any) {
+      chart.xAxis.tickFormat(function (d: number | string) {
         return chartData[0].xlabels[d] || d;
       });
       break;
     case "barChart":
       data = chartData;
       chart = nv.models.multiBarChart();
-      chart.xAxis.tickFormat(function (d: any) {
+      chart.xAxis.tickFormat(function (d: number | string) {
         return chartData[0].xlabels[d] || d;
       });
       break;
@@ -37,7 +44,7 @@ export function processSingleMsg(d: any): boolean {
     case "areaChart":
       data = chartData;
       chart = nv.models.stackedAreaChart().clipEdge(true).useInteractiveGuideline(true);
-      chart.xAxis.tickFormat(function (d: any) {
+      chart.xAxis.tickFormat(function (d: number | string) {
         return chartData[0].xlabels[d] || d;
       });
       break;
