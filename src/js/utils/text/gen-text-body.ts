@@ -88,7 +88,7 @@ export function genTextBody(
     if (rNode !== undefined && brNode !== undefined) {
       isFirstBr.value = true;
       brNode = brNode.constructor === Array ? brNode : [brNode];
-      brNode.forEach(function (item: any, _indx: any) {
+      brNode.forEach(function (item: PptxNode, _indx: number) {
         item.type = "br";
       });
       if (brNode.length > 1) {
@@ -96,7 +96,7 @@ export function genTextBody(
       }
       rNode = rNode.concat(brNode);
       //console.log("single a:p  rNode:", rNode, "brNode:", brNode )
-      rNode.sort(function (a: any, b: any) {
+      rNode.sort(function (a: PptxNode, b: PptxNode) {
         return a.attrs.order - b.attrs.order;
       });
       //console.log("sorted rNode:",rNode)
