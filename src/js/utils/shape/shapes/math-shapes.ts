@@ -6,6 +6,7 @@
  * - mathMultiply, mathNotEqual, mathPlus
  */
 
+import type { PptxNode } from "../../../types";
 import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
 
@@ -13,7 +14,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering math shapes
  */
 export interface MathShapeContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;
