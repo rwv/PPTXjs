@@ -8,13 +8,14 @@
  * - curvedConnector2, curvedConnector3, curvedConnector4, curvedConnector5
  */
 
+import type { PptxNode } from "../../../types";
 import { getTextByPathList } from "../../object";
 
 /**
  * Context for rendering connector shapes
  */
 export interface ConnectorContext {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
   shpId: string;
@@ -28,7 +29,7 @@ export interface ConnectorContext {
 /**
  * Extract arrow marker attributes from node
  */
-function getMarkerNodeAttrs(node: any): { headEndNodeAttrs: any; tailEndNodeAttrs: any } {
+function getMarkerNodeAttrs(node: PptxNode): { headEndNodeAttrs: any; tailEndNodeAttrs: any } {
   return {
     headEndNodeAttrs: getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]),
     tailEndNodeAttrs: getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]),
