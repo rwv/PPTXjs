@@ -1,4 +1,4 @@
-import type { WarpObject, SlideFactor, FontSizeFactor } from "../../types";
+import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
 import { processNodesInSlide } from "../node";
@@ -35,9 +35,9 @@ export function getBackground(
   warpObj: WarpObject,
   slideSize: { width: number; height: number },
   index: number,
-  tableStyles: any,
+  tableStyles: PptxNode,
   isFirstBr: { value: boolean },
-  styleTable: any,
+  styleTable: Record<string, { name: string; text: string }>,
   rtlLangsArray: string[],
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor,
