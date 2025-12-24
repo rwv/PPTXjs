@@ -27,7 +27,7 @@
  */
 
 import type { PptxArchive } from "../../archive/pptx-archive";
-import type { SlideFactor, FontSizeFactor } from "../../types";
+import type { PptxNode, SlideFactor, FontSizeFactor } from "../../types";
 import { readXmlFile, indexNodes } from "../xml";
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
@@ -39,10 +39,10 @@ export function processSingleSlide(
   sldFileName: string,
   index: number,
   slideSize: { width: number; height: number; appVersion?: any },
-  defaultTextStyle: any,
-  tableStyles: any,
+  defaultTextStyle: PptxNode,
+  tableStyles: PptxNode,
   isFirstBr: { value: boolean },
-  styleTable: any,
+  styleTable: Record<string, { name: string; text: string }>,
   rtlLangsArray: string[],
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor,
@@ -66,7 +66,7 @@ export function processSingleSlide(
   //console.log("RelationshipArray: " , RelationshipArray)
   let layoutFilename = "";
   let diagramFilename = "";
-  const slideResObj = {};
+  const slideResObj: Record<string, { type: string; target: string }> = {};
   if (RelationshipArray.constructor === Array) {
     for (let i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
@@ -124,7 +124,7 @@ export function processSingleSlide(
   const slideLayoutResContent = readXmlFile(archive, slideLayoutResFilename);
   RelationshipArray = slideLayoutResContent["Relationships"]["Relationship"];
   let masterFilename = "";
-  const layoutResObj = {};
+  const layoutResObj: Record<string, { type: string; target: string }> = {};
   if (RelationshipArray.constructor === Array) {
     for (let i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
@@ -159,7 +159,7 @@ export function processSingleSlide(
   const slideMasterResContent = readXmlFile(archive, slideMasterResFilename);
   RelationshipArray = slideMasterResContent["Relationships"]["Relationship"];
   let themeFilename = "";
-  const masterResObj = {};
+  const masterResObj: Record<string, { type: string; target: string }> = {};
   if (RelationshipArray.constructor === Array) {
     for (let i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
@@ -181,8 +181,8 @@ export function processSingleSlide(
   }
   //console.log(themeFilename)
   //Load Theme file
-  const themeResObj = {};
-  let themeContent: any;
+  const themeResObj: Record<string, { type: string; target: string }> = {};
+  let themeContent: PptxNode;
   if (themeFilename !== undefined) {
     const themeName = themeFilename.split("/").pop();
     const themeResFileName = themeFilename.replace(themeName, "_rels/" + themeName) + ".rels";
@@ -217,8 +217,8 @@ export function processSingleSlide(
     }
   }
   //Load diagram file
-  const diagramResObj = {};
-  let digramFileContent = {};
+  const diagramResObj: Record<string, { type: string; target: string }> = {};
+  let digramFileContent: PptxNode = {};
   if (diagramFilename !== undefined) {
     const diagName = diagramFilename.split("/").pop();
     const diagramResFileName = diagramFilename.replace(diagName, "_rels/" + diagName) + ".rels";
