@@ -17,6 +17,45 @@ import { getVerticalAlign, getPosition, getSize, getContentDir } from "../../lay
 import { shapeArc } from "./helpers/arc";
 import { genTextBody } from "../../text";
 
+// Path point type definitions for custom geometry
+interface MoveToPoint {
+  type: "movto";
+  order: string;
+  x: string;
+  y: string;
+}
+
+interface LineToPoint {
+  type: "lnto";
+  order: string;
+  x: string;
+  y: string;
+}
+
+interface CubicBezierPoint {
+  type: "cubicBezTo";
+  order: string;
+  cubBzPt: Array<{ x: string; y: string }>;
+}
+
+interface ArcToPoint {
+  type: "arcTo";
+  order: string;
+  hR: string;
+  wR: string;
+  stAng: string;
+  swAng: string;
+  shftX: string | number;
+  shftY: string | number;
+}
+
+interface ClosePoint {
+  type: "close";
+  order: string;
+}
+
+type PathPoint = MoveToPoint | LineToPoint | CubicBezierPoint | ArcToPoint | ClosePoint;
+
 export function renderCustomGeometry(
   custShapType: PptxNode,
   node: PptxNode,
@@ -80,14 +119,14 @@ export function renderCustomGeometry(
   }
   //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
 
-  const multiSapeAry = [];
+  const multiSapeAry: any[] = [];
   if (moveToNode.length > 0) {
     //a:moveTo
     Object.keys(moveToNode).forEach(function (key) {
       const moveToPtNode = moveToNode[key]["a:pt"];
       if (moveToPtNode !== undefined) {
         Object.keys(moveToPtNode).forEach(function (key2) {
-          const ptObj: any = {};
+          const ptObj: MoveToPoint = {} as MoveToPoint;
           const moveToNoPt = moveToPtNode[key2];
           const spX = moveToNoPt["attrs"]["x"]; //parseInt(moveToNoPt["attrs"]["x"]) * slideFactor;
           const spY = moveToNoPt["attrs"]["y"]; //parseInt(moveToNoPt["attrs"]["y"]) * slideFactor;
@@ -107,7 +146,7 @@ export function renderCustomGeometry(
         const lnToPtNode = lnToNodes[key]["a:pt"];
         if (lnToPtNode !== undefined) {
           Object.keys(lnToPtNode).forEach(function (key2) {
-            const ptObj: any = {};
+            const ptObj: LineToPoint = {} as LineToPoint;
             const lnToNoPt = lnToPtNode[key2];
             const ptX = lnToNoPt["attrs"]["x"];
             const ptY = lnToNoPt["attrs"]["y"];
@@ -124,7 +163,7 @@ export function renderCustomGeometry(
     }
     //a:cubicBezTo
     if (cubicBezToNodes !== undefined) {
-      const cubicBezToPtNodesAry: any = [];
+      const cubicBezToPtNodesAry: PptxNode[] = [];
       //console.log("cubicBezToNodes: ", cubicBezToNodes, ", is arry: ", Array.isArray(cubicBezToNodes))
       if (!Array.isArray(cubicBezToNodes)) {
         cubicBezToNodes = [cubicBezToNodes];
@@ -137,11 +176,11 @@ export function renderCustomGeometry(
       //console.log("cubicBezToNodes: ", cubicBezToPtNodesAry)
       cubicBezToPtNodesAry.forEach(function (key2) {
         //console.log("cubicBezToPtNodesAry: key2 : ", key2)
-        const nodeObj: any = {};
+        const nodeObj: CubicBezierPoint = {} as CubicBezierPoint;
         nodeObj.type = "cubicBezTo";
         nodeObj.order = key2[0]["attrs"]["order"];
-        const pts_ary: any = [];
-        key2.forEach(function (pt: any) {
+        const pts_ary: Array<{ x: string; y: string }> = [];
+        key2.forEach(function (pt: PptxNode) {
           const pt_obj = {
             x: pt["attrs"]["x"],
             y: pt["attrs"]["y"],
@@ -168,7 +207,7 @@ export function renderCustomGeometry(
         shftY = arcToPtNode["y"];
         //console.log("shftX: ",shftX," shftY: ",shftY)
       }
-      const ptObj: any = {};
+      const ptObj: ArcToPoint = {} as ArcToPoint;
       ptObj.type = "arcTo";
       ptObj.order = arcOrder;
       ptObj.hR = hR;
@@ -195,7 +234,7 @@ export function renderCustomGeometry(
         const clsAttrs = closeNode[key]["attrs"];
         //var clsAttrs = closeNode["attrs"];
         const clsOrder = clsAttrs["order"];
-        const ptObj: any = {};
+        const ptObj: ClosePoint = {} as ClosePoint;
         ptObj.type = "close";
         ptObj.order = clsOrder;
         multiSapeAry.push(ptObj);
