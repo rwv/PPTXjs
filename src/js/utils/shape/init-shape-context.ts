@@ -68,11 +68,11 @@ export function initShapeContext(
   type: string,
   name: string,
   order: string | number,
-  sType: any,
-  source: any,
+  sType: string,
+  source: string,
   warpObj: WarpObject,
   slideFactor: SlideFactor,
-  styleTable: any
+  styleTable: Record<string, { name: string; text: string }>
 ): ShapeContext | null {
   //var dltX = 0;
   //var dltY = 0;
