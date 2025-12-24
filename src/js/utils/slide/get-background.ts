@@ -1,4 +1,11 @@
-import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
+import type {
+  PptxNode,
+  WarpObject,
+  SlideFactor,
+  FontSizeFactor,
+  SlideSize,
+  PptxSettings,
+} from "../../types";
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
 import { processNodesInSlide } from "../node";
@@ -18,7 +25,7 @@ import { processNodesInSlide } from "../node";
  * - Returns wrapped HTML with background styling
  *
  * @param warpObj - Warp object containing slideContent, slideLayoutContent, slideMasterContent
- * @param slideSize - Slide dimensions {width, height}
+ * @param slideSize - Slide dimensions with optional app version
  * @param index - Slide index for CSS class naming
  * @param tableStyles - Table styles from presentation
  * @param isFirstBr - Object {value: boolean} for line break state
@@ -28,12 +35,12 @@ import { processNodesInSlide } from "../node";
  * @param fontSizeFactor - Font size scaling factor
  * @param chartID - Chart ID counter
  * @param MsgQueue - Message queue for chart processing
- * @param settings - Plugin settings
+ * @param settings - PPTXjs plugin settings
  * @returns HTML string for slide background
  */
 export function getBackground(
   warpObj: WarpObject,
-  slideSize: { width: number; height: number },
+  slideSize: SlideSize,
   index: number,
   tableStyles: PptxNode,
   isFirstBr: { value: boolean },
@@ -41,9 +48,9 @@ export function getBackground(
   rtlLangsArray: string[],
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor,
-  chartID: any,
-  MsgQueue: any,
-  settings: any
+  chartID: number,
+  MsgQueue: any[],
+  settings: PptxSettings
 ): string {
   //var rslt = "";
   const _slideContent = warpObj["slideContent"];
