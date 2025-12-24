@@ -23,8 +23,8 @@ import { escapeHtml } from "../string";
 export function processPicNode(
   node: PptxNode,
   warpObj: WarpObject,
-  source: any,
-  sType: any,
+  source: string,
+  _sType: any,
   slideFactor: SlideFactor,
   settings: any
 ): string {
@@ -34,7 +34,7 @@ export function processPicNode(
   const order = node["attrs"]["order"];
 
   const rid = node["p:blipFill"]["a:blip"]["attrs"]["r:embed"];
-  let resObj;
+  let resObj: Record<string, { target: string }>;
   if (source === "slideMasterBg") {
     resObj = warpObj["masterResObj"];
   } else if (source === "slideLayoutBg") {
@@ -53,7 +53,6 @@ export function processPicNode(
   let xfrmNode = node["p:spPr"]["a:xfrm"];
   if (xfrmNode === undefined) {
     const idx = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "idx"]);
-    const _type = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "type"]);
     if (idx !== undefined) {
       xfrmNode = getTextByPathList(warpObj["slideLayoutTables"], [
         "idxTable",
@@ -71,13 +70,13 @@ export function processPicNode(
   }
   //video
   const vdoNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:videoFile"]);
-  let vdoRid,
-    vdoFile,
-    vdoFileExt,
-    vdoMimeType,
-    uInt8Array,
-    blob,
-    vdoBlob,
+  let vdoRid: string | undefined,
+    vdoFile: string | undefined,
+    vdoFileExt: string | undefined,
+    vdoMimeType: string | undefined,
+    uInt8Array: ArrayBuffer | undefined,
+    blob: Blob | undefined,
+    vdoBlob: string | undefined,
     mediaSupportFlag = false,
     isVdeoLink = false;
   const mediaProcess = settings.mediaProcess;
@@ -107,9 +106,14 @@ export function processPicNode(
   }
   //Audio
   const audioNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:audioFile"]);
-  let audioRid, audioFile, audioFileExt, _audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
+  let audioRid: string | undefined,
+    audioFile: string | undefined,
+    audioFileExt: string | undefined,
+    uInt8ArrayAudio: ArrayBuffer | undefined,
+    blobAudio: Blob | undefined,
+    audioBlob: string | undefined;
   let audioPlayerFlag = false;
-  let audioObjc;
+  let audioObjc: any;
   if (audioNode !== undefined && mediaProcess) {
     audioRid = audioNode["attrs"]["r:link"];
     audioFile = resObj[audioRid]["target"];
