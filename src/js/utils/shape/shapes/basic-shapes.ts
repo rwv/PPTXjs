@@ -9,14 +9,15 @@
  * - Irregular seals (irregularSeal1, irregularSeal2)
  */
 
+import type { PptxNode } from "../../../types";
 import { getTextByPathList } from "../../object";
 import { shapeSnipRoundRect } from "./helpers/snip-round-rect";
 
 export interface BasicShapeParams {
-  node: any;
+  node: PptxNode;
   w: number;
   h: number;
-  shpId: any;
+  shpId: string | number;
   fillColor: string;
   grndFillFlg: boolean;
   imgFillFlg: boolean;
