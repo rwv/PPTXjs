@@ -1,4 +1,4 @@
-import type { PptxNode, WarpObject, SlideFactor } from "../../types";
+import type { PptxNode, WarpObject, SlideFactor, PptxSettings } from "../../types";
 import { getTextByPathList } from "../object";
 import { getPosition } from "../layout/get-position";
 import { getSize } from "../layout/get-size";
@@ -17,16 +17,16 @@ import { escapeHtml } from "../string";
  * @param source - Source type (slideMasterBg, slideLayoutBg, etc.)
  * @param sType - Shape type
  * @param slideFactor - EMU to pixel conversion factor
- * @param settings - Settings object containing mediaProcess flag
+ * @param settings - PPTXjs plugin settings
  * @returns HTML string for the picture/video/audio element
  */
 export function processPicNode(
   node: PptxNode,
   warpObj: WarpObject,
   source: string,
-  _sType: any,
+  _sType: string,
   slideFactor: SlideFactor,
-  settings: any
+  settings: PptxSettings
 ): string {
   //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
   let rtrnData = "";
@@ -113,7 +113,7 @@ export function processPicNode(
     blobAudio: Blob | undefined,
     audioBlob: string | undefined;
   let audioPlayerFlag = false;
-  let audioObjc: any;
+  let audioObjc: PptxNode;
   if (audioNode !== undefined && mediaProcess) {
     audioRid = audioNode["attrs"]["r:link"];
     audioFile = resObj[audioRid]["target"];

@@ -34,10 +34,10 @@ import { processSpNode } from "../node";
 export function genDiagram(
   node: PptxNode,
   warpObj: WarpObject,
-  source: any,
-  sType: any,
+  source: string,
+  sType: string,
   slideFactor: SlideFactor,
-  styleTable: any,
+  styleTable: Record<string, { name: string; text: string }>,
   fontSizeFactor: FontSizeFactor,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
