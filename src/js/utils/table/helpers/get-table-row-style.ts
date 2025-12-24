@@ -15,6 +15,7 @@
  * @returns Row style properties (fillColor, borders, fontColor, fontWeight)
  */
 
+import type { WarpObject } from "../../../types";
 import { getTextByPathList } from "../../object";
 import { getSolidFill } from "../../color";
 import { getTableBorders } from "../../border";
@@ -33,7 +34,7 @@ export function getTableRowStyle(
   totalRows: number,
   tblStylAttrObj: any,
   thisTblStyle: any,
-  warpObj: any
+  warpObj: WarpObject
 ): TableRowStyle {
   let fillColor = "";
   let row_borders: string | undefined = "";

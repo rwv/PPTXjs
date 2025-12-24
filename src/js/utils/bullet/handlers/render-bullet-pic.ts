@@ -9,12 +9,13 @@
  * - RTL support
  */
 
+import type { WarpObject } from "../../../types";
 import { getTextByPathList } from "../../object";
 import { getMimeType, base64ArrayBuffer } from "../../media";
 
 export function renderBulletPic(
   buPic: any,
-  warpObj: any,
+  warpObj: WarpObject,
   marLStr: string,
   marRStr: string,
   bultSize: string,
