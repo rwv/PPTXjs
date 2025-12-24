@@ -453,7 +453,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
     case "pct90":
     case "trellis":
     case "divot": {
-      let px_pr_ary;
+      let px_pr_ary: [string, string, string];
       switch (prst) {
         case "pct5":
           px_pr_ary = ["0.3px", "10%", "2px 2px"];

@@ -52,7 +52,7 @@ export function initSlideMode(divId: any, settings: any): void {
     } else {
       revealjsPath = "./revealjs/reveal.js";
     }
-    $.getScript(revealjsPath, function (response: any, status: any) {
+    $.getScript(revealjsPath, function (_response: any, status: any) {
       if (status === "success") {
         // $("section").removeClass("slide");
         Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO

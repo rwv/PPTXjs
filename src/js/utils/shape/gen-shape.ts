@@ -30,13 +30,10 @@
  */
 
 import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../types";
-import { getTextByPathList } from "../object";
-import { getPosition, getSize, getVerticalAlign, angleToDegrees, getContentDir } from "../layout";
-import { getFillType, getShapeFill } from "../fill";
+import { getPosition, getSize, getVerticalAlign, getContentDir } from "../layout";
+import { getShapeFill } from "../fill";
 import { getBorder } from "../border";
 import { genTextBody } from "../text";
-import { getSolidFill } from "../color";
-import { getSvgGradient, getSvgImagePattern } from "../svg";
 import { renderCustomGeometry } from "./shapes/custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
@@ -125,18 +122,18 @@ export function genShape(
     shpId,
     shapType,
     custShapType,
-    rotate,
-    flip,
-    x,
-    y,
+    rotate: _rotate,
+    flip: _flip,
+    x: _x,
+    y: _y,
     w,
     h,
     svgCssName,
-    effectsClassName,
+    effectsClassName: _effectsClassName,
     fillColor,
     grndFillFlg,
     imgFillFlg,
-    clrFillType,
+    clrFillType: _clrFillType,
     border,
   } = context;
 
