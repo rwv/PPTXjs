@@ -1,3 +1,4 @@
+import type { PptxNode } from "../../types";
 import type { PptxArchive } from "../../archive/pptx-archive";
 import { tXml } from "../vendors/txml-enhanced";
 
@@ -15,7 +16,7 @@ export function readXmlFile(
   filename: string,
   isSlideContent?: boolean,
   appVersion?: number
-): any | null {
+): PptxNode | null {
   try {
     if (!archive.hasFile(filename)) {
       return null;
