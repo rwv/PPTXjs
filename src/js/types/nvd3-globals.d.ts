@@ -10,4 +10,4 @@
 declare const d3: d3.Base;
 
 // NVD3 global variable
-declare const nv: Nvd3Static;
+declare const nv: nv.Nvd3Static;
