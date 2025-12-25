@@ -122,119 +122,64 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       adj2 = ((adj2 / 60000) * Math.PI) / 180;
       adj3 = adj3 * slideFactor;
     }
-    let a1,
-      crAng,
-      a2a1,
-      maxAdj3,
-      a3,
-      dy1,
-      dy2,
-      dx1,
-      x1,
-      x8,
-      y2,
-      y3,
-      y1,
-      y4,
-      cadj2,
-      xadj2,
-      len,
-      bhw,
-      bhw2,
-      x7,
-      dx67,
-      x6,
-      dx57,
-      x5,
-      dx47,
-      x4,
-      dx37,
-      x3,
-      dx27,
-      x2,
-      rx7,
-      rx6,
-      rx5,
-      rx4,
-      rx3,
-      rx2,
-      dx7,
-      rxt,
-      lxt,
-      rx,
-      lx,
-      dy3,
-      dy4,
-      ry,
-      ly,
-      dlx,
-      drx,
-      dly,
-      dry,
-      xC1,
-      xC2,
-      yC1,
-      yC2,
-      yC3,
-      yC4;
-    const angVal1 = (70 * Math.PI) / 180,
-      angVal2 = (110 * Math.PI) / 180;
+    const angVal1 = (70 * Math.PI) / 180;
+    const angVal2 = (110 * Math.PI) / 180;
     const cnstVal4 = 73490 * slideFactor;
-    a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
-    crAng = adj2 < angVal1 ? angVal1 : adj2 > angVal2 ? angVal2 : adj2;
-    a2a1 = a1 * 2;
-    maxAdj3 = cnstVal2 - a2a1;
-    a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
-    dy1 = (h * a1) / cnstVal2;
-    dy2 = (h * a3) / cnstVal3;
-    dx1 = (w * cnstVal4) / cnstVal3;
-    x1 = hc - dx1;
-    x8 = hc + dx1;
-    y2 = vc - dy2;
-    y3 = vc + dy2;
-    y1 = y2 - dy1;
-    y4 = y3 + dy1;
-    cadj2 = crAng - Math.PI / 2;
-    xadj2 = hd2 * Math.tan(cadj2);
-    len = Math.sqrt(xadj2 * xadj2 + hd2 * hd2);
-    bhw = (len * dy1) / hd2;
-    bhw2 = bhw / 2;
-    x7 = hc + xadj2 - bhw2;
-    dx67 = (xadj2 * y1) / hd2;
-    x6 = x7 - dx67;
-    dx57 = (xadj2 * y2) / hd2;
-    x5 = x7 - dx57;
-    dx47 = (xadj2 * y3) / hd2;
-    x4 = x7 - dx47;
-    dx37 = (xadj2 * y4) / hd2;
-    x3 = x7 - dx37;
-    dx27 = xadj2 * 2;
-    x2 = x7 - dx27;
-    rx7 = x7 + bhw;
-    rx6 = x6 + bhw;
-    rx5 = x5 + bhw;
-    rx4 = x4 + bhw;
-    rx3 = x3 + bhw;
-    rx2 = x2 + bhw;
-    dx7 = (dy1 * hd2) / len;
-    rxt = x7 + dx7;
-    lxt = rx7 - dx7;
-    rx = cadj2 > 0 ? rxt : rx7;
-    lx = cadj2 > 0 ? x7 : lxt;
-    dy3 = (dy1 * xadj2) / len;
-    dy4 = -dy3;
-    ry = cadj2 > 0 ? dy3 : 0;
-    ly = cadj2 > 0 ? 0 : dy4;
-    dlx = w - rx;
-    drx = w - lx;
-    dly = h - ry;
-    dry = h - ly;
-    xC1 = (rx + lx) / 2;
-    xC2 = (drx + dlx) / 2;
-    yC1 = (ry + ly) / 2;
-    yC2 = (y1 + y2) / 2;
-    yC3 = (y3 + y4) / 2;
-    yC4 = (dry + dly) / 2;
+    const a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
+    const crAng = adj2 < angVal1 ? angVal1 : adj2 > angVal2 ? angVal2 : adj2;
+    const a2a1 = a1 * 2;
+    const maxAdj3 = cnstVal2 - a2a1;
+    const a3 = adj3 < 0 ? 0 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+    const dy1 = (h * a1) / cnstVal2;
+    const dy2 = (h * a3) / cnstVal3;
+    const dx1 = (w * cnstVal4) / cnstVal3;
+    const x1 = hc - dx1;
+    const x8 = hc + dx1;
+    const y2 = vc - dy2;
+    const y3 = vc + dy2;
+    const y1 = y2 - dy1;
+    const y4 = y3 + dy1;
+    const cadj2 = crAng - Math.PI / 2;
+    const xadj2 = hd2 * Math.tan(cadj2);
+    const len = Math.sqrt(xadj2 * xadj2 + hd2 * hd2);
+    const bhw = (len * dy1) / hd2;
+    const bhw2 = bhw / 2;
+    const x7 = hc + xadj2 - bhw2;
+    const dx67 = (xadj2 * y1) / hd2;
+    const x6 = x7 - dx67;
+    const dx57 = (xadj2 * y2) / hd2;
+    const x5 = x7 - dx57;
+    const dx47 = (xadj2 * y3) / hd2;
+    const x4 = x7 - dx47;
+    const dx37 = (xadj2 * y4) / hd2;
+    const x3 = x7 - dx37;
+    const dx27 = xadj2 * 2;
+    const x2 = x7 - dx27;
+    const rx7 = x7 + bhw;
+    const rx6 = x6 + bhw;
+    const rx5 = x5 + bhw;
+    const rx4 = x4 + bhw;
+    const rx3 = x3 + bhw;
+    const _rx2 = x2 + bhw;
+    const dx7 = (dy1 * hd2) / len;
+    const rxt = x7 + dx7;
+    const lxt = rx7 - dx7;
+    const rx = cadj2 > 0 ? rxt : rx7;
+    const lx = cadj2 > 0 ? x7 : lxt;
+    const dy3 = (dy1 * xadj2) / len;
+    const dy4 = -dy3;
+    const ry = cadj2 > 0 ? dy3 : 0;
+    const ly = cadj2 > 0 ? 0 : dy4;
+    const dlx = w - rx;
+    const drx = w - lx;
+    const dly = h - ry;
+    const dry = h - ly;
+    const _xC1 = (rx + lx) / 2;
+    const _xC2 = (drx + dlx) / 2;
+    const _yC1 = (ry + ly) / 2;
+    const _yC2 = (y1 + y2) / 2;
+    const _yC3 = (y3 + y4) / 2;
+    const _yC4 = (dry + dly) / 2;
 
     dVal =
       "M" +
@@ -328,53 +273,31 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       adj2 = adj2 * slideFactor;
       adj3 = adj3 * slideFactor;
     }
-    let a1,
-      ma1,
-      ma3h,
-      ma3w,
-      maxAdj3,
-      a3,
-      m4a3,
-      maxAdj2,
-      a2,
-      dy1,
-      yg,
-      rad,
-      dx1,
-      y3,
-      y4,
-      a,
-      y2,
-      y1,
-      y5,
-      x1,
-      x3,
-      x2;
     const cnstVal4 = 1000 * slideFactor;
     const cnstVal5 = 36745 * slideFactor;
     const cnstVal6 = 73490 * slideFactor;
-    a1 = adj1 < cnstVal4 ? cnstVal4 : adj1 > cnstVal5 ? cnstVal5 : adj1;
-    ma1 = -a1;
-    ma3h = (cnstVal6 + ma1) / 4;
-    ma3w = (cnstVal5 * w) / h;
-    maxAdj3 = ma3h < ma3w ? ma3h : ma3w;
-    a3 = adj3 < cnstVal4 ? cnstVal4 : adj3 > maxAdj3 ? maxAdj3 : adj3;
-    m4a3 = -4 * a3;
-    maxAdj2 = cnstVal6 + m4a3 - a1;
-    a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
-    dy1 = (h * a1) / cnstVal3;
-    yg = (h * a2) / cnstVal2;
-    rad = (h * a3) / cnstVal2;
-    dx1 = (w * cnstVal6) / cnstVal3;
-    y3 = vc - dy1;
-    y4 = vc + dy1;
-    a = yg + rad;
-    y2 = y3 - a;
-    y1 = y2 - rad;
-    y5 = h - y1;
-    x1 = hc - dx1;
-    x3 = hc + dx1;
-    x2 = hc - rad;
+    const a1 = adj1 < cnstVal4 ? cnstVal4 : adj1 > cnstVal5 ? cnstVal5 : adj1;
+    const ma1 = -a1;
+    const ma3h = (cnstVal6 + ma1) / 4;
+    const ma3w = (cnstVal5 * w) / h;
+    const maxAdj3 = ma3h < ma3w ? ma3h : ma3w;
+    const a3 = adj3 < cnstVal4 ? cnstVal4 : adj3 > maxAdj3 ? maxAdj3 : adj3;
+    const m4a3 = -4 * a3;
+    const maxAdj2 = cnstVal6 + m4a3 - a1;
+    const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+    const dy1 = (h * a1) / cnstVal3;
+    const yg = (h * a2) / cnstVal2;
+    const rad = (h * a3) / cnstVal2;
+    const dx1 = (w * cnstVal6) / cnstVal3;
+    const y3 = vc - dy1;
+    const y4 = vc + dy1;
+    const a = yg + rad;
+    const y2 = y3 - a;
+    const y1 = y2 - rad;
+    const y5 = h - y1;
+    const x1 = hc - dx1;
+    const x3 = hc + dx1;
+    const _x2 = hc - rad;
     const cd4 = 90,
       c3d4 = 270;
     const cX1 = hc - Math.cos((c3d4 * Math.PI) / 180) * rad;
@@ -421,23 +344,21 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
     }
     const cnstVal5 = 36745 * slideFactor;
     const cnstVal6 = 73490 * slideFactor;
-    let a1, a2a1, mAdj2, a2, dy1, dy2, dx1, y2, y3, y1, y4, x1, x2, yC1, yC2;
-
-    a1 = adj1 < 0 ? 0 : adj1 > cnstVal5 ? cnstVal5 : adj1;
-    a2a1 = a1 * 2;
-    mAdj2 = cnstVal2 - a2a1;
-    a2 = adj2 < 0 ? 0 : adj2 > mAdj2 ? mAdj2 : adj2;
-    dy1 = (h * a1) / cnstVal2;
-    dy2 = (h * a2) / cnstVal3;
-    dx1 = (w * cnstVal6) / cnstVal3;
-    y2 = vc - dy2;
-    y3 = vc + dy2;
-    y1 = y2 - dy1;
-    y4 = y3 + dy1;
-    x1 = hc - dx1;
-    x2 = hc + dx1;
-    yC1 = (y1 + y2) / 2;
-    yC2 = (y3 + y4) / 2;
+    const a1 = adj1 < 0 ? 0 : adj1 > cnstVal5 ? cnstVal5 : adj1;
+    const a2a1 = a1 * 2;
+    const mAdj2 = cnstVal2 - a2a1;
+    const a2 = adj2 < 0 ? 0 : adj2 > mAdj2 ? mAdj2 : adj2;
+    const dy1 = (h * a1) / cnstVal2;
+    const dy2 = (h * a2) / cnstVal3;
+    const dx1 = (w * cnstVal6) / cnstVal3;
+    const y2 = vc - dy2;
+    const y3 = vc + dy2;
+    const y1 = y2 - dy1;
+    const y4 = y3 + dy1;
+    const x1 = hc - dx1;
+    const x2 = hc + dx1;
+    const _yC1 = (y1 + y2) / 2;
+    const _yC2 = (y3 + y4) / 2;
     dVal =
       "M" +
       x1 +
@@ -480,14 +401,13 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       adj1 = adj1 * slideFactor;
     }
     const cnstVal6 = 73490 * slideFactor;
-    let a1, dy1, dx1, y1, y2, x1, x2;
-    a1 = adj1 < 0 ? 0 : adj1 > cnstVal2 ? cnstVal2 : adj1;
-    dy1 = (h * a1) / cnstVal3;
-    dx1 = (w * cnstVal6) / cnstVal3;
-    y1 = vc - dy1;
-    y2 = vc + dy1;
-    x1 = hc - dx1;
-    x2 = hc + dx1;
+    const a1 = adj1 < 0 ? 0 : adj1 > cnstVal2 ? cnstVal2 : adj1;
+    const dy1 = (h * a1) / cnstVal3;
+    const dx1 = (w * cnstVal6) / cnstVal3;
+    const y1 = vc - dy1;
+    const y2 = vc + dy1;
+    const x1 = hc - dx1;
+    const x2 = hc + dx1;
 
     dVal =
       "M" +
@@ -514,69 +434,38 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
       adj1 = adj1 * slideFactor;
     }
     const cnstVal6 = 51965 * slideFactor;
-    let a1,
-      th,
-      a,
-      sa,
-      ca,
-      ta,
-      dl,
-      rw,
-      lM,
-      xM,
-      yM,
-      dxAM,
-      dyAM,
-      xA,
-      yA,
-      xB,
-      yB,
-      xBC,
-      yBC,
-      yC,
-      xD,
-      xE,
-      yFE,
-      xFE,
-      xF,
-      xL,
-      yG,
-      yH,
-      yI,
-      xC2,
-      yC3;
     const ss = Math.min(w, h);
-    a1 = adj1 < 0 ? 0 : adj1 > cnstVal6 ? cnstVal6 : adj1;
-    th = (ss * a1) / cnstVal2;
-    a = Math.atan(h / w);
-    sa = 1 * Math.sin(a);
-    ca = 1 * Math.cos(a);
-    ta = 1 * Math.tan(a);
-    dl = Math.sqrt(w * w + h * h);
-    rw = (dl * cnstVal6) / cnstVal2;
-    lM = dl - rw;
-    xM = (ca * lM) / 2;
-    yM = (sa * lM) / 2;
-    dxAM = (sa * th) / 2;
-    dyAM = (ca * th) / 2;
-    xA = xM - dxAM;
-    yA = yM + dyAM;
-    xB = xM + dxAM;
-    yB = yM - dyAM;
-    xBC = hc - xB;
-    yBC = xBC * ta;
-    yC = yBC + yB;
-    xD = w - xB;
-    xE = w - xA;
-    yFE = vc - yA;
-    xFE = yFE / ta;
-    xF = xE - xFE;
-    xL = xA + xFE;
-    yG = h - yA;
-    yH = h - yB;
-    yI = h - yC;
-    xC2 = w - xM;
-    yC3 = h - yM;
+    const a1 = adj1 < 0 ? 0 : adj1 > cnstVal6 ? cnstVal6 : adj1;
+    const th = (ss * a1) / cnstVal2;
+    const a = Math.atan(h / w);
+    const sa = 1 * Math.sin(a);
+    const ca = 1 * Math.cos(a);
+    const ta = 1 * Math.tan(a);
+    const dl = Math.sqrt(w * w + h * h);
+    const rw = (dl * cnstVal6) / cnstVal2;
+    const lM = dl - rw;
+    const xM = (ca * lM) / 2;
+    const yM = (sa * lM) / 2;
+    const dxAM = (sa * th) / 2;
+    const dyAM = (ca * th) / 2;
+    const xA = xM - dxAM;
+    const yA = yM + dyAM;
+    const xB = xM + dxAM;
+    const yB = yM - dyAM;
+    const xBC = hc - xB;
+    const yBC = xBC * ta;
+    const yC = yBC + yB;
+    const xD = w - xB;
+    const xE = w - xA;
+    const yFE = vc - yA;
+    const xFE = yFE / ta;
+    const xF = xE - xFE;
+    const xL = xA + xFE;
+    const yG = h - yA;
+    const yH = h - yB;
+    const yI = h - yC;
+    const _xC2 = w - xM;
+    const _yC3 = h - yM;
 
     dVal =
       "M" +
@@ -636,20 +525,18 @@ function renderMathShape(ctx: MathShapeContext, shapType: string): string {
     }
     const cnstVal6 = 73490 * slideFactor;
     const ss = Math.min(w, h);
-    let a1, dx1, dy1, dx2, x1, x2, x3, x4, y1, y2, y3, y4;
-
-    a1 = adj1 < 0 ? 0 : adj1 > cnstVal6 ? cnstVal6 : adj1;
-    dx1 = (w * cnstVal6) / cnstVal3;
-    dy1 = (h * cnstVal6) / cnstVal3;
-    dx2 = (ss * a1) / cnstVal3;
-    x1 = hc - dx1;
-    x2 = hc - dx2;
-    x3 = hc + dx2;
-    x4 = hc + dx1;
-    y1 = vc - dy1;
-    y2 = vc - dx2;
-    y3 = vc + dx2;
-    y4 = vc + dy1;
+    const a1 = adj1 < 0 ? 0 : adj1 > cnstVal6 ? cnstVal6 : adj1;
+    const dx1 = (w * cnstVal6) / cnstVal3;
+    const dy1 = (h * cnstVal6) / cnstVal3;
+    const dx2 = (ss * a1) / cnstVal3;
+    const x1 = hc - dx1;
+    const x2 = hc - dx2;
+    const x3 = hc + dx2;
+    const x4 = hc + dx1;
+    const y1 = vc - dy1;
+    const y2 = vc - dx2;
+    const y3 = vc + dx2;
+    const y4 = vc + dy1;
 
     dVal =
       "M" +

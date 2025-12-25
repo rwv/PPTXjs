@@ -54,7 +54,7 @@ interface ClosePoint {
   order: string;
 }
 
-type PathPoint = MoveToPoint | LineToPoint | CubicBezierPoint | ArcToPoint | ClosePoint;
+type _PathPoint = MoveToPoint | LineToPoint | CubicBezierPoint | ArcToPoint | ClosePoint;
 
 export function renderCustomGeometry(
   custShapType: PptxNode,
