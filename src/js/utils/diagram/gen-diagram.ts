@@ -2,7 +2,7 @@ import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor } from "../../ty
 import { getTextByPathList } from "../object";
 import { readXmlFile } from "../xml";
 import { getPosition, getSize } from "../layout";
-import { processSpNode } from "../node";
+import { processSpNode } from "../node/process-sp-node";
 
 /**
  * Generate HTML for SmartArt diagram

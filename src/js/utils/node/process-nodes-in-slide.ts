@@ -3,7 +3,7 @@ import { getTextByPathList } from "../object";
 import { processSpNode } from "./process-sp-node";
 import { processCxnSpNode } from "../shape/process-cxn-sp-node";
 import { processPicNode } from "../media/process-pic-node";
-import { processGraphicFrameNode } from "./process-graphic-frame-node";
+import { processGraphicFrameNode, type GraphicFrameResult } from "./process-graphic-frame-node";
 import { processGroupSpNode } from "./process-group-sp-node";
 
 /**
@@ -88,8 +88,8 @@ export function processNodesInSlide(
       result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
       break;
     case "p:graphicFrame": {
-      // Chart, Diagram, Table
-      const graphicResult = processGraphicFrameNode(
+      // Chart, Diagram, Table, OLE Objects
+      const graphicResult: GraphicFrameResult = processGraphicFrameNode(
         nodeValue,
         warpObj,
         source,
@@ -105,8 +105,26 @@ export function processNodesInSlide(
         settings
       );
       if (Array.isArray(graphicResult)) {
+        // Chart result: [html, chartID]
         result = graphicResult[0];
         chartID = graphicResult[1];
+      } else if (typeof graphicResult === "object" && "oleNode" in graphicResult) {
+        // OLE object: process as group shape
+        result = processGroupSpNode(
+          graphicResult.oleNode,
+          warpObj,
+          source,
+          slideFactor,
+          tableStyles,
+          isFirstBr,
+          styleTable,
+          rtlLangsArray,
+          fontSizeFactor,
+          chartID,
+          MsgQueue,
+          settings,
+          processNodesInSlide
+        );
       } else {
         result = graphicResult;
       }
@@ -125,7 +143,8 @@ export function processNodesInSlide(
         fontSizeFactor,
         chartID,
         MsgQueue,
-        settings
+        settings,
+        processNodesInSlide
       );
       break;
     case "mc:AlternateContent": {
@@ -144,7 +163,8 @@ export function processNodesInSlide(
         fontSizeFactor,
         chartID,
         MsgQueue,
-        settings
+        settings,
+        processNodesInSlide
       );
       break;
     }

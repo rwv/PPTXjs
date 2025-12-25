@@ -3,7 +3,17 @@ import { getTextByPathList } from "../object";
 import { genTable } from "../table";
 import { genChart } from "../chart";
 import { genDiagram } from "../diagram";
-import { processGroupSpNode } from "./process-group-sp-node";
+
+/**
+ * Result type for processGraphicFrameNode
+ * - string: HTML result
+ * - [string, number]: HTML result with updated chartID
+ * - { oleNode: PptxNode }: OLE object that needs group processing by caller
+ */
+export type GraphicFrameResult =
+  | string
+  | [string, number]
+  | { oleNode: PptxNode };
 
 /**
  * Process graphic frame node (p:graphicFrame) to generate HTML
@@ -31,7 +41,7 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @param chartID - Chart ID counter
  * @param MsgQueue - Message queue for chart processing
  * @param settings - PPTXjs plugin settings
- * @returns HTML string or [HTML string, chartID] for charts
+ * @returns GraphicFrameResult - HTML string, [HTML, chartID] for charts, or {oleNode} for OLE objects
  */
 export function processGraphicFrameNode(
   node: PptxNode,
@@ -46,8 +56,8 @@ export function processGraphicFrameNode(
   fontSizeFactor: FontSizeFactor,
   chartID: number,
   MsgQueue: any[],
-  settings: PptxSettings
-): string | [string, number] {
+  _settings: PptxSettings
+): GraphicFrameResult {
   let result = "";
   let updatedChartID = chartID;
   const graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
@@ -96,20 +106,8 @@ export function processGraphicFrameNode(
       }
       //console.log("node:", node, "oleObjNode:", oleObjNode)
       if (oleObjNode !== undefined) {
-        result = processGroupSpNode(
-          oleObjNode,
-          warpObj,
-          source,
-          slideFactor,
-          tableStyles,
-          isFirstBr,
-          styleTable,
-          rtlLangsArray,
-          fontSizeFactor,
-          chartID,
-          MsgQueue,
-          settings
-        );
+        // Return oleNode for caller to process as group shape (avoids circular dependency)
+        return { oleNode: oleObjNode };
       }
       break;
     }

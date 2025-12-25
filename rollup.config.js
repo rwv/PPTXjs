@@ -23,7 +23,8 @@ export default {
           strict: false,
           esModuleInterop: true,
           allowSyntheticDefaultImports: true
-        }
+        },
+        exclude: ['**/__tests__/**', '**/*.test.ts']
       })
     ]
 };

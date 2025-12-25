@@ -1,7 +1,27 @@
 import type { PptxNode, WarpObject, SlideFactor, FontSizeFactor, PptxSettings } from "../../types";
 import { getTextByPathList } from "../object";
 import { angleToDegrees } from "../layout";
-import { processNodesInSlide } from "./process-nodes-in-slide";
+
+/**
+ * Type for node processor callback (used for dependency injection to avoid circular imports)
+ */
+export type NodeProcessor = (
+  nodeKey: string,
+  nodeValue: PptxNode,
+  nodes: PptxNode,
+  warpObj: WarpObject,
+  source: string,
+  sType: string,
+  tableStyles: PptxNode,
+  isFirstBr: { value: boolean },
+  styleTable: Record<string, { name: string; text: string }>,
+  rtlLangsArray: string[],
+  slideFactor: SlideFactor,
+  fontSizeFactor: FontSizeFactor,
+  chartID: number,
+  MsgQueue: any[],
+  settings: PptxSettings
+) => string;
 
 /**
  * Process group shape node (p:grpSp) to generate HTML
@@ -29,6 +49,7 @@ import { processNodesInSlide } from "./process-nodes-in-slide";
  * @param chartID - Chart ID counter
  * @param MsgQueue - Message queue for chart processing
  * @param settings - PPTXjs plugin settings
+ * @param nodeProcessor - Callback to process child nodes (injected to avoid circular dependency)
  * @returns HTML string for the group
  */
 export function processGroupSpNode(
@@ -43,7 +64,8 @@ export function processGroupSpNode(
   fontSizeFactor: FontSizeFactor,
   chartID: number,
   MsgQueue: any[],
-  settings: PptxSettings
+  settings: PptxSettings,
+  nodeProcessor: NodeProcessor
 ): string {
   //console.log("processGroupSpNode: node: ", node)
   // Declare variables outside the if block so they're accessible later
@@ -118,11 +140,11 @@ export function processGroupSpNode(
     grpStyle +
     " border:1px solid red;'>";
 
-  // Procsee all child nodes
+  // Process all child nodes
   for (const nodeKey in node) {
     if (node[nodeKey].constructor === Array) {
       for (let i = 0; i < node[nodeKey].length; i++) {
-        result += processNodesInSlide(
+        result += nodeProcessor(
           nodeKey,
           node[nodeKey][i],
           node,
@@ -141,7 +163,7 @@ export function processGroupSpNode(
         );
       }
     } else {
-      result += processNodesInSlide(
+      result += nodeProcessor(
         nodeKey,
         node[nodeKey],
         node,
