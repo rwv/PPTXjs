@@ -16,7 +16,7 @@ import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
 export function getPregraphMargn(
   pNode: PptxNode,
   idx: number | undefined,
-  type: any,
+  type: string,
   isBullate: boolean,
   warpObj: WarpObject,
   slideFactor: number
