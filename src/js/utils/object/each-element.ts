@@ -1,3 +1,5 @@
+import type { PptxNode } from "../../types";
+
 /**
  * Execute a function on each element, handling both single elements and arrays
  *
@@ -9,7 +11,10 @@
  * eachElement([1, 2, 3], (item, i) => `${i}:${item} `); // "0:1 1:2 2:3 "
  * eachElement(5, (item) => `value:${item}`); // "value:5"
  */
-export function eachElement(node: any, doFunction: any): string {
+export function eachElement(
+  node: PptxNode | PptxNode[],
+  doFunction: (element: PptxNode, index: number) => string
+): string {
   if (node === undefined) {
     return "";
   }
