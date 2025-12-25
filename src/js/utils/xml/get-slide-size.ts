@@ -1,5 +1,6 @@
 import { readXmlFile } from "./read-xml-file";
 import type { PptxArchive } from "../../archive/pptx-archive";
+import type { PptxNode, PptxSettings } from "../../types";
 
 /**
  * Get slide size from presentation.xml and read default text style
@@ -12,8 +13,8 @@ import type { PptxArchive } from "../../archive/pptx-archive";
 export function getSlideSizeAndSetDefaultTextStyle(
   archive: PptxArchive,
   slideFactor: number,
-  settings: any
-): { width: number; height: number; appVersion: number; defaultTextStyle: any } {
+  settings: PptxSettings
+): { width: number; height: number; appVersion: number; defaultTextStyle: PptxNode } {
   //get app version
   const app = readXmlFile(archive, "docProps/app.xml");
   const app_verssion_str = app["Properties"]["AppVersion"];
