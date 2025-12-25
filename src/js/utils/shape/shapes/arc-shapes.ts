@@ -171,13 +171,13 @@ function renderFrame(ctx: ArcShapeContext): string {
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let a1, x1, x4, y4;
+  let a1;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > cnstVal1) a1 = cnstVal1;
   else a1 = adj1;
-  x1 = (Math.min(w, h) * a1) / cnstVal2;
-  x4 = w - x1;
-  y4 = h - x1;
+  const x1 = (Math.min(w, h) * a1) / cnstVal2;
+  const x4 = w - x1;
+  const y4 = h - x1;
   const d =
     "M" +
     0 +
@@ -236,13 +236,13 @@ function renderDonut(ctx: ArcShapeContext): string {
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let a, dr, iwd2, ihd2;
+  let a;
   if (adj < 0) a = 0;
   else if (adj > cnstVal1) a = cnstVal1;
   else a = adj;
-  dr = (Math.min(w, h) * a) / cnstVal2;
-  iwd2 = w / 2 - dr;
-  ihd2 = h / 2 - dr;
+  const dr = (Math.min(w, h) * a) / cnstVal2;
+  const iwd2 = w / 2 - dr;
+  const ihd2 = h / 2 - dr;
   const d =
     "M" +
     0 +
@@ -285,35 +285,34 @@ function renderNoSmoking(ctx: ArcShapeContext): string {
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let a, dr, iwd2, ihd2, ang, ct, st, m, n, drd2, dang, dang2, swAng, stAng1, stAng2;
+  let a;
   if (adj < 0) a = 0;
   else if (adj > cnstVal1) a = cnstVal1;
   else a = adj;
-  dr = (Math.min(w, h) * a) / cnstVal2;
-  iwd2 = w / 2 - dr;
-  ihd2 = h / 2 - dr;
-  ang = Math.atan(h / w);
-  ct = ihd2 * Math.cos(ang);
-  st = iwd2 * Math.sin(ang);
-  m = Math.sqrt(ct * ct + st * st);
-  n = (iwd2 * ihd2) / m;
-  drd2 = dr / 2;
-  dang = Math.atan(drd2 / n);
-  dang2 = dang * 2;
-  swAng = -Math.PI + dang2;
-  stAng1 = ang - dang;
-  stAng2 = stAng1 - Math.PI;
-  let ct1, st1, m1, n1, dx1, dy1, x1, y1, x2, y2;
-  ct1 = ihd2 * Math.cos(stAng1);
-  st1 = iwd2 * Math.sin(stAng1);
-  m1 = Math.sqrt(ct1 * ct1 + st1 * st1);
-  n1 = (iwd2 * ihd2) / m1;
-  dx1 = n1 * Math.cos(stAng1);
-  dy1 = n1 * Math.sin(stAng1);
-  x1 = w / 2 + dx1;
-  y1 = h / 2 + dy1;
-  x2 = w / 2 - dx1;
-  y2 = h / 2 - dy1;
+  const dr = (Math.min(w, h) * a) / cnstVal2;
+  const iwd2 = w / 2 - dr;
+  const ihd2 = h / 2 - dr;
+  const ang = Math.atan(h / w);
+  const ct = ihd2 * Math.cos(ang);
+  const st = iwd2 * Math.sin(ang);
+  const m = Math.sqrt(ct * ct + st * st);
+  const n = (iwd2 * ihd2) / m;
+  const drd2 = dr / 2;
+  const dang = Math.atan(drd2 / n);
+  const dang2 = dang * 2;
+  const swAng = -Math.PI + dang2;
+  const stAng1 = ang - dang;
+  const stAng2 = stAng1 - Math.PI;
+  const ct1 = ihd2 * Math.cos(stAng1);
+  const st1 = iwd2 * Math.sin(stAng1);
+  const m1 = Math.sqrt(ct1 * ct1 + st1 * st1);
+  const n1 = (iwd2 * ihd2) / m1;
+  const dx1 = n1 * Math.cos(stAng1);
+  const dy1 = n1 * Math.sin(stAng1);
+  const x1 = w / 2 + dx1;
+  const y1 = h / 2 + dy1;
+  const x2 = w / 2 - dx1;
+  const y2 = h / 2 - dy1;
   const stAng1deg = (stAng1 * 180) / Math.PI;
   const stAng2deg = (stAng2 * 180) / Math.PI;
   const swAng2deg = (swAng * 180) / Math.PI;
@@ -441,7 +440,7 @@ function renderBlockArc(ctx: ArcShapeContext): string {
     }
   }
 
-  let stAng, istAng, a3, sw11, sw12, swAng, iswAng;
+  let stAng, istAng, a3;
   const cd1 = 360;
   if (adj1 < 0) stAng = 0;
   else if (adj1 > cd1) stAng = cd1;
@@ -455,21 +454,21 @@ function renderBlockArc(ctx: ArcShapeContext): string {
   else if (adj3 > cnstVal1) a3 = cnstVal1;
   else a3 = adj3;
 
-  sw11 = istAng - stAng;
-  sw12 = sw11 + cd1;
-  swAng = sw11 > 0 ? sw11 : sw12;
-  iswAng = -swAng;
+  const sw11 = istAng - stAng;
+  const sw12 = sw11 + cd1;
+  const swAng = sw11 > 0 ? sw11 : sw12;
+  const iswAng = -swAng;
 
   const endAng = stAng + swAng;
   const iendAng = istAng + iswAng;
 
-  let wt1, ht1, dx1, dy1, x1, y1, stRd, istRd, wd2, hd2, hc, vc;
-  stRd = (stAng * Math.PI) / 180;
-  istRd = (istAng * Math.PI) / 180;
-  wd2 = w / 2;
-  hd2 = h / 2;
-  hc = w / 2;
-  vc = h / 2;
+  let wt1, ht1, dx1, dy1, x1, y1;
+  const stRd = (stAng * Math.PI) / 180;
+  const istRd = (istAng * Math.PI) / 180;
+  const wd2 = w / 2;
+  const hd2 = h / 2;
+  const hc = w / 2;
+  const vc = h / 2;
   if (stAng > 90 && stAng < 270) {
     wt1 = wd2 * Math.sin(Math.PI / 2 - stRd);
     ht1 = hd2 * Math.cos(Math.PI / 2 - stRd);
@@ -489,10 +488,10 @@ function renderBlockArc(ctx: ArcShapeContext): string {
     x1 = hc + dx1;
     y1 = vc + dy1;
   }
-  let dr, iwd2, ihd2, wt2, ht2, dx2, dy2, x2, y2;
-  dr = (Math.min(w, h) * a3) / cnstVal2;
-  iwd2 = wd2 - dr;
-  ihd2 = hd2 - dr;
+  let wt2, ht2, dx2, dy2, x2, y2;
+  const dr = (Math.min(w, h) * a3) / cnstVal2;
+  const iwd2 = wd2 - dr;
+  const ihd2 = hd2 - dr;
   if ((endAng <= 450 && endAng > 270) || (endAng >= 630 && endAng < 720)) {
     wt2 = iwd2 * Math.sin(istRd);
     ht2 = ihd2 * Math.cos(istRd);

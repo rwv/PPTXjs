@@ -12,7 +12,11 @@ import type { PptxNode } from "../../types";
  * @param slideMasterTextStyles - Master text styles (unused but kept for consistency)
  * @returns CSS text-decoration value ("underline", "line-through", "underline line-through", or "inherit")
  */
-export function getFontDecoration(node: PptxNode, _type: string, _slideMasterTextStyles: PptxNode): string {
+export function getFontDecoration(
+  node: PptxNode,
+  _type: string,
+  _slideMasterTextStyles: PptxNode
+): string {
   if (node["a:rPr"] !== undefined) {
     const underLine =
       node["a:rPr"]["attrs"]["u"] !== undefined ? node["a:rPr"]["attrs"]["u"] : "none";
