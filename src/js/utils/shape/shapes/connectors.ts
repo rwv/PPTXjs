@@ -29,7 +29,7 @@ export interface ConnectorContext {
 /**
  * Extract arrow marker attributes from node
  */
-function getMarkerNodeAttrs(node: PptxNode): { headEndNodeAttrs: any; tailEndNodeAttrs: any } {
+function getMarkerNodeAttrs(node: PptxNode): { headEndNodeAttrs: PptxNode; tailEndNodeAttrs: PptxNode } {
   return {
     headEndNodeAttrs: getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]),
     tailEndNodeAttrs: getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]),
