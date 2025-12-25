@@ -108,6 +108,19 @@ export interface BorderStyle {
 }
 
 /**
+ * Border type used in shape rendering
+ * Can be a string ("hidden"), an object with border properties, or undefined
+ */
+export type BorderType =
+  | string
+  | {
+      color: string;
+      width: string;
+      strokeDasharray: string;
+    }
+  | undefined;
+
+/**
  * 文本方向
  */
 export type TextDirection = "ltr" | "rtl" | "";

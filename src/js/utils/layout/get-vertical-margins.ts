@@ -30,8 +30,8 @@ import { getFontSize } from "../font/get-font-size";
 export function getVerticalMargins(
   pNode: PptxNode,
   textBodyNode: PptxNode,
-  type: any,
-  idx: any,
+  type: string,
+  idx: number | undefined,
   warpObj: WarpObject,
   fontSizeFactor: FontSizeFactor
 ): string {
