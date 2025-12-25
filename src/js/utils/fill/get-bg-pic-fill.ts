@@ -27,7 +27,7 @@ export function getBgPicFill(
   bgPr: PptxNode,
   sorce: string,
   warpObj: WarpObject,
-  phClr: any,
+  phClr: PptxNode,
   _index: number | undefined
 ): string {
   const picFillBase64 = getPicFill(sorce, bgPr["a:blipFill"], warpObj);
