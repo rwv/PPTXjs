@@ -140,16 +140,16 @@ function renderCorner(ctx: MiscSymbolContext): string {
   const minWH = Math.min(w, h);
   const maxAdj1 = (cnsVal * h) / minWH;
   const maxAdj2 = (cnsVal * w) / minWH;
-  let a1, a2, x1, dy1, y1;
+  let a1, a2;
   if (sAdj1_val < 0) a1 = 0;
   else if (sAdj1_val > maxAdj1) a1 = maxAdj1;
   else a1 = sAdj1_val;
   if (sAdj2_val < 0) a2 = 0;
   else if (sAdj2_val > maxAdj2) a2 = maxAdj2;
   else a2 = sAdj2_val;
-  x1 = (minWH * a2) / cnsVal;
-  dy1 = (minWH * a1) / cnsVal;
-  y1 = h - dy1;
+  const x1 = (minWH * a2) / cnsVal;
+  const dy1 = (minWH * a1) / cnsVal;
+  const y1 = h - dy1;
   const d =
     "M0,0 L" +
     x1 +
@@ -186,12 +186,12 @@ function renderDiagStripe(ctx: MiscSymbolContext): string {
   if (shapAdjst !== undefined) {
     sAdj1_val = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let a1, x2, y2;
+  let a1;
   if (sAdj1_val < 0) a1 = 0;
   else if (sAdj1_val > cnsVal) a1 = cnsVal;
   else a1 = sAdj1_val;
-  x2 = (w * a1) / cnsVal;
-  y2 = (h * a1) / cnsVal;
+  const x2 = (w * a1) / cnsVal;
+  const y2 = (h * a1) / cnsVal;
   const d = "M0," + y2 + " L" + x2 + ",0 L" + w + ",0 L0," + h + " z";
   return createPath(d, ctx);
 }
@@ -238,22 +238,22 @@ function renderTeardrop(ctx: MiscSymbolContext): string {
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let a1, r2, tw, th, sw, sh, dx1, dy1, x1, y1, x2, y2, rd45;
+  let a1;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > cnsVal2) a1 = cnsVal2;
   else a1 = adj1;
-  r2 = Math.sqrt(2);
-  tw = r2 * (w / 2);
-  th = r2 * (h / 2);
-  sw = (tw * a1) / cnsVal1;
-  sh = (th * a1) / cnsVal1;
-  rd45 = (45 * Math.PI) / 180;
-  dx1 = sw * Math.cos(rd45);
-  dy1 = sh * Math.cos(rd45);
-  x1 = w / 2 + dx1;
-  y1 = h / 2 - dy1;
-  x2 = (w / 2 + x1) / 2;
-  y2 = (h / 2 + y1) / 2;
+  const r2 = Math.sqrt(2);
+  const tw = r2 * (w / 2);
+  const th = r2 * (h / 2);
+  const sw = (tw * a1) / cnsVal1;
+  const sh = (th * a1) / cnsVal1;
+  const rd45 = (45 * Math.PI) / 180;
+  const dx1 = sw * Math.cos(rd45);
+  const dy1 = sh * Math.cos(rd45);
+  const x1 = w / 2 + dx1;
+  const y1 = h / 2 - dy1;
+  const x2 = (w / 2 + x1) / 2;
+  const y2 = (h / 2 + y1) / 2;
   const d_val =
     shapeArc(w / 2, h / 2, w / 2, h / 2, 180, 270, false) +
     "Q " +
@@ -292,13 +292,13 @@ function renderPlaque(ctx: MiscSymbolContext): string {
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let a1, x1, x2, y2;
+  let a1;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > cnsVal1) a1 = cnsVal1;
   else a1 = adj1;
-  x1 = (a1 * Math.min(w, h)) / cnsVal2;
-  x2 = w - x1;
-  y2 = h - x1;
+  const x1 = (a1 * Math.min(w, h)) / cnsVal2;
+  const x2 = w - x1;
+  const y2 = h - x1;
   const d_val =
     "M0," +
     x1 +
@@ -344,8 +344,8 @@ function renderSun(ctx: MiscSymbolContext): string {
   const g0 = cnstVa3 - a1,
     g1 = (g0 * (30274 * refr)) / (32768 * refr),
     g2 = (g0 * (12540 * refr)) / (32768 * refr),
-    g3 = g1 + cnstVa3,
-    g4 = g2 + cnstVa3,
+    _g3 = g1 + cnstVa3,
+    _g4 = g2 + cnstVa3,
     g5 = cnstVa3 - g1,
     g6 = cnstVa3 - g2,
     g7 = (g0 * (23170 * refr)) / (32768 * refr),
@@ -364,8 +364,8 @@ function renderSun(ctx: MiscSymbolContext): string {
     oy1 = (h * (3163 * refr)) / (21600 * refr),
     ox2 = (w * (3163 * refr)) / (21600 * refr),
     oy2 = (h * (18436 * refr)) / (21600 * refr),
-    x8 = (w * g8) / cnstVa4,
-    x9 = (w * g9) / cnstVa4,
+    _x8 = (w * g8) / cnstVa4,
+    _x9 = (w * g9) / cnstVa4,
     x10 = (w * g10) / cnstVa4,
     x12 = (w * g12) / cnstVa4,
     x13 = (w * g13) / cnstVa4,
@@ -377,8 +377,8 @@ function renderSun(ctx: MiscSymbolContext): string {
     x19 = (w * a1) / cnstVa4,
     wR = (w * g0) / cnstVa4,
     hR = (h * g0) / cnstVa4,
-    y8 = (h * g8) / cnstVa4,
-    y9 = (h * g9) / cnstVa4,
+    _y8 = (h * g8) / cnstVa4,
+    _y9 = (h * g9) / cnstVa4,
     y10 = (h * g10) / cnstVa4,
     y12 = (h * g12) / cnstVa4,
     y13 = (h * g13) / cnstVa4,
@@ -545,24 +545,24 @@ function renderLightningBolt(ctx: MiscSymbolContext): string {
   const x1 = (w * 5022) / 21600,
     x2 = (w * 11050) / 21600,
     x3 = (w * 8472) / 21600,
-    x4 = (w * 8757) / 21600,
+    _x4 = (w * 8757) / 21600,
     x5 = (w * 10012) / 21600,
     x6 = (w * 14767) / 21600,
     x7 = (w * 12222) / 21600,
     x8 = (w * 12860) / 21600,
-    x9 = (w * 13917) / 21600,
+    _x9 = (w * 13917) / 21600,
     x10 = (w * 7602) / 21600,
     x11 = (w * 16577) / 21600,
     y1 = (h * 3890) / 21600,
     y2 = (h * 6080) / 21600,
     y3 = (h * 6797) / 21600,
-    y4 = (h * 7437) / 21600,
+    _y4 = (h * 7437) / 21600,
     y5 = (h * 12877) / 21600,
     y6 = (h * 9705) / 21600,
     y7 = (h * 12007) / 21600,
     y8 = (h * 13987) / 21600,
     y9 = (h * 8382) / 21600,
-    y10 = (h * 14277) / 21600,
+    _y10 = (h * 14277) / 21600,
     y11 = (h * 14915) / 21600;
   const d_val =
     "M" +
@@ -886,7 +886,7 @@ function renderSmileyFace(ctx: MiscSymbolContext): string {
   const cnstVal1 = 50000 * refr;
   const cnstVal2 = 100000 * refr;
   const cnstVal3 = 4653 * refr;
-  const ss = Math.min(w, h);
+  const _ss = Math.min(w, h);
   const wd2 = w / 2,
     hd2 = h / 2;
   const a = adj < -cnstVal3 ? -cnstVal3 : adj > cnstVal3 ? cnstVal3 : adj;
