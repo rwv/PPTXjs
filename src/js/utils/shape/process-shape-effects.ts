@@ -37,7 +37,7 @@ export function processShapeEffects(
   border: any,
   warpObj: WarpObject,
   slideFactor: number,
-  styleTable: any
+  styleTable: Record<string, { name: string; text: string }>
 ): ShapeEffectsResult {
   let defsContent = "";
   const effectsClassName = svgCssName + "_effects";
