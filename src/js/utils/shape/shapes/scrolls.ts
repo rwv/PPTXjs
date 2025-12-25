@@ -93,21 +93,19 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
     l = 0,
     b = h,
     r = w;
-  let a, ch, ch2, ch4;
-  a = adj < 0 ? 0 : adj > cnstVal1 ? cnstVal1 : adj;
-  ch = (ss * a) / cnstVal2;
-  ch2 = ch / 2;
-  ch4 = ch / 4;
+  const a = adj < 0 ? 0 : adj > cnstVal1 ? cnstVal1 : adj;
+  const ch = (ss * a) / cnstVal2;
+  const ch2 = ch / 2;
+  const ch4 = ch / 4;
 
   if (shapType === "verticalScroll") {
-    let x3, x4, x6, x7, x5, y3, y4;
-    x3 = ch + ch2;
-    x4 = ch + ch;
-    x6 = r - ch;
-    x7 = r - ch2;
-    x5 = x6 - ch2;
-    y3 = b - ch;
-    y4 = b - ch2;
+    const x3 = ch + ch2;
+    const x4 = ch + ch;
+    const x6 = r - ch;
+    const x7 = r - ch2;
+    const x5 = x6 - ch2;
+    const y3 = b - ch;
+    const y4 = b - ch2;
 
     d_val =
       "M" +
@@ -173,14 +171,13 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       "," +
       y3;
   } else if (shapType === "horizontalScroll") {
-    let y3, y4, y6, y7, y5, x3, x4;
-    y3 = ch + ch2;
-    y4 = ch + ch;
-    y6 = b - ch;
-    y7 = b - ch2;
-    y5 = y6 - ch2;
-    x3 = r - ch;
-    x4 = r - ch2;
+    const y3 = ch + ch2;
+    const y4 = ch + ch;
+    const y6 = b - ch;
+    const y7 = b - ch2;
+    const y5 = y6 - ch2;
+    const x3 = r - ch;
+    const x4 = r - ch2;
 
     d_val =
       "M" +
