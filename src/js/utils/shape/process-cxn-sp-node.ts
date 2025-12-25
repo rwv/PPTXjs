@@ -26,7 +26,7 @@ export function processCxnSpNode(
   source: string,
   sType: string,
   slideFactor: SlideFactor,
-  styleTable: any,
+  styleTable: Record<string, { name: string; text: string }>,
   fontSizeFactor: FontSizeFactor,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
