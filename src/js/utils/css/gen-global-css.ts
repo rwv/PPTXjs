@@ -1,3 +1,5 @@
+import type { PptxSettings } from "../../types";
+
 /**
  * Generate global CSS text from style table
  *
@@ -6,7 +8,11 @@
  * @param slideWidth - Width of slides in pixels
  * @returns CSS text string
  */
-export function genGlobalCSS(styleTable: any, settings: any, slideWidth: number): string {
+export function genGlobalCSS(
+  styleTable: Record<string, { name: string; text: string; suffix?: string }>,
+  settings: PptxSettings,
+  slideWidth: number
+): string {
   let cssText = "";
   //console.log("styleTable: ", styleTable)
   for (const key in styleTable) {
