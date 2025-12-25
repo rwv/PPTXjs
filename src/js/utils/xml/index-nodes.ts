@@ -1,3 +1,4 @@
+import type { PptxNode } from "../../types";
 import { getTextByPathList } from "../object";
 
 /**
@@ -6,7 +7,11 @@ import { getTextByPathList } from "../object";
  * @param content - Slide XML content object
  * @returns Object with idTable, idxTable, and typeTable lookup maps
  */
-export function indexNodes(content: any): { idTable: any; idxTable: any; typeTable: any } {
+export function indexNodes(content: PptxNode): {
+  idTable: Record<string, PptxNode>;
+  idxTable: Record<string, PptxNode>;
+  typeTable: Record<string, PptxNode>;
+} {
   const keys = Object.keys(content);
   const spTreeNode = content[keys[0]]["p:cSld"]["p:spTree"];
 
