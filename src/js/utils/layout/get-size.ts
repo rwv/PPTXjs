@@ -1,17 +1,4 @@
-import type { SlideFactor } from "../../types";
-
-/**
- * PPTX extent node containing size attributes
- */
-interface ExtentNode {
-  "a:ext"?: {
-    attrs?: {
-      cx?: string;
-      cy?: string;
-    };
-  };
-  [key: string]: any;
-}
+import type { PptxNode, SlideFactor } from "../../types";
 
 /**
  * Calculates the CSS size styling for a PPTX shape element
@@ -28,9 +15,9 @@ interface ExtentNode {
  * @returns CSS size string (e.g., "width: 100px; height: 50px;") or empty string if no extent found
  */
 export function getSize(
-  slideSpNode: ExtentNode | undefined,
-  slideLayoutSpNode: ExtentNode | undefined,
-  slideMasterSpNode: ExtentNode | undefined,
+  slideSpNode: PptxNode | undefined,
+  slideLayoutSpNode: PptxNode | undefined,
+  slideMasterSpNode: PptxNode | undefined,
   slideFactor: SlideFactor
 ): string {
   let ext: { cx?: string; cy?: string } | undefined;
