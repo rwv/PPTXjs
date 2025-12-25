@@ -1,13 +1,18 @@
 /**
- * Shared utilities for circular arrow shape rendering.
+ * Shared types and utilities for curved arrow shapes
+ *
+ * This module provides common interfaces and helper functions for:
+ * - Directional curved arrows (curvedDownArrow, curvedLeftArrow, curvedRightArrow, curvedUpArrow)
+ * - Swoosh arrow (swooshArrow)
+ * - Circular arrows (circularArrow, leftCircularArrow)
  */
 
 import type { PptxNode } from "../../../../types";
 
 /**
- * Context for rendering circular arrow shapes
+ * Context for rendering curved arrow shapes
  */
-export interface CircularArrowContext {
+export interface CurvedArrowContext {
   node: PptxNode;
   w: number;
   h: number;
@@ -26,7 +31,7 @@ export interface CircularArrowContext {
 /**
  * Generate fill attribute string for SVG path
  */
-export function getFillAttr(ctx: CircularArrowContext): string {
+export function getFillAttr(ctx: CurvedArrowContext): string {
   const { imgFillFlg, grndFillFlg, shpId, fillColor } = ctx;
   if (imgFillFlg) {
     return `url(#imgPtrn_${shpId})`;
@@ -40,7 +45,7 @@ export function getFillAttr(ctx: CircularArrowContext): string {
 /**
  * Generate stroke attributes string for SVG path
  */
-export function getStrokeAttrs(ctx: CircularArrowContext): string {
+export function getStrokeAttrs(ctx: CurvedArrowContext): string {
   const { border } = ctx;
   return `stroke='${border.color}' stroke-width='${border.width}' stroke-dasharray='${border.strokeDasharray}'`;
 }
@@ -48,6 +53,6 @@ export function getStrokeAttrs(ctx: CircularArrowContext): string {
 /**
  * Create SVG path element with fill and stroke
  */
-export function createPath(d: string, ctx: CircularArrowContext): string {
+export function createPath(d: string, ctx: CurvedArrowContext): string {
   return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }

@@ -1,27 +1,27 @@
 /**
- * Circular arrow shape renderer.
+ * Left circular arrow shape renderer.
  *
- * Handles: circularArrow
+ * Handles: leftCircularArrow
  */
 
 import { getTextByPathList } from "../../../object";
 import { shapeArc } from "../helpers/arc";
-import type { CircularArrowContext } from "./shared";
+import type { CurvedArrowContext } from "./shared";
 import { createPath } from "./shared";
 
 /**
- * Render circularArrow shape
+ * Render leftCircularArrow shape
  */
-export function renderCircularArrow(ctx: CircularArrowContext): string {
+export function renderLeftCircularArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
   const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
   let sAdj1,
     adj1 = 12500 * slideFactor;
   let sAdj2,
-    adj2 = ((1142319 / 60000) * Math.PI) / 180;
+    adj2 = ((-1142319 / 60000) * Math.PI) / 180;
   let sAdj3,
-    adj3 = ((20457681 / 60000) * Math.PI) / 180;
+    adj3 = ((1142319 / 60000) * Math.PI) / 180;
   let sAdj4,
     adj4 = ((10800000 / 60000) * Math.PI) / 180;
   let sAdj5,
@@ -79,10 +79,8 @@ export function renderCircularArrow(ctx: CircularArrowContext): string {
   const rh3 = rh2 + th2;
   const wtH = rw3 * Math.sin(enAng);
   const htH = rh3 * Math.cos(enAng);
-
   const dxH = rw3 * Math.cos(Math.atan2(wtH, htH));
   const dyH = rh3 * Math.sin(Math.atan2(wtH, htH));
-
   const xH = hc + dxH;
   const yH = vc + dyH;
   const rI = rw2 < rh2 ? rw2 : rh2;
@@ -98,9 +96,7 @@ export function renderCircularArrow(ctx: CircularArrowContext): string {
   const u10 = u4 / dxH;
   const u11 = u10 / dyH;
   const u12 = (1 + u9) / u11;
-
   const u13 = Math.atan2(u12, 1);
-
   const u14 = u13 + rdAngVal3;
   const u15 = u13 > 0 ? u13 : u14;
   const u16 = u15 - enAng;
@@ -109,24 +105,30 @@ export function renderCircularArrow(ctx: CircularArrowContext): string {
   const u19 = u18 - cd2;
   const u20 = u18 - rdAngVal3;
   const u21 = u19 > 0 ? u20 : u18;
-  const maxAng = Math.abs(u21);
-  const aAng = adj2 < 0 ? 0 : adj2 > maxAng ? maxAng : adj2;
+  const u22 = Math.abs(u21);
+  const minAng = u22 * -1;
+  const u23 = Math.abs(adj2);
+  const _a2 = u23 * -1;
+  const aAng = _a2 < minAng ? minAng : _a2 > 0 ? 0 : _a2;
   const ptAng = enAng + aAng;
   const wtA = rw3 * Math.sin(ptAng);
   const htA = rh3 * Math.cos(ptAng);
   const dxA = rw3 * Math.cos(Math.atan2(wtA, htA));
   const dyA = rh3 * Math.sin(Math.atan2(wtA, htA));
-
   const xA = hc + dxA;
   const yA = vc + dyA;
   const wtE = rw1 * Math.sin(stAng);
   const htE = rh1 * Math.cos(stAng);
-
   const dxE = rw1 * Math.cos(Math.atan2(wtE, htE));
   const dyE = rh1 * Math.sin(Math.atan2(wtE, htE));
-
-  const _xE = hc + dxE;
-  const _yE = vc + dyE;
+  const xE = hc + dxE;
+  const yE = vc + dyE;
+  const wtD = rw2 * Math.sin(stAng);
+  const htD = rh2 * Math.cos(stAng);
+  const dxD = rw2 * Math.cos(Math.atan2(wtD, htD));
+  const dyD = rh2 * Math.sin(Math.atan2(wtD, htD));
+  const xD = hc + dxD;
+  const yD = vc + dyD;
   const dxG = thh * Math.cos(ptAng);
   const dyG = thh * Math.sin(ptAng);
   const xG = xH + dxG;
@@ -226,14 +228,14 @@ export function renderCircularArrow(ctx: CircularArrowContext): string {
   const sdyC = (dyC * rh2) / rI;
   const xC = hc + sdxC;
   const yC = vc + sdyC;
-
   const ist0 = Math.atan2(sdyC, sdxC);
-
   const ist1 = ist0 + rdAngVal3;
-  const istAng = ist0 > 0 ? ist0 : ist1;
-  const isw1 = stAng - istAng;
-  const isw2 = isw1 - rdAngVal3;
-  const iswAng = isw1 > 0 ? isw2 : isw1;
+  const istAng0 = ist0 > 0 ? ist0 : ist1;
+  const isw1 = stAng - istAng0;
+  const isw2 = isw1 + rdAngVal3;
+  const iswAng0 = isw1 > 0 ? isw1 : isw2;
+  const istAng = istAng0 + iswAng0;
+  const iswAng = -iswAng0;
   const p1 = xF - xC;
   const p2 = yF - yC;
   const p3 = Math.sqrt(p1 * p1 + p2 * p2);
@@ -243,40 +245,47 @@ export function renderCircularArrow(ctx: CircularArrowContext): string {
   const yGp = p5 > 0 ? yF : yG;
   const xBp = p5 > 0 ? xC : xB;
   const yBp = p5 > 0 ? yC : yB;
-
   const en0 = Math.atan2(sdyF, sdxF);
-
   const en1 = en0 + rdAngVal3;
   const en2 = en0 > 0 ? en0 : en1;
   const sw0 = en2 - stAng;
-  const sw1 = sw0 + rdAngVal3;
-  const swAng = sw0 > 0 ? sw0 : sw1;
+  const sw1 = sw0 - rdAngVal3;
+  const swAng = sw0 > 0 ? sw1 : sw0;
+  const stAng0 = stAng + swAng;
 
-  const strtAng = (stAng * 180) / Math.PI;
-  const endAng = strtAng + (swAng * 180) / Math.PI;
+  const strtAng = (stAng0 * 180) / Math.PI;
+  const endAng = (stAng * 180) / Math.PI;
   const stiAng = (istAng * 180) / Math.PI;
   const swiAng = (iswAng * 180) / Math.PI;
   const ediAng = stiAng + swiAng;
 
   const d_val =
-    shapeArc(w / 2, h / 2, rw1, rh1, strtAng, endAng, false) +
-    " L" +
-    xGp +
+    "M" +
+    xE +
     "," +
-    yGp +
+    yE +
     " L" +
-    xA +
+    xD +
     "," +
-    yA +
+    yD +
+    shapeArc(w / 2, h / 2, rw2, rh2, stiAng, ediAng, false).replace("M", "L") +
     " L" +
     xBp +
     "," +
     yBp +
     " L" +
-    xC +
+    xA +
     "," +
-    yC +
-    shapeArc(w / 2, h / 2, rw2, rh2, stiAng, ediAng, false).replace("M", "L") +
+    yA +
+    " L" +
+    xGp +
+    "," +
+    yGp +
+    " L" +
+    xF +
+    "," +
+    yF +
+    shapeArc(w / 2, h / 2, rw1, rh1, strtAng, endAng, false).replace("M", "L") +
     " z";
   return createPath(d_val, ctx);
 }
