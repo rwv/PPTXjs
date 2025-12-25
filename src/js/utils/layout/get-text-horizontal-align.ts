@@ -1,4 +1,4 @@
-import type { WarpObject } from "../../types";
+import type { PptxNode, WarpObject } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 
 /**
@@ -21,7 +21,7 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @param warpObj - Container object with layout tables and master styles
  * @returns CSS text-align value ("left", "right", "center", "justify", or "inherit")
  */
-export function getTextHorizontalAlign(node: any, pNode: any, type: any, warpObj: WarpObject): string {
+export function getTextHorizontalAlign(node: PptxNode, pNode: PptxNode, type: string, warpObj: WarpObject): string {
   //console.log("getTextHorizontalAlign: type: ", type, ", node: ", node)
   let getAlgn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
   if (getAlgn === undefined) {
