@@ -1,3 +1,4 @@
+import type { PptxNode } from "../../types";
 import { getTextByPathList } from "./get-text-by-path-list";
 
 /**
@@ -12,6 +13,6 @@ import { getTextByPathList } from "./get-text-by-path-list";
  * getTextByPathStr(obj, 'a b c'); // 'value'
  * getTextByPathStr(obj, 'a  b  c'); // 'value' (multiple spaces)
  */
-export function getTextByPathStr(node: any, pathStr: any): any {
+export function getTextByPathStr(node: PptxNode, pathStr: string): any {
   return getTextByPathList(node, pathStr.trim().split(/\s+/));
 }
