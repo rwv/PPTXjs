@@ -2,53 +2,6 @@ import type { PptxNode, SlideFactor } from "../../types";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 
 /**
- * PPTX transform node containing offset attributes
- */
-interface TransformNode {
-  "a:off"?: {
-    attrs?: {
-      x?: string;
-      y?: string;
-    };
-  };
-  "a:ext"?: {
-    attrs?: {
-      cx?: string;
-      cy?: string;
-    };
-  };
-  [key: string]: any;
-}
-
-/**
- * PPTX group transform node with additional child offset/extent
- */
-interface GroupTransformNode extends TransformNode {
-  "a:chOff"?: {
-    attrs?: {
-      x?: string;
-      y?: string;
-    };
-  };
-  "a:chExt"?: {
-    attrs?: {
-      cx?: string;
-      cy?: string;
-    };
-  };
-}
-
-/**
- * Parent node that may contain group properties
- */
-interface ParentNode {
-  "p:grpSpPr"?: {
-    "a:xfrm"?: GroupTransformNode;
-  };
-  [key: string]: any;
-}
-
-/**
  * Calculates the CSS position styling for a PPTX shape element
  *
  * Handles positioning with fallback hierarchy:
@@ -69,10 +22,10 @@ interface ParentNode {
  * @returns CSS position string (e.g., "top: 100px; left: 50px;") or empty string if no position found
  */
 export function getPosition(
-  slideSpNode: TransformNode | undefined,
-  pNode: ParentNode | undefined,
-  slideLayoutSpNode: TransformNode | undefined,
-  slideMasterSpNode: TransformNode | undefined,
+  slideSpNode: PptxNode | undefined,
+  pNode: PptxNode | undefined,
+  slideLayoutSpNode: PptxNode | undefined,
+  slideMasterSpNode: PptxNode | undefined,
   sType: string | undefined,
   slideFactor: SlideFactor
 ): string {
