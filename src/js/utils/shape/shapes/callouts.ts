@@ -108,48 +108,31 @@ function renderWedgeEllipseCallout(ctx: CalloutContext): string {
       }
     }
   }
-  let d_val;
   const cnstVal1 = 100000 * slideFactor;
   const angVal1 = (11 * Math.PI) / 180;
-  const ss = Math.min(w, h);
-  let dxPos,
-    dyPos,
-    xPos,
-    yPos,
-    sdx,
-    sdy,
-    pang,
-    stAng,
-    enAng,
-    dx1,
-    dy1,
-    x1,
-    y1,
-    dx2,
-    dy2,
-    x2,
-    y2,
-    stAng1,
-    enAng1,
-    swAng1,
-    swAng2,
-    swAng,
-    vc = h / 2,
-    hc = w / 2;
-  dxPos = (w * adj1) / cnstVal1;
-  dyPos = (h * adj2) / cnstVal1;
-  xPos = hc + dxPos;
-  yPos = vc + dyPos;
-  sdx = dxPos * h;
-  sdy = dyPos * w;
-  pang = Math.atan(sdy / sdx);
-  stAng = pang + angVal1;
-  enAng = pang - angVal1;
+  const _ss = Math.min(w, h);
+  const vc = h / 2;
+  const hc = w / 2;
+  const dxPos = (w * adj1) / cnstVal1;
+  const dyPos = (h * adj2) / cnstVal1;
+  const xPos = hc + dxPos;
+  const yPos = vc + dyPos;
+  const sdx = dxPos * h;
+  const sdy = dyPos * w;
+  const pang = Math.atan(sdy / sdx);
+  const stAng = pang + angVal1;
+  const enAng = pang - angVal1;
   console.log("dxPos: ", dxPos, "dyPos: ", dyPos);
-  dx1 = hc * Math.cos(stAng);
-  dy1 = vc * Math.sin(stAng);
-  dx2 = hc * Math.cos(enAng);
-  dy2 = vc * Math.sin(enAng);
+  const dx1 = hc * Math.cos(stAng);
+  const dy1 = vc * Math.sin(stAng);
+  const dx2 = hc * Math.cos(enAng);
+  const dy2 = vc * Math.sin(enAng);
+  const _stAng1 = 0;
+  const _enAng1 = 0;
+  const _swAng1 = 0;
+  const _swAng2 = 0;
+  const _swAng = 0;
+  let x1, y1, x2, y2;
   if (dxPos >= 0) {
     x1 = hc + dx1;
     y1 = vc + dy1;
@@ -161,7 +144,7 @@ function renderWedgeEllipseCallout(ctx: CalloutContext): string {
     x2 = hc - dx2;
     y2 = vc - dy2;
   }
-  d_val =
+  const d_val =
     "M" +
     x1 +
     "," +
@@ -203,80 +186,45 @@ function renderWedgeRectCallout(ctx: CalloutContext): string {
       }
     }
   }
-  let d_val;
   const cnstVal1 = 100000 * slideFactor;
-  let dxPos,
-    dyPos,
-    xPos,
-    yPos,
-    dx,
-    dy,
-    dq,
-    ady,
-    adq,
-    dz,
-    xg1,
-    xg2,
-    x1,
-    x2,
-    yg1,
-    yg2,
-    y1,
-    y2,
-    t1,
-    xl,
-    t2,
-    xt,
-    t3,
-    xr,
-    t4,
-    xb,
-    t5,
-    yl,
-    t6,
-    yt,
-    t7,
-    yr,
-    t8,
-    yb,
-    vc = h / 2,
-    hc = w / 2;
-  dxPos = (w * adj1) / cnstVal1;
-  dyPos = (h * adj2) / cnstVal1;
-  xPos = hc + dxPos;
-  yPos = vc + dyPos;
-  dx = xPos - hc;
-  dy = yPos - vc;
-  dq = (dxPos * h) / w;
-  ady = Math.abs(dyPos);
-  adq = Math.abs(dq);
-  dz = ady - adq;
-  xg1 = dxPos > 0 ? 7 : 2;
-  xg2 = dxPos > 0 ? 10 : 5;
-  x1 = (w * xg1) / 12;
-  x2 = (w * xg2) / 12;
-  yg1 = dyPos > 0 ? 7 : 2;
-  yg2 = dyPos > 0 ? 10 : 5;
-  y1 = (h * yg1) / 12;
-  y2 = (h * yg2) / 12;
-  t1 = dxPos > 0 ? 0 : xPos;
-  xl = dz > 0 ? 0 : t1;
-  t2 = dyPos > 0 ? x1 : xPos;
-  xt = dz > 0 ? t2 : x1;
-  t3 = dxPos > 0 ? xPos : w;
-  xr = dz > 0 ? w : t3;
-  t4 = dyPos > 0 ? xPos : x1;
-  xb = dz > 0 ? t4 : x1;
-  t5 = dxPos > 0 ? y1 : yPos;
-  yl = dz > 0 ? y1 : t5;
-  t6 = dyPos > 0 ? 0 : yPos;
-  yt = dz > 0 ? t6 : 0;
-  t7 = dxPos > 0 ? yPos : y1;
-  yr = dz > 0 ? y1 : t7;
-  t8 = dyPos > 0 ? yPos : h;
-  yb = dz > 0 ? t8 : h;
+  const vc = h / 2;
+  const hc = w / 2;
+  const dxPos = (w * adj1) / cnstVal1;
+  const dyPos = (h * adj2) / cnstVal1;
+  const xPos = hc + dxPos;
+  const yPos = vc + dyPos;
+  const _dx = xPos - hc;
+  const _dy = yPos - vc;
+  const dq = (dxPos * h) / w;
+  const ady = Math.abs(dyPos);
+  const adq = Math.abs(dq);
+  const dz = ady - adq;
+  const xg1 = dxPos > 0 ? 7 : 2;
+  const xg2 = dxPos > 0 ? 10 : 5;
+  const x1 = (w * xg1) / 12;
+  const x2 = (w * xg2) / 12;
+  const yg1 = dyPos > 0 ? 7 : 2;
+  const yg2 = dyPos > 0 ? 10 : 5;
+  const y1 = (h * yg1) / 12;
+  const y2 = (h * yg2) / 12;
+  const t1 = dxPos > 0 ? 0 : xPos;
+  const xl = dz > 0 ? 0 : t1;
+  const t2 = dyPos > 0 ? x1 : xPos;
+  const xt = dz > 0 ? t2 : x1;
+  const t3 = dxPos > 0 ? xPos : w;
+  const xr = dz > 0 ? w : t3;
+  const t4 = dyPos > 0 ? xPos : x1;
+  const xb = dz > 0 ? t4 : x1;
+  const t5 = dxPos > 0 ? y1 : yPos;
+  const yl = dz > 0 ? y1 : t5;
+  const t6 = dyPos > 0 ? 0 : yPos;
+  const yt = dz > 0 ? t6 : 0;
+  const t7 = dxPos > 0 ? yPos : y1;
+  const yr = dz > 0 ? y1 : t7;
+  const t8 = dyPos > 0 ? yPos : h;
+  const yb = dz > 0 ? t8 : h;
 
-  d_val =
+  const d_val =
     "M" +
     0 +
     "," +
@@ -375,82 +323,46 @@ function renderWedgeRoundRectCallout(ctx: CalloutContext): string {
       }
     }
   }
-  let d_val;
   const cnstVal1 = 100000 * slideFactor;
   const ss = Math.min(w, h);
-  let dxPos,
-    dyPos,
-    xPos,
-    yPos,
-    dq,
-    ady,
-    adq,
-    dz,
-    xg1,
-    xg2,
-    x1,
-    x2,
-    yg1,
-    yg2,
-    y1,
-    y2,
-    t1,
-    xl,
-    t2,
-    xt,
-    t3,
-    xr,
-    t4,
-    xb,
-    t5,
-    yl,
-    t6,
-    yt,
-    t7,
-    yr,
-    t8,
-    yb,
-    u1,
-    u2,
-    v2,
-    vc = h / 2,
-    hc = w / 2;
-  dxPos = (w * adj1) / cnstVal1;
-  dyPos = (h * adj2) / cnstVal1;
-  xPos = hc + dxPos;
-  yPos = vc + dyPos;
-  dq = (dxPos * h) / w;
-  ady = Math.abs(dyPos);
-  adq = Math.abs(dq);
-  dz = ady - adq;
-  xg1 = dxPos > 0 ? 7 : 2;
-  xg2 = dxPos > 0 ? 10 : 5;
-  x1 = (w * xg1) / 12;
-  x2 = (w * xg2) / 12;
-  yg1 = dyPos > 0 ? 7 : 2;
-  yg2 = dyPos > 0 ? 10 : 5;
-  y1 = (h * yg1) / 12;
-  y2 = (h * yg2) / 12;
-  t1 = dxPos > 0 ? 0 : xPos;
-  xl = dz > 0 ? 0 : t1;
-  t2 = dyPos > 0 ? x1 : xPos;
-  xt = dz > 0 ? t2 : x1;
-  t3 = dxPos > 0 ? xPos : w;
-  xr = dz > 0 ? w : t3;
-  t4 = dyPos > 0 ? xPos : x1;
-  xb = dz > 0 ? t4 : x1;
-  t5 = dxPos > 0 ? y1 : yPos;
-  yl = dz > 0 ? y1 : t5;
-  t6 = dyPos > 0 ? 0 : yPos;
-  yt = dz > 0 ? t6 : 0;
-  t7 = dxPos > 0 ? yPos : y1;
-  yr = dz > 0 ? y1 : t7;
-  t8 = dyPos > 0 ? yPos : h;
-  yb = dz > 0 ? t8 : h;
-  u1 = (ss * adj3) / cnstVal1;
-  u2 = w - u1;
-  v2 = h - u1;
-  d_val =
+  const vc = h / 2;
+  const hc = w / 2;
+  const dxPos = (w * adj1) / cnstVal1;
+  const dyPos = (h * adj2) / cnstVal1;
+  const xPos = hc + dxPos;
+  const yPos = vc + dyPos;
+  const dq = (dxPos * h) / w;
+  const ady = Math.abs(dyPos);
+  const adq = Math.abs(dq);
+  const dz = ady - adq;
+  const xg1 = dxPos > 0 ? 7 : 2;
+  const xg2 = dxPos > 0 ? 10 : 5;
+  const x1 = (w * xg1) / 12;
+  const x2 = (w * xg2) / 12;
+  const yg1 = dyPos > 0 ? 7 : 2;
+  const yg2 = dyPos > 0 ? 10 : 5;
+  const y1 = (h * yg1) / 12;
+  const y2 = (h * yg2) / 12;
+  const t1 = dxPos > 0 ? 0 : xPos;
+  const xl = dz > 0 ? 0 : t1;
+  const t2 = dyPos > 0 ? x1 : xPos;
+  const xt = dz > 0 ? t2 : x1;
+  const t3 = dxPos > 0 ? xPos : w;
+  const xr = dz > 0 ? w : t3;
+  const t4 = dyPos > 0 ? xPos : x1;
+  const xb = dz > 0 ? t4 : x1;
+  const t5 = dxPos > 0 ? y1 : yPos;
+  const yl = dz > 0 ? y1 : t5;
+  const t6 = dyPos > 0 ? 0 : yPos;
+  const yt = dz > 0 ? t6 : 0;
+  const t7 = dxPos > 0 ? yPos : y1;
+  const yr = dz > 0 ? y1 : t7;
+  const t8 = dyPos > 0 ? yPos : h;
+  const yb = dz > 0 ? t8 : h;
+  const u1 = (ss * adj3) / cnstVal1;
+  const u2 = w - u1;
+  const v2 = h - u1;
+  const d_val =
     "M" +
     0 +
     "," +
@@ -578,29 +490,22 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
       }
     }
   }
-  let d_val;
   const cnstVal1 = 100000 * refr;
-  let isBorder = true;
+  let d_val;
 
   switch (shapType) {
     case "borderCallout1":
-    case "callout1":
-      if (shapType === "borderCallout1") {
-        isBorder = true;
-      } else {
-        isBorder = false;
-      }
+    case "callout1": {
       if (shapAdjst_ary === undefined) {
         adj1 = 18750 * refr;
         adj2 = -8333 * refr;
         adj3 = 112500 * refr;
         adj4 = -38333 * refr;
       }
-      var y1, x1, y2, x2;
-      y1 = (h * adj1) / cnstVal1;
-      x1 = (w * adj2) / cnstVal1;
-      y2 = (h * adj3) / cnstVal1;
-      x2 = (w * adj4) / cnstVal1;
+      const y1 = (h * adj1) / cnstVal1;
+      const x1 = (w * adj2) / cnstVal1;
+      const y2 = (h * adj3) / cnstVal1;
+      const x2 = (w * adj4) / cnstVal1;
       d_val =
         "M" +
         0 +
@@ -628,13 +533,9 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         "," +
         y2;
       break;
+    }
     case "borderCallout2":
-    case "callout2":
-      if (shapType === "borderCallout2") {
-        isBorder = true;
-      } else {
-        isBorder = false;
-      }
+    case "callout2": {
       if (shapAdjst_ary === undefined) {
         adj1 = 18750 * refr;
         adj2 = -8333 * refr;
@@ -644,15 +545,13 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         adj5 = 112500 * refr;
         adj6 = -46667 * refr;
       }
-      var y1, x1, y2, x2, y3, x3;
+      const y1_2 = (h * adj1) / cnstVal1;
+      const x1_2 = (w * adj2) / cnstVal1;
+      const y2_2 = (h * adj3) / cnstVal1;
+      const x2_2 = (w * adj4) / cnstVal1;
 
-      y1 = (h * adj1) / cnstVal1;
-      x1 = (w * adj2) / cnstVal1;
-      y2 = (h * adj3) / cnstVal1;
-      x2 = (w * adj4) / cnstVal1;
-
-      y3 = (h * adj5) / cnstVal1;
-      x3 = (w * adj6) / cnstVal1;
+      const y3 = (h * adj5) / cnstVal1;
+      const x3 = (w * adj6) / cnstVal1;
       d_val =
         "M" +
         0 +
@@ -672,30 +571,26 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         h +
         " z" +
         " M" +
-        x1 +
+        x1_2 +
         "," +
-        y1 +
+        y1_2 +
         " L" +
-        x2 +
+        x2_2 +
         "," +
-        y2 +
+        y2_2 +
         " L" +
         x3 +
         "," +
         y3 +
         " L" +
-        x2 +
+        x2_2 +
         "," +
-        y2;
+        y2_2;
 
       break;
+    }
     case "borderCallout3":
-    case "callout3":
-      if (shapType === "borderCallout3") {
-        isBorder = true;
-      } else {
-        isBorder = false;
-      }
+    case "callout3": {
       if (shapAdjst_ary === undefined) {
         adj1 = 18750 * refr;
         adj2 = -8333 * refr;
@@ -708,18 +603,16 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         adj7 = 112963 * refr;
         adj8 = -8333 * refr;
       }
-      var y1, x1, y2, x2, y3, x3, y4, x4;
+      const y1_3 = (h * adj1) / cnstVal1;
+      const x1_3 = (w * adj2) / cnstVal1;
+      const y2_3 = (h * adj3) / cnstVal1;
+      const x2_3 = (w * adj4) / cnstVal1;
 
-      y1 = (h * adj1) / cnstVal1;
-      x1 = (w * adj2) / cnstVal1;
-      y2 = (h * adj3) / cnstVal1;
-      x2 = (w * adj4) / cnstVal1;
+      const y3_3 = (h * adj5) / cnstVal1;
+      const x3_3 = (w * adj6) / cnstVal1;
 
-      y3 = (h * adj5) / cnstVal1;
-      x3 = (w * adj6) / cnstVal1;
-
-      y4 = (h * adj7) / cnstVal1;
-      x4 = (w * adj8) / cnstVal1;
+      const y4 = (h * adj7) / cnstVal1;
+      const x4 = (w * adj8) / cnstVal1;
       d_val =
         "M" +
         0 +
@@ -739,49 +632,43 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         h +
         " z" +
         " M" +
-        x1 +
+        x1_3 +
         "," +
-        y1 +
+        y1_3 +
         " L" +
-        x2 +
+        x2_3 +
         "," +
-        y2 +
+        y2_3 +
         " L" +
-        x3 +
+        x3_3 +
         "," +
-        y3 +
+        y3_3 +
         " L" +
         x4 +
         "," +
         y4 +
         " L" +
-        x3 +
+        x3_3 +
         "," +
-        y3 +
+        y3_3 +
         " L" +
-        x2 +
+        x2_3 +
         "," +
-        y2;
+        y2_3;
       break;
+    }
     case "accentBorderCallout1":
-    case "accentCallout1":
-      if (shapType === "accentBorderCallout1") {
-        isBorder = true;
-      } else {
-        isBorder = false;
-      }
-
+    case "accentCallout1": {
       if (shapAdjst_ary === undefined) {
         adj1 = 18750 * refr;
         adj2 = -8333 * refr;
         adj3 = 112500 * refr;
         adj4 = -38333 * refr;
       }
-      var y1, x1, y2, x2;
-      y1 = (h * adj1) / cnstVal1;
-      x1 = (w * adj2) / cnstVal1;
-      y2 = (h * adj3) / cnstVal1;
-      x2 = (w * adj4) / cnstVal1;
+      const y1_4 = (h * adj1) / cnstVal1;
+      const x1_4 = (w * adj2) / cnstVal1;
+      const y2_4 = (h * adj3) / cnstVal1;
+      const x2_4 = (w * adj4) / cnstVal1;
       d_val =
         "M" +
         0 +
@@ -801,29 +688,25 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         h +
         " z" +
         " M" +
-        x1 +
+        x1_4 +
         "," +
-        y1 +
+        y1_4 +
         " L" +
-        x2 +
+        x2_4 +
         "," +
-        y2 +
+        y2_4 +
         " M" +
-        x1 +
+        x1_4 +
         "," +
         0 +
         " L" +
-        x1 +
+        x1_4 +
         "," +
         h;
       break;
+    }
     case "accentBorderCallout2":
-    case "accentCallout2":
-      if (shapType === "accentBorderCallout2") {
-        isBorder = true;
-      } else {
-        isBorder = false;
-      }
+    case "accentCallout2": {
       if (shapAdjst_ary === undefined) {
         adj1 = 18750 * refr;
         adj2 = -8333 * refr;
@@ -832,14 +715,12 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         adj5 = 112500 * refr;
         adj6 = -46667 * refr;
       }
-      var y1, x1, y2, x2, y3, x3;
-
-      y1 = (h * adj1) / cnstVal1;
-      x1 = (w * adj2) / cnstVal1;
-      y2 = (h * adj3) / cnstVal1;
-      x2 = (w * adj4) / cnstVal1;
-      y3 = (h * adj5) / cnstVal1;
-      x3 = (w * adj6) / cnstVal1;
+      const y1_5 = (h * adj1) / cnstVal1;
+      const x1_5 = (w * adj2) / cnstVal1;
+      const y2_5 = (h * adj3) / cnstVal1;
+      const x2_5 = (w * adj4) / cnstVal1;
+      const y3_5 = (h * adj5) / cnstVal1;
+      const x3_5 = (w * adj6) / cnstVal1;
       d_val =
         "M" +
         0 +
@@ -859,39 +740,34 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         h +
         " z" +
         " M" +
-        x1 +
+        x1_5 +
         "," +
-        y1 +
+        y1_5 +
         " L" +
-        x2 +
+        x2_5 +
         "," +
-        y2 +
+        y2_5 +
         " L" +
-        x3 +
+        x3_5 +
         "," +
-        y3 +
+        y3_5 +
         " L" +
-        x2 +
+        x2_5 +
         "," +
-        y2 +
+        y2_5 +
         " M" +
-        x1 +
+        x1_5 +
         "," +
         0 +
         " L" +
-        x1 +
+        x1_5 +
         "," +
         h;
 
       break;
+    }
     case "accentBorderCallout3":
-    case "accentCallout3":
-      if (shapType === "accentBorderCallout3") {
-        isBorder = true;
-      } else {
-        isBorder = false;
-      }
-      isBorder = true;
+    case "accentCallout3": {
       if (shapAdjst_ary === undefined) {
         adj1 = 18750 * refr;
         adj2 = -8333 * refr;
@@ -902,16 +778,14 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         adj7 = 112963 * refr;
         adj8 = -8333 * refr;
       }
-      var y1, x1, y2, x2, y3, x3, y4, x4;
-
-      y1 = (h * adj1) / cnstVal1;
-      x1 = (w * adj2) / cnstVal1;
-      y2 = (h * adj3) / cnstVal1;
-      x2 = (w * adj4) / cnstVal1;
-      y3 = (h * adj5) / cnstVal1;
-      x3 = (w * adj6) / cnstVal1;
-      y4 = (h * adj7) / cnstVal1;
-      x4 = (w * adj8) / cnstVal1;
+      const y1_6 = (h * adj1) / cnstVal1;
+      const x1_6 = (w * adj2) / cnstVal1;
+      const y2_6 = (h * adj3) / cnstVal1;
+      const x2_6 = (w * adj4) / cnstVal1;
+      const y3_6 = (h * adj5) / cnstVal1;
+      const x3_6 = (w * adj6) / cnstVal1;
+      const y4_6 = (h * adj7) / cnstVal1;
+      const x4_6 = (w * adj8) / cnstVal1;
       d_val =
         "M" +
         0 +
@@ -931,38 +805,39 @@ function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): strin
         h +
         " z" +
         " M" +
-        x1 +
+        x1_6 +
         "," +
-        y1 +
+        y1_6 +
         " L" +
-        x2 +
+        x2_6 +
         "," +
-        y2 +
+        y2_6 +
         " L" +
-        x3 +
+        x3_6 +
         "," +
-        y3 +
+        y3_6 +
         " L" +
-        x4 +
+        x4_6 +
         "," +
-        y4 +
+        y4_6 +
         " L" +
-        x3 +
+        x3_6 +
         "," +
-        y3 +
+        y3_6 +
         " L" +
-        x2 +
+        x2_6 +
         "," +
-        y2 +
+        y2_6 +
         " M" +
-        x1 +
+        x1_6 +
         "," +
         0 +
         " L" +
-        x1 +
+        x1_6 +
         "," +
         h;
       break;
+    }
     default:
       d_val = "";
   }
