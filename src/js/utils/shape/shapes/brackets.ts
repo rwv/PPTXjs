@@ -95,30 +95,23 @@ function renderBracePair(ctx: BracketShapeContext): string {
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let vc = h / 2,
-    cd = 360,
-    cd2 = 180,
-    cd4 = 90,
-    c3d4 = 270,
-    a,
-    x1,
-    x2,
-    x3,
-    x4,
-    y2,
-    y3,
-    y4;
+  const vc = h / 2;
+  const cd = 360;
+  const cd2 = 180;
+  const cd4 = 90;
+  const c3d4 = 270;
+  let a;
   if (adj < 0) a = 0;
   else if (adj > cnstVal1) a = cnstVal1;
   else a = adj;
   const minWH = Math.min(w, h);
-  x1 = (minWH * a) / cnstVal3;
-  x2 = (minWH * a) / cnstVal2;
-  x3 = w - x2;
-  x4 = w - x1;
-  y2 = vc - x1;
-  y3 = vc + x1;
-  y4 = h - x1;
+  const x1 = (minWH * a) / cnstVal3;
+  const x2 = (minWH * a) / cnstVal2;
+  const x3 = w - x2;
+  const x4 = w - x1;
+  const y2 = vc - x1;
+  const y3 = vc + x1;
+  const y4 = h - x1;
 
   const d =
     "M" +
@@ -181,35 +174,27 @@ function renderLeftBrace(ctx: BracketShapeContext): string {
       }
     }
   }
-  let vc = h / 2,
-    cd2 = 180,
-    cd4 = 90,
-    c3d4 = 270,
-    a1,
-    a2,
-    q1,
-    q2,
-    q3,
-    y1,
-    y2,
-    y3,
-    y4;
+  const _vc = h / 2;
+  const cd2 = 180;
+  const cd4 = 90;
+  const c3d4 = 270;
+  let a1, a2, q2;
   if (adj2 < 0) a2 = 0;
   else if (adj2 > cnstVal2) a2 = cnstVal2;
   else a2 = adj2;
   const minWH = Math.min(w, h);
-  q1 = cnstVal2 - a2;
+  const q1 = cnstVal2 - a2;
   if (q1 < a2) q2 = q1;
   else q2 = a2;
-  q3 = q2 / 2;
+  const q3 = q2 / 2;
   const maxAdj1 = (q3 * h) / minWH;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > maxAdj1) a1 = maxAdj1;
   else a1 = adj1;
-  y1 = (minWH * a1) / cnstVal2;
-  y3 = (h * a2) / cnstVal2;
-  y2 = y3 - y1;
-  y4 = y3 + y1;
+  const y1 = (minWH * a1) / cnstVal2;
+  const y3 = (h * a2) / cnstVal2;
+  const y2 = y3 - y1;
+  const y4 = y3 + y1;
 
   const d =
     "M" +
@@ -256,36 +241,28 @@ function renderRightBrace(ctx: BracketShapeContext): string {
       }
     }
   }
-  let vc = h / 2,
-    cd = 360,
-    cd2 = 180,
-    cd4 = 90,
-    c3d4 = 270,
-    a1,
-    a2,
-    q1,
-    q2,
-    q3,
-    y1,
-    y2,
-    y3,
-    y4;
+  const _vc = h / 2;
+  const cd = 360;
+  const cd2 = 180;
+  const cd4 = 90;
+  const c3d4 = 270;
+  let a1, a2, q2;
   if (adj2 < 0) a2 = 0;
   else if (adj2 > cnstVal2) a2 = cnstVal2;
   else a2 = adj2;
   const minWH = Math.min(w, h);
-  q1 = cnstVal2 - a2;
+  const q1 = cnstVal2 - a2;
   if (q1 < a2) q2 = q1;
   else q2 = a2;
-  q3 = q2 / 2;
+  const q3 = q2 / 2;
   const maxAdj1 = (q3 * h) / minWH;
   if (adj1 < 0) a1 = 0;
   else if (adj1 > maxAdj1) a1 = maxAdj1;
   else a1 = adj1;
-  y1 = (minWH * a1) / cnstVal2;
-  y3 = (h * a2) / cnstVal2;
-  y2 = y3 - y1;
-  y4 = h - y1;
+  const y1 = (minWH * a1) / cnstVal2;
+  const y3 = (h * a2) / cnstVal2;
+  const y2 = y3 - y1;
+  const y4 = h - y1;
 
   const d =
     "M" +
@@ -328,21 +305,18 @@ function renderBracketPair(ctx: BracketShapeContext): string {
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let r = w,
-    b = h,
-    cd2 = 180,
-    cd4 = 90,
-    c3d4 = 270,
-    a,
-    x1,
-    x2,
-    y2;
+  const r = w;
+  const b = h;
+  const cd2 = 180;
+  const cd4 = 90;
+  const c3d4 = 270;
+  let a;
   if (adj < 0) a = 0;
   else if (adj > cnstVal1) a = cnstVal1;
   else a = adj;
-  x1 = (Math.min(w, h) * a) / cnstVal2;
-  x2 = r - x1;
-  y2 = b - x1;
+  const x1 = (Math.min(w, h) * a) / cnstVal2;
+  const x2 = r - x1;
+  const y2 = b - x1;
 
   const d =
     shapeArc(x1, x1, x1, x1, c3d4, cd2, false) +
@@ -374,20 +348,18 @@ function renderLeftBracket(ctx: BracketShapeContext): string {
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let r = w,
-    b = h,
-    cd2 = 180,
-    cd4 = 90,
-    c3d4 = 270,
-    a,
-    y1,
-    y2;
+  const r = w;
+  const b = h;
+  const cd2 = 180;
+  const cd4 = 90;
+  const c3d4 = 270;
+  let a, y1;
   if (adj < 0) a = 0;
   else if (adj > maxAdj) a = maxAdj;
   else a = adj;
   y1 = (Math.min(w, h) * a) / cnstVal2;
   if (y1 > w) y1 = w;
-  y2 = b - y1;
+  const y2 = b - y1;
 
   const d =
     "M" +
@@ -429,20 +401,17 @@ function renderRightBracket(ctx: BracketShapeContext): string {
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let cd = 360,
-    cd2 = 180,
-    cd4 = 90,
-    c3d4 = 270,
-    a,
-    y1,
-    y2,
-    y3;
+  const cd = 360;
+  const _cd2 = 180;
+  const cd4 = 90;
+  const c3d4 = 270;
+  let a;
   if (adj < 0) a = 0;
   else if (adj > maxAdj) a = maxAdj;
   else a = adj;
-  y1 = (Math.min(w, h) * a) / cnstVal2;
-  y2 = h - y1;
-  y3 = w - y1;
+  const y1 = (Math.min(w, h) * a) / cnstVal2;
+  const y2 = h - y1;
+  const y3 = w - y1;
 
   const d =
     "M" +
