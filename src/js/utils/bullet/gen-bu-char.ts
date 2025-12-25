@@ -33,9 +33,9 @@ export function genBuChar(
   i: number,
   spNode: PptxNode,
   textBodyNode: PptxNode,
-  pFontStyle: any,
+  pFontStyle: PptxNode,
   idx: number | undefined,
-  type: any,
+  type: string,
   warpObj: WarpObject,
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor

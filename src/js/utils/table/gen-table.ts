@@ -38,9 +38,9 @@ import { getTableRowStyle, getTableStyleById } from "./helpers";
 export function genTable(
   node: PptxNode,
   warpObj: WarpObject,
-  tableStyles: any,
+  tableStyles: PptxNode,
   isFirstBr: { value: boolean },
-  styleTable: any,
+  styleTable: Record<string, { name: string; text: string }>,
   rtlLangsArray: string[],
   slideFactor: SlideFactor,
   fontSizeFactor: FontSizeFactor

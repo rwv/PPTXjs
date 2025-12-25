@@ -18,8 +18,8 @@ import { getPatternFill } from "../fill/get-pattern-fill";
 export function getBorder(
   node: PptxNode,
   pNode: PptxNode,
-  isSvgMode: any,
-  bType: any,
+  isSvgMode: boolean,
+  bType: string,
   warpObj: WarpObject
 ) {
   let cssText, lineNode, _subNodeTxt;
