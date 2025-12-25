@@ -8,6 +8,6 @@ import type { PptxNode } from "../../types";
  * @param slideMasterTextStyles - Master text styles (unused but kept for consistency)
  * @returns "bold" or "inherit"
  */
-export function getFontBold(node: PptxNode, _type: any, _slideMasterTextStyles: any): string {
+export function getFontBold(node: PptxNode, _type: string, _slideMasterTextStyles: PptxNode): string {
   return node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["b"] === "1" ? "bold" : "inherit";
 }
