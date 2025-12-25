@@ -14,7 +14,7 @@ import { angleToDegrees } from "../layout/angle-to-degrees";
 
 export function getBgGradientFill(
   bgPr: PptxNode,
-  phClr: any,
+  phClr: PptxNode,
   slideMasterContent: PptxNode,
   warpObj: WarpObject
 ): string {
