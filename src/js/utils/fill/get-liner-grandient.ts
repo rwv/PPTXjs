@@ -22,7 +22,7 @@
  * @param fgColor - Foreground color (hex without #)
  * @returns Array: [CSS gradient string, optional size, optional position]
  */
-export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
+export function getLinerGrandient(prst: string, bgColor: string, fgColor: string) {
   switch (prst) {
     case "smGrid":
       return [
