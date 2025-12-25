@@ -218,25 +218,17 @@ function renderHexagon(ctx: PolygonShapeContext): string {
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let maxAdj,
-    a,
-    shd2,
-    x1,
-    x2,
-    dy1,
-    y1,
-    y2,
-    vc = h / 2,
-    hd2 = h / 2;
+  const vc = h / 2;
+  const hd2 = h / 2;
   const ss = Math.min(w, h);
-  maxAdj = (cnstVal1 * w) / ss;
-  a = adj < 0 ? 0 : adj > maxAdj ? maxAdj : adj;
-  shd2 = (hd2 * vf) / cnstVal2;
-  x1 = (ss * a) / cnstVal2;
-  x2 = w - x1;
-  dy1 = shd2 * Math.sin(angVal1);
-  y1 = vc - dy1;
-  y2 = vc + dy1;
+  const maxAdj = (cnstVal1 * w) / ss;
+  const a = adj < 0 ? 0 : adj > maxAdj ? maxAdj : adj;
+  const shd2 = (hd2 * vf) / cnstVal2;
+  const x1 = (ss * a) / cnstVal2;
+  const x2 = w - x1;
+  const dy1 = shd2 * Math.sin(angVal1);
+  const y1 = vc - dy1;
+  const y2 = vc + dy1;
 
   const d =
     "M" +
