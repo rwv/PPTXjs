@@ -46,6 +46,14 @@ export function processGroupSpNode(
   settings: PptxSettings
 ): string {
   //console.log("processGroupSpNode: node: ", node)
+  // Declare variables outside the if block so they're accessible later
+  let rotStr: string | undefined;
+  let top: number | undefined;
+  let left: number | undefined;
+  let width: number | undefined;
+  let height: number | undefined;
+  let sType: string | undefined;
+
   const xfrmNode = getTextByPathList(node, ["p:grpSpPr", "a:xfrm"]);
   if (xfrmNode !== undefined) {
     const x = parseInt(xfrmNode["a:off"]["attrs"]["x"]) * slideFactor;
@@ -57,16 +65,16 @@ export function processGroupSpNode(
     const chcx = parseInt(xfrmNode["a:chExt"]["attrs"]["cx"]) * slideFactor;
     const chcy = parseInt(xfrmNode["a:chExt"]["attrs"]["cy"]) * slideFactor;
     let rotate = parseInt(xfrmNode["attrs"]["rot"]);
-    var rotStr = ""; //;" border: 3px solid black;";
+    rotStr = ""; //;" border: 3px solid black;";
     // angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
     // var rotX = 0;
     // var rotY = 0;
-    var top = y - chy,
-      left = x - chx,
-      width = cx - chcx,
-      height = cy - chcy;
+    top = y - chy;
+    left = x - chx;
+    width = cx - chcx;
+    height = cy - chcy;
 
-    var sType = "group";
+    sType = "group";
     if (!isNaN(rotate)) {
       rotate = angleToDegrees(rotate);
       rotStr += "transform: rotate(" + rotate + "deg) ; transform-origin: center;";
