@@ -1023,10 +1023,10 @@ function renderQuadArrowCallout(ctx: ArrowShapeContext): string {
   const x3 = hc + dy2;
   const x4 = hc + dy1;
   const dx3 = (ss * a3) / cnstVal2;
-  const x5 = hc - dx3;
-  const x6 = hc + dx3;
-  const y5 = vc - dx3;
-  const y6 = vc + dx3;
+  const _x5 = hc - dx3;
+  const _x6 = hc + dx3;
+  const _y5 = vc - dx3;
+  const _y6 = vc + dx3;
   const dx4 = (ss * a4) / cnstVal3;
   const x7 = hc - dx4;
   const x8 = hc + dx4;
