@@ -16,6 +16,7 @@ build/
 .cache/
 .vite/
 .vitest/
+.vitest-attachments/
 node_modules/.cache/
 
 # Logs
