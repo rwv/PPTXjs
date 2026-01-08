@@ -872,5 +872,3 @@ const dingbat_unicode: { f: string; code: string; unicode: string }[] = [
 ];
 
 export { dingbat_unicode };
-
-(window as any).dingbat_unicode = dingbat_unicode;

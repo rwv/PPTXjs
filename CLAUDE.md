@@ -13,7 +13,7 @@ PPTXjs is a jQuery plugin that converts PowerPoint (PPTX) files to HTML using pu
 - JSZip v2.x for PPTX file parsing (NOT v3.x - important constraint)
 - D3.js + NVD3 for chart rendering
 - TypeScript with `strict: false` (gradual migration from JavaScript)
-- Rollup for bundling three IIFE modules
+- Rollup for bundling two IIFE modules
 
 ## Build Commands
 
@@ -36,22 +36,20 @@ pnpm test:ui
 
 ## Architecture Overview
 
-### Three-Module System
+### Two-Module System
 
-The codebase builds three separate IIFE bundles:
+The codebase builds two separate IIFE bundles:
 
 1. **pptxjs.js** (`src/js/pptxjs.ts`) - Main PPTX parser and renderer
    - jQuery plugin that extends `$.fn.pptxToHtml`
    - Parses PPTX files using JSZip v2.x
    - Renders slides as HTML/CSS with inline styles
    - Handles XML parsing, theme processing, and layout calculations
+   - Includes dingbat font mappings for bullet character rendering
 
 2. **divs2slides.js** (`src/js/divs2slides.ts`) - Slideshow presentation mode
    - jQuery plugin for slide navigation and presentation
    - Adds slide transitions, keyboard shortcuts, auto-play
-
-3. **dingbat.js** (`src/js/dingbat.ts`) - Bullet character mappings
-   - Maps dingbat fonts to Unicode characters for bullets
 
 ### Core PPTX Processing Flow
 
