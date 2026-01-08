@@ -11526,8 +11526,8 @@ import type { JsZip } from "./types/jszip";
             var order = node["attrs"]["order"];
             var xfrmNode = getTextByPathList(node, ["p:xfrm"]);
             var result = "<div id='chart" + chartID + "' class='block content' style='" +
-                // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
-                getPosition(xfrmNode, node, undefined, undefined) + getSize(xfrmNode, undefined, undefined) +
+                getPosition(xfrmNode, node, undefined, undefined, undefined, slideFactor) +
+                getSize(xfrmNode, undefined, undefined, slideFactor) +
                 " z-index: " + order + ";'></div>";
 
             var rid = node["a:graphic"]["a:graphicData"]["c:chart"]["attrs"]["r:id"];
