@@ -6,7 +6,6 @@ import jszipMinJs from 'jszip/dist/jszip.min.js?url'
 import jszipUtilsJs from 'jszip-utils/dist/jszip-utils.min.js?url'
 import d3MinJs from 'd3/d3.min.js?url'
 import nvD3MinJs from 'nvd3/build/nv.d3.min.js?url'
-import dingbatJs from '../js/dingbat.js?url'
 import pptxjsJs from '../js/pptxjs.js?url'
 import divs2slidesJs from '../js/divs2slides.js?url'
 
@@ -35,7 +34,6 @@ export async function loadPPTXjs(document: Document) {
     jszipUtilsJs,
     d3MinJs,
     nvD3MinJs,
-    dingbatJs,
     pptxjsJs,
     divs2slidesJs
   ]

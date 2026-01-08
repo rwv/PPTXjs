@@ -74,7 +74,6 @@ PPTXjs
 <script type="text/javascript" src="./js/filereader.js"></script> <!--https://github.com/meshesha/filereader.js -->
 <script type="text/javascript" src="./js/d3.min.js"></script> <!-- for charts graphs -->
 <script type="text/javascript" src="./js/nv.d3.min.js"></script> <!-- for charts graphs -->
-<script type="text/javascript" src="./js/dingbat.js"></script> <!--for bullets -->
 <script type="text/javascript" src="./js/pptxjs.js"></script>
 <script type="text/javascript" src="./js/divs2slides.js"></script> <!-- for slide show -->
  ```
