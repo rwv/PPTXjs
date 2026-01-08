@@ -17,7 +17,8 @@ export default [
         compilerOptions: {
           target: 'ES2020',
           module: 'ESNext',
-          strict: false
+          strict: false,
+          allowSyntheticDefaultImports: true
         }
       })
     ]
@@ -41,7 +42,8 @@ export default [
         compilerOptions: {
           target: 'ES2020',
           module: 'ESNext',
-          strict: false
+          strict: false,
+          allowSyntheticDefaultImports: true
         }
       })
     ]
@@ -65,7 +67,8 @@ export default [
         compilerOptions: {
           target: 'ES2020',
           module: 'ESNext',
-          strict: false
+          strict: false,
+          allowSyntheticDefaultImports: true
         }
       })
     ]
