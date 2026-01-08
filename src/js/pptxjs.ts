@@ -51,7 +51,7 @@ import {
   eachElement,
 } from "./utils/object";
 import { extractChartData } from "./utils/chart";
-import * as tinycolor from "tinycolor2";
+import tinycolor from "tinycolor2";
 
 (function ($) {
     $.fn.pptxToHtml = function (options: any) {
