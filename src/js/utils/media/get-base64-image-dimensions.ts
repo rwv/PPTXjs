@@ -15,6 +15,31 @@ export function getBase64ImageDimensions(imgSrc: string): [number, number] {
       bytes[i] = binary.charCodeAt(i);
     }
 
+    const svgStart = binary.indexOf("<svg");
+    if (svgStart !== -1) {
+      const svgText = binary.slice(svgStart);
+      const widthMatch = svgText.match(/\bwidth=["']?([\d.]+)[^"']*["']?/i);
+      const heightMatch = svgText.match(/\bheight=["']?([\d.]+)[^"']*["']?/i);
+      if (widthMatch && heightMatch) {
+        const width = parseFloat(widthMatch[1]);
+        const height = parseFloat(heightMatch[1]);
+        if (width > 0 && height > 0) {
+          return [width, height];
+        }
+      }
+
+      const viewBoxMatch = svgText.match(/\bviewBox=["']?([^"']+)["']?/i);
+      if (viewBoxMatch) {
+        const parts = viewBoxMatch[1]
+          .trim()
+          .split(/[,\s]+/)
+          .map(Number);
+        if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+          return [parts[2], parts[3]];
+        }
+      }
+    }
+
     // PNG signature: 89 50 4E 47 0D 0A 1A 0A, IHDR at offset 16.
     if (
       bytes.length >= 24 &&
