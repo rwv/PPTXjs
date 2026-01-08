@@ -1,4 +1,4 @@
-import * as tinycolor from "tinycolor2";
+import tinycolor from "tinycolor2";
 import { getTextByPathList } from "../object/get-text-by-path-list";
 import {
   toHex,
