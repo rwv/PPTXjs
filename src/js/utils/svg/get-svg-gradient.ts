@@ -1,4 +1,4 @@
-import * as tinycolor from "tinycolor2";
+import tinycolor from "tinycolor2";
 import { getMiddleStops } from "./get-middle-stops";
 import { svgAngle } from "./svg-angle";
 
