@@ -18,7 +18,7 @@ PPTXjs is a jQuery plugin that converts PowerPoint (PPTX) files to HTML using pu
 ## Build Commands
 
 ```bash
-# Build all bundles (outputs to js/ directory)
+# Build all bundles (outputs to dist/ directory)
 pnpm build
 
 # Type checking (expect many errors - strict mode is disabled)
@@ -56,7 +56,7 @@ The codebase builds two separate IIFE bundles:
 The main processing happens in `src/js/pptxjs.ts` (~13,000 lines):
 
 1. **ZIP Extraction**: Uses JSZip v2.x to unzip PPTX file
-2. **XML Parsing**: Custom tXml parser (`src/js/utils/vendors/txml.ts`) converts XML to JS objects
+2. **XML Parsing**: Custom tXml parser (`src/js/utils/vendors/txml.js`) converts XML to JS objects
 3. **Theme Resolution**: Extracts color schemes, fonts from `theme/theme*.xml`
 4. **Layout Hierarchy**: Resolves properties through slide → layout → master → theme fallback chain
 5. **HTML Generation**: Creates HTML divs with inline CSS for each slide element

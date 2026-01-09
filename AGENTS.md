@@ -25,7 +25,7 @@ All commands must pass before committing.
 - `src/js/divs2slides.ts`: slideshow/presentation mode plugin.
 - `src/js/utils/**`: utility modules grouped by domain (layout, color, font, shape, media, chart, xml, vendors).
 - `src/index.ts` and `src/load-pptxjs.ts`: programmatic loader and browser entry used by tests.
-- `rollup.config.js`: builds IIFE output to `js/pptxjs.js`.
+- `rollup.config.js`: builds IIFE output to `dist/js/pptxjs.js`.
 - `css/`: runtime styles; `js/` and `js-original/`: built and legacy artifacts.
 - `src/__tests__/*.browser.test.ts`: browser tests (Vitest + Playwright).
 - `Sample_12.pptx`: sample PPTX for manual/testing.

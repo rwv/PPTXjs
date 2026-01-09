@@ -2,7 +2,7 @@
 /*
         This is my custom tXml.js file
         */
-export function tXml(t: any, r: any) {
+export function tXml(t, r) {
   "use strict";
   function e() {
     for (var r = []; t[l]; )
@@ -106,11 +106,11 @@ export function tXml(t: any, r: any) {
   );
 }
 var _order = 1;
-tXml.simplify = function (t: any) {
+tXml.simplify = function (t) {
   var r = {};
   if (void 0 === t) return {};
   if (1 === t.length && "string" == typeof t[0]) return t[0];
-  t.forEach(function (t: any) {
+  t.forEach(function (t) {
     if ("object" == typeof t) {
       r[t.tagName] || (r[t.tagName] = []);
       var e = tXml.simplify(t.children || []);
@@ -123,10 +123,10 @@ tXml.simplify = function (t: any) {
   for (var e in r) 1 == r[e].length && (r[e] = r[e][0]);
   return r;
 };
-((tXml.filter = function (t: any, r: any) {
-  var e: any = [];
+((tXml.filter = function (t, r) {
+  var e = [];
   return (
-    t.forEach(function (t: any) {
+    t.forEach(function (t) {
       if (("object" == typeof t && r(t) && e.push(t), t.children)) {
         var n = tXml.filter(t.children, r);
         e = e.concat(n);
@@ -135,12 +135,12 @@ tXml.simplify = function (t: any) {
     e
   );
 }),
-  (tXml.stringify = function (t: any) {
-    function r(t: any) {
+  (tXml.stringify = function (t) {
+    function r(t) {
       if (t)
         for (var r = 0; r < t.length; r++) "string" == typeof t[r] ? (n += t[r].trim()) : e(t[r]);
     }
-    function e(t: any) {
+    function e(t) {
       n += "<" + t.tagName;
       for (var e in t.attributes)
         n +=
@@ -154,7 +154,7 @@ tXml.simplify = function (t: any) {
     var n = "";
     return (r(t), n);
   }),
-  (tXml.toContentString = function (t: any) {
+  (tXml.toContentString = function (t) {
     if (Array.isArray(t)) {
       var r = "";
       return (
@@ -166,18 +166,18 @@ tXml.simplify = function (t: any) {
     }
     return "object" == typeof t ? tXml.toContentString(t.children) : " " + t;
   }),
-  (tXml.getElementById = function (t: any, r: any, e: any) {
+  (tXml.getElementById = function (t, r, e) {
     var n = tXml(t, { attrValue: r, simplify: e });
     return e ? n : n[0];
   }),
-  (tXml.getElementsByClassName = function (t: any, r: any, e: any) {
+  (tXml.getElementsByClassName = function (t, r, e) {
     return tXml(t, {
       attrName: "class",
       attrValue: "[a-zA-Z0-9-s ]*" + r + "[a-zA-Z0-9-s ]*",
       simplify: e,
     });
   }),
-  (tXml.parseStream = function (t: any, r: any) {
+  (tXml.parseStream = function (t, r) {
     if (
       ("function" == typeof r && ((cb = r), (r = 0)),
       "string" == typeof r && (r = r.length + 2),
@@ -190,7 +190,7 @@ tXml.simplify = function (t: any) {
       i = "",
       a = 0;
     return (
-      t.on("data", function (r: any) {
+      t.on("data", function (r) {
         (a++, (i += r));
         for (var e = 0; ; ) {
           n = i.indexOf("<", n) + 1;

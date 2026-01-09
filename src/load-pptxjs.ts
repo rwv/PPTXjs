@@ -5,7 +5,7 @@ import jqueryFullscreenJs from "jquery-fullscreen-plugin/jquery.fullscreen-min.j
 import jszipMinJs from "jszip/dist/jszip.min.js?url";
 import d3MinJs from "d3/d3.min.js?url";
 import nvD3MinJs from "nvd3/build/nv.d3.min.js?url";
-import pptxjsJs from "../js/pptxjs.js?url";
+import pptxjsJs from "../dist/js/pptxjs.js?url";
 
 export async function loadPPTXjs(document: Document) {
   // Load CSS files
