@@ -21,7 +21,7 @@ export interface ShapeContext {
   slideMasterXfrmNode: any;
 
   /** Shape IDs and types */
-  shpId: any;
+  shpId: number | string;
   shapType: any;
   custShapType: any;
 
