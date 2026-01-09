@@ -9,7 +9,7 @@
  */
 
 export function renderBulletNumeric(
-  bultColor: any,
+  bultColor: string[],
   bultSize: string,
   marLStr: string,
   marRStr: string,
