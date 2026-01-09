@@ -27,12 +27,12 @@ import { getFontSize } from "../font/get-font-size";
  * @returns CSS string with margin and padding styles
  */
 export function getVerticalMargins(
-  pNode: any,
-  textBodyNode: any,
-  type: any,
-  idx: any,
-  warpObj: any,
-  fontSizeFactor: any
+  pNode: Record<string, unknown>,
+  textBodyNode: Record<string, unknown> | undefined,
+  type: string | undefined,
+  idx: number | string | undefined,
+  warpObj: Record<string, unknown>,
+  fontSizeFactor: number
 ): string {
   //margin-top ;
   //a:pPr => a:spcBef => a:spcPts (/100) | a:spcPct (/?)
