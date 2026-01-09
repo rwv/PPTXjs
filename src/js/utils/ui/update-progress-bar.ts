@@ -3,7 +3,7 @@
  *
  * @param percent - Progress percentage (0-100)
  */
-export function updateProgressBar(percent: any): void {
+export function updateProgressBar(percent: number): void {
   //console.log("percent: ", percent)
   const progressBarElemtnt = $(".slides-loading-progress-bar");
   progressBarElemtnt.width(percent + "%");
