@@ -10036,7 +10036,7 @@ import type { JsZip } from "./types/jszip";
             if (rNode !== undefined) {
                 dfltBultColor = getFontColorPr(rNode, spNode, lstStyle, pFontStyle, lvl, idx, type, warpObj);
                 color_tye = dfltBultColor[2];
-                dfltBultSize = getFontSize(rNode, textBodyNode, pFontStyle, lvl, type, warpObj);
+                dfltBultSize = getFontSize(rNode, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);
             } else {
                 return "";
             }
@@ -10679,7 +10679,7 @@ import type { JsZip } from "./types/jszip";
                     styleText += "filter: " + fontClrPr[1].effcts + ";";
                 }
             }
-            var font_size = getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj);
+            var font_size = getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);
             //text_style += "font-size:" + font_size + ";"
             
             text_style += "font-size:" + font_size + ";" +
