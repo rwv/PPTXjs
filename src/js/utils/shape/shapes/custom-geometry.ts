@@ -64,7 +64,7 @@ export function renderCustomGeometry(
   //console.log("custShapType : ", custShapType, ", pathLstNode: ", pathLstNode, ", node: ", node);//, ", y:", y, ", w:", w, ", h:", h);
 
   let moveToNode = getTextByPathList(pathNodes, ["a:moveTo"]);
-  const total_shapes = moveToNode.length;
+  const _totalShapes = moveToNode.length;
 
   const lnToNodes = pathNodes["a:lnTo"]; //total a:pt : 1
   let cubicBezToNodes = pathNodes["a:cubicBezTo"]; //total a:pt : 3
@@ -153,10 +153,10 @@ export function renderCustomGeometry(
     if (arcToNodes !== undefined) {
       const arcToNodesAttrs = arcToNodes["attrs"];
       const arcOrder = arcToNodesAttrs["order"];
-      var hR = arcToNodesAttrs["hR"];
-      var wR = arcToNodesAttrs["wR"];
-      var stAng = arcToNodesAttrs["stAng"];
-      var swAng = arcToNodesAttrs["swAng"];
+      const hR = arcToNodesAttrs["hR"];
+      const wR = arcToNodesAttrs["wR"];
+      const stAng = arcToNodesAttrs["stAng"];
+      const swAng = arcToNodesAttrs["swAng"];
       let shftX = 0;
       let shftY = 0;
       const arcToPtNode = getTextByPathList(arcToNodes, ["a:pt", "attrs"]);
@@ -208,10 +208,10 @@ export function renderCustomGeometry(
     //console.log("custShapType >>sorted  multiSapeAry: ");
     //console.log(multiSapeAry);
     let k = 0;
-    const isClose = false;
+    const _isClose = false;
     let d = "";
     while (k < multiSapeAry.length) {
-      if (multiSapeAry[k].type == "movto") {
+      if (multiSapeAry[k].type === "movto") {
         //start point
         const spX = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
         const spY = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
@@ -236,11 +236,11 @@ export function renderCustomGeometry(
         // }
 
         d += " M" + spX + "," + spY;
-      } else if (multiSapeAry[k].type == "lnto") {
+      } else if (multiSapeAry[k].type === "lnto") {
         const Lx = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
         const Ly = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
         d += " L" + Lx + "," + Ly;
-      } else if (multiSapeAry[k].type == "cubicBezTo") {
+      } else if (multiSapeAry[k].type === "cubicBezTo") {
         const Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX; //slideFactor;
         const Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY; //slideFactor;
         const Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX; //slideFactor;
@@ -248,19 +248,19 @@ export function renderCustomGeometry(
         const Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX; //slideFactor;
         const Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY; //slideFactor;
         d += " C" + Cx1 + "," + Cy1 + " " + Cx2 + "," + Cy2 + " " + Cx3 + "," + Cy3;
-      } else if (multiSapeAry[k].type == "arcTo") {
-        var hR: any = parseInt(multiSapeAry[k].hR) * cX; //slideFactor;
-        var wR: any = parseInt(multiSapeAry[k].wR) * cY; //slideFactor;
-        var stAng: any = parseInt(multiSapeAry[k].stAng) / 60000;
-        var swAng: any = parseInt(multiSapeAry[k].swAng) / 60000;
+      } else if (multiSapeAry[k].type === "arcTo") {
+        const hR: any = parseInt(multiSapeAry[k].hR) * cX; //slideFactor;
+        const wR: any = parseInt(multiSapeAry[k].wR) * cY; //slideFactor;
+        const stAng: any = parseInt(multiSapeAry[k].stAng) / 60000;
+        const swAng: any = parseInt(multiSapeAry[k].swAng) / 60000;
         //var shftX = parseInt(multiSapeAry[k].shftX) * slideFactor;
         //var shftY = parseInt(multiSapeAry[k].shftY) * slideFactor;
         const endAng = stAng + swAng;
 
         d += shapeArc(wR, hR, wR, hR, stAng, endAng, false);
-      } else if (multiSapeAry[k].type == "quadBezTo") {
+      } else if (multiSapeAry[k].type === "quadBezTo") {
         console.log("custShapType: quadBezTo - TODO");
-      } else if (multiSapeAry[k].type == "close") {
+      } else if (multiSapeAry[k].type === "close") {
         // result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
         //     "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
         // result += "/>";
@@ -327,7 +327,7 @@ export function renderCustomGeometry(
 
   // TextBody
   if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
-    if (type != "diagram" && type != "textBox") {
+    if (type !== "diagram" && type !== "textBox") {
       type = "shape";
     }
     result += genTextBody(
