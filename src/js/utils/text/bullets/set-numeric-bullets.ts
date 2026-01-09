@@ -23,7 +23,7 @@ import { getNumTypeNum } from "../get-num-type-num";
  *
  * setNumericBullets($('.paragraph-container'));
  */
-export function setNumericBullets(elem: any) {
+export function setNumericBullets(elem: JQuery) {
   const prgrphs_arry = elem;
   for (let i = 0; i < prgrphs_arry.length; i++) {
     const buSpan = $(prgrphs_arry[i]).find(".numeric-bullet-style");
