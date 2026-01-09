@@ -32,15 +32,15 @@ import { processNodesInSlide } from "../node";
  */
 export function getBackground(
   warpObj: any,
-  slideSize: any,
-  index: any,
+  slideSize: { width: number; height: number },
+  index: number,
   tableStyles: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
   slideFactor: number,
   fontSizeFactor: number,
-  chartID: any,
+  chartID: { value: number },
   MsgQueue: any,
   settings: any
 ): string {
