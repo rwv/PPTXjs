@@ -12,6 +12,6 @@ import { getTextByPathList } from "./get-text-by-path-list";
  * getTextByPathStr(obj, 'a b c'); // 'value'
  * getTextByPathStr(obj, 'a  b  c'); // 'value' (multiple spaces)
  */
-export function getTextByPathStr(node: any, pathStr: any): any {
+export function getTextByPathStr(node: unknown, pathStr: string): unknown {
   return getTextByPathList(node, pathStr.trim().split(/\s+/));
 }
