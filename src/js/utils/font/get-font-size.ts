@@ -30,10 +30,10 @@ export function getFontSize(
   node: any,
   textBodyNode: any,
   pFontStyle: any,
-  lvl: any,
-  type: any,
+  lvl: number | string,
+  type: string | undefined,
   warpObj: any,
-  fontSizeFactor: any
+  fontSizeFactor: number
 ): string {
   // if(type == "sldNum")
   //console.log("getFontSize node:", node, "lstStyle", lstStyle, "lvl:", lvl, 'type:', type, "warpObj:", warpObj)
