@@ -41,23 +41,23 @@ export function getFontColorPr(
 
   if (rPrNode !== undefined) {
     filTyp = getFillType(rPrNode);
-    if (filTyp == "SOLID_FILL") {
-      var solidFillNode = rPrNode["a:solidFill"];
+    if (filTyp === "SOLID_FILL") {
+      const solidFillNode = rPrNode["a:solidFill"];
       color = getSolidFill(solidFillNode, undefined, undefined, warpObj);
-      var highlightNode = rPrNode["a:highlight"];
+      const highlightNode = rPrNode["a:highlight"];
       if (highlightNode !== undefined) {
         highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
       }
       colorType = "solid";
-    } else if (filTyp == "PATTERN_FILL") {
-      var pattFill = rPrNode["a:pattFill"];
+    } else if (filTyp === "PATTERN_FILL") {
+      const pattFill = rPrNode["a:pattFill"];
       color = getPatternFill(pattFill, warpObj);
       colorType = "pattern";
-    } else if (filTyp == "PIC_FILL") {
+    } else if (filTyp === "PIC_FILL") {
       color = getBgPicFill(rPrNode, "slideBg", warpObj, undefined, undefined);
       colorType = "pic";
-    } else if (filTyp == "GRADIENT_FILL") {
-      var shpFill = rPrNode["a:gradFill"];
+    } else if (filTyp === "GRADIENT_FILL") {
+      const shpFill = rPrNode["a:gradFill"];
       color = getGradientFill(shpFill, warpObj);
       colorType = "gradient";
     }
@@ -70,23 +70,23 @@ export function getFontColorPr(
     // lstStyle
     const lstStyledefRPr = getTextByPathList(lstStyle, ["a:lvl" + lvl + "pPr", "a:defRPr"]);
     filTyp = getFillType(lstStyledefRPr);
-    if (filTyp == "SOLID_FILL") {
-      var solidFillNode = lstStyledefRPr["a:solidFill"];
+    if (filTyp === "SOLID_FILL") {
+      const solidFillNode = lstStyledefRPr["a:solidFill"];
       color = getSolidFill(solidFillNode, undefined, undefined, warpObj);
-      var highlightNode = lstStyledefRPr["a:highlight"];
+      const highlightNode = lstStyledefRPr["a:highlight"];
       if (highlightNode !== undefined) {
         highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
       }
       colorType = "solid";
-    } else if (filTyp == "PATTERN_FILL") {
-      var pattFill = lstStyledefRPr["a:pattFill"];
+    } else if (filTyp === "PATTERN_FILL") {
+      const pattFill = lstStyledefRPr["a:pattFill"];
       color = getPatternFill(pattFill, warpObj);
       colorType = "pattern";
-    } else if (filTyp == "PIC_FILL") {
+    } else if (filTyp === "PIC_FILL") {
       color = getBgPicFill(lstStyledefRPr, "slideBg", warpObj, undefined, undefined);
       colorType = "pic";
-    } else if (filTyp == "GRADIENT_FILL") {
-      var shpFill = lstStyledefRPr["a:gradFill"];
+    } else if (filTyp === "GRADIENT_FILL") {
+      const shpFill = lstStyledefRPr["a:gradFill"];
       color = getGradientFill(shpFill, warpObj);
       colorType = "gradient";
     }
@@ -99,7 +99,7 @@ export function getFontColorPr(
       if (color !== undefined) {
         colorType = "solid";
       }
-      var highlightNode = sPstyle["a:highlight"];
+      const highlightNode = sPstyle["a:highlight"];
       if (highlightNode !== undefined) {
         highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
       }
@@ -123,7 +123,7 @@ export function getFontColorPr(
       const defRpRLaout = getTextByPathList(pPrNodeLaout, ["a:defRPr", "a:solidFill"]);
       if (defRpRLaout !== undefined) {
         color = getSolidFill(defRpRLaout, undefined, undefined, warpObj);
-        var highlightNode = getTextByPathList(pPrNodeLaout, ["a:defRPr", "a:highlight"]);
+        const highlightNode = getTextByPathList(pPrNodeLaout, ["a:defRPr", "a:highlight"]);
         if (highlightNode !== undefined) {
           highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
         }
@@ -135,7 +135,7 @@ export function getFontColorPr(
         const defRprMaster = getTextByPathList(pPrNodeMaster, ["a:defRPr", "a:solidFill"]);
         if (defRprMaster !== undefined) {
           color = getSolidFill(defRprMaster, undefined, undefined, warpObj);
-          var highlightNode = getTextByPathList(pPrNodeMaster, ["a:defRPr", "a:highlight"]);
+          const highlightNode = getTextByPathList(pPrNodeMaster, ["a:defRPr", "a:highlight"]);
           if (highlightNode !== undefined) {
             highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
           }
@@ -157,7 +157,7 @@ export function getFontColorPr(
       const txBrdAry = txBrd.split(" ");
       const brdSize = parseInt(txBrdAry[0].substring(0, txBrdAry[0].indexOf("px"))) + "px";
       const brdClr = txBrdAry[2];
-      if (colorType == "solid") {
+      if (colorType === "solid") {
         textBordr =
           "-" +
           brdSize +
@@ -217,7 +217,7 @@ export function getFontColorPr(
       rad +
       "px #" +
       glowClr;
-    if (colorType == "solid") {
+    if (colorType === "solid") {
       txtEffects.push(oGlowStr);
     } else {
       txtEffects.push(
@@ -246,21 +246,21 @@ export function getFontColorPr(
   if (txtShadow !== undefined) {
     const shadowClr = getSolidFill(txtShadow, undefined, undefined, warpObj);
     const outerShdwAttrs = txtShadow["attrs"];
-    const algn = outerShdwAttrs["algn"];
+    const _algn = outerShdwAttrs["algn"];
     const dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
     const dist = parseInt(outerShdwAttrs["dist"]) * slideFactor;
-    const rotWithShape = outerShdwAttrs["rotWithShape"];
+    const _rotWithShape = outerShdwAttrs["rotWithShape"];
     const blurRad = outerShdwAttrs["blurRad"]
       ? parseInt(outerShdwAttrs["blurRad"]) * slideFactor + "px"
       : "";
-    const sx = outerShdwAttrs["sx"] ? parseInt(outerShdwAttrs["sx"]) / 100000 : 1;
-    const sy = outerShdwAttrs["sy"] ? parseInt(outerShdwAttrs["sy"]) / 100000 : 1;
+    const _sx = outerShdwAttrs["sx"] ? parseInt(outerShdwAttrs["sx"]) / 100000 : 1;
+    const _sy = outerShdwAttrs["sy"] ? parseInt(outerShdwAttrs["sy"]) / 100000 : 1;
     const vx = dist * Math.sin((dir * Math.PI) / 180);
     const hx = dist * Math.cos((dir * Math.PI) / 180);
 
     if (!isNaN(vx) && !isNaN(hx)) {
       oShadowStr = hx + "px " + vx + "px " + blurRad + " #" + shadowClr;
-      if (colorType == "solid") {
+      if (colorType === "solid") {
         txtEffects.push(oShadowStr);
       } else {
         txtEffects.push(
@@ -272,7 +272,7 @@ export function getFontColorPr(
 
   let text_effcts = "",
     txt_effects: any;
-  if (colorType == "solid") {
+  if (colorType === "solid") {
     if (txtEffects.length > 0) {
       text_effcts = txtEffects.join(",");
     }
