@@ -4,7 +4,31 @@
  * @param divId - Container div ID
  * @param settings - Settings object containing slideType and configuration
  */
-export function initSlideMode(divId: any, settings: any): void {
+type SlideModeConfig = {
+  first: number;
+  nav: boolean;
+  navTxtColor: string;
+  keyBoardShortCut: boolean;
+  showSlideNum: boolean;
+  showTotalSlideNum: boolean;
+  autoSlide: boolean | number;
+  randomAutoSlide: boolean;
+  loop: boolean;
+  background: boolean | string;
+  transition: string;
+  transitionTime: number;
+};
+
+type SlideModeSettings = {
+  slideType: string;
+  slideModeConfig: SlideModeConfig;
+  showPlayPauseBtn?: boolean;
+  slidesScale: string;
+  revealjsPath: string;
+  revealjsConfig: Record<string, unknown>;
+};
+
+export function initSlideMode(divId: string, settings: SlideModeSettings): void {
   //console.log(settings.slideType)
   if (settings.slideType === "" || settings.slideType === "divs2slidesjs") {
     const slidesHeight = $("#" + divId + " .slide").height();
@@ -12,7 +36,10 @@ export function initSlideMode(divId: any, settings: any): void {
     setTimeout(function () {
       const slideConf = settings.slideModeConfig;
       $(".slides-loadnig-msg").remove();
-      ($("#" + divId) as any).divs2slides({
+      const $container = $("#" + divId) as JQuery & {
+        divs2slides: (config: SlideModeConfig & { showPlayPauseBtn?: boolean }) => void;
+      };
+      $container.divs2slides({
         first: slideConf.first,
         nav: slideConf.nav,
         showPlayPauseBtn: settings.showPlayPauseBtn,
@@ -52,7 +79,7 @@ export function initSlideMode(divId: any, settings: any): void {
     } else {
       revealjsPath = "./revealjs/reveal.js";
     }
-    $.getScript(revealjsPath, function (response: any, status: any) {
+    $.getScript(revealjsPath, function (_response: unknown, status: string) {
       if (status === "success") {
         // $("section").removeClass("slide");
         // @ts-expect-error TS(2304): Cannot find name 'Reveal'.
