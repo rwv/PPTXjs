@@ -11,7 +11,7 @@ import { getSolidFill } from "../color/get-solid-fill";
 import { getBgGradientFill } from "./get-bg-gradient-fill";
 import { getBgPicFill } from "./get-bg-pic-fill";
 
-export function getSlideBackgroundFill(warpObj: any, index: any): string | undefined {
+export function getSlideBackgroundFill(warpObj: any, index: number | string): string | undefined {
   const slideContent = warpObj["slideContent"];
   const slideLayoutContent = warpObj["slideLayoutContent"];
   const slideMasterContent = warpObj["slideMasterContent"];
