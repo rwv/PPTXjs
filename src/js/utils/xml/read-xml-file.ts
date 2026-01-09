@@ -36,7 +36,7 @@ export function readXmlFile(
     } else {
       return xmlData;
     }
-  } catch (e) {
+  } catch {
     // console.log("error readXmlFile: the file '", filename, "' not exit")
     return null;
   }
