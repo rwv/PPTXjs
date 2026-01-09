@@ -51,7 +51,7 @@ export function genDiagram(
    * 5-drawing#.xml, which Microsoft added as an extension for persisting diagram layout information.
    */
   ///get colors#.xml, data#.xml , layout#.xml , quickStyle#.xml
-  const order = node["attrs"]["order"];
+  const _order = node["attrs"]["order"];
   const archive = warpObj["archive"];
   const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
   const dgmRelIds = getTextByPathList(node, ["a:graphic", "a:graphicData", "dgm:relIds", "attrs"]);
@@ -65,10 +65,10 @@ export function genDiagram(
     dgmLayoutFileName = warpObj["slideResObj"][dgmLayoutFileId].target,
     dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
   //console.log("dgmClrFileName: " , dgmClrFileName,", dgmDataFileName: ",dgmDataFileName,", dgmLayoutFileName: ",dgmLayoutFileName,", dgmQuickStyleFileName: ",dgmQuickStyleFileName);
-  const dgmClr = readXmlFile(archive, dgmClrFileName);
-  const dgmData = readXmlFile(archive, dgmDataFileName);
-  const dgmLayout = readXmlFile(archive, dgmLayoutFileName);
-  const dgmQuickStyle = readXmlFile(archive, dgmQuickStyleFileName);
+  const _dgmClr = readXmlFile(archive, dgmClrFileName);
+  const _dgmData = readXmlFile(archive, dgmDataFileName);
+  const _dgmLayout = readXmlFile(archive, dgmLayoutFileName);
+  const _dgmQuickStyle = readXmlFile(archive, dgmQuickStyleFileName);
   //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
   ///get drawing#.xml
   // var dgmDrwFileName = "";
