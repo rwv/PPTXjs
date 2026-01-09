@@ -62,7 +62,7 @@ export function processPPTX(
   const app_verssion = slideSize.appVersion;
   const defaultTextStyle = slideSize.defaultTextStyle;
   const slideWidth = slideSize.width;
-  const slideHeight = slideSize.height;
+  const _slideHeight = slideSize.height;
   const processFullTheme = settings.themeProcess;
   const tableStyles = readXmlFile(archive, "ppt/tableStyles.xml");
   //console.log("slideSize: ", slideSize)
@@ -77,20 +77,20 @@ export function processPPTX(
     const filename = filesInfo["slides"][i];
     let filename_no_path = "";
     let filename_no_path_ary = [];
-    if (filename.indexOf("/") != -1) {
+    if (filename.indexOf("/") !== -1) {
       filename_no_path_ary = filename.split("/");
       filename_no_path = filename_no_path_ary.pop();
     } else {
       filename_no_path = filename;
     }
     let filename_no_path_no_ext = "";
-    if (filename_no_path.indexOf(".") != -1) {
+    if (filename_no_path.indexOf(".") !== -1) {
       const filename_no_path_no_ext_ary = filename_no_path.split(".");
-      const slide_ext = filename_no_path_no_ext_ary.pop();
+      const _slide_ext = filename_no_path_no_ext_ary.pop();
       filename_no_path_no_ext = filename_no_path_no_ext_ary.join(".");
     }
     let slide_number = 1;
-    if (filename_no_path_no_ext != "" && filename_no_path.indexOf("slide") != -1) {
+    if (filename_no_path_no_ext !== "" && filename_no_path.indexOf("slide") !== -1) {
       slide_number = Number(filename_no_path_no_ext.substr(5));
     }
     const slideHtml = processSingleSlide(
