@@ -22,10 +22,10 @@ import { escapeHtml } from "../string";
 export function processPicNode(
   node: any,
   warpObj: any,
-  source: any,
-  sType: any,
+  source: string,
+  sType: string,
   slideFactor: number,
-  settings: any
+  settings: { mediaProcess: boolean }
 ): string {
   //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
   let rtrnData = "";
