@@ -33,14 +33,14 @@ import { processNodesInSlide } from "./process-nodes-in-slide";
 export function processGroupSpNode(
   node: any,
   warpObj: any,
-  source: any,
+  source: string,
   slideFactor: number,
   tableStyles: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
   fontSizeFactor: number,
-  chartID: any,
+  chartID: { value: number },
   MsgQueue: any,
   settings: any
 ): string {
