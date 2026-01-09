@@ -21,10 +21,10 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns CSS text-align value ("left", "right", "center", "justify", or "inherit")
  */
 export function getTextHorizontalAlign(
-  node: any,
-  pNode: any,
+  node: Record<string, unknown>,
+  pNode: Record<string, unknown>,
   type: string | undefined,
-  warpObj: any
+  warpObj: Record<string, unknown>
 ): string {
   //console.log("getTextHorizontalAlign: type: ", type, ", node: ", node)
   let getAlgn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
