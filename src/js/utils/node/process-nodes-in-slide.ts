@@ -36,19 +36,19 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @returns HTML string for the node
  */
 export function processNodesInSlide(
-  nodeKey: any,
+  nodeKey: string,
   nodeValue: any,
   nodes: any,
   warpObj: any,
-  source: any,
-  sType: any,
+  source: string,
+  sType: string,
   tableStyles: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
   slideFactor: number,
   fontSizeFactor: number,
-  chartID: any,
+  chartID: { value: number },
   MsgQueue: any,
   settings: any
 ): string {
