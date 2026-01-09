@@ -9,7 +9,7 @@ export function getBase64ImageDimensions(imgSrc: string): [number, number] {
   const base64Data = (base64Match ? base64Match[1] : imgSrc).replace(/\s/g, "");
 
   try {
-    const binary = atob(base64Data);
+    const binary = window.atob(base64Data);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i += 1) {
       bytes[i] = binary.charCodeAt(i);
