@@ -1,4 +1,8 @@
-export function getPercentPattern(prst: any, bgColor: any, fgColor: any) {
+export function getPercentPattern(
+  prst: string,
+  bgColor: string,
+  fgColor: string
+): string[] | undefined {
   switch (prst) {
     case "pct5":
     case "pct10":
