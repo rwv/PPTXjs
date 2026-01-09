@@ -119,15 +119,15 @@ export function genSpanElement(
   let getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
   if (getRtlVal === undefined) {
     getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
-    if (getRtlVal === undefined && type != "shape") {
+    if (getRtlVal === undefined && type !== "shape") {
       getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
     }
   }
-  let isRTL = false;
-  let dirStr = "ltr";
-  if (getRtlVal !== undefined && getRtlVal == "1") {
-    isRTL = true;
-    dirStr = "rtl";
+  let _isRTL = false;
+  let _dirStr = "ltr";
+  if (getRtlVal !== undefined && getRtlVal === "1") {
+    _isRTL = true;
+    _dirStr = "rtl";
   }
 
   const linkID = getTextByPathList(node, ["a:rPr", "a:hlinkClick", "attrs", "r:id"]);
@@ -144,7 +144,7 @@ export function genSpanElement(
     const rPrlinkClr = getSolidFill(linkClrNode, undefined, undefined, warpObj);
 
     //console.log("genSpanElement defLinkClr: ", defLinkClr, "rPrlinkClr:", rPrlinkClr)
-    if (rPrlinkClr !== undefined && rPrlinkClr != "") {
+    if (rPrlinkClr !== undefined && rPrlinkClr !== "") {
       defLinkClr = rPrlinkClr;
     }
   }
@@ -163,26 +163,26 @@ export function genSpanElement(
   );
   const fontClrType = fontClrPr[2];
   //console.log("genSpanElement fontClrPr: ", fontClrPr, "linkID", linkID);
-  if (fontClrType == "solid") {
-    if (linkID === undefined && fontClrPr[0] !== undefined && fontClrPr[0] != "") {
+  if (fontClrType === "solid") {
+    if (linkID === undefined && fontClrPr[0] !== undefined && fontClrPr[0] !== "") {
       styleText += "color: #" + fontClrPr[0] + ";";
     } else if (linkID !== undefined && defLinkClr !== undefined) {
       styleText += "color: #" + defLinkClr + ";";
     }
 
-    if (fontClrPr[1] !== undefined && fontClrPr[1] != "" && fontClrPr[1] != ";") {
+    if (fontClrPr[1] !== undefined && fontClrPr[1] !== "" && fontClrPr[1] !== ";") {
       styleText += "text-shadow:" + fontClrPr[1] + ";";
     }
-    if (fontClrPr[3] !== undefined && fontClrPr[3] != "") {
+    if (fontClrPr[3] !== undefined && fontClrPr[3] !== "") {
       styleText += "background-color: #" + fontClrPr[3] + ";";
     }
-  } else if (fontClrType == "pattern" || fontClrType == "pic" || fontClrType == "gradient") {
-    if (fontClrType == "pattern") {
+  } else if (fontClrType === "pattern" || fontClrType === "pic" || fontClrType === "gradient") {
+    if (fontClrType === "pattern") {
       styleText += "background:" + fontClrPr[0][0] + ";";
-      if (fontClrPr[0][1] !== null && fontClrPr[0][1] !== undefined && fontClrPr[0][1] != "") {
+      if (fontClrPr[0][1] !== null && fontClrPr[0][1] !== undefined && fontClrPr[0][1] !== "") {
         styleText += "background-size:" + fontClrPr[0][1] + ";"; //" 2px 2px;" +
       }
-      if (fontClrPr[0][2] !== null && fontClrPr[0][2] !== undefined && fontClrPr[0][2] != "") {
+      if (fontClrPr[0][2] !== null && fontClrPr[0][2] !== undefined && fontClrPr[0][2] !== "") {
         styleText += "background-position:" + fontClrPr[0][2] + ";"; //" 2px 2px;" +
       }
       // styleText += "-webkit-background-clip: text;" +
@@ -190,19 +190,19 @@ export function genSpanElement(
       //     "color: transparent;" +
       //     "-webkit-text-stroke: " + fontClrPr[1].border + ";" +
       //     "filter: " + fontClrPr[1].effcts + ";";
-    } else if (fontClrType == "pic") {
+    } else if (fontClrType === "pic") {
       styleText += fontClrPr[0] + ";";
       // styleText += "-webkit-background-clip: text;" +
       //     "background-clip: text;" +
       //     "color: transparent;" +
       //     "-webkit-text-stroke: " + fontClrPr[1].border + ";";
-    } else if (fontClrType == "gradient") {
+    } else if (fontClrType === "gradient") {
       const colorAry = fontClrPr[0].color;
       const rot = fontClrPr[0].rot;
 
       styleText += "background: linear-gradient(" + rot + "deg,";
       for (let i = 0; i < colorAry.length; i++) {
-        if (i == colorAry.length - 1) {
+        if (i === colorAry.length - 1) {
           styleText += "#" + colorAry[i] + ");";
         } else {
           styleText += "#" + colorAry[i] + ", ";
@@ -312,7 +312,7 @@ export function genSpanElement(
       capNode = getTextByPathList(pPrNodeMaster, ["a:defRPr", "attrs", "cap"]);
     }
   }
-  if (capNode == "small" || capNode == "all") {
+  if (capNode === "small" || capNode === "all") {
     styleText += "text-transform: uppercase";
   }
   //styleText += "word-break: break-word;";
@@ -330,11 +330,11 @@ export function genSpanElement(
     };
   }
   let linkColorSyle = "";
-  if (fontClrType == "solid" && linkID !== undefined) {
+  if (fontClrType === "solid" && linkID !== undefined) {
     linkColorSyle = "style='color: inherit;'";
   }
 
-  if (linkID !== undefined && linkID != "") {
+  if (linkID !== undefined && linkID !== "") {
     let linkURL = warpObj["slideResObj"][linkID]["target"];
     linkURL = escapeHtml(linkURL);
     return (
