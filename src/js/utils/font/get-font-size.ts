@@ -57,7 +57,7 @@ export function getFontSize(
     fontSize = parseInt(sz) / 100;
   }
   //a:spAutoFit
-  let isAutoFit = false;
+  let _isAutoFit = false;
   let isKerning = false;
   if (textBodyNode !== undefined) {
     const spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:spAutoFit"]);
@@ -65,7 +65,7 @@ export function getFontSize(
     //     spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:normAutofit"]);
     // }
     if (spAutoFitNode !== undefined) {
-      isAutoFit = true;
+      _isAutoFit = true;
       isKerning = true;
     }
   }
@@ -131,7 +131,7 @@ export function getFontSize(
       "kern",
     ]);
     if (sz === undefined) {
-      if (type == "title" || type == "subTitle" || type == "ctrTitle") {
+      if (type === "title" || type === "subTitle" || type === "ctrTitle") {
         sz = getTextByPathList(warpObj["slideMasterTextStyles"], [
           "p:titleStyle",
           lvlpPr,
@@ -147,10 +147,10 @@ export function getFontSize(
           "kern",
         ]);
       } else if (
-        type == "body" ||
-        type == "obj" ||
-        type == "dt" ||
-        type == "sldNum" ||
+        type === "body" ||
+        type === "obj" ||
+        type === "dt" ||
+        type === "sldNum" ||
         type === "textBox"
       ) {
         sz = getTextByPathList(warpObj["slideMasterTextStyles"], [
@@ -167,7 +167,7 @@ export function getFontSize(
           "attrs",
           "kern",
         ]);
-      } else if (type == "shape") {
+      } else if (type === "shape") {
         //textBox and shape text does not indent
         sz = getTextByPathList(warpObj["slideMasterTextStyles"], [
           "p:otherStyle",
@@ -230,14 +230,14 @@ export function getFontSize(
       "attrs",
       "fontScale",
     ]);
-    if (normAutofit !== undefined && normAutofit != 0) {
+    if (normAutofit !== undefined && Number(normAutofit) !== 0) {
       //console.log("fontSize", fontSize, "normAutofit: ", normAutofit, normAutofit/100000)
       fontSize = Math.round(fontSize * (normAutofit / 100000));
     }
   }
 
   return isNaN(fontSize)
-    ? type == "br"
+    ? type === "br"
       ? "initial"
       : "inherit"
     : fontSize * fontSizeFactor + "px"; // + "pt");
