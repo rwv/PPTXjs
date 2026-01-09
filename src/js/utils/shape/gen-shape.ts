@@ -29,13 +29,22 @@
  * @returns HTML string with SVG shape
  */
 
-import { getTextByPathList } from "../object";
-import { getPosition, getSize, getVerticalAlign, angleToDegrees, getContentDir } from "../layout";
-import { getFillType, getShapeFill } from "../fill";
+import { getTextByPathList as _getTextByPathList } from "../object";
+import {
+  getPosition,
+  getSize,
+  getVerticalAlign,
+  angleToDegrees as _angleToDegrees,
+  getContentDir,
+} from "../layout";
+import { getFillType as _getFillType, getShapeFill } from "../fill";
 import { getBorder } from "../border";
 import { genTextBody } from "../text";
-import { getSolidFill } from "../color";
-import { getSvgGradient, getSvgImagePattern } from "../svg";
+import { getSolidFill as _getSolidFill } from "../color";
+import {
+  getSvgGradient as _getSvgGradient,
+  getSvgImagePattern as _getSvgImagePattern,
+} from "../svg";
 import { renderCustomGeometry } from "./shapes/custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
@@ -124,18 +133,18 @@ export function genShape(
     shpId,
     shapType,
     custShapType,
-    rotate,
-    flip,
-    x,
-    y,
+    rotate: _rotate,
+    flip: _flip,
+    x: _x,
+    y: _y,
     w,
     h,
     svgCssName,
-    effectsClassName,
+    effectsClassName: _effectsClassName,
     fillColor,
     grndFillFlg,
     imgFillFlg,
-    clrFillType,
+    clrFillType: _clrFillType,
     border,
   } = context;
 
@@ -410,7 +419,7 @@ export function genShape(
 
     // TextBody
     if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
-      if (type != "diagram" && type != "textBox") {
+      if (type !== "diagram" && type !== "textBox") {
         type = "shape";
       }
       result += genTextBody(
