@@ -10,7 +10,7 @@
  * @param slideMasterTextStyles - Master text styles (unused but kept for consistency)
  * @returns CSS text-decoration value ("underline", "line-through", "underline line-through", or "inherit")
  */
-export function getFontDecoration(node: any, type: any, slideMasterTextStyles: any): string {
+export function getFontDecoration(node: any, _type: any, _slideMasterTextStyles: any): string {
   if (node["a:rPr"] !== undefined) {
     const underLine =
       node["a:rPr"]["attrs"]["u"] !== undefined ? node["a:rPr"]["attrs"]["u"] : "none";
@@ -19,11 +19,11 @@ export function getFontDecoration(node: any, type: any, slideMasterTextStyles: a
         ? node["a:rPr"]["attrs"]["strike"]
         : "noStrike";
 
-    if (underLine != "none" && strikethrough == "noStrike") {
+    if (underLine !== "none" && strikethrough === "noStrike") {
       return "underline";
-    } else if (underLine == "none" && strikethrough != "noStrike") {
+    } else if (underLine === "none" && strikethrough !== "noStrike") {
       return "line-through";
-    } else if (underLine != "none" && strikethrough != "noStrike") {
+    } else if (underLine !== "none" && strikethrough !== "noStrike") {
       return "underline line-through";
     } else {
       return "inherit";
