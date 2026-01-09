@@ -14,7 +14,7 @@ import { getSolidFill } from "../color/get-solid-fill";
 import { getGradientFill } from "../fill/get-gradient-fill";
 import { getPatternFill } from "../fill/get-pattern-fill";
 
-export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, warpObj: any) {
+export function getBorder(node: any, pNode: any, isSvgMode: boolean, bType: string, warpObj: any) {
   let cssText, lineNode;
 
   if (bType === "shape") {
