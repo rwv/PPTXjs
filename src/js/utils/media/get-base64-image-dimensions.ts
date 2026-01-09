@@ -48,22 +48,15 @@ export function getBase64ImageDimensions(imgSrc: string): [number, number] {
       bytes[2] === 0x4e &&
       bytes[3] === 0x47
     ) {
-      const width =
-        (bytes[16] << 24) | (bytes[17] << 16) | (bytes[18] << 8) | bytes[19];
-      const height =
-        (bytes[20] << 24) | (bytes[21] << 16) | (bytes[22] << 8) | bytes[23];
+      const width = (bytes[16] << 24) | (bytes[17] << 16) | (bytes[18] << 8) | bytes[19];
+      const height = (bytes[20] << 24) | (bytes[21] << 16) | (bytes[22] << 8) | bytes[23];
       if (width > 0 && height > 0) {
         return [width, height];
       }
     }
 
     // GIF header: GIF87a/GIF89a, width/height at offset 6/8 (little-endian).
-    if (
-      bytes.length >= 10 &&
-      bytes[0] === 0x47 &&
-      bytes[1] === 0x49 &&
-      bytes[2] === 0x46
-    ) {
+    if (bytes.length >= 10 && bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
       const width = bytes[6] | (bytes[7] << 8);
       const height = bytes[8] | (bytes[9] << 8);
       if (width > 0 && height > 0) {
