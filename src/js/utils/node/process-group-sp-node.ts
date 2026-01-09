@@ -46,6 +46,12 @@ export function processGroupSpNode(
 ): string {
   //console.log("processGroupSpNode: node: ", node)
   const xfrmNode = getTextByPathList(node, ["p:grpSpPr", "a:xfrm"]);
+  let rotStr = ""; //;" border: 3px solid black;";
+  let top;
+  let left;
+  let width;
+  let height;
+  let sType = "group";
   if (xfrmNode !== undefined) {
     const x = parseInt(xfrmNode["a:off"]["attrs"]["x"]) * slideFactor;
     const y = parseInt(xfrmNode["a:off"]["attrs"]["y"]) * slideFactor;
@@ -56,16 +62,13 @@ export function processGroupSpNode(
     const chcx = parseInt(xfrmNode["a:chExt"]["attrs"]["cx"]) * slideFactor;
     const chcy = parseInt(xfrmNode["a:chExt"]["attrs"]["cy"]) * slideFactor;
     let rotate = parseInt(xfrmNode["attrs"]["rot"]);
-    var rotStr = ""; //;" border: 3px solid black;";
     // angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
     // var rotX = 0;
     // var rotY = 0;
-    var top = y - chy,
-      left = x - chx,
-      width = cx - chcx,
-      height = cy - chcy;
-
-    var sType = "group";
+    top = y - chy;
+    left = x - chx;
+    width = cx - chcx;
+    height = cy - chcy;
     if (!isNaN(rotate)) {
       rotate = angleToDegrees(rotate);
       rotStr += "transform: rotate(" + rotate + "deg) ; transform-origin: center;";
@@ -73,7 +76,7 @@ export function processGroupSpNode(
       // var rdian = degreesToRadians(rotate);
       // rotX = cLin * Math.cos(rdian);
       // rotY = cLin * Math.sin(rdian);
-      if (rotate != 0) {
+      if (rotate !== 0) {
         top = y;
         left = x;
         width = cx;
@@ -84,7 +87,7 @@ export function processGroupSpNode(
   }
   let grpStyle = "";
 
-  if (rotStr !== undefined && rotStr != "") {
+  if (rotStr !== undefined && rotStr !== "") {
     grpStyle += rotStr;
   }
 
