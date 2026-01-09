@@ -45,7 +45,7 @@ export function getBackground(
   settings: any
 ): string {
   //var rslt = "";
-  const slideContent = warpObj["slideContent"];
+  const _slideContent = warpObj["slideContent"];
   const slideLayoutContent = warpObj["slideLayoutContent"];
   const slideMasterContent = warpObj["slideMasterContent"];
 
@@ -80,22 +80,22 @@ export function getBackground(
     "px;" +
     bgColor +
     "'>";
-  const node_ph_type_ary = [];
+  const _nodePhTypeAry = [];
   if (nodesSldLayout !== undefined) {
-    for (var nodeKey in nodesSldLayout) {
+    for (const nodeKey in nodesSldLayout) {
       if (nodesSldLayout[nodeKey].constructor === Array) {
-        for (var i = 0; i < nodesSldLayout[nodeKey].length; i++) {
-          var ph_type = getTextByPathList(nodesSldLayout[nodeKey][i], [
+        for (let i = 0; i < nodesSldLayout[nodeKey].length; i++) {
+          const phType = getTextByPathList(nodesSldLayout[nodeKey][i], [
             "p:nvSpPr",
             "p:nvPr",
             "p:ph",
             "attrs",
             "type",
           ]);
-          // if (ph_type !== undefined && ph_type != "pic") {
-          //     node_ph_type_ary.push(ph_type);
+          // if (phType !== undefined && phType !== "pic") {
+          //     _nodePhTypeAry.push(phType);
           // }
-          if (ph_type != "pic") {
+          if (phType !== "pic") {
             result += processNodesInSlide(
               nodeKey,
               nodesSldLayout[nodeKey][i],
@@ -116,17 +116,17 @@ export function getBackground(
           }
         }
       } else {
-        var ph_type = getTextByPathList(nodesSldLayout[nodeKey], [
+        const phType = getTextByPathList(nodesSldLayout[nodeKey], [
           "p:nvSpPr",
           "p:nvPr",
           "p:ph",
           "attrs",
           "type",
         ]);
-        // if (ph_type !== undefined && ph_type != "pic") {
-        //     node_ph_type_ary.push(ph_type);
+        // if (phType !== undefined && phType !== "pic") {
+        //     _nodePhTypeAry.push(phType);
         // }
-        if (ph_type != "pic") {
+        if (phType !== "pic") {
           result += processNodesInSlide(
             nodeKey,
             nodesSldLayout[nodeKey],
@@ -148,18 +148,18 @@ export function getBackground(
       }
     }
   }
-  if (nodesSldMaster !== undefined && (showMasterSp == "1" || showMasterSp === undefined)) {
-    for (var nodeKey in nodesSldMaster) {
+  if (nodesSldMaster !== undefined && (showMasterSp === "1" || showMasterSp === undefined)) {
+    for (const nodeKey in nodesSldMaster) {
       if (nodesSldMaster[nodeKey].constructor === Array) {
-        for (var i = 0; i < nodesSldMaster[nodeKey].length; i++) {
-          var ph_type = getTextByPathList(nodesSldMaster[nodeKey][i], [
+        for (let i = 0; i < nodesSldMaster[nodeKey].length; i++) {
+          const _phType = getTextByPathList(nodesSldMaster[nodeKey][i], [
             "p:nvSpPr",
             "p:nvPr",
             "p:ph",
             "attrs",
             "type",
           ]);
-          //if (node_ph_type_ary.indexOf(ph_type) > -1) {
+          //if (_nodePhTypeAry.indexOf(_phType) > -1) {
           result += processNodesInSlide(
             nodeKey,
             nodesSldMaster[nodeKey][i],
@@ -180,14 +180,14 @@ export function getBackground(
           //}
         }
       } else {
-        var ph_type = getTextByPathList(nodesSldMaster[nodeKey], [
+        const _phType = getTextByPathList(nodesSldMaster[nodeKey], [
           "p:nvSpPr",
           "p:nvPr",
           "p:ph",
           "attrs",
           "type",
         ]);
-        //if (node_ph_type_ary.indexOf(ph_type) > -1) {
+        //if (_nodePhTypeAry.indexOf(_phType) > -1) {
         result += processNodesInSlide(
           nodeKey,
           nodesSldMaster[nodeKey],
