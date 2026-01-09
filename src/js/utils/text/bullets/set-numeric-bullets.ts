@@ -39,34 +39,34 @@ export function setNumericBullets(elem: any) {
         const bult_typ = $(buSpan[j]).data("bulltname");
         const bult_lvl = $(buSpan[j]).data("bulltlvl");
 
-        if (buletIndex == 0) {
+        if (buletIndex === 0) {
           prevBultTyp = bult_typ;
           prevBultLvl = bult_lvl;
           tmpArry[tmpArryIndx] = buletIndex;
           buletTypSrry[tmpArryIndx] = bult_typ;
           buletIndex++;
         } else {
-          if (bult_typ == prevBultTyp && bult_lvl == prevBultLvl) {
+          if (bult_typ === prevBultTyp && bult_lvl === prevBultLvl) {
             prevBultTyp = bult_typ;
             prevBultLvl = bult_lvl;
             buletIndex++;
             tmpArry[tmpArryIndx] = buletIndex;
             buletTypSrry[tmpArryIndx] = bult_typ;
-          } else if (bult_typ != prevBultTyp && bult_lvl == prevBultLvl) {
+          } else if (bult_typ !== prevBultTyp && bult_lvl === prevBultLvl) {
             prevBultTyp = bult_typ;
             prevBultLvl = bult_lvl;
             tmpArryIndx++;
             tmpArry[tmpArryIndx] = buletIndex;
             buletTypSrry[tmpArryIndx] = bult_typ;
             buletIndex = 1;
-          } else if (bult_typ != prevBultTyp && Number(bult_lvl) > Number(prevBultLvl)) {
+          } else if (bult_typ !== prevBultTyp && Number(bult_lvl) > Number(prevBultLvl)) {
             prevBultTyp = bult_typ;
             prevBultLvl = bult_lvl;
             tmpArryIndx++;
             tmpArry[tmpArryIndx] = buletIndex;
             buletTypSrry[tmpArryIndx] = bult_typ;
             buletIndex = 1;
-          } else if (bult_typ != prevBultTyp && Number(bult_lvl) < Number(prevBultLvl)) {
+          } else if (bult_typ !== prevBultTyp && Number(bult_lvl) < Number(prevBultLvl)) {
             prevBultTyp = bult_typ;
             prevBultLvl = bult_lvl;
             tmpArryIndx--;
