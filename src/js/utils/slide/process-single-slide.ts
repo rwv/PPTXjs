@@ -88,7 +88,6 @@ export function processSingleSlide(
           break;
         case "http://schemas.microsoft.com/office/2007/relationships/diagramDrawing":
           diagramFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           slideResObj[RelationshipArray[i]["attrs"]["Id"]] = {
             type: RelationshipArray[i]["attrs"]["Type"].replace(
               "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
@@ -102,7 +101,6 @@ export function processSingleSlide(
         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart":
         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink":
         default:
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           slideResObj[RelationshipArray[i]["attrs"]["Id"]] = {
             type: RelationshipArray[i]["attrs"]["Type"].replace(
               "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
@@ -117,7 +115,6 @@ export function processSingleSlide(
   }
   //console.log(slideResObj);
   // Open slideLayoutXX.xml
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const slideLayoutContent = readXmlFile(archive, layoutFilename);
   const slideLayoutTables = indexNodes(slideLayoutContent);
   const sldLayoutClrOvr = getTextByPathList(slideLayoutContent, [
@@ -137,7 +134,6 @@ export function processSingleSlide(
   // @masterName: ppt/slideLayouts/_rels/slideLayout1.xml.rels
   const slideLayoutResFilename =
     layoutFilename.replace("slideLayouts/slideLayout", "slideLayouts/_rels/slideLayout") + ".rels";
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const slideLayoutResContent = readXmlFile(archive, slideLayoutResFilename);
   RelationshipArray = slideLayoutResContent["Relationships"]["Relationship"];
   let masterFilename = "";
@@ -149,7 +145,6 @@ export function processSingleSlide(
           masterFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
           break;
         default:
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           layoutResObj[RelationshipArray[i]["attrs"]["Id"]] = {
             type: RelationshipArray[i]["attrs"]["Type"].replace(
               "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
@@ -163,7 +158,6 @@ export function processSingleSlide(
     masterFilename = RelationshipArray["attrs"]["Target"].replace("../", "ppt/");
   }
   // Open slideMasterXX.xml
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const slideMasterContent = readXmlFile(archive, masterFilename);
   const slideMasterTextStyles = getTextByPathList(slideMasterContent, [
     "p:sldMaster",
@@ -175,7 +169,6 @@ export function processSingleSlide(
   //Open slideMasterXX.xml.rels
   const slideMasterResFilename =
     masterFilename.replace("slideMasters/slideMaster", "slideMasters/_rels/slideMaster") + ".rels";
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const slideMasterResContent = readXmlFile(archive, slideMasterResFilename);
   RelationshipArray = slideMasterResContent["Relationships"]["Relationship"];
   var themeFilename = "";
@@ -187,7 +180,6 @@ export function processSingleSlide(
           themeFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
           break;
         default:
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           masterResObj[RelationshipArray[i]["attrs"]["Id"]] = {
             type: RelationshipArray[i]["attrs"]["Type"].replace(
               "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
@@ -205,12 +197,9 @@ export function processSingleSlide(
   const themeResObj = {};
   if (themeFilename !== undefined) {
     const themeName = themeFilename.split("/").pop();
-    // @ts-expect-error TS(2769): No overload matches this call.
     const themeResFileName = themeFilename.replace(themeName, "_rels/" + themeName) + ".rels";
     //console.log("themeFilename: ", themeFilename, ", themeName: ", themeName, ", themeResFileName: ", themeResFileName)
-    // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     var themeContent = readXmlFile(archive, themeFilename);
-    // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     const themeResContent = readXmlFile(archive, themeResFileName);
     if (themeResContent !== null) {
       var relationshipArray = themeResContent["Relationships"]["Relationship"];
@@ -218,7 +207,6 @@ export function processSingleSlide(
         var themeFilename = "";
         if (relationshipArray.constructor === Array) {
           for (var i = 0; i < relationshipArray.length; i++) {
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             themeResObj[relationshipArray[i]["attrs"]["Id"]] = {
               type: relationshipArray[i]["attrs"]["Type"].replace(
                 "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
@@ -229,7 +217,6 @@ export function processSingleSlide(
           }
         } else {
           //console.log("theme relationshipArray : ", relationshipArray)
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           themeResObj[relationshipArray["attrs"]["Id"]] = {
             type: relationshipArray["attrs"]["Type"].replace(
               "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
@@ -246,10 +233,8 @@ export function processSingleSlide(
   let digramFileContent = {};
   if (diagramFilename !== undefined) {
     const diagName = diagramFilename.split("/").pop();
-    // @ts-expect-error TS(2769): No overload matches this call.
     const diagramResFileName = diagramFilename.replace(diagName, "_rels/" + diagName) + ".rels";
     //console.log("diagramFilename: ", diagramFilename, ", themeName: ", themeName, ", diagramResFileName: ", diagramResFileName)
-    // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     digramFileContent = readXmlFile(archive, diagramFilename);
     if (digramFileContent !== null && digramFileContent !== undefined && digramFileContent != "") {
       let digramFileContentObjToStr = JSON.stringify(digramFileContent);
@@ -257,14 +242,12 @@ export function processSingleSlide(
       digramFileContent = JSON.parse(digramFileContentObjToStr);
     }
 
-    // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     const digramResContent = readXmlFile(archive, diagramResFileName);
     if (digramResContent !== null) {
       var relationshipArray = digramResContent["Relationships"]["Relationship"];
       var themeFilename = "";
       if (relationshipArray.constructor === Array) {
         for (var i = 0; i < relationshipArray.length; i++) {
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           diagramResObj[relationshipArray[i]["attrs"]["Id"]] = {
             type: relationshipArray[i]["attrs"]["Type"].replace(
               "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
@@ -275,7 +258,6 @@ export function processSingleSlide(
         }
       } else {
         //console.log("theme relationshipArray : ", relationshipArray)
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         diagramResObj[relationshipArray["attrs"]["Id"]] = {
           type: relationshipArray["attrs"]["Type"].replace(
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
