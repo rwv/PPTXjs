@@ -47,19 +47,19 @@ import { genDiagram as _genDiagram } from "../diagram";
 
 export function processSingleSlide(
   archive: PptxArchive,
-  sldFileName: any,
-  index: any,
-  slideSize: any,
+  sldFileName: string,
+  index: number,
+  slideSize: { width: number; height: number; appVersion: number; defaultTextStyle: any },
   defaultTextStyle: any,
-  app_verssion: any,
-  processFullTheme: any,
+  app_verssion: number,
+  processFullTheme: boolean,
   tableStyles: any,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
   slideFactor: number,
   fontSizeFactor: number,
-  chartID: any,
+  chartID: { value: number },
   MsgQueue: any,
   settings: any
 ): string {
