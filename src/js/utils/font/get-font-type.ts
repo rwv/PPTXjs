@@ -14,10 +14,10 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns Font family name or "inherit"
  */
 export function getFontType(
-  node: any,
+  node: Record<string, unknown>,
   type: string | undefined,
-  warpObj: any,
-  pFontStyle: any
+  warpObj: Record<string, unknown>,
+  pFontStyle: Record<string, unknown> | undefined
 ): string {
   let typeface = getTextByPathList(node, ["a:rPr", "a:latin", "attrs", "typeface"]);
 
