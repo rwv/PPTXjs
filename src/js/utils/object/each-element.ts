@@ -9,13 +9,16 @@
  * eachElement([1, 2, 3], (item, i) => `${i}:${item} `); // "0:1 1:2 2:3 "
  * eachElement(5, (item) => `value:${item}`); // "value:5"
  */
-export function eachElement(node: any, doFunction: any): string {
+export function eachElement<T>(
+  node: T | T[] | undefined,
+  doFunction: (element: T, index: number) => string
+): string {
   if (node === undefined) {
     return "";
   }
 
   let result = "";
-  if (node.constructor === Array) {
+  if (Array.isArray(node)) {
     const length = node.length;
     for (let i = 0; i < length; i++) {
       result += doFunction(node[i], i);
