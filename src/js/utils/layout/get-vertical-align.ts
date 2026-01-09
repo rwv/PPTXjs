@@ -24,7 +24,7 @@ export function getVerticalAlign(
   node: any,
   slideLayoutSpNode: any,
   slideMasterSpNode: any,
-  type: any
+  _type: any
 ): string {
   // Find anchor with fallback hierarchy: node -> layout -> master -> default
   let anchor = getTextByPathList(node, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
