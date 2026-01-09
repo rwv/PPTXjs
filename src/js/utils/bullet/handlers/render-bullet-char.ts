@@ -48,24 +48,17 @@ export function renderBulletChar(
     }
   } else if (color_tye == "pattern" || color_tye == "pic" || color_tye == "gradient") {
     if (color_tye == "pattern") {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       bullet += "background:" + bultColor[0][0] + ";";
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (bultColor[0][1] !== null && bultColor[0][1] !== undefined && bultColor[0][1] != "") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         bullet += "background-size:" + bultColor[0][1] + ";";
       }
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (bultColor[0][2] !== null && bultColor[0][2] !== undefined && bultColor[0][2] != "") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         bullet += "background-position:" + bultColor[0][2] + ";";
       }
     } else if (color_tye == "pic") {
       bullet += bultColor[0] + ";";
     } else if (color_tye == "gradient") {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       const colorAry = bultColor[0].color;
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       const rot = bultColor[0].rot;
 
       bullet += "background: linear-gradient(" + rot + "deg,";
@@ -80,14 +73,10 @@ export function renderBulletChar(
 
     // Apply background clipping for non-solid colors
     bullet += "-webkit-background-clip: text;" + "background-clip: text;" + "color: transparent;";
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (bultColor[1].border !== undefined && bultColor[1].border !== "") {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       bullet += "-webkit-text-stroke: " + bultColor[1].border + ";";
     }
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (bultColor[1].effcts !== undefined && bultColor[1].effcts !== "") {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       bullet += "filter: " + bultColor[1].effcts + ";";
     }
   }
