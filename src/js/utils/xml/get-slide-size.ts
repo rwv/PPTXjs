@@ -12,8 +12,8 @@ import type { PptxArchive } from "../../archive/pptx-archive";
 export function getSlideSizeAndSetDefaultTextStyle(
   archive: PptxArchive,
   slideFactor: number,
-  settings: any
-): { width: number; height: number; appVersion: number; defaultTextStyle: any } {
+  settings: { incSlide: { width: number; height: number } }
+): { width: number; height: number; appVersion: number; defaultTextStyle: unknown } {
   //get app version
   const app = readXmlFile(archive, "docProps/app.xml");
   const app_verssion_str = app["Properties"]["AppVersion"];
