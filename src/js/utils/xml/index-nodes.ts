@@ -6,13 +6,17 @@ import { getTextByPathList } from "../object";
  * @param content - Slide XML content object
  * @returns Object with idTable, idxTable, and typeTable lookup maps
  */
-export function indexNodes(content: any): { idTable: any; idxTable: any; typeTable: any } {
+export function indexNodes(content: any): {
+  idTable: Record<string, unknown>;
+  idxTable: Record<string, unknown>;
+  typeTable: Record<string, unknown>;
+} {
   const keys = Object.keys(content);
   const spTreeNode = content[keys[0]]["p:cSld"]["p:spTree"];
 
-  const idTable = {};
-  const idxTable = {};
-  const typeTable = {};
+  const idTable: Record<string, unknown> = {};
+  const idxTable: Record<string, unknown> = {};
+  const typeTable: Record<string, unknown> = {};
 
   for (const key in spTreeNode) {
     if (key === "p:nvGrpSpPr" || key === "p:grpSpPr") {
