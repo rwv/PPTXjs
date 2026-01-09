@@ -14,9 +14,7 @@ import { angleToDegrees } from "../layout/angle-to-degrees";
 export function getGradientFill(node: any, warpObj: any) {
   const gsLst = node["a:gsLst"]["a:gs"];
   const color_ary = [];
-  const tint_ary = [];
   for (let i = 0; i < gsLst.length; i++) {
-    var lo_tint;
     const lo_color = getSolidFill(gsLst[i], undefined, undefined, warpObj);
     color_ary[i] = lo_color;
   }
