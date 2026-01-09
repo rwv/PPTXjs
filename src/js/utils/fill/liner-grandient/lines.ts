@@ -1,4 +1,8 @@
-export function getLinePattern(prst: any, bgColor: any, fgColor: any) {
+export function getLinePattern(
+  prst: string,
+  bgColor: string,
+  fgColor: string
+): string[] | undefined {
   switch (prst) {
     case "wdUpDiag":
       return [
