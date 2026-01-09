@@ -95,8 +95,7 @@ export function getTableCellParams(
   ); //tableStyles
 
   if (total_col_width != 0 /*&& row_idx == 0*/) {
-    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-    colWidth = parseInt(total_col_width) * slideFactor;
+    colWidth = parseInt(String(total_col_width), 10) * slideFactor;
     colStyl += "width:" + colWidth + "px;";
   }
 
@@ -234,11 +233,9 @@ export function getTableCellParams(
   let cssName = "";
   if (celFillColor !== undefined && celFillColor != "") {
     if (celFillColor in styleTable) {
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       cssName = styleTable[celFillColor]["name"];
     } else {
       cssName = "_tbl_cell_css_" + (Object.keys(styleTable).length + 1);
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       styleTable[celFillColor] = {
         name: cssName,
         text: celFillColor,
