@@ -20,7 +20,7 @@ import { createPptxArchive } from "./archive";
 registerDivs2Slides();
 
 (function ($) {
-  $.fn.pptxToHtml = function (options: any) {
+  ($.fn as any).pptxToHtml = function (options: any) {
     //var worker;
     const $result = $(this);
     const divId = $result.attr("id");
@@ -82,7 +82,7 @@ registerDivs2Slides();
           class: "slides-loadnig-msg",
           style: "display:block; width:100%; color:white; background-color: #ddd;",
         }) /*.html("Loading...")*/
-        .html(
+        .append(
           $("<div></div>")
             .attr({
               class: "slides-loading-progress-bar",
@@ -175,10 +175,8 @@ registerDivs2Slides();
       //s = readXmlFile(zip, 'ppt/tableStyles.xml');
       //var slidesHeight = $("#" + divId + " .slide").height();
       for (let i = 0; i < rslt_ary.length; i++) {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         switch (rslt_ary[i]["type"]) {
           case "slide":
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             $result.append(rslt_ary[i]["data"]);
             break;
           case "pptx-thumb":
@@ -189,7 +187,6 @@ registerDivs2Slides();
             break;
           case "globalCSS":
             //console.log(rslt_ary[i]["data"])
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             $result.append("<style>" + rslt_ary[i]["data"] + "</style>");
             break;
           case "ExecutionTime":
@@ -208,7 +205,6 @@ registerDivs2Slides();
             break;
           case "progress-update":
             //console.log(rslt_ary[i]["data"]); //update progress bar - TODO
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             updateProgressBar(rslt_ary[i]["data"]);
             break;
           default:
@@ -237,7 +233,6 @@ registerDivs2Slides();
 
       const slidesHeight = $("#" + divId + " .slide").height();
       const numOfSlides = $("#" + divId + " .slide").length;
-      // @ts-expect-error TS(2454): Variable 'scaleVal' is used before being assigned.
       const sScaleVal = sScale != "" ? scaleVal : 1;
       //console.log("slidesHeight: " + slidesHeight + "\nnumOfSlides: " + numOfSlides + "\nScale: " + sScaleVal)
 
