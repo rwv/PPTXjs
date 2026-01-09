@@ -23,12 +23,12 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns CSS class name for horizontal alignment (h-left, h-right, h-mid, etc.)
  */
 export function getHorizontalAlign(
-  node: any,
-  textBodyNode: any,
+  node: Record<string, unknown>,
+  textBodyNode: Record<string, unknown>,
   idx: number | string | undefined,
   type: string | undefined,
   prg_dir: string | undefined,
-  warpObj: any
+  warpObj: Record<string, unknown>
 ): string {
   let algn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
   if (algn === undefined) {
