@@ -86,18 +86,12 @@ function renderHomePlate(ctx: PlateCylinderContext): string {
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let a,
-    x1,
-    dx1,
-    maxAdj,
-    vc = h / 2;
+  const vc = h / 2;
   const minWH = Math.min(w, h);
-  maxAdj = (cnstVal1 * w) / minWH;
-  if (adj < 0) a = 0;
-  else if (adj > maxAdj) a = maxAdj;
-  else a = adj;
-  dx1 = (minWH * a) / cnstVal1;
-  x1 = w - dx1;
+  const maxAdj = (cnstVal1 * w) / minWH;
+  const a = adj < 0 ? 0 : adj > maxAdj ? maxAdj : adj;
+  const dx1 = (minWH * a) / cnstVal1;
+  const x1 = w - dx1;
 
   const d_val =
     "M" +
@@ -144,18 +138,12 @@ function renderChevron(ctx: PlateCylinderContext): string {
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
-  let a,
-    x1,
-    x2,
-    maxAdj,
-    vc = h / 2;
+  const vc = h / 2;
   const minWH = Math.min(w, h);
-  maxAdj = (cnstVal1 * w) / minWH;
-  if (adj < 0) a = 0;
-  else if (adj > maxAdj) a = maxAdj;
-  else a = adj;
-  x1 = (minWH * a) / cnstVal1;
-  x2 = w - x1;
+  const maxAdj = (cnstVal1 * w) / minWH;
+  const a = adj < 0 ? 0 : adj > maxAdj ? maxAdj : adj;
+  const x1 = (minWH * a) / cnstVal1;
+  const x2 = w - x1;
 
   const d_val =
     "M" +
@@ -212,26 +200,22 @@ function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
   const ss = Math.min(w, h);
-  let maxAdj, a, y1, y2, y3, dVal;
-
-  if (shapType == "flowChartMagneticDisk" || shapType == "flowChartMagneticDrum") {
+  if (shapType === "flowChartMagneticDisk" || shapType === "flowChartMagneticDrum") {
     adj = 50000 * slideFactor;
   }
 
-  maxAdj = (cnstVal1 * h) / ss;
-  a = adj < 0 ? 0 : adj > maxAdj ? maxAdj : adj;
-  y1 = (ss * a) / cnstVal2;
-  y2 = y1 + y1;
-  y3 = h - y1;
+  const maxAdj = (cnstVal1 * h) / ss;
+  const a = adj < 0 ? 0 : adj > maxAdj ? maxAdj : adj;
+  const y1 = (ss * a) / cnstVal2;
+  const _y2 = y1 + y1;
+  const y3 = h - y1;
   const cd2 = 180,
     wd2 = w / 2;
 
-  let tranglRott = "";
-  if (shapType == "flowChartMagneticDrum") {
-    tranglRott = `transform='rotate(90 ${w / 2},${h / 2})'`;
-  }
+  const tranglRott =
+    shapType === "flowChartMagneticDrum" ? `transform='rotate(90 ${w / 2},${h / 2})'` : "";
 
-  dVal =
+  const dVal =
     shapeArc(wd2, y1, wd2, y1, 0, cd2, false) +
     shapeArc(wd2, y1, wd2, y1, cd2, cd2 + cd2, false).replace("M", "L") +
     " L" +
