@@ -493,7 +493,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           px_pr_ary = ["1px", "100%", "2px 2px"];
           break;
       }
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       return [
         "radial-gradient(#" +
           fgColor +
@@ -502,7 +501,6 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ", transparent " +
           px_pr_ary[1] +
           ")," +
-          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           "#" +
           bgColor +
           ";",
