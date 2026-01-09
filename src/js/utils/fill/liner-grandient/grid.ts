@@ -1,4 +1,8 @@
-export function getGridPattern(prst: any, bgColor: any, fgColor: any) {
+export function getGridPattern(
+  prst: string,
+  bgColor: string,
+  fgColor: string
+): string[] | undefined {
   switch (prst) {
     case "smGrid":
       return [
