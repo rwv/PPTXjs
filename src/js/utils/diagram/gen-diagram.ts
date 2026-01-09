@@ -65,13 +65,9 @@ export function genDiagram(
     dgmLayoutFileName = warpObj["slideResObj"][dgmLayoutFileId].target,
     dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
   //console.log("dgmClrFileName: " , dgmClrFileName,", dgmDataFileName: ",dgmDataFileName,", dgmLayoutFileName: ",dgmLayoutFileName,", dgmQuickStyleFileName: ",dgmQuickStyleFileName);
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const dgmClr = readXmlFile(archive, dgmClrFileName);
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const dgmData = readXmlFile(archive, dgmDataFileName);
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const dgmLayout = readXmlFile(archive, dgmLayoutFileName);
-  // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
   const dgmQuickStyle = readXmlFile(archive, dgmQuickStyleFileName);
   //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
   ///get drawing#.xml
