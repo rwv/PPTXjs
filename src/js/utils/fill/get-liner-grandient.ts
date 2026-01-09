@@ -169,10 +169,10 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
       ];
     case "lgCheck":
-    case "smCheck":
-      var size = "";
-      var pos = "";
-      if (prst == "lgCheck") {
+    case "smCheck": {
+      let size = "";
+      let pos = "";
+      if (prst === "lgCheck") {
         size = "8px 8px";
         pos = "0 0, 4px 4px, 4px 4px, 8px 8px";
       } else {
@@ -196,6 +196,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
         size,
         pos,
       ];
+    }
     case "dashUpDiag":
       return [
         "repeating-linear-gradient(152deg, #" +
@@ -335,9 +336,9 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
         "0 0, 2px 2px",
       ];
     case "zigZag":
-    case "wave":
-      var size = "";
-      if (prst == "zigZag") size = "0";
+    case "wave": {
+      let size = "";
+      if (prst === "zigZag") size = "0";
       else size = "1px";
       return [
         "linear-gradient(135deg,  #" +
@@ -361,10 +362,11 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         "4px 4px",
       ];
+    }
     case "lgConfetti":
-    case "smConfetti":
-      var size = "";
-      if (prst == "lgConfetti") size = "4px 4px";
+    case "smConfetti": {
+      let size = "";
+      if (prst === "lgConfetti") size = "4px 4px";
       else size = "2px 2px";
       return [
         "linear-gradient(135deg,  #" +
@@ -384,6 +386,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         size,
       ];
+    }
     case "plaid":
       return [
         "linear-gradient(0deg, transparent, transparent 25%, #" +
@@ -449,8 +452,8 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
     case "pct80":
     case "pct90":
     case "trellis":
-    case "divot":
-      var px_pr_ary;
+    case "divot": {
+      let px_pr_ary;
       switch (prst) {
         case "pct5":
           px_pr_ary = ["0.3px", "10%", "2px 2px"];
@@ -506,6 +509,7 @@ export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
           ";",
         px_pr_ary[2],
       ];
+    }
     default:
       return [0, 0];
   }
