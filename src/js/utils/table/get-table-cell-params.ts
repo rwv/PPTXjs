@@ -34,10 +34,10 @@ import { genTextBody } from "../text";
 export function getTableCellParams(
   tcNodes: any,
   getColsGrid: any,
-  row_idx: any,
-  col_idx: any,
+  row_idx: number,
+  col_idx: number,
   thisTblStyle: any,
-  cellSource: any,
+  cellSource: string | undefined,
   warpObj: any,
   isFirstBr: { value: boolean },
   styleTable: any,
