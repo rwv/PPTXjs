@@ -43,10 +43,10 @@ export function genTextBody(
   spNode: any,
   slideLayoutSpNode: any,
   slideMasterSpNode: any,
-  type: any,
-  idx: any,
+  type: string | undefined,
+  idx: number | string | undefined,
   warpObj: any,
-  tbl_col_width: any,
+  tbl_col_width: number | string | undefined,
   isFirstBr: { value: boolean },
   styleTable: any,
   rtlLangsArray: string[],
@@ -87,7 +87,7 @@ export function genTextBody(
     if (rNode !== undefined && brNode !== undefined) {
       isFirstBr.value = true;
       brNode = brNode.constructor === Array ? brNode : [brNode];
-      brNode.forEach(function (item: any, _indx: any) {
+      brNode.forEach(function (item: any, _indx: number) {
         item.type = "br";
       });
       if (brNode.length > 1) {
