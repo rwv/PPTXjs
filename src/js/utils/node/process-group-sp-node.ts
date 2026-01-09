@@ -84,24 +84,19 @@ export function processGroupSpNode(
   }
   let grpStyle = "";
 
-  // @ts-expect-error TS(2454): Variable 'rotStr' is used before being assigned.
   if (rotStr !== undefined && rotStr != "") {
     grpStyle += rotStr;
   }
 
-  // @ts-expect-error TS(2454): Variable 'top' is used before being assigned.
   if (top !== undefined) {
     grpStyle += "top: " + top + "px;";
   }
-  // @ts-expect-error TS(2454): Variable 'left' is used before being assigned.
   if (left !== undefined) {
     grpStyle += "left: " + left + "px;";
   }
-  // @ts-expect-error TS(2454): Variable 'width' is used before being assigned.
   if (width !== undefined) {
     grpStyle += "width:" + width + "px;";
   }
-  // @ts-expect-error TS(2454): Variable 'height' is used before being assigned.
   if (height !== undefined) {
     grpStyle += "height: " + height + "px;";
   }
@@ -118,7 +113,6 @@ export function processGroupSpNode(
   for (const nodeKey in node) {
     if (node[nodeKey].constructor === Array) {
       for (let i = 0; i < node[nodeKey].length; i++) {
-        // @ts-expect-error TS(2454): Variable 'sType' is used before being assigned.
         result += processNodesInSlide(
           nodeKey,
           node[nodeKey][i],
@@ -138,7 +132,6 @@ export function processGroupSpNode(
         );
       }
     } else {
-      // @ts-expect-error TS(2454): Variable 'sType' is used before being assigned.
       result += processNodesInSlide(
         nodeKey,
         node[nodeKey],
