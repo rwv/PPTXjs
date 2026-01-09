@@ -18,8 +18,8 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  */
 export function getLayoutAndMasterNode(
   node: any,
-  idx: any,
-  type: any,
+  idx: number | string | undefined,
+  type: string | undefined,
   warpObj: any
 ): { nodeLaout: any; nodeMaster: any } {
   let pPrNodeLaout, pPrNodeMaster;
