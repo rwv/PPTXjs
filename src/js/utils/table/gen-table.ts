@@ -59,7 +59,7 @@ export function genTable(
   let tblDir = "";
   if (getTblPr !== undefined) {
     const isRTL = getTblPr["attrs"]["rtl"];
-    tblDir = isRTL == 1 ? "dir=rtl" : "dir=ltr";
+    tblDir = String(isRTL) === "1" ? "dir=rtl" : "dir=ltr";
   }
   const firstRowAttr = getTblPr["attrs"]["firstRow"]; //associated element <a:firstRow> in the table styles
   const firstColAttr = getTblPr["attrs"]["firstCol"]; //associated element <a:firstCol> in the table styles
@@ -69,12 +69,12 @@ export function genTable(
   const bandColAttr = getTblPr["attrs"]["bandCol"]; //associated element <a:band1V>, <a:band2V> in the table styles
   //console.log("getTblPr: ", getTblPr);
   const tblStylAttrObj = {
-    isFrstRowAttr: firstRowAttr !== undefined && firstRowAttr == "1" ? 1 : 0,
-    isFrstColAttr: firstColAttr !== undefined && firstColAttr == "1" ? 1 : 0,
-    isLstRowAttr: lastRowAttr !== undefined && lastRowAttr == "1" ? 1 : 0,
-    isLstColAttr: lastColAttr !== undefined && lastColAttr == "1" ? 1 : 0,
-    isBandRowAttr: bandRowAttr !== undefined && bandRowAttr == "1" ? 1 : 0,
-    isBandColAttr: bandColAttr !== undefined && bandColAttr == "1" ? 1 : 0,
+    isFrstRowAttr: firstRowAttr !== undefined && firstRowAttr === "1" ? 1 : 0,
+    isFrstColAttr: firstColAttr !== undefined && firstColAttr === "1" ? 1 : 0,
+    isLstRowAttr: lastRowAttr !== undefined && lastRowAttr === "1" ? 1 : 0,
+    isLstColAttr: lastColAttr !== undefined && lastColAttr === "1" ? 1 : 0,
+    isBandRowAttr: bandRowAttr !== undefined && bandRowAttr === "1" ? 1 : 0,
+    isBandColAttr: bandColAttr !== undefined && bandColAttr === "1" ? 1 : 0,
   };
 
   const tbleStyleId = getTblPr["a:tableStyleId"];
@@ -89,7 +89,7 @@ export function genTable(
     tbl_borders = getTableBorders(tblBorderStyl, warpObj);
   }
   let tbl_bgcolor = "";
-  const tbl_opacity = 1;
+  const _tblOpacity = 1;
   let tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:tblBg", "a:fillRef"]);
   //console.log( "thisTblStyle:", thisTblStyle, "warpObj:", warpObj)
   if (tbl_bgFillschemeClr !== undefined) {
@@ -128,7 +128,7 @@ export function genTable(
   }
   //if (trNodes.constructor === Array) {
   //multi rows
-  let totalrowSpan = 0;
+  let _totalRowSpan = 0;
   let rowSpanAry: any = [];
   for (let i = 0; i < trNodes.length; i++) {
     //////////////rows Style ////////////Amir
@@ -147,8 +147,8 @@ export function genTable(
     const fontWeight = rowStyle.fontWeight;
     rowsStyl += row_borders !== undefined ? row_borders : "";
     rowsStyl += fontClrPr !== undefined ? " color: #" + fontClrPr + ";" : "";
-    rowsStyl += fontWeight != "" ? " font-weight:" + fontWeight + ";" : "";
-    if (fillColor !== undefined && fillColor != "") {
+    rowsStyl += fontWeight !== "" ? " font-weight:" + fontWeight + ";" : "";
+    if (fillColor !== undefined && fillColor !== "") {
       //rowsStyl += "background-color: rgba(" + hexToRgbNew(fillColor) + "," + colorOpacity + ");";
       rowsStyl += "background-color: #" + fillColor + ";";
     }
@@ -160,40 +160,40 @@ export function genTable(
       if (tcNodes.constructor === Array) {
         //multi columns
         let j = 0;
-        if (rowSpanAry.length == 0) {
+        if (rowSpanAry.length === 0) {
           rowSpanAry = Array.apply(null, Array(tcNodes.length)).map(function () {
             return 0;
           });
         }
         let totalColSpan = 0;
         while (j < tcNodes.length) {
-          if (rowSpanAry[j] == 0 && totalColSpan == 0) {
-            var a_sorce;
+          if (rowSpanAry[j] === 0 && totalColSpan === 0) {
+            let a_sorce;
             //j=0 : first col
-            if (j == 0 && tblStylAttrObj["isFrstColAttr"] == 1) {
+            if (j === 0 && tblStylAttrObj["isFrstColAttr"] === 1) {
               a_sorce = "a:firstCol";
               if (
-                tblStylAttrObj["isLstRowAttr"] == 1 &&
-                i == trNodes.length - 1 &&
+                tblStylAttrObj["isLstRowAttr"] === 1 &&
+                i === trNodes.length - 1 &&
                 getTextByPathList(thisTblStyle, ["a:seCell"]) !== undefined
               ) {
                 a_sorce = "a:seCell";
               } else if (
-                tblStylAttrObj["isFrstRowAttr"] == 1 &&
-                i == 0 &&
+                tblStylAttrObj["isFrstRowAttr"] === 1 &&
+                i === 0 &&
                 getTextByPathList(thisTblStyle, ["a:neCell"]) !== undefined
               ) {
                 a_sorce = "a:neCell";
               }
             } else if (
               j > 0 &&
-              tblStylAttrObj["isBandColAttr"] == 1 &&
-              !(tblStylAttrObj["isFrstColAttr"] == 1 && i == 0) &&
-              !(tblStylAttrObj["isLstRowAttr"] == 1 && i == trNodes.length - 1) &&
-              j != tcNodes.length - 1
+              tblStylAttrObj["isBandColAttr"] === 1 &&
+              !(tblStylAttrObj["isFrstColAttr"] === 1 && i === 0) &&
+              !(tblStylAttrObj["isLstRowAttr"] === 1 && i === trNodes.length - 1) &&
+              j !== tcNodes.length - 1
             ) {
-              if (j % 2 != 0) {
-                var aBandNode = getTextByPathList(thisTblStyle, ["a:band2V"]);
+              if (j % 2 !== 0) {
+                let aBandNode = getTextByPathList(thisTblStyle, ["a:band2V"]);
                 if (aBandNode === undefined) {
                   aBandNode = getTextByPathList(thisTblStyle, ["a:band1V"]);
                   if (aBandNode !== undefined) {
@@ -205,24 +205,24 @@ export function genTable(
               }
             }
 
-            if (j == tcNodes.length - 1 && tblStylAttrObj["isLstColAttr"] == 1) {
+            if (j === tcNodes.length - 1 && tblStylAttrObj["isLstColAttr"] === 1) {
               a_sorce = "a:lastCol";
               if (
-                tblStylAttrObj["isLstRowAttr"] == 1 &&
-                i == trNodes.length - 1 &&
+                tblStylAttrObj["isLstRowAttr"] === 1 &&
+                i === trNodes.length - 1 &&
                 getTextByPathList(thisTblStyle, ["a:swCell"]) !== undefined
               ) {
                 a_sorce = "a:swCell";
               } else if (
-                tblStylAttrObj["isFrstRowAttr"] == 1 &&
-                i == 0 &&
+                tblStylAttrObj["isFrstRowAttr"] === 1 &&
+                i === 0 &&
                 getTextByPathList(thisTblStyle, ["a:nwCell"]) !== undefined
               ) {
                 a_sorce = "a:nwCell";
               }
             }
 
-            var cellParmAry = getTableCellParams(
+            const cellParmAry = getTableCellParams(
               tcNodes[j],
               getColsGrid,
               i,
@@ -236,14 +236,14 @@ export function genTable(
               slideFactor,
               fontSizeFactor
             );
-            var text = cellParmAry[0];
-            var colStyl = cellParmAry[1];
-            var cssName = cellParmAry[2];
-            var rowSpan = cellParmAry[3];
+            const text = cellParmAry[0];
+            const colStyl = cellParmAry[1];
+            const cssName = cellParmAry[2];
+            const rowSpan = cellParmAry[3];
             const colSpan = cellParmAry[4];
 
             if (rowSpan !== undefined) {
-              totalrowSpan++;
+              _totalRowSpan++;
               rowSpanAry[j] = parseInt(rowSpan) - 1;
               tableHtml +=
                 "<td class='" +
@@ -290,10 +290,10 @@ export function genTable(
                 "</td>";
             }
           } else {
-            if (rowSpanAry[j] != 0) {
+            if (rowSpanAry[j] !== 0) {
               rowSpanAry[j] -= 1;
             }
-            if (totalColSpan != 0) {
+            if (totalColSpan !== 0) {
               totalColSpan--;
             }
           }
@@ -302,11 +302,14 @@ export function genTable(
       } else {
         //single column
 
-        var a_sorce;
-        if (tblStylAttrObj["isFrstColAttr"] == 1 && !(tblStylAttrObj["isLstRowAttr"] == 1)) {
+        let a_sorce;
+        if (tblStylAttrObj["isFrstColAttr"] === 1 && !(tblStylAttrObj["isLstRowAttr"] === 1)) {
           a_sorce = "a:firstCol";
-        } else if (tblStylAttrObj["isBandColAttr"] == 1 && !(tblStylAttrObj["isLstRowAttr"] == 1)) {
-          var aBandNode = getTextByPathList(thisTblStyle, ["a:band2V"]);
+        } else if (
+          tblStylAttrObj["isBandColAttr"] === 1 &&
+          !(tblStylAttrObj["isLstRowAttr"] === 1)
+        ) {
+          let aBandNode = getTextByPathList(thisTblStyle, ["a:band2V"]);
           if (aBandNode === undefined) {
             aBandNode = getTextByPathList(thisTblStyle, ["a:band1V"]);
             if (aBandNode !== undefined) {
@@ -317,11 +320,11 @@ export function genTable(
           }
         }
 
-        if (tblStylAttrObj["isLstColAttr"] == 1 && !(tblStylAttrObj["isLstRowAttr"] == 1)) {
+        if (tblStylAttrObj["isLstColAttr"] === 1 && !(tblStylAttrObj["isLstRowAttr"] === 1)) {
           a_sorce = "a:lastCol";
         }
 
-        var cellParmAry = getTableCellParams(
+        const cellParmAry = getTableCellParams(
           tcNodes,
           getColsGrid,
           i,
@@ -335,10 +338,10 @@ export function genTable(
           slideFactor,
           fontSizeFactor
         );
-        var text = cellParmAry[0];
-        var colStyl = cellParmAry[1];
-        var cssName = cellParmAry[2];
-        var rowSpan = cellParmAry[3];
+        const text = cellParmAry[0];
+        const colStyl = cellParmAry[1];
+        const cssName = cellParmAry[2];
+        const rowSpan = cellParmAry[3];
 
         if (rowSpan !== undefined) {
           tableHtml +=
