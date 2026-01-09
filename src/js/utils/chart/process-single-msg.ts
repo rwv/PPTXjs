@@ -1,13 +1,33 @@
+type ChartMessage = {
+  chartID: string | number;
+  chartType: string;
+  chartData: any[];
+};
+
+function isChartMessage(value: unknown): value is ChartMessage {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const record = value as Record<string, unknown>;
+  return (
+    (typeof record.chartID === "string" || typeof record.chartID === "number") &&
+    typeof record.chartType === "string" &&
+    Array.isArray(record.chartData)
+  );
+}
+
 /**
  * Process a single chart rendering message using D3 and NVD3
  *
  * @param d - Chart configuration data containing chartID, chartType, and chartData
  * @returns True if chart was successfully rendered, false otherwise
  */
-export function processSingleMsg(d: any): boolean {
-  const chartID = d.chartID;
-  const chartType = d.chartType;
-  const chartData = d.chartData;
+export function processSingleMsg(d: unknown): boolean {
+  if (!isChartMessage(d)) {
+    return false;
+  }
+
+  const { chartID, chartType, chartData } = d;
 
   let data = [];
 
@@ -17,16 +37,16 @@ export function processSingleMsg(d: any): boolean {
       data = chartData;
       // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.lineChart().useInteractiveGuideline(true);
-      chart.xAxis.tickFormat(function (d: any) {
-        return chartData[0].xlabels[d] || d;
+      chart.xAxis.tickFormat(function (value: number) {
+        return chartData[0].xlabels[value] || value;
       });
       break;
     case "barChart":
       data = chartData;
       // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.multiBarChart();
-      chart.xAxis.tickFormat(function (d: any) {
-        return chartData[0].xlabels[d] || d;
+      chart.xAxis.tickFormat(function (value: number) {
+        return chartData[0].xlabels[value] || value;
       });
       break;
     case "pieChart":
@@ -41,8 +61,8 @@ export function processSingleMsg(d: any): boolean {
       data = chartData;
       // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.stackedAreaChart().clipEdge(true).useInteractiveGuideline(true);
-      chart.xAxis.tickFormat(function (d: any) {
-        return chartData[0].xlabels[d] || d;
+      chart.xAxis.tickFormat(function (value: number) {
+        return chartData[0].xlabels[value] || value;
       });
       break;
     case "scatterChart":
