@@ -11,48 +11,48 @@ export function getTableBorders(node: any, warpObj: any): string {
   let borderStyle = "";
 
   if (node["a:bottom"] !== undefined) {
-    var obj = {
+    const obj = {
       "p:spPr": {
         "a:ln": node["a:bottom"]["a:ln"],
       },
     };
-    var borders = getBorder(obj, undefined, false, "shape", warpObj);
+    const borders = getBorder(obj, undefined, false, "shape", warpObj);
     if (typeof borders === "string") {
       borderStyle += borders.replace("border", "border-bottom");
     }
   }
 
   if (node["a:top"] !== undefined) {
-    var obj = {
+    const obj = {
       "p:spPr": {
         "a:ln": node["a:top"]["a:ln"],
       },
     };
-    var borders = getBorder(obj, undefined, false, "shape", warpObj);
+    const borders = getBorder(obj, undefined, false, "shape", warpObj);
     if (typeof borders === "string") {
       borderStyle += borders.replace("border", "border-top");
     }
   }
 
   if (node["a:right"] !== undefined) {
-    var obj = {
+    const obj = {
       "p:spPr": {
         "a:ln": node["a:right"]["a:ln"],
       },
     };
-    var borders = getBorder(obj, undefined, false, "shape", warpObj);
+    const borders = getBorder(obj, undefined, false, "shape", warpObj);
     if (typeof borders === "string") {
       borderStyle += borders.replace("border", "border-right");
     }
   }
 
   if (node["a:left"] !== undefined) {
-    var obj = {
+    const obj = {
       "p:spPr": {
         "a:ln": node["a:left"]["a:ln"],
       },
     };
-    var borders = getBorder(obj, undefined, false, "shape", warpObj);
+    const borders = getBorder(obj, undefined, false, "shape", warpObj);
     if (typeof borders === "string") {
       borderStyle += borders.replace("border", "border-left");
     }
