@@ -85,7 +85,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
         border.strokeDasharray +
         "' />";
 
-      if (shapType == "flowChartPredefinedProcess") {
+      if (shapType === "flowChartPredefinedProcess") {
         result +=
           "<rect x='" +
           w * (1 / 8) +
@@ -100,7 +100,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           "' stroke-dasharray='" +
           border.strokeDasharray +
           "' />";
-      } else if (shapType == "flowChartInternalStorage") {
+      } else if (shapType === "flowChartInternalStorage") {
         result +=
           " <polyline points='" +
           w * (1 / 8) +
@@ -132,9 +132,10 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
       }
       break;
     case "irregularSeal1":
-    case "irregularSeal2":
-      if (shapType == "irregularSeal1") {
-        var d =
+    case "irregularSeal2": {
+      let d = "";
+      if (shapType === "irregularSeal1") {
+        d =
           "M" +
           (w * 10800) / 21600 +
           "," +
@@ -232,8 +233,8 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           "," +
           (h * 2295) / 21600 +
           " z";
-      } else if (shapType == "irregularSeal2") {
-        var d =
+      } else if (shapType === "irregularSeal2") {
+        d =
           "M" +
           (w * 11462) / 21600 +
           "," +
@@ -365,6 +366,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
         border.strokeDasharray +
         "' />";
       break;
+    }
     case "ellipse":
     case "flowChartConnector":
     case "flowChartSummingJunction":
@@ -391,7 +393,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
         "' stroke-dasharray='" +
         border.strokeDasharray +
         "' />";
-      if (shapType == "flowChartOr") {
+      if (shapType === "flowChartOr") {
         result +=
           " <polyline points='" +
           w / 2 +
@@ -424,24 +426,18 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           "' stroke-dasharray='" +
           border.strokeDasharray +
           "' />";
-      } else if (shapType == "flowChartSummingJunction") {
-        let iDx,
-          idy,
-          il,
-          ir,
-          it,
-          ib,
-          hc = w / 2,
-          vc = h / 2,
-          wd2 = w / 2,
-          hd2 = h / 2;
+      } else if (shapType === "flowChartSummingJunction") {
+        const hc = w / 2;
+        const vc = h / 2;
+        const wd2 = w / 2;
+        const hd2 = h / 2;
         const angVal = Math.PI / 4;
-        iDx = wd2 * Math.cos(angVal);
-        idy = hd2 * Math.sin(angVal);
-        il = hc - iDx;
-        ir = hc + iDx;
-        it = vc - idy;
-        ib = vc + idy;
+        const iDx = wd2 * Math.cos(angVal);
+        const idy = hd2 * Math.sin(angVal);
+        const il = hc - iDx;
+        const ir = hc + iDx;
+        const it = vc - idy;
+        const ib = vc + idy;
         result +=
           " <polyline points='" +
           il +
@@ -484,18 +480,21 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
     case "snip2DiagRect":
     case "snip2SameRect":
     case "flowChartAlternateProcess":
-    case "flowChartPunchedCard":
-      var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-      var sAdj1, sAdj1_val; // = 0.33334;
-      var sAdj2, sAdj2_val; // = 0.33334;
-      var shpTyp, adjTyp;
+    case "flowChartPunchedCard": {
+      const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+      let sAdj1;
+      let sAdj1_val;
+      let sAdj2;
+      let sAdj2_val;
+      let shpTyp;
+      let adjTyp;
       if (shapAdjst_ary !== undefined && shapAdjst_ary.constructor === Array) {
-        for (var i = 0; i < shapAdjst_ary.length; i++) {
-          var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-          if (sAdj_name == "adj1") {
+        for (let i = 0; i < shapAdjst_ary.length; i++) {
+          const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+          if (sAdj_name === "adj1") {
             sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
             sAdj1_val = parseInt(sAdj1.substr(4)) / 50000;
-          } else if (sAdj_name == "adj2") {
+          } else if (sAdj_name === "adj2") {
             sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
             sAdj2_val = parseInt(sAdj2.substr(4)) / 50000;
           }
@@ -506,7 +505,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
         sAdj2_val = 0;
       }
       //console.log("shapType: ",shapType,",node: ",node )
-      var tranglRott = "";
+      let tranglRott = "";
       switch (shapType) {
         case "roundRect":
         case "flowChartAlternateProcess":
@@ -539,7 +538,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           adjTyp = "cornr1";
           if (sAdj1_val === undefined) sAdj1_val = 0.33334;
           sAdj2_val = 0;
-          if (shapType == "flowChartPunchedCard") {
+          if (shapType === "flowChartPunchedCard") {
             tranglRott = "transform='translate(" + w + ",0) scale(-1,1)'";
           }
           break;
@@ -556,7 +555,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
           if (sAdj2_val === undefined) sAdj2_val = 0;
           break;
       }
-      var d_val = shapeSnipRoundRect(w, h, sAdj1_val, sAdj2_val, shpTyp, adjTyp);
+      const d_val = shapeSnipRoundRect(w, h, sAdj1_val, sAdj2_val, shpTyp, adjTyp);
       result +=
         "<path " +
         tranglRott +
@@ -576,25 +575,26 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
         border.strokeDasharray +
         "' />";
       break;
-    case "snipRoundRect":
-      var shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-      var sAdj1,
-        sAdj1_val: any = 0.33334;
-      var sAdj2,
-        sAdj2_val: any = 0.33334;
+    }
+    case "snipRoundRect": {
+      const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+      let sAdj1;
+      let sAdj1_val = 0.33334;
+      let sAdj2;
+      let sAdj2_val = 0.33334;
       if (shapAdjst_ary !== undefined) {
-        for (var i = 0; i < shapAdjst_ary.length; i++) {
-          var sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-          if (sAdj_name == "adj1") {
+        for (let i = 0; i < shapAdjst_ary.length; i++) {
+          const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+          if (sAdj_name === "adj1") {
             sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
             sAdj1_val = parseInt(sAdj1.substr(4)) / 50000;
-          } else if (sAdj_name == "adj2") {
+          } else if (sAdj_name === "adj2") {
             sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
             sAdj2_val = parseInt(sAdj2.substr(4)) / 50000;
           }
         }
       }
-      var d_val =
+      const d_val =
         "M0," +
         h +
         " L" +
@@ -630,6 +630,7 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
         border.strokeDasharray +
         "' />";
       break;
+    }
     case "leftRightCircularArrow":
     case "chartPlus":
     case "chartStar":
