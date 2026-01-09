@@ -29,7 +29,11 @@ import { getTilePattern } from "./liner-grandient/tiles";
 import { getSpecialPattern } from "./liner-grandient/special";
 import { getPercentPattern } from "./liner-grandient/percent";
 
-export function getLinerGrandient(prst: any, bgColor: any, fgColor: any) {
+export function getLinerGrandient(
+  prst: string,
+  bgColor: string,
+  fgColor: string
+): Array<string | number> {
   const gridPattern = getGridPattern(prst, bgColor, fgColor);
   if (gridPattern) return gridPattern;
 
