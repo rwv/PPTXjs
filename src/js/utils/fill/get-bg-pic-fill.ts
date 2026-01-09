@@ -22,7 +22,13 @@ import { getPicFill } from "./get-pic-fill";
  * @param index - Slide index for CSS class naming
  * @returns CSS background style string with z-index
  */
-export function getBgPicFill(bgPr: any, sorce: any, warpObj: any, phClr: any, _index: any): string {
+export function getBgPicFill(
+  bgPr: any,
+  sorce: string,
+  warpObj: any,
+  phClr: string | undefined,
+  _index: number | string
+): string {
   const picFillBase64 = getPicFill(sorce, bgPr["a:blipFill"], warpObj);
   const ordr = bgPr["attrs"]["order"];
   const aBlipNode = bgPr["a:blipFill"]["a:blip"];
