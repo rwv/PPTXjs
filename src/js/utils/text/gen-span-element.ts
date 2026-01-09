@@ -178,16 +178,11 @@ export function genSpanElement(
     }
   } else if (fontClrType == "pattern" || fontClrType == "pic" || fontClrType == "gradient") {
     if (fontClrType == "pattern") {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       styleText += "background:" + fontClrPr[0][0] + ";";
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (fontClrPr[0][1] !== null && fontClrPr[0][1] !== undefined && fontClrPr[0][1] != "") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         styleText += "background-size:" + fontClrPr[0][1] + ";"; //" 2px 2px;" +
       }
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (fontClrPr[0][2] !== null && fontClrPr[0][2] !== undefined && fontClrPr[0][2] != "") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         styleText += "background-position:" + fontClrPr[0][2] + ";"; //" 2px 2px;" +
       }
       // styleText += "-webkit-background-clip: text;" +
@@ -202,9 +197,7 @@ export function genSpanElement(
       //     "color: transparent;" +
       //     "-webkit-text-stroke: " + fontClrPr[1].border + ";";
     } else if (fontClrType == "gradient") {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       const colorAry = fontClrPr[0].color;
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       const rot = fontClrPr[0].rot;
 
       styleText += "background: linear-gradient(" + rot + "deg,";
@@ -222,14 +215,10 @@ export function genSpanElement(
     }
     styleText +=
       "-webkit-background-clip: text;" + "background-clip: text;" + "color: transparent;";
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (fontClrPr[1].border !== undefined && fontClrPr[1].border !== "") {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       styleText += "-webkit-text-stroke: " + fontClrPr[1].border + ";";
     }
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (fontClrPr[1].effcts !== undefined && fontClrPr[1].effcts !== "") {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       styleText += "filter: " + fontClrPr[1].effcts + ";";
     }
   }
@@ -332,11 +321,9 @@ export function genSpanElement(
   let cssName = "";
 
   if (styleText in styleTable) {
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     cssName = styleTable[styleText]["name"];
   } else {
     cssName = "_css_" + (Object.keys(styleTable).length + 1);
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     styleTable[styleText] = {
       name: cssName,
       text: styleText,
