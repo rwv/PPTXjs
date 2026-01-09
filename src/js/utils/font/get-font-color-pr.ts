@@ -22,14 +22,14 @@ import { getLayoutAndMasterNode } from "../layout/get-layout-and-master-node";
 import { getBorder } from "../border/get-border";
 
 export function getFontColorPr(
-  node: any,
-  pNode: any,
-  lstStyle: any,
-  pFontStyle: any,
-  lvl: any,
-  idx: any,
-  type: any,
-  warpObj: any,
+  node: Record<string, unknown>,
+  pNode: Record<string, unknown>,
+  lstStyle: Record<string, unknown> | undefined,
+  pFontStyle: Record<string, unknown> | undefined,
+  lvl: number | string,
+  idx: number | string | undefined,
+  type: string | undefined,
+  warpObj: Record<string, unknown>,
   slideFactor: number
 ): [any, any, string, string] {
   const rPrNode = getTextByPathList(node, ["a:rPr"]);
@@ -146,7 +146,7 @@ export function getFontColorPr(
   }
 
   const txtEffects: string[] = [];
-  const txtEffObj: any = {};
+  const txtEffObj: Record<string, string> = {};
 
   // textBordr
   const txtBrdrNode = getTextByPathList(node, ["a:rPr", "a:ln"]);
@@ -270,8 +270,8 @@ export function getFontColorPr(
     }
   }
 
-  let text_effcts = "",
-    txt_effects: any;
+  let text_effcts = "";
+  let txt_effects: string | Record<string, string>;
   if (colorType === "solid") {
     if (txtEffects.length > 0) {
       text_effcts = txtEffects.join(",");
