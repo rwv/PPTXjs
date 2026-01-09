@@ -42,7 +42,7 @@ export function getVerticalMargins(
   //a:pPr =>a:lnSpc => a:spcPts (/?) | a:spcPct (/?)
   //console.log("getVerticalMargins ", pNode, type,idx, warpObj)
   //var lstStyle = textBodyNode["a:lstStyle"];
-  var lvl = 1;
+  let lvl = 1;
   let spcBefNode = getTextByPathList(pNode, ["a:pPr", "a:spcBef", "a:spcPts", "attrs", "val"]);
   let spcAftNode = getTextByPathList(pNode, ["a:pPr", "a:spcAft", "a:spcPts", "attrs", "val"]);
   let lnSpcNode = getTextByPathList(pNode, ["a:pPr", "a:lnSpc", "a:spcPct", "attrs", "val"]);
@@ -68,7 +68,7 @@ export function getVerticalMargins(
       warpObj,
       fontSizeFactor
     );
-    if (fontSizeStr != "inherit") {
+    if (fontSizeStr !== "inherit") {
       // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
       fontSize = parseInt(fontSizeStr, "px"); //pt
     }
@@ -100,7 +100,7 @@ export function getVerticalMargins(
   //     //check in layout and then in master
   // }
   let isInLayoutOrMaster = true;
-  if (type == "shape" || type == "textBox") {
+  if (type === "shape" || type === "textBox") {
     isInLayoutOrMaster = false;
   }
   if (
@@ -172,8 +172,7 @@ export function getVerticalMargins(
     //slideMasterTextStyles
     const slideMasterTextStyles = warpObj["slideMasterTextStyles"];
     let dirLoc = "";
-    // @ts-expect-error TS(2403): Subsequent variable declarations must have the sam... Remove this comment to see the full error message
-    var lvl = "a:lvl" + lvl + "pPr";
+    const lvlKey = "a:lvl" + lvl + "pPr";
     switch (type) {
       case "title":
       case "ctrTitle":
@@ -195,10 +194,10 @@ export function getVerticalMargins(
       default:
         dirLoc = "p:otherStyle";
     }
-    // if (type == "shape" || type == "textBox") {
-    //     lvl = "a:lvl1pPr";
+    // if (type === "shape" || type === "textBox") {
+    //     lvlKey = "a:lvl1pPr";
     // }
-    const inLvlNode = getTextByPathList(slideMasterTextStyles, [dirLoc, lvl]);
+    const inLvlNode = getTextByPathList(slideMasterTextStyles, [dirLoc, lvlKey]);
     if (inLvlNode !== undefined) {
       if (spcBefNode === undefined) {
         spcBefNode = getTextByPathList(inLvlNode, ["a:spcBef", "a:spcPts", "attrs", "val"]);
@@ -257,12 +256,12 @@ export function getVerticalMargins(
   }
 
   if (lnSpcNode !== undefined && fontSize !== undefined) {
-    if (lnSpcNodeType == "Pts") {
+    if (lnSpcNodeType === "Pts") {
       marginTopBottomStr += "padding-top: " + (parseInt(lnSpcNode) / 100 - fontSize) + "px;"; //+ "pt;";
     } else {
       const fct = parseInt(lnSpcNode) / 100000;
       spcLines = fontSize * (fct - 1) - fontSize; // fontSize *
-      const pTop = fct > 1 ? spcLines : 0;
+      const _pTop = fct > 1 ? spcLines : 0;
       const pBottom = fct > 1 ? fontSize : 0;
       // marginTopBottomStr += "padding-top: " + spcLines + "pt;";
       // marginTopBottomStr += "padding-bottom: " + pBottom + "pt;";
