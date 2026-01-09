@@ -27,7 +27,7 @@ export function getTextHorizontalAlign(node: any, pNode: any, type: any, warpObj
     getAlgn = getTextByPathList(pNode, ["a:pPr", "attrs", "algn"]);
   }
   if (getAlgn === undefined) {
-    if (type == "title" || type == "ctrTitle" || type == "subTitle") {
+    if (type === "title" || type === "ctrTitle" || type === "subTitle") {
       let lvlIdx = 1;
       const lvlNode = getTextByPathList(pNode, ["a:pPr", "attrs", "lvl"]);
       if (lvlNode !== undefined) {
@@ -74,7 +74,7 @@ export function getTextHorizontalAlign(node: any, pNode: any, type: any, warpObj
           }
         }
       }
-    } else if (type == "body") {
+    } else if (type === "body") {
       getAlgn = getTextByPathList(warpObj, [
         "slideMasterTextStyles",
         "p:bodyStyle",
