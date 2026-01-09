@@ -15,12 +15,12 @@ import { getGradientFill } from "../fill/get-gradient-fill";
 import { getPatternFill } from "../fill/get-pattern-fill";
 
 export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, warpObj: any) {
-  let cssText, lineNode, subNodeTxt;
+  let cssText, lineNode;
 
-  if (bType == "shape") {
+  if (bType === "shape") {
     cssText = "border: ";
     lineNode = node["p:spPr"]["a:ln"];
-  } else if (bType == "text") {
+  } else if (bType === "text") {
     cssText = "";
     lineNode = node["a:rPr"]["a:ln"];
   }
@@ -30,8 +30,8 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
     return "hidden";
   }
 
-  if (lineNode == undefined) {
-    var lnRefNode = getTextByPathList(node, ["p:style", "a:lnRef"]);
+  if (lineNode === undefined) {
+    const lnRefNode = getTextByPathList(node, ["p:style", "a:lnRef"]);
     if (lnRefNode !== undefined) {
       const lnIdx = getTextByPathList(lnRefNode, ["attrs", "idx"]);
       lineNode =
@@ -40,7 +40,7 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
         ][Number(lnIdx) - 1];
     }
   }
-  if (lineNode == undefined) {
+  if (lineNode === undefined) {
     // is table
     cssText = "";
     lineNode = node;
@@ -116,20 +116,20 @@ export function getBorder(node: any, pNode: any, isSvgMode: any, bType: any, war
     }
     // Border color
     const fillTyp = getFillType(lineNode);
-    if (fillTyp == "NO_FILL") {
+    if (fillTyp === "NO_FILL") {
       borderColor = isSvgMode ? "none" : "";
-    } else if (fillTyp == "SOLID_FILL") {
+    } else if (fillTyp === "SOLID_FILL") {
       borderColor = getSolidFill(lineNode["a:solidFill"], undefined, undefined, warpObj);
-    } else if (fillTyp == "GRADIENT_FILL") {
+    } else if (fillTyp === "GRADIENT_FILL") {
       borderColor = getGradientFill(lineNode["a:gradFill"], warpObj);
-    } else if (fillTyp == "PATTERN_FILL") {
+    } else if (fillTyp === "PATTERN_FILL") {
       borderColor = getPatternFill(lineNode["a:pattFill"], warpObj);
     }
   }
 
   // 2. drawingML namespace
   if (borderColor === undefined) {
-    var lnRefNode = getTextByPathList(node, ["p:style", "a:lnRef"]);
+    const lnRefNode = getTextByPathList(node, ["p:style", "a:lnRef"]);
     if (lnRefNode !== undefined) {
       borderColor = getSolidFill(lnRefNode, undefined, undefined, warpObj);
     }
