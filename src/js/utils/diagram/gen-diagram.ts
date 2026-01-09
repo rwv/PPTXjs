@@ -33,8 +33,8 @@ import { processSpNode } from "../node";
 export function genDiagram(
   node: any,
   warpObj: any,
-  source: any,
-  sType: any,
+  source: string,
+  sType: string,
   slideFactor: number,
   styleTable: any,
   fontSizeFactor: number,
