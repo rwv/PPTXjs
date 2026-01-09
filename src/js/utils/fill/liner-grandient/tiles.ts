@@ -1,4 +1,8 @@
-export function getTilePattern(prst: any, bgColor: any, fgColor: any) {
+export function getTilePattern(
+  prst: string,
+  bgColor: string,
+  fgColor: string
+): string[] | undefined {
   switch (prst) {
     case "diagBrick":
       return [
