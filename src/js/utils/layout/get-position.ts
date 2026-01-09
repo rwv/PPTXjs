@@ -16,7 +16,7 @@ interface TransformNode {
       cy?: string;
     };
   };
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -44,7 +44,7 @@ interface ParentNode {
   "p:grpSpPr"?: {
     "a:xfrm"?: GroupTransformNode;
   };
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
