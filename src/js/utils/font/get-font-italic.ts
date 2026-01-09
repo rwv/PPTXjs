@@ -6,6 +6,10 @@
  * @param slideMasterTextStyles - Master text styles (unused but kept for consistency)
  * @returns "italic" or "inherit"
  */
-export function getFontItalic(node: any, _type: any, _slideMasterTextStyles: any): string {
+export function getFontItalic(
+  node: Record<string, unknown>,
+  _type: string | undefined,
+  _slideMasterTextStyles: unknown
+): string {
   return node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["i"] === "1" ? "italic" : "inherit";
 }
