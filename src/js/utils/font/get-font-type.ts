@@ -27,8 +27,8 @@ export function getFontType(node: any, type: any, warpObj: any, pFontStyle: any)
       "a:themeElements",
       "a:fontScheme",
     ]);
-    if (fontIdx == "") {
-      if (type == "title" || type == "subTitle" || type == "ctrTitle") {
+    if (fontIdx === "") {
+      if (type === "title" || type === "subTitle" || type === "ctrTitle") {
         fontIdx = "major";
       } else {
         fontIdx = "minor";
