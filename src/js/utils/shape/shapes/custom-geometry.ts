@@ -84,21 +84,14 @@ export function renderCustomGeometry(
       const moveToPtNode = moveToNode[key]["a:pt"];
       if (moveToPtNode !== undefined) {
         Object.keys(moveToPtNode).forEach(function (key2) {
-          const ptObj = {};
+          const ptObj: any = {};
           const moveToNoPt = moveToPtNode[key2];
-          // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-          const spX = moveToNoPt[("attrs", "x")]; //parseInt(moveToNoPt["attrs", "x"]) * slideFactor;
-          // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-          const spY = moveToNoPt[("attrs", "y")]; //parseInt(moveToNoPt["attrs", "y"]) * slideFactor;
-          // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-          const ptOrdr = moveToNoPt[("attrs", "order")];
-          // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+          const spX = moveToNoPt["x"]; //parseInt(moveToNoPt["attrs", "x"]) * slideFactor;
+          const spY = moveToNoPt["y"]; //parseInt(moveToNoPt["attrs", "y"]) * slideFactor;
+          const ptOrdr = moveToNoPt["order"];
           ptObj.type = "movto";
-          // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
           ptObj.order = ptOrdr;
-          // @ts-expect-error TS(2339): Property 'x' does not exist on type '{}'.
           ptObj.x = spX;
-          // @ts-expect-error TS(2339): Property 'y' does not exist on type '{}'.
           ptObj.y = spY;
           multiSapeAry.push(ptObj);
           //console.log(key2, lnToNoPt);
@@ -111,21 +104,14 @@ export function renderCustomGeometry(
         const lnToPtNode = lnToNodes[key]["a:pt"];
         if (lnToPtNode !== undefined) {
           Object.keys(lnToPtNode).forEach(function (key2) {
-            const ptObj = {};
+            const ptObj: any = {};
             const lnToNoPt = lnToPtNode[key2];
-            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-            const ptX = lnToNoPt[("attrs", "x")];
-            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-            const ptY = lnToNoPt[("attrs", "y")];
-            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
-            const ptOrdr = lnToNoPt[("attrs", "order")];
-            // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+            const ptX = lnToNoPt["x"];
+            const ptY = lnToNoPt["y"];
+            const ptOrdr = lnToNoPt["order"];
             ptObj.type = "lnto";
-            // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
             ptObj.order = ptOrdr;
-            // @ts-expect-error TS(2339): Property 'x' does not exist on type '{}'.
             ptObj.x = ptX;
-            // @ts-expect-error TS(2339): Property 'y' does not exist on type '{}'.
             ptObj.y = ptY;
             multiSapeAry.push(ptObj);
             //console.log(key2, lnToNoPt);
@@ -146,13 +132,10 @@ export function renderCustomGeometry(
       });
 
       //console.log("cubicBezToNodes: ", cubicBezToPtNodesAry)
-      // @ts-expect-error TS(7006): Parameter 'key2' implicitly has an 'any' type.
       cubicBezToPtNodesAry.forEach(function (key2) {
         //console.log("cubicBezToPtNodesAry: key2 : ", key2)
-        const nodeObj = {};
-        // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+        const nodeObj: any = {};
         nodeObj.type = "cubicBezTo";
-        // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
         nodeObj.order = key2[0]["attrs"]["order"];
         const pts_ary: any = [];
         key2.forEach(function (pt: any) {
@@ -162,7 +145,6 @@ export function renderCustomGeometry(
           };
           pts_ary.push(pt_obj);
         });
-        // @ts-expect-error TS(2339): Property 'cubBzPt' does not exist on type '{}'.
         nodeObj.cubBzPt = pts_ary; //key2;
         multiSapeAry.push(nodeObj);
       });
@@ -183,22 +165,14 @@ export function renderCustomGeometry(
         shftY = arcToPtNode["y"];
         //console.log("shftX: ",shftX," shftY: ",shftY)
       }
-      const ptObj = {};
-      // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+      const ptObj: any = {};
       ptObj.type = "arcTo";
-      // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
       ptObj.order = arcOrder;
-      // @ts-expect-error TS(2339): Property 'hR' does not exist on type '{}'.
       ptObj.hR = hR;
-      // @ts-expect-error TS(2339): Property 'wR' does not exist on type '{}'.
       ptObj.wR = wR;
-      // @ts-expect-error TS(2339): Property 'stAng' does not exist on type '{}'.
       ptObj.stAng = stAng;
-      // @ts-expect-error TS(2339): Property 'swAng' does not exist on type '{}'.
       ptObj.swAng = swAng;
-      // @ts-expect-error TS(2339): Property 'shftX' does not exist on type '{}'.
       ptObj.shftX = shftX;
-      // @ts-expect-error TS(2339): Property 'shftY' does not exist on type '{}'.
       ptObj.shftY = shftY;
       multiSapeAry.push(ptObj);
     }
@@ -218,10 +192,8 @@ export function renderCustomGeometry(
         const clsAttrs = closeNode[key]["attrs"];
         //var clsAttrs = closeNode["attrs"];
         const clsOrder = clsAttrs["order"];
-        const ptObj = {};
-        // @ts-expect-error TS(2339): Property 'type' does not exist on type '{}'.
+        const ptObj: any = {};
         ptObj.type = "close";
-        // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
         ptObj.order = clsOrder;
         multiSapeAry.push(ptObj);
       });
@@ -230,7 +202,6 @@ export function renderCustomGeometry(
     // console.log("custShapType >> multiSapeAry: ", multiSapeAry);
 
     multiSapeAry.sort(function (a, b) {
-      // @ts-expect-error TS(2339): Property 'order' does not exist on type '{}'.
       return a.order - b.order;
     });
 
@@ -240,12 +211,9 @@ export function renderCustomGeometry(
     const isClose = false;
     let d = "";
     while (k < multiSapeAry.length) {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (multiSapeAry[k].type == "movto") {
         //start point
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const spX = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const spY = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
         // if (d == "") {
         //     d = "M" + spX + "," + spY;
@@ -268,48 +236,30 @@ export function renderCustomGeometry(
         // }
 
         d += " M" + spX + "," + spY;
-
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type == "lnto") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Lx = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Ly = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
         d += " L" + Lx + "," + Ly;
-
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type == "cubicBezTo") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cy2 = parseInt(multiSapeAry[k].cubBzPt[1].y) * cY; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         const Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY; //slideFactor;
         d += " C" + Cx1 + "," + Cy1 + " " + Cx2 + "," + Cy2 + " " + Cx3 + "," + Cy3;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type == "arcTo") {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var hR = parseInt(multiSapeAry[k].hR) * cX; //slideFactor;
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        var wR = parseInt(multiSapeAry[k].wR) * cY; //slideFactor;
-        var stAng = parseInt(multiSapeAry[k].stAng) / 60000;
-        var swAng = parseInt(multiSapeAry[k].swAng) / 60000;
+        var hR: any = parseInt(multiSapeAry[k].hR) * cX; //slideFactor;
+        var wR: any = parseInt(multiSapeAry[k].wR) * cY; //slideFactor;
+        var stAng: any = parseInt(multiSapeAry[k].stAng) / 60000;
+        var swAng: any = parseInt(multiSapeAry[k].swAng) / 60000;
         //var shftX = parseInt(multiSapeAry[k].shftX) * slideFactor;
         //var shftY = parseInt(multiSapeAry[k].shftY) * slideFactor;
         const endAng = stAng + swAng;
 
         d += shapeArc(wR, hR, wR, hR, stAng, endAng, false);
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type == "quadBezTo") {
         console.log("custShapType: quadBezTo - TODO");
-
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       } else if (multiSapeAry[k].type == "close") {
         // result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
         //     "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
