@@ -34,9 +34,9 @@ export function processPicNode(
 
   const rid = node["p:blipFill"]["a:blip"]["attrs"]["r:embed"];
   let resObj;
-  if (source == "slideMasterBg") {
+  if (source === "slideMasterBg") {
     resObj = warpObj["masterResObj"];
-  } else if (source == "slideLayoutBg") {
+  } else if (source === "slideLayoutBg") {
     resObj = warpObj["layoutResObj"];
   } else {
     //imgName = warpObj["slideResObj"][rid]["target"];
@@ -52,7 +52,7 @@ export function processPicNode(
   let xfrmNode = node["p:spPr"]["a:xfrm"];
   if (xfrmNode === undefined) {
     const idx = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "idx"]);
-    const type = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "type"]);
+    const _type = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "type"]);
     if (idx !== undefined) {
       xfrmNode = getTextByPathList(warpObj["slideLayoutTables"], [
         "idxTable",
@@ -93,7 +93,7 @@ export function processPicNode(
       mediaPicFlag = true;
     } else {
       vdoFileExt = extractFileExtension(vdoFile).toLowerCase();
-      if (vdoFileExt == "mp4" || vdoFileExt == "webm" || vdoFileExt == "ogg") {
+      if (vdoFileExt === "mp4" || vdoFileExt === "webm" || vdoFileExt === "ogg") {
         uInt8Array = archive.readAsArrayBuffer(vdoFile);
         vdoMimeType = getMimeType(vdoFileExt);
         blob = new Blob([uInt8Array], {
@@ -107,7 +107,7 @@ export function processPicNode(
   }
   //Audio
   const audioNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:audioFile"]);
-  let audioRid, audioFile, audioFileExt, audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
+  let audioRid, audioFile, audioFileExt, _audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
   let audioPlayerFlag = false;
   let audioObjc;
   // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
@@ -115,7 +115,7 @@ export function processPicNode(
     audioRid = audioNode["attrs"]["r:link"];
     audioFile = resObj[audioRid]["target"];
     audioFileExt = extractFileExtension(audioFile).toLowerCase();
-    if (audioFileExt == "mp3" || audioFileExt == "wav" || audioFileExt == "ogg") {
+    if (audioFileExt === "mp3" || audioFileExt === "wav" || audioFileExt === "ogg") {
       uInt8ArrayAudio = archive.readAsArrayBuffer(audioFile);
       blobAudio = new Blob([uInt8ArrayAudio]);
       audioBlob = URL.createObjectURL(blobAudio);
