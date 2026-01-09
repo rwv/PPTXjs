@@ -9974,7 +9974,7 @@ import type { JsZip } from "./types/jszip";
                 var bu_width = (buText_ary[1] !== undefined && buText_ary[1] !== null && isBullate) ? buText_ary[1] + buText_ary[2] : 0;
                 text += (buText_ary[0] !== undefined) ? buText_ary[0]:"";
                 //get text margin 
-                var margin_ary = getPregraphMargn(pNode, idx, type, isBullate, warpObj);
+                var margin_ary = getPregraphMargn(pNode, idx, type, isBullate, warpObj, slideFactor);
                 var margin = margin_ary[0];
                 var mrgin_val = margin_ary[1];
                 if (prg_width_node === undefined && tbl_col_width !== undefined && prg_width_node != 0){
@@ -10049,7 +10049,7 @@ import type { JsZip } from "./types/jszip";
             var dfltBultColor, dfltBultSize, bultColor, bultSize, color_tye;
 
             if (rNode !== undefined) {
-                dfltBultColor = getFontColorPr(rNode, spNode, lstStyle, pFontStyle, lvl, idx, type, warpObj);
+                dfltBultColor = getFontColorPr(rNode, spNode, lstStyle, pFontStyle, lvl, idx, type, warpObj, slideFactor);
                 color_tye = dfltBultColor[2];
                 dfltBultSize = getFontSize(rNode, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);
             } else {
@@ -10617,7 +10617,7 @@ import type { JsZip } from "./types/jszip";
             }
             /////////////////////////////////////////////////////////////////////////////////////
             //getFontColor
-            var fontClrPr = getFontColorPr(node, pNode, lstStyle, pFontStyle, lvl, idx, type, warpObj);
+            var fontClrPr = getFontColorPr(node, pNode, lstStyle, pFontStyle, lvl, idx, type, warpObj, slideFactor);
             var fontClrType = fontClrPr[2];
             //console.log("genSpanElement fontClrPr: ", fontClrPr, "linkID", linkID);
             if (fontClrType == "solid") {
