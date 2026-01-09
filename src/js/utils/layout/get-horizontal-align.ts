@@ -25,9 +25,9 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
 export function getHorizontalAlign(
   node: any,
   textBodyNode: any,
-  idx: any,
-  type: any,
-  prg_dir: any,
+  idx: number | string | undefined,
+  type: string | undefined,
+  prg_dir: string | undefined,
   warpObj: any
 ): string {
   let algn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
