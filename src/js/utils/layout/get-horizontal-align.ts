@@ -90,7 +90,7 @@ export function getHorizontalAlign(
 
         if (algn === undefined) {
           //masterlayout
-          if (type == "title" || type == "ctrTitle") {
+          if (type === "title" || type === "ctrTitle") {
             algn = getTextByPathList(warpObj, [
               "slideMasterTextStyles",
               "p:titleStyle",
@@ -98,7 +98,7 @@ export function getHorizontalAlign(
               "attrs",
               "algn",
             ]);
-          } else if (type == "body" || type == "obj" || type == "subTitle") {
+          } else if (type === "body" || type === "obj" || type === "subTitle") {
             algn = getTextByPathList(warpObj, [
               "slideMasterTextStyles",
               "p:bodyStyle",
@@ -106,7 +106,7 @@ export function getHorizontalAlign(
               "attrs",
               "algn",
             ]);
-          } else if (type == "shape" || type == "diagram") {
+          } else if (type === "shape" || type === "diagram") {
             algn = getTextByPathList(warpObj, [
               "slideMasterTextStyles",
               "p:otherStyle",
@@ -114,7 +114,7 @@ export function getHorizontalAlign(
               "attrs",
               "algn",
             ]);
-          } else if (type == "textBox") {
+          } else if (type === "textBox") {
             algn = getTextByPathList(warpObj, ["defaultTextStyle", lvlStr, "attrs", "algn"]);
           } else {
             algn = getTextByPathList(warpObj, [
@@ -142,23 +142,23 @@ export function getHorizontalAlign(
   }
 
   if (algn === undefined) {
-    if (type == "title" || type == "subTitle" || type == "ctrTitle") {
+    if (type === "title" || type === "subTitle" || type === "ctrTitle") {
       return "h-mid";
-    } else if (type == "sldNum") {
+    } else if (type === "sldNum") {
       return "h-right";
     }
   }
   if (algn !== undefined) {
     switch (algn) {
       case "l":
-        if (prg_dir == "pregraph-rtl") {
+        if (prg_dir === "pregraph-rtl") {
           //return "h-right";
           return "h-left-rtl";
         } else {
           return "h-left";
         }
       case "r":
-        if (prg_dir == "pregraph-rtl") {
+        if (prg_dir === "pregraph-rtl") {
           //return "h-left";
           return "h-right-rtl";
         } else {
