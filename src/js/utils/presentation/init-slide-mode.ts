@@ -12,7 +12,7 @@ export function initSlideMode(divId: any, settings: any): void {
     setTimeout(function () {
       const slideConf = settings.slideModeConfig;
       $(".slides-loadnig-msg").remove();
-      $("#" + divId).divs2slides({
+      ($("#" + divId) as any).divs2slides({
         first: slideConf.first,
         nav: slideConf.nav,
         showPlayPauseBtn: settings.showPlayPauseBtn,
@@ -30,15 +30,15 @@ export function initSlideMode(divId: any, settings: any): void {
 
       const sScale = settings.slidesScale;
       let trnsfrmScl = "";
+      let scaleVal = 1;
       if (sScale != "") {
         const numsScale = parseInt(sScale);
-        var scaleVal = numsScale / 100;
+        scaleVal = numsScale / 100;
         trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
       }
 
       const numOfSlides = 1;
-      // @ts-expect-error TS(2454): Variable 'scaleVal' is used before being assigned.
-      const sScaleVal = sScale != "" ? scaleVal : 1;
+      const sScaleVal = scaleVal;
       //console.log(slidesHeight);
       $("#all_slides_warpper").attr({
         style: trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px",
