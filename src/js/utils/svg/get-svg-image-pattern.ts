@@ -35,7 +35,7 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
   if (
     tialphaModFixNode !== undefined &&
     tialphaModFixNode["amt"] !== undefined &&
-    tialphaModFixNode["amt"] != ""
+    tialphaModFixNode["amt"] !== ""
   ) {
     const amt = parseInt(tialphaModFixNode["amt"]) / 100000;
     const opacity = amt;
@@ -43,7 +43,7 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
   }
 
   let ptrn: string;
-  if (sx !== undefined && sx != 0) {
+  if (sx !== undefined && sx !== 0) {
     ptrn =
       '<pattern id="imgPtrn_' +
       shpId +
@@ -66,7 +66,7 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
   if (duotoneNode !== undefined) {
     const clr_ary: any[] = [];
     Object.keys(duotoneNode).forEach(function (clr_type) {
-      if (clr_type != "attrs") {
+      if (clr_type !== "attrs") {
         const obj: any = {};
         obj[clr_type] = duotoneNode[clr_type];
         const hexClr = getSolidFill(obj, undefined, undefined, warpObj);
@@ -75,7 +75,7 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
       }
     });
 
-    if (clr_ary.length == 2) {
+    if (clr_ary.length === 2) {
       fillterNode =
         '<filter id="svg_image_duotone"> ' +
         '<feColorMatrix type="matrix" values=".33 .33 .33 0 0' +
@@ -109,7 +109,7 @@ export function getSvgImagePattern(node: any, fill: any, shpId: any, warpObj: an
 
   fill = escapeHtml(fill);
 
-  if (sx !== undefined && sx != 0) {
+  if (sx !== undefined && sx !== 0) {
     ptrn +=
       '<image  xlink:href="' +
       fill +
