@@ -2,7 +2,7 @@ import { getTextByPathList } from "../object";
 import { getFontColorPr, getFontSize } from "../font";
 import { getLayoutAndMasterNode } from "../layout";
 import { getSolidFill } from "../color";
-import { getHtmlBullet } from "./get-html-bullet";
+import { getHtmlBullet as _getHtmlBullet } from "./get-html-bullet";
 import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handlers";
 
 /**
@@ -42,7 +42,7 @@ export function genBuChar(
 ): string | [string, number, number] {
   //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
   ///////////////////////////////////////Amir///////////////////////////////
-  const sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
+  const _sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
   const lstStyle = textBodyNode["a:lstStyle"];
 
   let rNode = getTextByPathList(node, ["a:r"]);
@@ -111,11 +111,11 @@ export function genBuChar(
   if (buFontSize === undefined) {
     buFontSize = getTextByPathList(pPrNode, ["a:buSzPct", "attrs", "val"]);
     if (buFontSize !== undefined) {
-      var prcnt = parseInt(buFontSize) / 100000;
+      const prcnt = parseInt(buFontSize) / 100000;
       //dfltBultSize = XXpt
       //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
       // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-      var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
+      const dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
       // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
       bultSize = prcnt * parseInt(dfltBultSizeNoPt) + "px"; // + "pt";
     }
@@ -199,12 +199,12 @@ export function genBuChar(
   let getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
   if (getRtlVal === undefined) {
     getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
-    if (getRtlVal === undefined && type != "shape") {
+    if (getRtlVal === undefined && type !== "shape") {
       getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
     }
   }
   let isRTL = false;
-  if (getRtlVal !== undefined && getRtlVal == "1") {
+  if (getRtlVal !== undefined && getRtlVal === "1") {
     isRTL = true;
   }
   //align
@@ -268,7 +268,7 @@ export function genBuChar(
     marRStr += (marginRight + indent < 0 ? 0 : marginRight + indent) + "px;";
   }
 
-  if (buType != "TYPE_NONE") {
+  if (buType !== "TYPE_NONE") {
     //var buFontAttrs = getTextByPathList(pPrNode, ["a:buFont", "attrs"]);
   }
   //console.log("Bullet Type: " + buType);
@@ -294,7 +294,7 @@ export function genBuChar(
       defBultColor = getSolidFill(pFontStyle, undefined, undefined, warpObj);
     }
   }
-  if (defBultColor === undefined || defBultColor == "NONE") {
+  if (defBultColor === undefined || defBultColor === "NONE") {
     bultColor = dfltBultColor;
   } else {
     bultColor = [defBultColor, "", "solid"];
@@ -309,10 +309,10 @@ export function genBuChar(
     if (buFontSize === undefined) {
       buFontSize = getTextByPathList(pPrNodeLaout, ["a:buSzPct", "attrs", "val"]);
       if (buFontSize !== undefined) {
-        var prcnt = parseInt(buFontSize) / 100000;
+        const prcnt = parseInt(buFontSize) / 100000;
         //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
         // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-        var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
+        const dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
         // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
         bultSize = prcnt * parseInt(dfltBultSizeNoPt) + "px"; // + "pt";
       }
@@ -325,11 +325,11 @@ export function genBuChar(
     if (buFontSize === undefined) {
       buFontSize = getTextByPathList(pPrNodeMaster, ["a:buSzPct", "attrs", "val"]);
       if (buFontSize !== undefined) {
-        var prcnt = parseInt(buFontSize) / 100000;
+        const prcnt = parseInt(buFontSize) / 100000;
         //dfltBultSize = XXpt
         //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
         // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-        var dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
+        const dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
         // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
         bultSize = prcnt * parseInt(dfltBultSizeNoPt) + "px"; // + "pt";
       }
@@ -343,7 +343,7 @@ export function genBuChar(
   // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   font_val = parseInt(bultSize, "px");
   ////////////////////////////////////////////////////////////////////////
-  if (buType == "TYPE_BULLET") {
+  if (buType === "TYPE_BULLET") {
     bullet = renderBulletChar(
       pPrNode,
       buChar,
@@ -355,9 +355,9 @@ export function genBuChar(
       isRTL,
       font_val
     );
-  } else if (buType == "TYPE_NUMERIC") {
+  } else if (buType === "TYPE_NUMERIC") {
     bullet = renderBulletNumeric(bultColor, bultSize, marLStr, marRStr, isRTL, buNum, lvl);
-  } else if (buType == "TYPE_BULPIC") {
+  } else if (buType === "TYPE_BULPIC") {
     bullet = renderBulletPic(buPic, warpObj, marLStr, marRStr, bultSize, isRTL);
   }
   // else {
