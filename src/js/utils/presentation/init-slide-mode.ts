@@ -6,7 +6,7 @@
  */
 export function initSlideMode(divId: any, settings: any): void {
   //console.log(settings.slideType)
-  if (settings.slideType == "" || settings.slideType == "divs2slidesjs") {
+  if (settings.slideType === "" || settings.slideType === "divs2slidesjs") {
     const slidesHeight = $("#" + divId + " .slide").height();
     $("#" + divId + " .slide").hide();
     setTimeout(function () {
@@ -31,7 +31,7 @@ export function initSlideMode(divId: any, settings: any): void {
       const sScale = settings.slidesScale;
       let trnsfrmScl = "";
       let scaleVal = 1;
-      if (sScale != "") {
+      if (sScale !== "") {
         const numsScale = parseInt(sScale);
         scaleVal = numsScale / 100;
         trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
@@ -44,16 +44,16 @@ export function initSlideMode(divId: any, settings: any): void {
         style: trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px",
       });
     }, 1500);
-  } else if (settings.slideType == "revealjs") {
+  } else if (settings.slideType === "revealjs") {
     $(".slides-loadnig-msg").remove();
     let revealjsPath = "";
-    if (settings.revealjsPath != "") {
+    if (settings.revealjsPath !== "") {
       revealjsPath = settings.revealjsPath;
     } else {
       revealjsPath = "./revealjs/reveal.js";
     }
     $.getScript(revealjsPath, function (response: any, status: any) {
-      if (status == "success") {
+      if (status === "success") {
         // $("section").removeClass("slide");
         // @ts-expect-error TS(2304): Cannot find name 'Reveal'.
         Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
