@@ -30,12 +30,12 @@ import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handle
  */
 export function genBuChar(
   node: any,
-  i: any,
+  i: number,
   spNode: any,
   textBodyNode: any,
   pFontStyle: any,
-  idx: any,
-  type: any,
+  idx: number | string | undefined,
+  type: string | undefined,
   warpObj: any,
   slideFactor: number,
   fontSizeFactor: number
