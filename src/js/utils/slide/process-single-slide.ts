@@ -35,15 +35,15 @@ import { getSlideBackgroundFill } from "../fill";
 import { getBackground } from "./get-background";
 import {
   processNodesInSlide,
-  processSpNode,
-  processGraphicFrameNode,
-  processGroupSpNode,
+  processSpNode as _processSpNode,
+  processGraphicFrameNode as _processGraphicFrameNode,
+  processGroupSpNode as _processGroupSpNode,
 } from "../node";
-import { processCxnSpNode, genShape } from "../shape";
-import { processPicNode } from "../media";
-import { genTable } from "../table";
-import { genChart } from "../chart";
-import { genDiagram } from "../diagram";
+import { processCxnSpNode as _processCxnSpNode, genShape as _genShape } from "../shape";
+import { processPicNode as _processPicNode } from "../media";
+import { genTable as _genTable } from "../table";
+import { genChart as _genChart } from "../chart";
+import { genDiagram as _genDiagram } from "../diagram";
 
 export function processSingleSlide(
   archive: PptxArchive,
@@ -81,7 +81,7 @@ export function processSingleSlide(
   let diagramFilename = "";
   const slideResObj = {};
   if (RelationshipArray.constructor === Array) {
-    for (var i = 0; i < RelationshipArray.length; i++) {
+    for (let i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout":
           layoutFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
@@ -124,9 +124,9 @@ export function processSingleSlide(
   ]);
 
   //console.log(slideLayoutClrOvride);
-  let slideLayoutClrOvride;
+  let _slideLayoutClrOvride;
   if (sldLayoutClrOvr !== undefined) {
-    slideLayoutClrOvride = sldLayoutClrOvr["attrs"];
+    _slideLayoutClrOvride = sldLayoutClrOvr["attrs"];
   }
   // =====< Step 2 >=====
   // Read slide master filename of the slidelayout (Get slideMasterXX.xml)
@@ -139,7 +139,7 @@ export function processSingleSlide(
   let masterFilename = "";
   const layoutResObj = {};
   if (RelationshipArray.constructor === Array) {
-    for (var i = 0; i < RelationshipArray.length; i++) {
+    for (let i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster":
           masterFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
@@ -171,10 +171,10 @@ export function processSingleSlide(
     masterFilename.replace("slideMasters/slideMaster", "slideMasters/_rels/slideMaster") + ".rels";
   const slideMasterResContent = readXmlFile(archive, slideMasterResFilename);
   RelationshipArray = slideMasterResContent["Relationships"]["Relationship"];
-  var themeFilename = "";
+  let themeFilename = "";
   const masterResObj = {};
   if (RelationshipArray.constructor === Array) {
-    for (var i = 0; i < RelationshipArray.length; i++) {
+    for (let i = 0; i < RelationshipArray.length; i++) {
       switch (RelationshipArray[i]["attrs"]["Type"]) {
         case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme":
           themeFilename = RelationshipArray[i]["attrs"]["Target"].replace("../", "ppt/");
@@ -195,18 +195,18 @@ export function processSingleSlide(
   //console.log(themeFilename)
   //Load Theme file
   const themeResObj = {};
+  let themeContent = null;
   if (themeFilename !== undefined) {
     const themeName = themeFilename.split("/").pop();
     const themeResFileName = themeFilename.replace(themeName, "_rels/" + themeName) + ".rels";
     //console.log("themeFilename: ", themeFilename, ", themeName: ", themeName, ", themeResFileName: ", themeResFileName)
-    var themeContent = readXmlFile(archive, themeFilename);
+    themeContent = readXmlFile(archive, themeFilename);
     const themeResContent = readXmlFile(archive, themeResFileName);
     if (themeResContent !== null) {
-      var relationshipArray = themeResContent["Relationships"]["Relationship"];
+      const relationshipArray = themeResContent["Relationships"]["Relationship"];
       if (relationshipArray !== undefined) {
-        var themeFilename = "";
         if (relationshipArray.constructor === Array) {
-          for (var i = 0; i < relationshipArray.length; i++) {
+          for (let i = 0; i < relationshipArray.length; i++) {
             themeResObj[relationshipArray[i]["attrs"]["Id"]] = {
               type: relationshipArray[i]["attrs"]["Type"].replace(
                 "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
@@ -236,7 +236,7 @@ export function processSingleSlide(
     const diagramResFileName = diagramFilename.replace(diagName, "_rels/" + diagName) + ".rels";
     //console.log("diagramFilename: ", diagramFilename, ", themeName: ", themeName, ", diagramResFileName: ", diagramResFileName)
     digramFileContent = readXmlFile(archive, diagramFilename);
-    if (digramFileContent !== null && digramFileContent !== undefined && digramFileContent != "") {
+    if (digramFileContent !== null && digramFileContent !== undefined && digramFileContent !== "") {
       let digramFileContentObjToStr = JSON.stringify(digramFileContent);
       digramFileContentObjToStr = digramFileContentObjToStr.replace(/dsp:/g, "p:");
       digramFileContent = JSON.parse(digramFileContentObjToStr);
@@ -244,10 +244,9 @@ export function processSingleSlide(
 
     const digramResContent = readXmlFile(archive, diagramResFileName);
     if (digramResContent !== null) {
-      var relationshipArray = digramResContent["Relationships"]["Relationship"];
-      var themeFilename = "";
+      const relationshipArray = digramResContent["Relationships"]["Relationship"];
       if (relationshipArray.constructor === Array) {
-        for (var i = 0; i < relationshipArray.length; i++) {
+        for (let i = 0; i < relationshipArray.length; i++) {
           diagramResObj[relationshipArray[i]["attrs"]["Id"]] = {
             type: relationshipArray[i]["attrs"]["Type"].replace(
               "http://schemas.openxmlformats.org/officeDocument/2006/relationships/",
@@ -313,8 +312,9 @@ export function processSingleSlide(
     bgColor = fillResult !== undefined ? fillResult : "";
   }
 
-  if (settings.slideMode && settings.slideType == "revealjs") {
-    var result =
+  let result = "";
+  if (settings.slideMode && settings.slideType === "revealjs") {
+    result =
       "<section class='slide' style='width:" +
       slideSize.width +
       "px; height:" +
@@ -323,7 +323,7 @@ export function processSingleSlide(
       bgColor +
       "'>";
   } else {
-    var result =
+    result =
       "<div class='slide' style='width:" +
       slideSize.width +
       "px; height:" +
@@ -335,7 +335,7 @@ export function processSingleSlide(
   result += bgResult;
   for (const nodeKey in nodes) {
     if (nodes[nodeKey].constructor === Array) {
-      for (var i = 0; i < nodes[nodeKey].length; i++) {
+      for (let i = 0; i < nodes[nodeKey].length; i++) {
         result += processNodesInSlide(
           nodeKey,
           nodes[nodeKey][i],
@@ -374,7 +374,7 @@ export function processSingleSlide(
       );
     }
   }
-  if (settings.slideMode && settings.slideType == "revealjs") {
+  if (settings.slideMode && settings.slideType === "revealjs") {
     return result + "</div></section>";
   } else {
     return result + "</div></div>";
