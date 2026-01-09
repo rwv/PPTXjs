@@ -13,11 +13,11 @@ import { getTextByPathList } from "../object";
 import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
 
 export function getPregraphMargn(
-  pNode: any,
-  idx: any,
-  type: any,
-  isBullate: any,
-  warpObj: any,
+  pNode: Record<string, unknown>,
+  idx: number | string | undefined,
+  type: string | undefined,
+  isBullate: boolean,
+  warpObj: Record<string, unknown>,
   slideFactor: number
 ): [string, number] {
   if (!isBullate) {
