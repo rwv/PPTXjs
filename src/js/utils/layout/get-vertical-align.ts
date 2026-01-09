@@ -21,10 +21,10 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns CSS class name for vertical alignment ("v-mid", "v-down", or "v-up")
  */
 export function getVerticalAlign(
-  node: any,
-  slideLayoutSpNode: any,
-  slideMasterSpNode: any,
-  _type: any
+  node: Record<string, unknown>,
+  slideLayoutSpNode: Record<string, unknown> | undefined,
+  slideMasterSpNode: Record<string, unknown> | undefined,
+  _type: string | undefined
 ): string {
   // Find anchor with fallback hierarchy: node -> layout -> master -> default
   let anchor = getTextByPathList(node, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
