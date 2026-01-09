@@ -31,7 +31,7 @@ export interface ShapeEffectsResult {
  */
 export function processShapeEffects(
   node: any,
-  shpId: any,
+  shpId: number | string,
   svgCssName: string,
   border: any,
   warpObj: any,
