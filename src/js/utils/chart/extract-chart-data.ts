@@ -29,7 +29,7 @@ export function extractChartData(serNode: any) {
     let dataRow = new Array();
     eachElement(
       serNode["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"],
-      function (innerNode: any, _index: any) {
+      function (innerNode: any, _index: number) {
         dataRow.push(parseFloat(innerNode["c:v"]));
         return "";
       }
@@ -38,14 +38,14 @@ export function extractChartData(serNode: any) {
     dataRow = new Array();
     eachElement(
       serNode["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"],
-      function (innerNode: any, _index: any) {
+      function (innerNode: any, _index: number) {
         dataRow.push(parseFloat(innerNode["c:v"]));
         return "";
       }
     );
     dataMat.push(dataRow);
   } else {
-    eachElement(serNode, function (innerNode: any, index: any) {
+    eachElement(serNode, function (innerNode: any, index: number) {
       const dataRow = new Array();
       const colName =
         getTextByPathList(innerNode, ["c:tx", "c:strRef", "c:strCache", "c:pt", "c:v"]) || index;
@@ -55,7 +55,7 @@ export function extractChartData(serNode: any) {
       if (getTextByPathList(innerNode, ["c:cat", "c:strRef", "c:strCache", "c:pt"]) !== undefined) {
         eachElement(
           innerNode["c:cat"]["c:strRef"]["c:strCache"]["c:pt"],
-          function (innerNode: any, _index: any) {
+          function (innerNode: any, _index: number) {
             rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
             return "";
           }
@@ -65,7 +65,7 @@ export function extractChartData(serNode: any) {
       ) {
         eachElement(
           innerNode["c:cat"]["c:numRef"]["c:numCache"]["c:pt"],
-          function (innerNode: any, _index: any) {
+          function (innerNode: any, _index: number) {
             rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
             return "";
           }
@@ -76,7 +76,7 @@ export function extractChartData(serNode: any) {
       if (getTextByPathList(innerNode, ["c:val", "c:numRef", "c:numCache", "c:pt"]) !== undefined) {
         eachElement(
           innerNode["c:val"]["c:numRef"]["c:numCache"]["c:pt"],
-          function (innerNode: any, _index: any) {
+          function (innerNode: any, _index: number) {
             dataRow.push({
               x: innerNode["attrs"]["idx"],
               y: parseFloat(innerNode["c:v"]),
