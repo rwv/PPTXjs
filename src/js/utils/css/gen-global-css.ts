@@ -17,14 +17,11 @@ export function genGlobalCSS(styleTable: any, settings: any, slideWidth: number)
     //     tagname = "div";
     // }
     //ADD suffix
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     cssText +=
       tagname +
       " ." +
       styleTable[key]["name"] +
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       (styleTable[key]["suffix"] ? styleTable[key]["suffix"] : "") +
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       "{" +
       styleTable[key]["text"] +
       "}\n"; //section > div
