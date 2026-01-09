@@ -15,7 +15,7 @@ import { base64ArrayBuffer } from "../media/base64-array-buffer";
  * @param warpObj - Container object with ZIP file and resource mappings
  * @returns Base64 data URL of the image, or undefined if not found
  */
-export function getPicFill(type: any, node: any, warpObj: any) {
+export function getPicFill(type: string, node: any, warpObj: any) {
   let img;
   const rId = node["a:blip"]["attrs"]["r:embed"];
   let imgPath;
