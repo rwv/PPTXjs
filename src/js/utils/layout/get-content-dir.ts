@@ -15,7 +15,11 @@
  * @param warpObj - Container object with master slide text styles
  * @returns CSS class name for content direction (currently always "content")
  */
-export function getContentDir(_node: any, _type: any, _warpObj: any): string {
+export function getContentDir(
+  _node: Record<string, unknown>,
+  _type: string | undefined,
+  _warpObj: Record<string, unknown>
+): string {
   // NOTE: RTL (Right-to-Left) detection logic is currently disabled.
   // The early return below bypasses all RTL checks, always returning "content" (LTR).
   // To enable RTL support, comment out the line below and uncomment the logic beneath it.
