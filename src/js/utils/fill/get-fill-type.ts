@@ -12,7 +12,7 @@
  * @param node - Shape properties node from PPTX
  * @returns Fill type as string constant
  */
-export function getFillType(node: any): string {
+export function getFillType(node: Record<string, unknown>): string {
   let fillType = "";
   if (node["a:noFill"] !== undefined) {
     fillType = "NO_FILL";
