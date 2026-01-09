@@ -25,8 +25,7 @@
     "jquery-fullscreen-plugin": "^1.1.5",
     "jszip": "^2.7.0",
     "nvd3": "^1.8.6",
-    "tinycolor2": "^1.6.0",
-    "txml": "^5.2.1"
+    "tinycolor2": "^1.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
