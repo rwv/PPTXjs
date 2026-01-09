@@ -6,6 +6,10 @@
  * @param slideMasterTextStyles - Master text styles (unused but kept for consistency)
  * @returns "bold" or "inherit"
  */
-export function getFontBold(node: any, _type: any, _slideMasterTextStyles: any): string {
+export function getFontBold(
+  node: Record<string, unknown>,
+  _type: string | undefined,
+  _slideMasterTextStyles: unknown
+): string {
   return node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["b"] === "1" ? "bold" : "inherit";
 }
