@@ -1,4 +1,8 @@
-export function getSpecialPattern(prst: any, bgColor: any, fgColor: any) {
+export function getSpecialPattern(
+  prst: string,
+  bgColor: string,
+  fgColor: string
+): string[] | undefined {
   switch (prst) {
     case "plaid":
       return [
