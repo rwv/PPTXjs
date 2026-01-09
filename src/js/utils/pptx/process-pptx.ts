@@ -41,7 +41,7 @@ export function processPPTX(
   styleTable: any,
   rtlLangsArray: string[],
   fontSizeFactor: number,
-  chartID: any,
+  chartID: { value: number },
   MsgQueue: any,
   isFirstBr: { value: boolean }
 ): any[] {
