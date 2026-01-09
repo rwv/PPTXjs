@@ -413,7 +413,6 @@ export function genShape(
       if (type != "diagram" && type != "textBox") {
         type = "shape";
       }
-      // @ts-expect-error TS(2554): Expected 8 arguments, but got 7.
       result += genTextBody(
         node["p:txBody"],
         node,
