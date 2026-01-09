@@ -92,76 +92,51 @@ function renderLeftRightRibbon(ctx: RibbonContext): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * refr;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * refr;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * refr;
       }
     }
   }
-  let d_val;
   const cnstVal1 = 33333 * refr;
   const cnstVal2 = 100000 * refr;
   const cnstVal3 = 200000 * refr;
   const cnstVal4 = 400000 * refr;
   const ss = Math.min(w, h);
-  let a3,
-    maxAdj1,
-    a1,
-    w1,
-    maxAdj2,
-    a2,
-    x1,
-    x4,
-    dy1,
-    dy2,
-    ly1,
-    ry4,
-    ly2,
-    ry3,
-    ly4,
-    ry1,
-    ly3,
-    ry2,
-    hR,
-    x2,
-    x3,
-    y1,
-    y2,
-    wd32 = w / 32,
-    vc = h / 2,
-    hc = w / 2;
+  const wd32 = w / 32;
+  const vc = h / 2;
+  const hc = w / 2;
+  const a3 = adj3 < 0 ? 0 : adj3 > cnstVal1 ? cnstVal1 : adj3;
+  const maxAdj1 = cnstVal2 - a3;
+  const a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
+  const w1 = hc - wd32;
+  const maxAdj2 = (cnstVal2 * w1) / ss;
+  const a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
+  const x1 = (ss * a2) / cnstVal2;
+  const x4 = w - x1;
+  const dy1 = (h * a1) / cnstVal3;
+  const dy2 = (h * a3) / -cnstVal3;
+  const ly1 = vc + dy2 - dy1;
+  const ry4 = vc + dy1 - dy2;
+  const ly2 = ly1 + dy1;
+  const ry3 = h - ly2;
+  const ly4 = ly2 * 2;
+  const ry1 = h - ly4;
+  const ly3 = ly4 - ly1;
+  const ry2 = h - ly3;
+  const hR = (a3 * ss) / cnstVal4;
+  const x2 = hc - wd32;
+  const x3 = hc + wd32;
+  const y1 = ly1 + hR;
+  const y2 = ry2 - hR;
 
-  a3 = adj3 < 0 ? 0 : adj3 > cnstVal1 ? cnstVal1 : adj3;
-  maxAdj1 = cnstVal2 - a3;
-  a1 = adj1 < 0 ? 0 : adj1 > maxAdj1 ? maxAdj1 : adj1;
-  w1 = hc - wd32;
-  maxAdj2 = (cnstVal2 * w1) / ss;
-  a2 = adj2 < 0 ? 0 : adj2 > maxAdj2 ? maxAdj2 : adj2;
-  x1 = (ss * a2) / cnstVal2;
-  x4 = w - x1;
-  dy1 = (h * a1) / cnstVal3;
-  dy2 = (h * a3) / -cnstVal3;
-  ly1 = vc + dy2 - dy1;
-  ry4 = vc + dy1 - dy2;
-  ly2 = ly1 + dy1;
-  ry3 = h - ly2;
-  ly4 = ly2 * 2;
-  ry1 = h - ly4;
-  ly3 = ly4 - ly1;
-  ry2 = h - ly3;
-  hR = (a3 * ss) / cnstVal4;
-  x2 = hc - wd32;
-  x3 = hc + wd32;
-  y1 = ly1 + hR;
-  y2 = ry2 - hR;
-
-  d_val =
+  const d_val =
     "M" +
     0 +
     "," +
@@ -252,10 +227,10 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -268,37 +243,35 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
   const cnstVal4 = 100000 * slideFactor;
   const cnstVal5 = 200000 * slideFactor;
   const cnstVal6 = 400000 * slideFactor;
-  const hc = w / 2,
-    t = 0,
-    l = 0,
-    b = h,
-    r = w,
-    wd8 = w / 8,
-    wd32 = w / 32;
-  let a1, a2, x10, dx2, x2, x9, x3, x8, x5, x6, x4, x7, y1, y2, y4, y3, hR, y6;
-  a1 = adj1 < 0 ? 0 : adj1 > cnstVal2 ? cnstVal2 : adj1;
-  a2 = adj2 < cnstVal1 ? cnstVal1 : adj2 > cnstVal3 ? cnstVal3 : adj2;
-  x10 = r - wd8;
-  dx2 = (w * a2) / cnstVal5;
-  x2 = hc - dx2;
-  x9 = hc + dx2;
-  x3 = x2 + wd32;
-  x8 = x9 - wd32;
-  x5 = x2 + wd8;
-  x6 = x9 - wd8;
-  x4 = x5 - wd32;
-  x7 = x6 + wd32;
-  hR = (h * a1) / cnstVal6;
-  if (shapType == "ribbon2") {
-    let dy1, dy2, y7;
-    dy1 = (h * a1) / cnstVal5;
-    y1 = b - dy1;
-    dy2 = (h * a1) / cnstVal4;
-    y2 = b - dy2;
-    y4 = t + dy2;
-    y3 = (y4 + b) / 2;
-    y6 = b - hR;
-    y7 = y1 - hR;
+  const hc = w / 2;
+  const t = 0;
+  const l = 0;
+  const b = h;
+  const r = w;
+  const wd8 = w / 8;
+  const wd32 = w / 32;
+  const a1 = adj1 < 0 ? 0 : adj1 > cnstVal2 ? cnstVal2 : adj1;
+  const a2 = adj2 < cnstVal1 ? cnstVal1 : adj2 > cnstVal3 ? cnstVal3 : adj2;
+  const x10 = r - wd8;
+  const dx2 = (w * a2) / cnstVal5;
+  const x2 = hc - dx2;
+  const x9 = hc + dx2;
+  const x3 = x2 + wd32;
+  const x8 = x9 - wd32;
+  const x5 = x2 + wd8;
+  const x6 = x9 - wd8;
+  const x4 = x5 - wd32;
+  const x7 = x6 + wd32;
+  const hR = (h * a1) / cnstVal6;
+  if (shapType === "ribbon2") {
+    const dy1 = (h * a1) / cnstVal5;
+    const y1 = b - dy1;
+    const dy2 = (h * a1) / cnstVal4;
+    const y2 = b - dy2;
+    const y4 = t + dy2;
+    const y3 = (y4 + b) / 2;
+    const y6 = b - hR;
+    const y7 = y1 - hR;
 
     d_val =
       "M" +
@@ -400,14 +373,13 @@ function renderRibbon(ctx: RibbonContext, shapType: string): string {
       x9 +
       "," +
       y7;
-  } else if (shapType == "ribbon") {
-    let y5;
-    y1 = (h * a1) / cnstVal5;
-    y2 = (h * a1) / cnstVal4;
-    y4 = b - y2;
-    y3 = y4 / 2;
-    y5 = b - hR;
-    y6 = y2 - hR;
+  } else if (shapType === "ribbon") {
+    const y1 = (h * a1) / cnstVal5;
+    const y2 = (h * a1) / cnstVal4;
+    const y4 = b - y2;
+    const y3 = y4 / 2;
+    const y5 = b - hR;
+    const y6 = y2 - hR;
     d_val =
       "M" +
       l +
@@ -517,16 +489,16 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
 
   const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
   let sAdj1,
-    adj1 = shapType == "doubleWave" ? 6250 * slideFactor : 12500 * slideFactor;
+    adj1 = shapType === "doubleWave" ? 6250 * slideFactor : 12500 * slideFactor;
   let sAdj2,
     adj2 = 0;
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -536,71 +508,39 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
   const cnstVal2 = -10000 * slideFactor;
   const cnstVal3 = 50000 * slideFactor;
   const cnstVal4 = 100000 * slideFactor;
-  const hc = w / 2,
-    t = 0,
-    l = 0,
-    b = h,
-    r = w,
-    wd8 = w / 8,
-    wd32 = w / 32;
-  if (shapType == "doubleWave") {
+  const l = 0;
+  const b = h;
+  const r = w;
+  if (shapType === "doubleWave") {
     const cnstVal1 = 12500 * slideFactor;
-    var a1,
-      a2,
-      y1,
-      dy2,
-      y2,
-      y3,
-      y4,
-      y5,
-      y6,
-      of2,
-      dx2,
-      x2,
-      dx8,
-      x8,
-      dx3,
-      x3,
-      dx4,
-      x4,
-      x5,
-      x6,
-      x7,
-      x9,
-      x15,
-      x10,
-      x11,
-      x12,
-      x13,
-      x14;
-    a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
-    a2 = adj2 < cnstVal2 ? cnstVal2 : adj2 > cnstVal4 ? cnstVal4 : adj2;
-    y1 = (h * a1) / cnstVal4;
-    dy2 = (y1 * 10) / 3;
-    y2 = y1 - dy2;
-    y3 = y1 + dy2;
-    y4 = b - y1;
-    y5 = y4 - dy2;
-    y6 = y4 + dy2;
-    of2 = (w * a2) / cnstVal3;
-    dx2 = of2 > 0 ? 0 : of2;
-    x2 = l - dx2;
-    dx8 = of2 > 0 ? of2 : 0;
-    x8 = r - dx8;
-    dx3 = (dx2 + x8) / 6;
-    x3 = x2 + dx3;
-    dx4 = (dx2 + x8) / 3;
-    x4 = x2 + dx4;
-    x5 = (x2 + x8) / 2;
-    x6 = x5 + dx3;
-    x7 = (x6 + x8) / 2;
-    x9 = l + dx8;
-    x15 = r + dx2;
-    x10 = x9 + dx3;
-    x11 = x9 + dx4;
-    x12 = (x9 + x15) / 2;
-    x13 = x12 + dx3;
-    x14 = (x13 + x15) / 2;
+    const a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
+    const a2 = adj2 < cnstVal2 ? cnstVal2 : adj2 > cnstVal4 ? cnstVal4 : adj2;
+    const y1 = (h * a1) / cnstVal4;
+    const dy2 = (y1 * 10) / 3;
+    const y2 = y1 - dy2;
+    const y3 = y1 + dy2;
+    const y4 = b - y1;
+    const y5 = y4 - dy2;
+    const y6 = y4 + dy2;
+    const of2 = (w * a2) / cnstVal3;
+    const dx2 = of2 > 0 ? 0 : of2;
+    const x2 = l - dx2;
+    const dx8 = of2 > 0 ? of2 : 0;
+    const x8 = r - dx8;
+    const dx3 = (dx2 + x8) / 6;
+    const x3 = x2 + dx3;
+    const dx4 = (dx2 + x8) / 3;
+    const x4 = x2 + dx4;
+    const x5 = (x2 + x8) / 2;
+    const x6 = x5 + dx3;
+    const x7 = (x6 + x8) / 2;
+    const x9 = l + dx8;
+    const x15 = r + dx2;
+    const x10 = x9 + dx3;
+    const x11 = x9 + dx4;
+    const x12 = (x9 + x15) / 2;
+    const x13 = x12 + dx3;
+    const x14 = (x13 + x15) / 2;
 
     d_val =
       "M" +
@@ -660,30 +600,29 @@ function renderWave(ctx: RibbonContext, shapType: string): string {
       "," +
       y4 +
       " z";
-  } else if (shapType == "wave") {
+  } else if (shapType === "wave") {
     const cnstVal5 = 20000 * slideFactor;
-    var a1, a2, y1, dy2, y2, y3, y4, y5, y6, of2, dx2, x2, dx5, x5, dx3, x3, x4, x6, x10, x7, x8;
-    a1 = adj1 < 0 ? 0 : adj1 > cnstVal5 ? cnstVal5 : adj1;
-    a2 = adj2 < cnstVal2 ? cnstVal2 : adj2 > cnstVal4 ? cnstVal4 : adj2;
-    y1 = (h * a1) / cnstVal4;
-    dy2 = (y1 * 10) / 3;
-    y2 = y1 - dy2;
-    y3 = y1 + dy2;
-    y4 = b - y1;
-    y5 = y4 - dy2;
-    y6 = y4 + dy2;
-    of2 = (w * a2) / cnstVal3;
-    dx2 = of2 > 0 ? 0 : of2;
-    x2 = l - dx2;
-    dx5 = of2 > 0 ? of2 : 0;
-    x5 = r - dx5;
-    dx3 = (dx2 + x5) / 3;
-    x3 = x2 + dx3;
-    x4 = (x3 + x5) / 2;
-    x6 = l + dx5;
-    x10 = r + dx2;
-    x7 = x6 + dx3;
-    x8 = (x7 + x10) / 2;
+    const a1 = adj1 < 0 ? 0 : adj1 > cnstVal5 ? cnstVal5 : adj1;
+    const a2 = adj2 < cnstVal2 ? cnstVal2 : adj2 > cnstVal4 ? cnstVal4 : adj2;
+    const y1 = (h * a1) / cnstVal4;
+    const dy2 = (y1 * 10) / 3;
+    const y2 = y1 - dy2;
+    const y3 = y1 + dy2;
+    const y4 = b - y1;
+    const y5 = y4 - dy2;
+    const y6 = y4 + dy2;
+    const of2 = (w * a2) / cnstVal3;
+    const dx2 = of2 > 0 ? 0 : of2;
+    const x2 = l - dx2;
+    const dx5 = of2 > 0 ? of2 : 0;
+    const x5 = r - dx5;
+    const dx3 = (dx2 + x5) / 3;
+    const x3 = x2 + dx3;
+    const x4 = (x3 + x5) / 2;
+    const x6 = l + dx5;
+    const x10 = r + dx2;
+    const x7 = x6 + dx3;
+    const x8 = (x7 + x10) / 2;
 
     d_val =
       "M" +
@@ -740,13 +679,13 @@ function renderEllipseRibbon(ctx: RibbonContext, shapType: string): string {
   if (shapAdjst_ary !== undefined) {
     for (let i = 0; i < shapAdjst_ary.length; i++) {
       const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name == "adj1") {
+      if (sAdj_name === "adj1") {
         sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj2") {
+      } else if (sAdj_name === "adj2") {
         sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name == "adj3") {
+      } else if (sAdj_name === "adj3") {
         sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
@@ -763,79 +702,50 @@ function renderEllipseRibbon(ctx: RibbonContext, shapType: string): string {
     b = h,
     r = w,
     wd8 = w / 8;
-  let a1,
-    a2,
-    q10,
-    q11,
-    q12,
-    minAdj3,
-    a3,
-    dx2,
-    x2,
-    x3,
-    x4,
-    x5,
-    x6,
-    dy1,
-    f1,
-    q1,
-    q2,
-    cx1,
-    cx2,
-    dy3,
-    q3,
-    q4,
-    q5,
-    rh,
-    q8,
-    cx4,
-    q9,
-    cx5;
-  a1 = adj1 < 0 ? 0 : adj1 > cnstVal4 ? cnstVal4 : adj1;
-  a2 = adj2 < cnstVal1 ? cnstVal1 : adj2 > cnstVal3 ? cnstVal3 : adj2;
-  q10 = cnstVal4 - a1;
-  q11 = q10 / 2;
-  q12 = a1 - q11;
-  minAdj3 = 0 > q12 ? 0 : q12;
-  a3 = adj3 < minAdj3 ? minAdj3 : adj3 > a1 ? a1 : adj3;
-  dx2 = (w * a2) / cnstVal5;
-  x2 = hc - dx2;
-  x3 = x2 + wd8;
-  x4 = r - x3;
-  x5 = r - x2;
-  x6 = r - wd8;
-  dy1 = (h * a3) / cnstVal4;
-  f1 = (4 * dy1) / w;
-  q1 = (x3 * x3) / w;
-  q2 = x3 - q1;
-  cx1 = x3 / 2;
-  cx2 = r - cx1;
+  const a1 = adj1 < 0 ? 0 : adj1 > cnstVal4 ? cnstVal4 : adj1;
+  const a2 = adj2 < cnstVal1 ? cnstVal1 : adj2 > cnstVal3 ? cnstVal3 : adj2;
+  const q10 = cnstVal4 - a1;
+  const q11 = q10 / 2;
+  const q12 = a1 - q11;
+  const minAdj3 = 0 > q12 ? 0 : q12;
+  const a3 = adj3 < minAdj3 ? minAdj3 : adj3 > a1 ? a1 : adj3;
+  const dx2 = (w * a2) / cnstVal5;
+  const x2 = hc - dx2;
+  const x3 = x2 + wd8;
+  const x4 = r - x3;
+  const x5 = r - x2;
+  const x6 = r - wd8;
+  const dy1 = (h * a3) / cnstVal4;
+  const f1 = (4 * dy1) / w;
+  let q1 = (x3 * x3) / w;
+  const q2 = x3 - q1;
+  const cx1 = x3 / 2;
+  const cx2 = r - cx1;
   q1 = (h * a1) / cnstVal4;
-  dy3 = q1 - dy1;
-  q3 = (x2 * x2) / w;
-  q4 = x2 - q3;
-  q5 = f1 * q4;
-  rh = b - q1;
-  q8 = (dy1 * 14) / 16;
-  cx4 = x2 / 2;
-  q9 = f1 * cx4;
-  cx5 = r - cx4;
-  if (shapType == "ellipseRibbon") {
-    var y1, cy1, y3, q6, q7, cy3, y2, y5, y6, cy4, cy6, y7, cy7, y8;
-    y1 = f1 * q2;
-    cy1 = f1 * cx1;
-    y3 = q5 + dy3;
-    q6 = dy1 + dy3 - y3;
-    q7 = q6 + dy1;
-    cy3 = q7 + dy3;
-    y2 = (q8 + rh) / 2;
-    y5 = q5 + rh;
-    y6 = y3 + rh;
-    cy4 = q9 + rh;
-    cy6 = cy3 + rh;
-    y7 = y1 + dy3;
-    cy7 = q1 + q1 - y7;
-    y8 = b - dy1;
+  const dy3 = q1 - dy1;
+  const q3 = (x2 * x2) / w;
+  const q4 = x2 - q3;
+  const q5 = f1 * q4;
+  const rh = b - q1;
+  const q8 = (dy1 * 14) / 16;
+  const cx4 = x2 / 2;
+  const q9 = f1 * cx4;
+  const cx5 = r - cx4;
+  if (shapType === "ellipseRibbon") {
+    const y1 = f1 * q2;
+    const cy1 = f1 * cx1;
+    const y3 = q5 + dy3;
+    const q6 = dy1 + dy3 - y3;
+    const q7 = q6 + dy1;
+    const cy3 = q7 + dy3;
+    const y2 = (q8 + rh) / 2;
+    const y5 = q5 + rh;
+    const y6 = y3 + rh;
+    const cy4 = q9 + rh;
+    const cy6 = cy3 + rh;
+    const y7 = y1 + dy3;
+    const _cy7 = q1 + q1 - y7;
+    const _y8 = b - dy1;
     //
     d_val =
       "M" +
@@ -951,55 +861,31 @@ function renderEllipseRibbon(ctx: RibbonContext, shapType: string): string {
       x4 +
       "," +
       y1;
-  } else if (shapType == "ellipseRibbon2") {
-    var u1,
-      y1,
-      cu1,
-      cy1,
-      u3,
-      y3,
-      q6,
-      q7,
-      cu3,
-      cy3,
-      u2,
-      y2,
-      u5,
-      y5,
-      u6,
-      y6,
-      cu4,
-      cy4,
-      cu6,
-      cy6,
-      u7,
-      y7,
-      cu7,
-      cy7;
-    u1 = f1 * q2;
-    y1 = b - u1;
-    cu1 = f1 * cx1;
-    cy1 = b - cu1;
-    u3 = q5 + dy3;
-    y3 = b - u3;
-    q6 = dy1 + dy3 - u3;
-    q7 = q6 + dy1;
-    cu3 = q7 + dy3;
-    cy3 = b - cu3;
-    u2 = (q8 + rh) / 2;
-    y2 = b - u2;
-    u5 = q5 + rh;
-    y5 = b - u5;
-    u6 = u3 + rh;
-    y6 = b - u6;
-    cu4 = q9 + rh;
-    cy4 = b - cu4;
-    cu6 = cu3 + rh;
-    cy6 = b - cu6;
-    u7 = u1 + dy3;
-    y7 = b - u7;
-    cu7 = q1 + q1 - u7;
-    cy7 = b - cu7;
+  } else if (shapType === "ellipseRibbon2") {
+    const u1 = f1 * q2;
+    const y1 = b - u1;
+    const cu1 = f1 * cx1;
+    const cy1 = b - cu1;
+    const u3 = q5 + dy3;
+    const y3 = b - u3;
+    const q6 = dy1 + dy3 - u3;
+    const q7 = q6 + dy1;
+    const cu3 = q7 + dy3;
+    const cy3 = b - cu3;
+    const u2 = (q8 + rh) / 2;
+    const y2 = b - u2;
+    const u5 = q5 + rh;
+    const y5 = b - u5;
+    const u6 = u3 + rh;
+    const y6 = b - u6;
+    const cu4 = q9 + rh;
+    const cy4 = b - cu4;
+    const cu6 = cu3 + rh;
+    const cy6 = b - cu6;
+    const u7 = u1 + dy3;
+    const y7 = b - u7;
+    const cu7 = q1 + q1 - u7;
+    const _cy7 = b - cu7;
     //
     d_val =
       "M" +
