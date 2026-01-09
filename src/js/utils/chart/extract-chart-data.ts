@@ -56,7 +56,6 @@ export function extractChartData(serNode: any) {
         eachElement(
           innerNode["c:cat"]["c:strRef"]["c:strCache"]["c:pt"],
           function (innerNode: any, index: any) {
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
             return "";
           }
@@ -67,7 +66,6 @@ export function extractChartData(serNode: any) {
         eachElement(
           innerNode["c:cat"]["c:numRef"]["c:numCache"]["c:pt"],
           function (innerNode: any, index: any) {
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
             return "";
           }
