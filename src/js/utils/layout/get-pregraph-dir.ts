@@ -18,11 +18,11 @@ import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
  * @returns CSS class name for text direction (pregraph-rtl, pregraph-ltr, or pregraph-inherit)
  */
 export function getPregraphDir(
-  node: any,
-  textBodyNode: any,
-  idx: any,
-  type: any,
-  warpObj: any
+  node: Record<string, unknown>,
+  textBodyNode: Record<string, unknown> | undefined,
+  idx: number | string | undefined,
+  type: string | undefined,
+  warpObj: Record<string, unknown>
 ): string {
   let rtl = getTextByPathList(node, ["a:pPr", "attrs", "rtl"]);
   //console.log("getPregraphDir node:", node, "textBodyNode", textBodyNode, "rtl:", rtl, "idx", idx, "type", type, "warpObj", warpObj)
