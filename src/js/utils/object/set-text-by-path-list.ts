@@ -12,18 +12,27 @@
  * setTextByPathList(obj, ['a', 'b', 'c'], 'value');
  * // obj is now { a: { b: { c: 'value' } } }
  */
-export function setTextByPathList(node: any, path: any, value: any): any {
+export function setTextByPathList(
+  node: Record<string | number, unknown> | undefined,
+  path: Array<string | number>,
+  value: unknown
+): void {
   if (path.constructor !== Array) {
     throw Error("Error of path type! path is not array.");
   }
 
   if (node === undefined) {
-    return undefined;
+    return;
   }
 
-  Reflect.defineProperty(node, "set", {
-    value: function (parts: any, value: any) {
-      let obj = this;
+  type NodeRecord = Record<string | number, unknown>;
+  const target = node as NodeRecord & {
+    set?: (parts: Array<string | number>, value: unknown) => unknown;
+  };
+
+  Reflect.defineProperty(target, "set", {
+    value: function (this: NodeRecord, parts: Array<string | number>, value: unknown) {
+      let obj: NodeRecord = this;
       const len = parts.length;
       for (let i = 0; i < len; i++) {
         const p = parts[i];
@@ -34,11 +43,11 @@ export function setTextByPathList(node: any, path: any, value: any): any {
             obj[p] = {};
           }
         }
-        obj = obj[p];
+        obj = obj[p] as NodeRecord;
       }
       return obj;
     },
   });
 
-  node.set(path, value);
+  target.set?.(path, value);
 }
