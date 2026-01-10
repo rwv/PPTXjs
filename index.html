@@ -5,17 +5,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>PPTXjs - Meshesha</title>
 
-<link rel="stylesheet" href="./css/pptxjs.css">
-<link rel="stylesheet" href="./css/nv.d3.min.css">
+<script type="module">
+	import { ensurePptxDependencies, pptxToHtml } from "./src/pptxjs-entry.ts";
 
-<script type="text/javascript" src="./js/jszip.min.js"></script>
-<script type="text/javascript" src="./js/filereader.js"></script>
-<script type="text/javascript" src="./js/d3.min.js"></script>
-<script type="text/javascript" src="./js/nv.d3.min.js"></script>
-<script type="text/javascript" src="./dist/js/pptxjs.js"></script>
+	document.addEventListener("DOMContentLoaded", async function () {
+		await ensurePptxDependencies();
 
-<script type="text/javascript">
-	document.addEventListener("DOMContentLoaded", function () {
 		var oldWidth = "";
 		var oldMargin = "";
 		var fullscreenButton = document.getElementById("fullscreen-btn");
@@ -58,27 +53,8 @@
 				updateSlideStyles(oldWidth, oldMargin);
 			}
 		});
-	});
-</script>
-<style>
-	html, body { margin: 0; padding: 0; }
-	#warper { margin-right: auto; margin-left: auto; width: 900px; }
-</style>
-</head>
-<body>
-	<div id="warper">
-		<input id="uploadFileInput" type="file" />
-		<br><br>
-		<div id="container">
-			<input id="fullscreen-btn" type="button" value="Fullscreen" />
-			<br>
-			<div  id="result"></div>
-		</div>
-	</div>
-<script>
-	var result = document.getElementById("result");
-	if (result && window.pptxToHtml) {
-		window.pptxToHtml(result, {
+
+		pptxToHtml(result, {
 			pptxFileUrl: "Sample_12.pptx",
 			fileInputId: "uploadFileInput",
 			slideMode: false,
@@ -99,8 +75,22 @@
 			    transitionTime: 1 /** transition time in seconds */
 			}
 		});
-	}
+	});
 </script>
-
+<style>
+	html, body { margin: 0; padding: 0; }
+	#warper { margin-right: auto; margin-left: auto; width: 900px; }
+</style>
+</head>
+<body>
+	<div id="warper">
+		<input id="uploadFileInput" type="file" />
+		<br><br>
+		<div id="container">
+			<input id="fullscreen-btn" type="button" value="Fullscreen" />
+			<br>
+			<div  id="result"></div>
+		</div>
+	</div>
 </body>
 </html>

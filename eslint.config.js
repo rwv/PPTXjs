@@ -30,6 +30,7 @@ export default [
       },
       globals: {
         // Browser globals
+        globalThis: 'readonly',
         window: 'readonly',
         document: 'readonly',
         console: 'readonly',

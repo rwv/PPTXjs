@@ -50,6 +50,11 @@ The codebase builds a single IIFE bundle:
    - Native DOM implementation for slide navigation and presentation
    - Adds slide transitions, keyboard shortcuts, auto-play
 
+### ESM Entry (No Script Tags)
+
+- `src/pptxjs-entry.ts` provides `ensurePptxDependencies()` to load JSZip v2, D3 v3, and NVD3 via dynamic import and set globals.
+- Import `pptxToHtml` from the entry and call `await ensurePptxDependencies()` before use.
+
 ### Core PPTX Processing Flow
 
 The main processing happens in `src/js/pptxjs.ts` (~13,000 lines):

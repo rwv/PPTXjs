@@ -26,7 +26,8 @@ All commands must pass before committing.
 - `src/js/pptxjs.ts`: main PPTX parser and renderer (exports `pptxToHtml` and attaches to `window`).
 - `src/js/divs2slides.ts`: slideshow/presentation mode implementation.
 - `src/js/utils/**`: utility modules grouped by domain (layout, color, font, shape, media, chart, xml, vendors).
-- `src/index.ts` and `src/load-pptxjs.ts`: programmatic loader and browser entry used by tests.
+- `src/pptxjs-entry.ts`: ESM entry that wires JSZip/D3/NVD3 globals and exports `pptxToHtml`.
+- `src/index.ts`: test helper that uses the ESM entry to render slides.
 - `rollup.config.js`: builds IIFE output to `dist/js/pptxjs.js`.
 - `css/`: runtime styles; `js/` and `js-original/`: built and legacy artifacts.
 - `src/__tests__/*.browser.test.ts`: browser tests (Vitest + Playwright).

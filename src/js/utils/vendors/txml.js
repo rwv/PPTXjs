@@ -114,10 +114,12 @@ tXml.simplify = function (t) {
     if ("object" == typeof t) {
       r[t.tagName] || (r[t.tagName] = []);
       var e = tXml.simplify(t.children || []);
-      (r[t.tagName].push(e),
-        t.attributes && (e.attrs = t.attributes),
-        void 0 === e.attrs ? (e.attrs = { order: _order }) : (e.attrs.order = _order),
-        _order++);
+      r[t.tagName].push(e);
+      if ("object" == typeof e && null !== e) {
+        t.attributes && (e.attrs = t.attributes);
+        void 0 === e.attrs ? (e.attrs = { order: _order }) : (e.attrs.order = _order);
+      }
+      _order++;
     }
   });
   for (var e in r) 1 == r[e].length && (r[e] = r[e][0]);

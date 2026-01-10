@@ -31,7 +31,11 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: [
+      'd3',
+      'jszip',
+      'nvd3',
       'node:module',
+      'tinycolor2',
       'vite-plugin-node-polyfills/shims/buffer',
       'vite-plugin-node-polyfills/shims/global',
       'vite-plugin-node-polyfills/shims/process'

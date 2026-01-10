@@ -26,7 +26,7 @@ export class JSZipV2Adapter implements PptxArchive {
    * @param data - PPTX file as ArrayBuffer
    */
   constructor(data: ArrayBuffer) {
-    // @ts-expect-error - JSZip v2 is loaded globally via script tag
+    // @ts-expect-error - JSZip v2 is loaded globally via ensurePptxDependencies
     this.zip = new JSZip();
     this.zip.load(data);
   }

@@ -1,4 +1,4 @@
-import { loadPPTXjs } from "./load-pptxjs";
+import { ensurePptxDependencies, pptxToHtml } from "./pptxjs-entry";
 
 type PptxToHtmlOptions = {
   pptxFileUrl: string;
@@ -8,29 +8,24 @@ type PptxToHtmlOptions = {
   mediaProcess: boolean;
 };
 
-type PptxToHtmlFn = (container: HTMLElement | string, options: PptxToHtmlOptions) => void;
-
 export async function getPageElementsFromPPTX(file: Blob) {
   const url = URL.createObjectURL(file);
 
-  await loadPPTXjs(document);
+  await ensurePptxDependencies();
 
   const element = document.createElement("div");
   const elementID = crypto.randomUUID();
   element.id = elementID;
   document.body.appendChild(element);
 
-  const pptxToHtml = (window as { pptxToHtml?: PptxToHtmlFn }).pptxToHtml;
-  if (!pptxToHtml) {
-    throw new Error("pptxToHtml is not available");
-  }
-  pptxToHtml(element, {
+  const options: PptxToHtmlOptions = {
     pptxFileUrl: url,
     slidesScale: "100%",
     slideMode: false,
     keyBoardShortCut: false,
     mediaProcess: false,
-  });
+  };
+  pptxToHtml(element, options);
 
   // Wait until slides are loaded
   await new Promise<void>((resolve) => {
