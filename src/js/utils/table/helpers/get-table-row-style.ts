@@ -28,12 +28,19 @@ export interface TableRowStyle {
   band_2H_fillColor?: string;
 }
 
+type TableStyleAttrFlags = {
+  isFrstRowAttr?: number;
+  isBandRowAttr?: number;
+  isLstRowAttr?: number;
+  [key: string]: unknown;
+};
+
 export function getTableRowStyle(
   rowIndex: number,
   totalRows: number,
-  tblStylAttrObj: any,
-  thisTblStyle: any,
-  warpObj: any
+  tblStylAttrObj: TableStyleAttrFlags,
+  thisTblStyle: Record<string, unknown> | undefined,
+  warpObj: Record<string, unknown>
 ): TableRowStyle {
   let fillColor = "";
   let row_borders: string | undefined = "";
@@ -89,11 +96,11 @@ export function getTableRowStyle(
   }
 
   // Apply firstRow styling
-  if (rowIndex === 0 && tblStylAttrObj["isFrstRowAttr"] === 1 && thisTblStyle !== undefined) {
+  if (rowIndex === 0 && tblStylAttrObj.isFrstRowAttr === 1 && thisTblStyle !== undefined) {
     applyStyleFromPath(["a:firstRow"]);
   }
   // Apply banded row styling (skip first row if firstRow styling is applied)
-  else if (rowIndex > 0 && tblStylAttrObj["isBandRowAttr"] === 1 && thisTblStyle !== undefined) {
+  else if (rowIndex > 0 && tblStylAttrObj.isBandRowAttr === 1 && thisTblStyle !== undefined) {
     fillColor = "";
     row_borders = undefined;
 
@@ -112,7 +119,7 @@ export function getTableRowStyle(
   // Apply lastRow styling (overrides previous styling)
   if (
     rowIndex === totalRows - 1 &&
-    tblStylAttrObj["isLstRowAttr"] === 1 &&
+    tblStylAttrObj.isLstRowAttr === 1 &&
     thisTblStyle !== undefined
   ) {
     applyStyleFromPath(["a:lastRow"]);
