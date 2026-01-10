@@ -20,44 +20,44 @@ type BulletColor =
 
 export function renderBulletChar(
   pPrNode: Record<string, unknown> | undefined,
-  buChar: string,
-  bultColor: BulletColor,
-  color_tye: string,
-  bultSize: string,
-  marLStr: string,
-  marRStr: string,
-  isRTL: boolean,
-  font_val: number
+  bulletChar: string,
+  bulletColor: BulletColor,
+  colorType: string,
+  bulletSize: string,
+  marginLeftStyle: string,
+  marginRightStyle: string,
+  isRtl: boolean,
+  fontSizeValue: number
 ): string {
-  const typefaceNode = getTextByPathList<string>(pPrNode, ["a:buFont", "attrs", "typeface"]);
-  let typeface = "";
-  if (typefaceNode !== undefined) {
-    typeface = "font-family: " + typefaceNode;
+  const typefaceName = getTextByPathList<string>(pPrNode, ["a:buFont", "attrs", "typeface"]);
+  let typefaceStyle = "";
+  if (typefaceName !== undefined) {
+    typefaceStyle = "font-family: " + typefaceName;
   }
 
   let bullet =
     "<div style='height: 100%;" +
-    typeface +
+    typefaceStyle +
     ";" +
-    marLStr +
-    marRStr +
+    marginLeftStyle +
+    marginRightStyle +
     "font-size:" +
-    bultSize +
+    bulletSize +
     ";";
 
   // Handle different color types
-  if (color_tye === "solid") {
-    const [solidColor, solidShadow] = bultColor as [string, string];
+  if (colorType === "solid") {
+    const [solidColor, solidShadow] = bulletColor as [string, string];
     if (solidColor !== undefined && solidColor !== "") {
       bullet += "color:#" + solidColor + "; ";
     }
     if (solidShadow !== undefined && solidShadow !== "" && solidShadow !== ";") {
       bullet += "text-shadow:" + solidShadow + ";";
     }
-  } else if (color_tye === "pattern" || color_tye === "pic" || color_tye === "gradient") {
-    if (color_tye === "pattern") {
+  } else if (colorType === "pattern" || colorType === "pic" || colorType === "gradient") {
+    if (colorType === "pattern") {
       const [patternColor, patternSize, patternPos] = (
-        bultColor as [[string, string?, string?], BulletColorEffects]
+        bulletColor as [[string, string?, string?], BulletColorEffects]
       )[0];
       bullet += "background:" + patternColor + ";";
       if (patternSize !== null && patternSize !== undefined && patternSize !== "") {
@@ -66,37 +66,39 @@ export function renderBulletChar(
       if (patternPos !== null && patternPos !== undefined && patternPos !== "") {
         bullet += "background-position:" + patternPos + ";";
       }
-    } else if (color_tye === "pic") {
-      const picFill = (bultColor as [string, BulletColorEffects])[0];
-      bullet += picFill + ";";
-    } else if (color_tye === "gradient") {
-      const gradientFill = (bultColor as [{ color: string[]; rot: number }, BulletColorEffects])[0];
-      const colorAry = gradientFill.color;
-      const rot = gradientFill.rot;
+    } else if (colorType === "pic") {
+      const pictureFillStyle = (bulletColor as [string, BulletColorEffects])[0];
+      bullet += pictureFillStyle + ";";
+    } else if (colorType === "gradient") {
+      const gradientFill = (
+        bulletColor as [{ color: string[]; rot: number }, BulletColorEffects]
+      )[0];
+      const gradientColors = gradientFill.color;
+      const gradientRotation = gradientFill.rot;
 
-      bullet += "background: linear-gradient(" + rot + "deg,";
-      for (let i = 0; i < colorAry.length; i++) {
-        if (i === colorAry.length - 1) {
-          bullet += "#" + colorAry[i] + ");";
+      bullet += "background: linear-gradient(" + gradientRotation + "deg,";
+      for (let i = 0; i < gradientColors.length; i++) {
+        if (i === gradientColors.length - 1) {
+          bullet += "#" + gradientColors[i] + ");";
         } else {
-          bullet += "#" + colorAry[i] + ", ";
+          bullet += "#" + gradientColors[i] + ", ";
         }
       }
     }
 
     // Apply background clipping for non-solid colors
     bullet += "-webkit-background-clip: text;" + "background-clip: text;" + "color: transparent;";
-    const effects = (bultColor as [unknown, BulletColorEffects])[1];
-    if (effects.border !== undefined && effects.border !== "") {
-      bullet += "-webkit-text-stroke: " + effects.border + ";";
+    const bulletEffects = (bulletColor as [unknown, BulletColorEffects])[1];
+    if (bulletEffects.border !== undefined && bulletEffects.border !== "") {
+      bullet += "-webkit-text-stroke: " + bulletEffects.border + ";";
     }
-    if (effects.effcts !== undefined && effects.effcts !== "") {
-      bullet += "filter: " + effects.effcts + ";";
+    if (bulletEffects.effcts !== undefined && bulletEffects.effcts !== "") {
+      bullet += "filter: " + bulletEffects.effcts + ";";
     }
   }
 
   // RTL support
-  if (isRTL) {
+  if (isRtl) {
     bullet += "white-space: nowrap ;direction:rtl";
   }
 
@@ -104,14 +106,15 @@ export function renderBulletChar(
   const isIE11 =
     !!(window as { MSInputMethodContext?: unknown }).MSInputMethodContext &&
     !!(document as Document & { documentMode?: unknown }).documentMode;
-  let htmlBu = buChar;
+  let bulletHtml = bulletChar;
 
   if (!isIE11) {
     // IE11 does not support unicode
-    htmlBu = getHtmlBullet(typefaceNode, buChar);
+    bulletHtml = getHtmlBullet(typefaceName, bulletChar);
   }
 
-  bullet += "'><div style='line-height: " + font_val / 2 + "px;'>" + htmlBu + "</div></div>";
+  bullet +=
+    "'><div style='line-height: " + fontSizeValue / 2 + "px;'>" + bulletHtml + "</div></div>";
 
   return bullet;
 }
