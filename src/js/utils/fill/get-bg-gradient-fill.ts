@@ -1,8 +1,8 @@
 /**
  * Get background gradient fill style
  *
- * @param bgPr - Background properties node
- * @param phClr - Placeholder color
+ * @param backgroundProps - Background properties node
+ * @param placeholderColor - Placeholder color
  * @param slideMasterContent - Slide master content
  * @param warpObj - The warp object containing theme and other resources
  * @returns CSS background gradient string
@@ -16,57 +16,67 @@ type SolidFillWarpObj = Parameters<typeof getSolidFill>[3];
 type ColorMap = Parameters<typeof getSolidFill>[1];
 
 export function getBgGradientFill(
-  bgPr: Record<string, unknown> | undefined,
-  phClr: string | undefined,
+  backgroundProps: Record<string, unknown> | undefined,
+  placeholderColor: string | undefined,
   slideMasterContent: Record<string, unknown>,
   warpObj: SolidFillWarpObj
 ): string {
-  let bgcolor = "";
-  if (bgPr !== undefined) {
-    const grdFill = getTextByPathList<Record<string, unknown>>(bgPr, ["a:gradFill"]);
-    const gsLst =
-      getTextByPathList<Array<Record<string, unknown>>>(grdFill, ["a:gsLst", "a:gs"]) || [];
-    const color_ary: string[] = [];
-    const pos_ary: string[] = [];
-    const clrMap = getTextByPathList<ColorMap>(slideMasterContent, [
+  let backgroundStyle = "";
+  if (backgroundProps !== undefined) {
+    const gradientFillNode = getTextByPathList<Record<string, unknown>>(backgroundProps, [
+      "a:gradFill",
+    ]);
+    const gradientStops =
+      getTextByPathList<Array<Record<string, unknown>>>(gradientFillNode, ["a:gsLst", "a:gs"]) ||
+      [];
+    const colorStops: string[] = [];
+    const positionStops: string[] = [];
+    const colorMap = getTextByPathList<ColorMap>(slideMasterContent, [
       "p:sldMaster",
       "p:clrMap",
       "attrs",
     ]);
 
-    for (let i = 0; i < gsLst.length; i++) {
-      const lo_color = getSolidFill(gsLst[i] as SolidFillNode, clrMap, phClr, warpObj);
-      const pos = getTextByPathList<string>(gsLst[i], ["attrs", "pos"]);
+    for (let i = 0; i < gradientStops.length; i++) {
+      const solidFillColor = getSolidFill(
+        gradientStops[i] as SolidFillNode,
+        colorMap,
+        placeholderColor,
+        warpObj
+      );
+      const pos = getTextByPathList<string>(gradientStops[i], ["attrs", "pos"]);
       if (pos !== undefined) {
-        pos_ary[i] = Number(pos) / 1000 + "%";
+        positionStops[i] = Number(pos) / 1000 + "%";
       } else {
-        pos_ary[i] = "";
+        positionStops[i] = "";
       }
-      color_ary[i] = "#" + lo_color;
+      colorStops[i] = "#" + solidFillColor;
     }
 
     // get rotation
-    const lin = getTextByPathList<Record<string, unknown>>(grdFill, ["a:lin"]);
-    let rot = 90;
-    if (lin !== undefined) {
-      const ang = getTextByPathList<string | number>(lin, ["attrs", "ang"]);
-      if (ang !== undefined) {
-        rot = angleToDegrees(ang) + 90;
+    const linearGradientNode = getTextByPathList<Record<string, unknown>>(gradientFillNode, [
+      "a:lin",
+    ]);
+    let rotationDegrees = 90;
+    if (linearGradientNode !== undefined) {
+      const angle = getTextByPathList<string | number>(linearGradientNode, ["attrs", "ang"]);
+      if (angle !== undefined) {
+        rotationDegrees = angleToDegrees(angle) + 90;
       }
     }
 
-    bgcolor = "background: linear-gradient(" + rot + "deg,";
-    for (let i = 0; i < gsLst.length; i++) {
-      if (i === gsLst.length - 1) {
-        bgcolor += color_ary[i] + " " + pos_ary[i] + ");";
+    backgroundStyle = "background: linear-gradient(" + rotationDegrees + "deg,";
+    for (let i = 0; i < gradientStops.length; i++) {
+      if (i === gradientStops.length - 1) {
+        backgroundStyle += colorStops[i] + " " + positionStops[i] + ");";
       } else {
-        bgcolor += color_ary[i] + " " + pos_ary[i] + ", ";
+        backgroundStyle += colorStops[i] + " " + positionStops[i] + ", ";
       }
     }
   } else {
-    if (phClr !== undefined) {
-      bgcolor = "background: #" + phClr + ";";
+    if (placeholderColor !== undefined) {
+      backgroundStyle = "background: #" + placeholderColor + ";";
     }
   }
-  return bgcolor;
+  return backgroundStyle;
 }
