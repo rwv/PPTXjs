@@ -61,6 +61,8 @@ interface Divs2SlidesSettings {
   transitionTime: number /** transition time in seconds */;
 }
 
+type Divs2SlidesPlugin = (this: JQuery, options: Divs2SlidesSettings) => void;
+
 /**
  * Register divs2slides jQuery plugin
  * This function should be called once to add the .divs2slides() method to jQuery
@@ -512,7 +514,8 @@ export function registerDivs2Slides() {
       },
     };
 
-    ($.fn as any).divs2slides = function (options: Divs2SlidesSettings) {
+    const pluginHost = $.fn as JQuery & { divs2slides?: Divs2SlidesPlugin };
+    pluginHost.divs2slides = function (this: JQuery, options: Divs2SlidesSettings) {
       const target = $(this);
       const divId: string = target.attr("id");
       const slides = $("#" + divId + " .slide"); //target.children();
