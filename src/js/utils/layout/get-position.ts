@@ -60,48 +60,48 @@ interface ParentNode {
  * - Rotated groups with child offsets
  *
  * @param slideSpNode - Transform node from slide content
- * @param pNode - Parent node (may contain group properties)
+ * @param parentNode - Parent node (may contain group properties)
  * @param slideLayoutSpNode - Transform node from layout
  * @param slideMasterSpNode - Transform node from master slide
- * @param sType - Shape type ("group", "group-rotate", or other)
+ * @param shapeType - Shape type ("group", "group-rotate", or other)
  * @param slideFactor - Conversion factor from PPTX units to pixels (default: 96/914400)
  * @returns CSS position string (e.g., "top: 100px; left: 50px;") or empty string if no position found
  */
 export function getPosition(
   slideSpNode: TransformNode | undefined,
-  pNode: ParentNode | undefined,
+  parentNode: ParentNode | undefined,
   slideLayoutSpNode: TransformNode | undefined,
   slideMasterSpNode: TransformNode | undefined,
-  sType: string | undefined,
+  shapeType: string | undefined,
   slideFactor: number
 ): string {
-  let off: { x?: string; y?: string } | undefined;
-  let x = -1,
-    y = -1;
+  let offsetAttrs: { x?: string; y?: string } | undefined;
+  let xPosition = -1,
+    yPosition = -1;
 
   // Find offset with fallback hierarchy: slide -> layout -> master
   if (slideSpNode !== undefined) {
-    off = slideSpNode["a:off"]?.attrs;
+    offsetAttrs = slideSpNode["a:off"]?.attrs;
   }
 
-  if (off === undefined && slideLayoutSpNode !== undefined) {
-    off = slideLayoutSpNode["a:off"]?.attrs;
-  } else if (off === undefined && slideMasterSpNode !== undefined) {
-    off = slideMasterSpNode["a:off"]?.attrs;
+  if (offsetAttrs === undefined && slideLayoutSpNode !== undefined) {
+    offsetAttrs = slideLayoutSpNode["a:off"]?.attrs;
+  } else if (offsetAttrs === undefined && slideMasterSpNode !== undefined) {
+    offsetAttrs = slideMasterSpNode["a:off"]?.attrs;
   }
 
-  let offX = 0,
-    offY = 0;
-  let grpX = 0,
-    grpY = 0;
+  let childOffsetX = 0,
+    childOffsetY = 0;
+  let groupOffsetX = 0,
+    groupOffsetY = 0;
 
   // Handle group positioning
-  if (sType === "group" && pNode !== undefined) {
-    const grpXfrmNode = getTextByPathList(pNode, ["p:grpSpPr", "a:xfrm"]);
-    // BUG FIX: Changed xfrmNode to grpXfrmNode
-    if (grpXfrmNode !== undefined) {
-      grpX = parseInt(grpXfrmNode["a:off"]["attrs"]["x"]) * slideFactor;
-      grpY = parseInt(grpXfrmNode["a:off"]["attrs"]["y"]) * slideFactor;
+  if (shapeType === "group" && parentNode !== undefined) {
+    const groupTransformNode = getTextByPathList(parentNode, ["p:grpSpPr", "a:xfrm"]);
+    // BUG FIX: Use the group transform node when computing offsets.
+    if (groupTransformNode !== undefined) {
+      groupOffsetX = parseInt(groupTransformNode["a:off"]["attrs"]["x"]) * slideFactor;
+      groupOffsetY = parseInt(groupTransformNode["a:off"]["attrs"]["y"]) * slideFactor;
       // var chx = parseInt(grpXfrmNode["a:chOff"]["attrs"]["x"]) * slideFactor;
       // var chy = parseInt(grpXfrmNode["a:chOff"]["attrs"]["y"]) * slideFactor;
       // var cx = parseInt(grpXfrmNode["a:ext"]["attrs"]["cx"]) * slideFactor;
@@ -113,29 +113,37 @@ export function getPosition(
   }
 
   // Handle rotated group positioning
-  if (sType === "group-rotate" && pNode !== undefined && pNode["p:grpSpPr"] !== undefined) {
-    const xfrmNode = pNode["p:grpSpPr"]["a:xfrm"];
-    if (xfrmNode !== undefined && xfrmNode["a:chOff"] !== undefined) {
+  if (
+    shapeType === "group-rotate" &&
+    parentNode !== undefined &&
+    parentNode["p:grpSpPr"] !== undefined
+  ) {
+    const groupTransformNode = parentNode["p:grpSpPr"]["a:xfrm"];
+    if (groupTransformNode !== undefined && groupTransformNode["a:chOff"] !== undefined) {
       // var ox = parseInt(xfrmNode["a:off"]["attrs"]["x"]) * slideFactor;
       // var oy = parseInt(xfrmNode["a:off"]["attrs"]["y"]) * slideFactor;
-      const chx = parseInt(xfrmNode["a:chOff"]["attrs"]["x"]) * slideFactor;
-      const chy = parseInt(xfrmNode["a:chOff"]["attrs"]["y"]) * slideFactor;
+      const childOffsetXValue = parseInt(groupTransformNode["a:chOff"]["attrs"]["x"]) * slideFactor;
+      const childOffsetYValue = parseInt(groupTransformNode["a:chOff"]["attrs"]["y"]) * slideFactor;
 
-      offX = chx;
-      offY = chy;
+      childOffsetX = childOffsetXValue;
+      childOffsetY = childOffsetYValue;
     }
   }
 
   // Return empty string if no offset found
-  if (off === undefined) {
+  if (offsetAttrs === undefined) {
     return "";
   } else {
-    x = parseInt(off["x"] || "0") * slideFactor;
-    y = parseInt(off["y"] || "0") * slideFactor;
+    xPosition = parseInt(offsetAttrs["x"] || "0") * slideFactor;
+    yPosition = parseInt(offsetAttrs["y"] || "0") * slideFactor;
     // if (type == "body")  // Note: This was commented out with a bug (= instead of ==)
     //     console.log("getPosition: slideSpNode: ", slideSpNode, ", type: ", type, "x: ", x, "offX:", offX, "y:", y, "offY:", offY)
-    return isNaN(x) || isNaN(y)
+    return isNaN(xPosition) || isNaN(yPosition)
       ? ""
-      : "top:" + (y - offY + grpY) + "px; left:" + (x - offX + grpX) + "px;";
+      : "top:" +
+          (yPosition - childOffsetY + groupOffsetY) +
+          "px; left:" +
+          (xPosition - childOffsetX + groupOffsetX) +
+          "px;";
   }
 }
