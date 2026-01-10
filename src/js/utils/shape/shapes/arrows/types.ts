@@ -2,7 +2,7 @@
  * Context for rendering arrow shapes
  */
 export interface ArrowShapeContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
