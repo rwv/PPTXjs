@@ -137,8 +137,7 @@ export async function processPPTX(
   const dateAfter = new Date();
   post_ary.push({
     type: "ExecutionTime",
-    // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
-    data: dateAfter - dateBefore,
+    data: dateAfter.getTime() - dateBefore.getTime(),
   });
   return post_ary;
 }

@@ -113,8 +113,11 @@ export async function initSlideMode(divId: string, settings: SlideModeSettings):
     try {
       await loadScript(revealjsPath);
       // $("section").removeClass("slide");
-      // @ts-expect-error TS(2304): Cannot find name 'Reveal'.
-      Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
+      const reveal = (window as { Reveal?: { initialize: (config?: unknown) => void } }).Reveal;
+      if (!reveal) {
+        throw new Error("Reveal.js not available after script load.");
+      }
+      reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
     } catch (error) {
       console.error(error);
     }

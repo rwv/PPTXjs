@@ -69,8 +69,10 @@ export function getVerticalMargins(
       fontSizeFactor
     );
     if (fontSizeStr !== "inherit") {
-      // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-      fontSize = parseInt(fontSizeStr, "px"); //pt
+      const parsedFontSize = Number.parseFloat(fontSizeStr);
+      if (!Number.isNaN(parsedFontSize)) {
+        fontSize = parsedFontSize; //pt
+      }
     }
   }
   //var spcBef = "";

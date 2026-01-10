@@ -12,6 +12,13 @@ type BulletWarpObj = {
   [key: string]: unknown;
 };
 
+const parsePxValue = (value: string | number | undefined): number => {
+  if (value === undefined) {
+    return NaN;
+  }
+  return Number.parseFloat(String(value));
+};
+
 /**
  * Generate bullet character HTML for a text paragraph
  *
@@ -133,10 +140,8 @@ export async function genBuChar(
       const prcnt = parseInt(buFontSize) / 100000;
       //dfltBultSize = XXpt
       //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
-      // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-      const dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
-      // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-      bultSize = prcnt * parseInt(dfltBultSizeNoPt) + "px"; // + "pt";
+      const dfltBultSizeNoPt = parsePxValue(dfltBultSize);
+      bultSize = prcnt * dfltBultSizeNoPt + "px"; // + "pt";
     }
   } else {
     bultSize = (parseInt(buFontSize) / 100) * fontSizeFactor + "px";
@@ -330,10 +335,8 @@ export async function genBuChar(
       if (buFontSize !== undefined) {
         const prcnt = parseInt(buFontSize) / 100000;
         //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
-        // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-        const dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
-        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-        bultSize = prcnt * parseInt(dfltBultSizeNoPt) + "px"; // + "pt";
+        const dfltBultSizeNoPt = parsePxValue(dfltBultSize);
+        bultSize = prcnt * dfltBultSizeNoPt + "px"; // + "pt";
       }
     } else {
       bultSize = (parseInt(buFontSize) / 100) * fontSizeFactor + "px";
@@ -347,10 +350,8 @@ export async function genBuChar(
         const prcnt = parseInt(buFontSize) / 100000;
         //dfltBultSize = XXpt
         //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
-        // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-        const dfltBultSizeNoPt = parseInt(dfltBultSize, "px");
-        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-        bultSize = prcnt * parseInt(dfltBultSizeNoPt) + "px"; // + "pt";
+        const dfltBultSizeNoPt = parsePxValue(dfltBultSize);
+        bultSize = prcnt * dfltBultSizeNoPt + "px"; // + "pt";
       }
     } else {
       bultSize = (parseInt(buFontSize) / 100) * fontSizeFactor + "px";
@@ -359,8 +360,7 @@ export async function genBuChar(
   if (buFontSize === undefined) {
     bultSize = dfltBultSize;
   }
-  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-  font_val = parseInt(bultSize, "px");
+  font_val = parsePxValue(bultSize);
   ////////////////////////////////////////////////////////////////////////
   if (buType === "TYPE_BULLET") {
     bullet = renderBulletChar(

@@ -28,6 +28,7 @@ export function processSingleMsg(d: unknown): boolean {
   }
 
   const { chartID, chartType, chartData } = d;
+  const { nv, d3 } = window as { nv: any; d3: any };
 
   let data: unknown = [];
 
@@ -35,7 +36,6 @@ export function processSingleMsg(d: unknown): boolean {
   switch (chartType) {
     case "lineChart": {
       data = chartData;
-      // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.lineChart().useInteractiveGuideline(true);
       chart.xAxis.tickFormat(function (value: number) {
         const series = chartData[0] as { xlabels?: Array<string | number> } | undefined;
@@ -45,7 +45,6 @@ export function processSingleMsg(d: unknown): boolean {
     }
     case "barChart": {
       data = chartData;
-      // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.multiBarChart();
       chart.xAxis.tickFormat(function (value: number) {
         const series = chartData[0] as { xlabels?: Array<string | number> } | undefined;
@@ -59,13 +58,11 @@ export function processSingleMsg(d: unknown): boolean {
         const series = chartData[0] as { values?: unknown } | undefined;
         data = series?.values ?? [];
       }
-      // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.pieChart();
       break;
     }
     case "areaChart": {
       data = chartData;
-      // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.stackedAreaChart().clipEdge(true).useInteractiveGuideline(true);
       chart.xAxis.tickFormat(function (value: number) {
         const series = chartData[0] as { xlabels?: Array<string | number> } | undefined;
@@ -86,16 +83,12 @@ export function processSingleMsg(d: unknown): boolean {
       data = scatterData;
 
       //data = chartData;
-      // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models
         .scatterChart()
         .showDistX(true)
         .showDistY(true)
-        // @ts-expect-error TS(2304): Cannot find name 'd3'.
         .color(d3.scale.category10().range());
-      // @ts-expect-error TS(2304): Cannot find name 'd3'.
       chart.xAxis.axisLabel("X").tickFormat(d3.format(".02f"));
-      // @ts-expect-error TS(2304): Cannot find name 'd3'.
       chart.yAxis.axisLabel("Y").tickFormat(d3.format(".02f"));
       break;
     }
@@ -103,7 +96,6 @@ export function processSingleMsg(d: unknown): boolean {
   }
 
   if (chart !== null) {
-    // @ts-expect-error TS(2304): Cannot find name 'd3'.
     d3.select("#" + chartID)
       .append("svg")
       .datum(data)
@@ -111,7 +103,6 @@ export function processSingleMsg(d: unknown): boolean {
       .duration(500)
       .call(chart);
 
-    // @ts-expect-error TS(2304): Cannot find name 'nv'.
     nv.utils.windowResize(chart.update);
     return true;
   }

@@ -101,8 +101,9 @@ export function renderBulletChar(
   }
 
   // IE11 compatibility check
-  // @ts-expect-error TS(2339): Property 'MSInputMethodContext' does not exist on type 'Window & typeof globalThis'.
-  const isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+  const isIE11 =
+    !!(window as { MSInputMethodContext?: unknown }).MSInputMethodContext &&
+    !!(document as Document & { documentMode?: unknown }).documentMode;
   let htmlBu = buChar;
 
   if (!isIE11) {
