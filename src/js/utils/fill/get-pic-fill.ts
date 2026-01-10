@@ -15,29 +15,47 @@ import { base64ArrayBuffer } from "../media/base64-array-buffer";
  * @param warpObj - Container object with ZIP file and resource mappings
  * @returns Base64 data URL of the image, or undefined if not found
  */
-export function getPicFill(type: string, node: any, warpObj: any) {
-  let img;
-  const rId = node["a:blip"]["attrs"]["r:embed"];
+type ResourceMap = Record<string, { target: string }>;
+type PicWarpObj = {
+  slideResObj?: ResourceMap;
+  layoutResObj?: ResourceMap;
+  masterResObj?: ResourceMap;
+  themeResObj?: ResourceMap;
+  diagramResObj?: ResourceMap;
+  archive: { readAsArrayBuffer: (path: string) => ArrayBuffer };
+  [key: string]: unknown;
+};
+
+export function getPicFill(
+  type: string,
+  node: Record<string, unknown>,
+  warpObj: PicWarpObj
+): string | undefined {
+  let img: string | undefined;
+  const rId = getTextByPathList<string>(node, ["a:blip", "attrs", "r:embed"]);
+  if (rId === undefined) {
+    return undefined;
+  }
   let imgPath;
   if (type === "slideBg" || type === "slide") {
-    imgPath = getTextByPathList(warpObj, ["slideResObj", rId, "target"]);
+    imgPath = getTextByPathList<string>(warpObj, ["slideResObj", rId, "target"]);
   } else if (type === "slideLayoutBg") {
-    imgPath = getTextByPathList(warpObj, ["layoutResObj", rId, "target"]);
+    imgPath = getTextByPathList<string>(warpObj, ["layoutResObj", rId, "target"]);
   } else if (type === "slideMasterBg") {
-    imgPath = getTextByPathList(warpObj, ["masterResObj", rId, "target"]);
+    imgPath = getTextByPathList<string>(warpObj, ["masterResObj", rId, "target"]);
   } else if (type === "themeBg") {
-    imgPath = getTextByPathList(warpObj, ["themeResObj", rId, "target"]);
+    imgPath = getTextByPathList<string>(warpObj, ["themeResObj", rId, "target"]);
   } else if (type === "diagramBg") {
-    imgPath = getTextByPathList(warpObj, ["diagramResObj", rId, "target"]);
+    imgPath = getTextByPathList<string>(warpObj, ["diagramResObj", rId, "target"]);
   }
   if (imgPath === undefined) {
     return undefined;
   }
-  img = getTextByPathList(warpObj, ["loaded-images", imgPath]);
+  img = getTextByPathList<string>(warpObj, ["loaded-images", imgPath]);
   if (img === undefined) {
     imgPath = escapeHtml(imgPath);
 
-    const imgExt = imgPath.split(".").pop();
+    const imgExt = imgPath.split(".").pop() ?? "";
     if (imgExt === "xml") {
       return undefined;
     }
