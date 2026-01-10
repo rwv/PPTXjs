@@ -11,29 +11,34 @@ import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color/get-solid-fill";
 import { angleToDegrees } from "../layout/angle-to-degrees";
 
+type SolidFillNode = Parameters<typeof getSolidFill>[0];
+type SolidFillWarpObj = Parameters<typeof getSolidFill>[3];
+type ColorMap = Parameters<typeof getSolidFill>[1];
+
 export function getBgGradientFill(
-  bgPr: any,
+  bgPr: Record<string, unknown> | undefined,
   phClr: string | undefined,
-  slideMasterContent: any,
-  warpObj: any
+  slideMasterContent: Record<string, unknown>,
+  warpObj: SolidFillWarpObj
 ): string {
   let bgcolor = "";
   if (bgPr !== undefined) {
-    const grdFill = bgPr["a:gradFill"];
-    const gsLst = grdFill["a:gsLst"]["a:gs"];
+    const grdFill = getTextByPathList<Record<string, unknown>>(bgPr, ["a:gradFill"]);
+    const gsLst =
+      getTextByPathList<Array<Record<string, unknown>>>(grdFill, ["a:gsLst", "a:gs"]) || [];
     const color_ary: string[] = [];
     const pos_ary: string[] = [];
+    const clrMap = getTextByPathList<ColorMap>(slideMasterContent, [
+      "p:sldMaster",
+      "p:clrMap",
+      "attrs",
+    ]);
 
     for (let i = 0; i < gsLst.length; i++) {
-      const lo_color = getSolidFill(
-        gsLst[i],
-        slideMasterContent["p:sldMaster"]["p:clrMap"]["attrs"],
-        phClr,
-        warpObj
-      );
-      const pos = getTextByPathList(gsLst[i], ["attrs", "pos"]);
+      const lo_color = getSolidFill(gsLst[i] as SolidFillNode, clrMap, phClr, warpObj);
+      const pos = getTextByPathList<string>(gsLst[i], ["attrs", "pos"]);
       if (pos !== undefined) {
-        pos_ary[i] = pos / 1000 + "%";
+        pos_ary[i] = Number(pos) / 1000 + "%";
       } else {
         pos_ary[i] = "";
       }
@@ -41,11 +46,13 @@ export function getBgGradientFill(
     }
 
     // get rotation
-    const lin = grdFill["a:lin"];
+    const lin = getTextByPathList<Record<string, unknown>>(grdFill, ["a:lin"]);
     let rot = 90;
     if (lin !== undefined) {
-      rot = angleToDegrees(lin["attrs"]["ang"]);
-      rot = rot + 90;
+      const ang = getTextByPathList<string | number>(lin, ["attrs", "ang"]);
+      if (ang !== undefined) {
+        rot = angleToDegrees(ang) + 90;
+      }
     }
 
     bgcolor = "background: linear-gradient(" + rot + "deg,";
