@@ -4,7 +4,7 @@
  * @param backgroundProps - Background properties node
  * @param placeholderColor - Placeholder color
  * @param slideMasterContent - Slide master content
- * @param warpObj - The warp object containing theme and other resources
+ * @param warpContext - The warp object containing theme and other resources
  * @returns CSS background gradient string
  */
 import { getTextByPathList } from "../object";
@@ -19,9 +19,9 @@ export function getBgGradientFill(
   backgroundProps: Record<string, unknown> | undefined,
   placeholderColor: string | undefined,
   slideMasterContent: Record<string, unknown>,
-  warpObj: SolidFillWarpObj
+  warpContext: SolidFillWarpObj
 ): string {
-  let backgroundStyle = "";
+  let backgroundCss = "";
   if (backgroundProps !== undefined) {
     const gradientFillNode = getTextByPathList<Record<string, unknown>>(backgroundProps, [
       "a:gradFill",
@@ -42,7 +42,7 @@ export function getBgGradientFill(
         gradientStops[i] as SolidFillNode,
         colorMap,
         placeholderColor,
-        warpObj
+        warpContext
       );
       const pos = getTextByPathList<string>(gradientStops[i], ["attrs", "pos"]);
       if (pos !== undefined) {
@@ -65,18 +65,18 @@ export function getBgGradientFill(
       }
     }
 
-    backgroundStyle = "background: linear-gradient(" + rotationDegrees + "deg,";
+    backgroundCss = "background: linear-gradient(" + rotationDegrees + "deg,";
     for (let i = 0; i < gradientStops.length; i++) {
       if (i === gradientStops.length - 1) {
-        backgroundStyle += colorStops[i] + " " + positionStops[i] + ");";
+        backgroundCss += colorStops[i] + " " + positionStops[i] + ");";
       } else {
-        backgroundStyle += colorStops[i] + " " + positionStops[i] + ", ";
+        backgroundCss += colorStops[i] + " " + positionStops[i] + ", ";
       }
     }
   } else {
     if (placeholderColor !== undefined) {
-      backgroundStyle = "background: #" + placeholderColor + ";";
+      backgroundCss = "background: #" + placeholderColor + ";";
     }
   }
-  return backgroundStyle;
+  return backgroundCss;
 }
