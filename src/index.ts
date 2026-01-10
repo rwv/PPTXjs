@@ -1,5 +1,17 @@
 import { loadPPTXjs } from "./load-pptxjs";
 
+type PptxToHtmlOptions = {
+  pptxFileUrl: string;
+  slidesScale: string;
+  slideMode: boolean;
+  keyBoardShortCut: boolean;
+  mediaProcess: boolean;
+};
+
+type PptxToHtmlSelector = {
+  pptxToHtml: (options: PptxToHtmlOptions) => void;
+};
+
 export async function getPageElementsFromPPTX(file: Blob) {
   const url = URL.createObjectURL(file);
 
@@ -10,7 +22,8 @@ export async function getPageElementsFromPPTX(file: Blob) {
   element.id = elementID;
   document.body.appendChild(element);
 
-  (window as any).$(`#${elementID}`).pptxToHtml({
+  const selectElement = window.$ as unknown as (selector: string) => PptxToHtmlSelector;
+  selectElement(`#${elementID}`).pptxToHtml({
     pptxFileUrl: url,
     slidesScale: "100%",
     slideMode: false,
