@@ -11,10 +11,17 @@
 import { getTextByPathList } from "../../object";
 import { getHtmlBullet } from "../get-html-bullet";
 
+type BulletColorEffects = { border?: string; effcts?: string };
+type BulletColor =
+  | [string, string]
+  | [string, BulletColorEffects]
+  | [[string, string?, string?], BulletColorEffects]
+  | [{ color: string[]; rot: number }, BulletColorEffects];
+
 export function renderBulletChar(
-  pPrNode: any,
+  pPrNode: Record<string, unknown> | undefined,
   buChar: string,
-  bultColor: any,
+  bultColor: BulletColor,
   color_tye: string,
   bultSize: string,
   marLStr: string,
@@ -22,7 +29,7 @@ export function renderBulletChar(
   isRTL: boolean,
   font_val: number
 ): string {
-  const typefaceNode = getTextByPathList(pPrNode, ["a:buFont", "attrs", "typeface"]);
+  const typefaceNode = getTextByPathList<string>(pPrNode, ["a:buFont", "attrs", "typeface"]);
   let typeface = "";
   if (typefaceNode !== undefined) {
     typeface = "font-family: " + typefaceNode;
@@ -40,26 +47,32 @@ export function renderBulletChar(
 
   // Handle different color types
   if (color_tye === "solid") {
-    if (bultColor[0] !== undefined && bultColor[0] !== "") {
-      bullet += "color:#" + bultColor[0] + "; ";
+    const [solidColor, solidShadow] = bultColor as [string, string];
+    if (solidColor !== undefined && solidColor !== "") {
+      bullet += "color:#" + solidColor + "; ";
     }
-    if (bultColor[1] !== undefined && bultColor[1] !== "" && bultColor[1] !== ";") {
-      bullet += "text-shadow:" + bultColor[1] + ";";
+    if (solidShadow !== undefined && solidShadow !== "" && solidShadow !== ";") {
+      bullet += "text-shadow:" + solidShadow + ";";
     }
   } else if (color_tye === "pattern" || color_tye === "pic" || color_tye === "gradient") {
     if (color_tye === "pattern") {
-      bullet += "background:" + bultColor[0][0] + ";";
-      if (bultColor[0][1] !== null && bultColor[0][1] !== undefined && bultColor[0][1] !== "") {
-        bullet += "background-size:" + bultColor[0][1] + ";";
+      const [patternColor, patternSize, patternPos] = (
+        bultColor as [[string, string?, string?], BulletColorEffects]
+      )[0];
+      bullet += "background:" + patternColor + ";";
+      if (patternSize !== null && patternSize !== undefined && patternSize !== "") {
+        bullet += "background-size:" + patternSize + ";";
       }
-      if (bultColor[0][2] !== null && bultColor[0][2] !== undefined && bultColor[0][2] !== "") {
-        bullet += "background-position:" + bultColor[0][2] + ";";
+      if (patternPos !== null && patternPos !== undefined && patternPos !== "") {
+        bullet += "background-position:" + patternPos + ";";
       }
     } else if (color_tye === "pic") {
-      bullet += bultColor[0] + ";";
+      const picFill = (bultColor as [string, BulletColorEffects])[0];
+      bullet += picFill + ";";
     } else if (color_tye === "gradient") {
-      const colorAry = bultColor[0].color;
-      const rot = bultColor[0].rot;
+      const gradientFill = (bultColor as [{ color: string[]; rot: number }, BulletColorEffects])[0];
+      const colorAry = gradientFill.color;
+      const rot = gradientFill.rot;
 
       bullet += "background: linear-gradient(" + rot + "deg,";
       for (let i = 0; i < colorAry.length; i++) {
@@ -73,11 +86,12 @@ export function renderBulletChar(
 
     // Apply background clipping for non-solid colors
     bullet += "-webkit-background-clip: text;" + "background-clip: text;" + "color: transparent;";
-    if (bultColor[1].border !== undefined && bultColor[1].border !== "") {
-      bullet += "-webkit-text-stroke: " + bultColor[1].border + ";";
+    const effects = (bultColor as [unknown, BulletColorEffects])[1];
+    if (effects.border !== undefined && effects.border !== "") {
+      bullet += "-webkit-text-stroke: " + effects.border + ";";
     }
-    if (bultColor[1].effcts !== undefined && bultColor[1].effcts !== "") {
-      bullet += "filter: " + bultColor[1].effcts + ";";
+    if (effects.effcts !== undefined && effects.effcts !== "") {
+      bullet += "filter: " + effects.effcts + ";";
     }
   }
 
