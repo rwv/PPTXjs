@@ -7,41 +7,46 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * 1. Explicit typeface in node (a:rPr -> a:latin -> typeface)
  * 2. Font scheme from theme (major for titles, minor for body text)
  *
- * @param node - Text run node from PPTX
+ * @param textRunNode - Text run node from PPTX
  * @param type - Shape type (title, body, etc.) - determines major vs minor font
  * @param warpObj - Container object with theme content
- * @param pFontStyle - Paragraph font style (may specify font index)
+ * @param paragraphFontStyle - Paragraph font style (may specify font index)
  * @returns Font family name or "inherit"
  */
 export function getFontType(
-  node: Record<string, unknown>,
+  textRunNode: Record<string, unknown>,
   type: string | undefined,
   warpObj: Record<string, unknown>,
-  pFontStyle: Record<string, unknown> | undefined
+  paragraphFontStyle: Record<string, unknown> | undefined
 ): string {
-  let typeface = getTextByPathList(node, ["a:rPr", "a:latin", "attrs", "typeface"]);
+  let typefaceValue = getTextByPathList(textRunNode, ["a:rPr", "a:latin", "attrs", "typeface"]);
 
-  if (typeface === undefined) {
-    let fontIdx = "";
-    let fontGrup = "";
-    if (pFontStyle !== undefined) {
-      fontIdx = getTextByPathList(pFontStyle, ["attrs", "idx"]);
+  if (typefaceValue === undefined) {
+    let fontIndex = "";
+    let fontGroupKey = "";
+    if (paragraphFontStyle !== undefined) {
+      fontIndex = getTextByPathList(paragraphFontStyle, ["attrs", "idx"]);
     }
     const fontSchemeNode = getTextByPathList(warpObj["themeContent"], [
       "a:theme",
       "a:themeElements",
       "a:fontScheme",
     ]);
-    if (fontIdx === "") {
+    if (fontIndex === "") {
       if (type === "title" || type === "subTitle" || type === "ctrTitle") {
-        fontIdx = "major";
+        fontIndex = "major";
       } else {
-        fontIdx = "minor";
+        fontIndex = "minor";
       }
     }
-    fontGrup = "a:" + fontIdx + "Font";
-    typeface = getTextByPathList(fontSchemeNode, [fontGrup, "a:latin", "attrs", "typeface"]);
+    fontGroupKey = "a:" + fontIndex + "Font";
+    typefaceValue = getTextByPathList(fontSchemeNode, [
+      fontGroupKey,
+      "a:latin",
+      "attrs",
+      "typeface",
+    ]);
   }
 
-  return typeface === undefined ? "inherit" : typeface;
+  return typefaceValue === undefined ? "inherit" : typefaceValue;
 }
