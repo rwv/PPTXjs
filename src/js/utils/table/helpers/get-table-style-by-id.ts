@@ -29,29 +29,29 @@ export function getTableStyleById(
     return undefined;
   }
 
-  const tbleStylList = tableStyles?.["a:tblStyleLst"]?.["a:tblStyle"] as
+  const tableStyleList = tableStyles?.["a:tblStyleLst"]?.["a:tblStyle"] as
     | TableStyleNode
     | Array<TableStyleNode>
     | undefined;
-  if (tbleStylList === undefined) {
+  if (tableStyleList === undefined) {
     return undefined;
   }
 
   let foundStyle: TableStyleNode | undefined = undefined;
 
   // Handle array of styles
-  if (Array.isArray(tbleStylList)) {
-    for (let k = 0; k < tbleStylList.length; k++) {
-      if (tbleStylList[k].attrs?.styleId === styleId) {
-        foundStyle = tbleStylList[k];
+  if (Array.isArray(tableStyleList)) {
+    for (let index = 0; index < tableStyleList.length; index++) {
+      if (tableStyleList[index].attrs?.styleId === styleId) {
+        foundStyle = tableStyleList[index];
         break;
       }
     }
   }
   // Handle single style
   else {
-    if (tbleStylList.attrs?.styleId === styleId) {
-      foundStyle = tbleStylList;
+    if (tableStyleList.attrs?.styleId === styleId) {
+      foundStyle = tableStyleList;
     }
   }
 
