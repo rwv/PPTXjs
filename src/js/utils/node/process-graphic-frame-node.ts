@@ -17,79 +17,84 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * - Diagrams: http://schemas.openxmlformats.org/drawingml/2006/diagram
  * - OLE Objects: http://schemas.openxmlformats.org/presentationml/2006/ole
  *
- * @param node - Graphic frame node (p:graphicFrame)
- * @param warpObj - Warp object containing slide resources
- * @param source - Source context
- * @param sType - Shape type context
+ * @param graphicFrameNode - Graphic frame node (p:graphicFrame)
+ * @param warpContext - Warp object containing slide resources
+ * @param sourceType - Source context
+ * @param shapeType - Shape type context
  * @param tableStyles - Table styles from presentation
- * @param isFirstBr - Object {value: boolean} for line break state
+ * @param isFirstLineBreak - Object {value: boolean} for line break state
  * @param styleTable - CSS style table
- * @param rtlLangsArray - RTL language codes
- * @param slideFactor - EMU to pixel conversion factor
- * @param fontSizeFactor - Font size scaling factor
- * @param chartID - Chart ID counter object (modified in place)
- * @param MsgQueue - Message queue for chart processing
- * @param settings - Plugin settings
+ * @param rtlLanguages - RTL language codes
+ * @param emuToPx - EMU to pixel conversion factor
+ * @param fontSizeScale - Font size scaling factor
+ * @param chartIdCounter - Chart ID counter object (modified in place)
+ * @param messageQueue - Message queue for chart processing
+ * @param renderSettings - Plugin settings
  * @returns HTML string for the graphic frame content
  */
 export async function processGraphicFrameNode(
-  node: unknown,
-  warpObj: unknown,
-  source: string,
-  sType: string,
+  graphicFrameNode: unknown,
+  warpContext: unknown,
+  sourceType: string,
+  shapeType: string,
   tableStyles: unknown,
-  isFirstBr: { value: boolean },
+  isFirstLineBreak: { value: boolean },
   styleTable: unknown,
-  rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number,
-  chartID: { value: number },
-  MsgQueue: unknown,
-  settings: { mediaProcess: boolean } & Record<string, unknown>
+  rtlLanguages: string[],
+  emuToPx: number,
+  fontSizeScale: number,
+  chartIdCounter: { value: number },
+  messageQueue: unknown,
+  renderSettings: { mediaProcess: boolean } & Record<string, unknown>
 ): Promise<string> {
   let result = "";
-  const chartIdRef = chartID ?? { value: 0 };
-  const graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
-  const msgQueue: unknown[] = Array.isArray(MsgQueue) ? MsgQueue : [];
+  const chartIdRef = chartIdCounter ?? { value: 0 };
+  const graphicTypeUri = getTextByPathList(graphicFrameNode, [
+    "a:graphic",
+    "a:graphicData",
+    "attrs",
+    "uri",
+  ]);
+  const msgQueue: unknown[] = Array.isArray(messageQueue) ? messageQueue : [];
 
   switch (graphicTypeUri) {
     case "http://schemas.openxmlformats.org/drawingml/2006/table":
       result = await genTable(
-        node,
-        warpObj,
+        graphicFrameNode,
+        warpContext,
         tableStyles,
-        isFirstBr,
+        isFirstLineBreak,
         styleTable,
-        rtlLangsArray,
-        slideFactor,
-        fontSizeFactor
+        rtlLanguages,
+        emuToPx,
+        fontSizeScale
       );
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/chart":
       [result, chartIdRef.value] = await genChart(
-        node,
-        warpObj,
+        graphicFrameNode,
+        warpContext,
         chartIdRef.value,
         msgQueue,
-        slideFactor
+        emuToPx
       );
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
       result = await genDiagram(
-        node,
-        warpObj,
-        source,
-        sType,
-        slideFactor,
+        graphicFrameNode,
+        warpContext,
+        sourceType,
+        shapeType,
+        emuToPx,
         styleTable,
-        fontSizeFactor,
-        rtlLangsArray,
-        isFirstBr
+        fontSizeScale,
+        rtlLanguages,
+        isFirstLineBreak
       );
       break;
     case "http://schemas.openxmlformats.org/presentationml/2006/ole": {
-      //result = genDiagram(node, warpObj, source, sType);
-      let oleObjNode = getTextByPathList(node, [
+      //result = genDiagram(graphicFrameNode, warpContext, sourceType, shapeType);
+      let oleObjNode = getTextByPathList(graphicFrameNode, [
         "a:graphic",
         "a:graphicData",
         "mc:AlternateContent",
@@ -98,23 +103,27 @@ export async function processGraphicFrameNode(
       ]);
 
       if (oleObjNode === undefined) {
-        oleObjNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "p:oleObj"]);
+        oleObjNode = getTextByPathList(graphicFrameNode, [
+          "a:graphic",
+          "a:graphicData",
+          "p:oleObj",
+        ]);
       }
       //console.log("node:", node, "oleObjNode:", oleObjNode)
       if (oleObjNode !== undefined) {
         result = await processGroupSpNode(
           oleObjNode,
-          warpObj,
-          source,
-          slideFactor,
+          warpContext,
+          sourceType,
+          emuToPx,
           tableStyles,
-          isFirstBr,
+          isFirstLineBreak,
           styleTable,
-          rtlLangsArray,
-          fontSizeFactor,
-          chartID,
-          MsgQueue,
-          settings
+          rtlLanguages,
+          fontSizeScale,
+          chartIdCounter,
+          messageQueue,
+          renderSettings
         );
       }
       break;
