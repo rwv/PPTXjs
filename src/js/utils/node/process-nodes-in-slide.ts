@@ -37,20 +37,20 @@ import { processGroupSpNode } from "./process-group-sp-node";
  */
 export function processNodesInSlide(
   nodeKey: string,
-  nodeValue: any,
-  nodes: any,
-  warpObj: any,
+  nodeValue: unknown,
+  nodes: unknown,
+  warpObj: unknown,
   source: string,
   sType: string,
-  tableStyles: any,
+  tableStyles: unknown,
   isFirstBr: { value: boolean },
-  styleTable: any,
+  styleTable: unknown,
   rtlLangsArray: string[],
   slideFactor: number,
   fontSizeFactor: number,
   chartID: { value: number },
-  MsgQueue: any,
-  settings: any
+  MsgQueue: unknown,
+  settings: { mediaProcess: boolean } & Record<string, unknown>
 ): string {
   let result = "";
 
