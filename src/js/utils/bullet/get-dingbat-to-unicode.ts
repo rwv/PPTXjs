@@ -13,19 +13,19 @@ export function getDingbatToUnicode(typefaceNode: string, buChar: string): strin
   }
 
   // Use charCodeAt instead of codePointAt for better compatibility
-  const dingbatCode = buChar.charCodeAt(0) & 0xfff;
-  let charUnicode: string | null = null;
-  let len = dingbat_unicode.length;
-  let i = 0;
+  const dingbatCharCode = buChar.charCodeAt(0) & 0xfff;
+  let unicodeValue: string | null = null;
+  let remaining = dingbat_unicode.length;
+  let index = 0;
 
-  while (len--) {
-    const item = dingbat_unicode[i];
-    if (item.f === typefaceNode && item.code === String(dingbatCode)) {
-      charUnicode = item.unicode;
+  while (remaining--) {
+    const item = dingbat_unicode[index];
+    if (item.f === typefaceNode && item.code === String(dingbatCharCode)) {
+      unicodeValue = item.unicode;
       break;
     }
-    i++;
+    index++;
   }
 
-  return charUnicode;
+  return unicodeValue;
 }
