@@ -31,25 +31,27 @@ export function getSize(
   slideMasterSpNode: ExtentNode | undefined,
   slideFactor: number
 ): string {
-  let ext: { cx?: string; cy?: string } | undefined;
-  let w = -1,
-    h = -1;
+  let extentAttrs: { cx?: string; cy?: string } | undefined;
+  let widthPx = -1,
+    heightPx = -1;
 
   // Find extent with fallback hierarchy: slide -> layout -> master
   if (slideSpNode !== undefined) {
-    ext = slideSpNode["a:ext"]?.attrs;
+    extentAttrs = slideSpNode["a:ext"]?.attrs;
   } else if (slideLayoutSpNode !== undefined) {
-    ext = slideLayoutSpNode["a:ext"]?.attrs;
+    extentAttrs = slideLayoutSpNode["a:ext"]?.attrs;
   } else if (slideMasterSpNode !== undefined) {
-    ext = slideMasterSpNode["a:ext"]?.attrs;
+    extentAttrs = slideMasterSpNode["a:ext"]?.attrs;
   }
 
   // Return empty string if no extent found
-  if (ext === undefined) {
+  if (extentAttrs === undefined) {
     return "";
   } else {
-    w = parseInt(ext["cx"] || "0") * slideFactor;
-    h = parseInt(ext["cy"] || "0") * slideFactor;
-    return isNaN(w) || isNaN(h) ? "" : "width:" + w + "px; height:" + h + "px;";
+    widthPx = parseInt(extentAttrs["cx"] || "0") * slideFactor;
+    heightPx = parseInt(extentAttrs["cy"] || "0") * slideFactor;
+    return isNaN(widthPx) || isNaN(heightPx)
+      ? ""
+      : "width:" + widthPx + "px; height:" + heightPx + "px;";
   }
 }
