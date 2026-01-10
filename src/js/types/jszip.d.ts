@@ -43,6 +43,19 @@ export interface JSZipFile {
   };
 }
 
+export type JSZipFileOptions = {
+  base64?: boolean;
+  binary?: boolean;
+  date?: Date;
+  compression?: "STORE" | "DEFLATE";
+  dir?: boolean;
+};
+
+export type JSZipGenerateOptions = {
+  type?: "string" | "base64" | "uint8array" | "arraybuffer" | "blob";
+  compression?: "STORE" | "DEFLATE";
+};
+
 /**
  * JSZip v2.x interface
  */
@@ -67,7 +80,7 @@ export interface JsZip {
    * @param data - File content
    * @param options - File options
    */
-  file(path: string, data: string | ArrayBuffer | Uint8Array, options?: any): JsZip;
+  file(path: string, data: string | ArrayBuffer | Uint8Array, options?: JSZipFileOptions): JsZip;
 
   /**
    * Get or create a folder
@@ -94,10 +107,7 @@ export interface JsZip {
    * @param options - Generation options
    * @returns Generated data
    */
-  generate(options?: {
-    type?: "string" | "base64" | "uint8array" | "arraybuffer" | "blob";
-    compression?: "STORE" | "DEFLATE";
-  }): any;
+  generate(options?: JSZipGenerateOptions): string | Uint8Array | ArrayBuffer | Blob;
 
   /**
    * Remove a file or folder
