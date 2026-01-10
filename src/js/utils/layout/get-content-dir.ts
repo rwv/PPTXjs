@@ -10,19 +10,19 @@
  *
  * Returns "content" for LTR or "content-rtl" for RTL text direction
  *
- * @param node - Node containing text body from PPTX
- * @param type - Shape type (title, body, textBox, shape, etc.)
- * @param warpObj - Container object with master slide text styles
+ * @param textBodyNode - Node containing text body from PPTX
+ * @param shapeType - Shape type (title, body, textBox, shape, etc.)
+ * @param warpContext - Container object with master slide text styles
  * @returns CSS class name for content direction (currently always "content")
  */
 export function getContentDir(
-  _node: Record<string, unknown>,
-  _type: string | undefined,
-  _warpObj: Record<string, unknown>
+  textBodyNode: Record<string, unknown>,
+  shapeType: string | undefined,
+  warpContext: Record<string, unknown>
 ): string {
-  void _node;
-  void _type;
-  void _warpObj;
+  void textBodyNode;
+  void shapeType;
+  void warpContext;
   // NOTE: RTL (Right-to-Left) detection logic is currently disabled.
   // The early return below bypasses all RTL checks, always returning "content" (LTR).
   // To enable RTL support, comment out the line below and uncomment the logic beneath it.
@@ -30,7 +30,13 @@ export function getContentDir(
   return "content";
 
   /* RTL Detection Logic - Currently Disabled
-  const defRtl = getTextByPathList(node, ["p:txBody", "a:lstStyle", "a:defPPr", "attrs", "rtl"]);
+  const defRtl = getTextByPathList(textBodyNode, [
+    "p:txBody",
+    "a:lstStyle",
+    "a:defPPr",
+    "attrs",
+    "rtl",
+  ]);
   if (defRtl !== undefined) {
     if (defRtl === "1") {
       return "content-rtl";
@@ -39,7 +45,12 @@ export function getContentDir(
     }
   }
 
-  const rtlCol = getTextByPathList(node, ["p:txBody", "a:bodyPr", "attrs", "rtlCol"]);
+  const rtlCol = getTextByPathList(textBodyNode, [
+    "p:txBody",
+    "a:bodyPr",
+    "attrs",
+    "rtlCol",
+  ]);
   if (rtlCol !== undefined) {
     if (rtlCol === "1") {
       return "content-rtl";
@@ -48,14 +59,14 @@ export function getContentDir(
     }
   }
 
-  if (type === undefined) {
+  if (shapeType === undefined) {
     return "content";
   }
 
-  const slideMasterTextStyles = warpObj["slideMasterTextStyles"];
+  const slideMasterTextStyles = warpContext["slideMasterTextStyles"];
   let dirLoc = "";
 
-  switch (type) {
+  switch (shapeType) {
     case "title":
     case "ctrTitle":
       dirLoc = "p:titleStyle";
@@ -73,7 +84,11 @@ export function getContentDir(
   }
 
   if (slideMasterTextStyles !== undefined && dirLoc !== "") {
-    const dirVal = getTextByPathList(slideMasterTextStyles[dirLoc], ["a:lvl1pPr", "attrs", "rtl"]);
+    const dirVal = getTextByPathList(slideMasterTextStyles[dirLoc], [
+      "a:lvl1pPr",
+      "attrs",
+      "rtl",
+    ]);
     if (dirVal === "1") {
       return "content-rtl";
     }
