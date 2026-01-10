@@ -2,7 +2,7 @@
  * Context for rendering arc shapes
  */
 export interface ArcShapeContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
