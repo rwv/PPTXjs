@@ -6,13 +6,18 @@ import { getTextByPathList } from "../object";
  * @param content - Slide XML content object
  * @returns Object with idTable, idxTable, and typeTable lookup maps
  */
-export function indexNodes(content: any): {
+type XmlNode = Record<string, unknown>;
+
+export function indexNodes(content: Record<string, XmlNode>): {
   idTable: Record<string, unknown>;
   idxTable: Record<string, unknown>;
   typeTable: Record<string, unknown>;
 } {
   const keys = Object.keys(content);
-  const spTreeNode = content[keys[0]]["p:cSld"]["p:spTree"];
+  const spTreeNode = (content[keys[0]]["p:cSld"] as XmlNode)["p:spTree"] as Record<
+    string,
+    XmlNode | XmlNode[]
+  >;
 
   const idTable: Record<string, unknown> = {};
   const idxTable: Record<string, unknown> = {};
@@ -25,12 +30,12 @@ export function indexNodes(content: any): {
 
     const targetNode = spTreeNode[key];
 
-    if (targetNode.constructor === Array) {
+    if (Array.isArray(targetNode)) {
       for (let i = 0; i < targetNode.length; i++) {
-        const nvSpPrNode = targetNode[i]["p:nvSpPr"];
-        const id = getTextByPathList(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
-        const idx = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
-        const type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
+        const nvSpPrNode = (targetNode[i] as XmlNode)["p:nvSpPr"] as XmlNode;
+        const id = getTextByPathList<string>(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
+        const idx = getTextByPathList<string>(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
+        const type = getTextByPathList<string>(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
 
         if (id !== undefined) {
           idTable[id] = targetNode[i];
@@ -43,10 +48,10 @@ export function indexNodes(content: any): {
         }
       }
     } else {
-      const nvSpPrNode = targetNode["p:nvSpPr"];
-      const id = getTextByPathList(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
-      const idx = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
-      const type = getTextByPathList(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
+      const nvSpPrNode = (targetNode as XmlNode)["p:nvSpPr"] as XmlNode;
+      const id = getTextByPathList<string>(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
+      const idx = getTextByPathList<string>(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
+      const type = getTextByPathList<string>(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
 
       if (id !== undefined) {
         idTable[id] = targetNode;
