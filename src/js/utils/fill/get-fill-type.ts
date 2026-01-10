@@ -9,29 +9,29 @@
  * - PIC_FILL: Picture/image fill (a:blipFill)
  * - GROUP_FILL: Group fill (a:grpFill)
  *
- * @param node - Shape properties node from PPTX
+ * @param shapePropsNode - Shape properties node from PPTX
  * @returns Fill type as string constant
  */
-export function getFillType(node: Record<string, unknown>): string {
-  let fillType = "";
-  if (node["a:noFill"] !== undefined) {
-    fillType = "NO_FILL";
+export function getFillType(shapePropsNode: Record<string, unknown>): string {
+  let detectedFillType = "";
+  if (shapePropsNode["a:noFill"] !== undefined) {
+    detectedFillType = "NO_FILL";
   }
-  if (node["a:solidFill"] !== undefined) {
-    fillType = "SOLID_FILL";
+  if (shapePropsNode["a:solidFill"] !== undefined) {
+    detectedFillType = "SOLID_FILL";
   }
-  if (node["a:gradFill"] !== undefined) {
-    fillType = "GRADIENT_FILL";
+  if (shapePropsNode["a:gradFill"] !== undefined) {
+    detectedFillType = "GRADIENT_FILL";
   }
-  if (node["a:pattFill"] !== undefined) {
-    fillType = "PATTERN_FILL";
+  if (shapePropsNode["a:pattFill"] !== undefined) {
+    detectedFillType = "PATTERN_FILL";
   }
-  if (node["a:blipFill"] !== undefined) {
-    fillType = "PIC_FILL";
+  if (shapePropsNode["a:blipFill"] !== undefined) {
+    detectedFillType = "PIC_FILL";
   }
-  if (node["a:grpFill"] !== undefined) {
-    fillType = "GROUP_FILL";
+  if (shapePropsNode["a:grpFill"] !== undefined) {
+    detectedFillType = "GROUP_FILL";
   }
 
-  return fillType;
+  return detectedFillType;
 }
