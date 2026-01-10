@@ -20,19 +20,23 @@ type SolidFillNode = Parameters<typeof getSolidFill>[0];
  *
  * @param backgroundProps - Background properties node from PPTX
  * @param sourceType - Source type (slide, slideLayoutBg, etc.)
- * @param warpObj - Container object with ZIP file and resources
+ * @param warpContext - Container object with ZIP file and resources
  * @param placeholderColor - Placeholder color for theme color resolution
  * @returns CSS background style string with z-index
  */
 export async function getBgPicFill(
   backgroundProps: Record<string, unknown>,
   sourceType: string,
-  warpObj: Record<string, unknown>,
+  warpContext: Record<string, unknown>,
   placeholderColor: string | undefined
 ): Promise<string> {
   const blipFillNode = backgroundProps["a:blipFill"] as Record<string, unknown>;
-  const pictureFillDataUrl = await getPicFill(sourceType, blipFillNode, warpObj as PicFillWarpObj);
-  const order = (backgroundProps["attrs"] as Record<string, string | number>)["order"];
+  const pictureFillDataUrl = await getPicFill(
+    sourceType,
+    blipFillNode,
+    warpContext as PicFillWarpObj
+  );
+  const zIndexOrder = (backgroundProps["attrs"] as Record<string, string | number>)["order"];
   const blipNode = getTextByPathList<Record<string, unknown>>(backgroundProps, [
     "a:blipFill",
     "a:blip",
@@ -40,13 +44,13 @@ export async function getBgPicFill(
 
   const duotoneNode = getTextByPathList<Record<string, unknown>>(blipNode, ["a:duotone"]);
   if (duotoneNode !== undefined) {
-    const duotoneColors: Array<string | undefined> = [];
+    const duotonePalette: Array<string | undefined> = [];
     Object.keys(duotoneNode).forEach(function (colorType) {
       if (colorType !== "attrs") {
         const colorNode: Record<string, unknown> = {};
         colorNode[colorType] = duotoneNode[colorType];
-        duotoneColors.push(
-          getSolidFill(colorNode as SolidFillNode, undefined, placeholderColor, warpObj)
+        duotonePalette.push(
+          getSolidFill(colorNode as SolidFillNode, undefined, placeholderColor, warpContext)
         );
       }
     });
@@ -71,9 +75,9 @@ export async function getBgPicFill(
     "a:tile",
     "attrs",
   ]);
-  let backgroundStyle = "";
+  let backgroundCss = "";
   if (tileAttrs !== undefined && tileAttrs["sx"] !== undefined) {
-    backgroundStyle += "background-repeat: round;";
+    backgroundCss += "background-repeat: round;";
   }
 
   const stretchNode = getTextByPathList<Record<string, unknown>>(backgroundProps, [
@@ -85,20 +89,20 @@ export async function getBgPicFill(
       "a:fillRect",
       "attrs",
     ]);
-    backgroundStyle += "background-repeat: no-repeat;";
-    backgroundStyle += "background-position: center;";
+    backgroundCss += "background-repeat: no-repeat;";
+    backgroundCss += "background-position: center;";
     if (fillRectAttrs !== undefined) {
-      backgroundStyle += "background-size:  100% 100%;;";
+      backgroundCss += "background-size:  100% 100%;;";
     }
   }
-  const composedStyle =
+  const composedCss =
     "background: url(" +
     pictureFillDataUrl +
     ");  z-index: " +
-    order +
+    zIndexOrder +
     ";" +
-    backgroundStyle +
+    backgroundCss +
     imageOpacityStyle;
 
-  return composedStyle;
+  return composedCss;
 }
