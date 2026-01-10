@@ -12,7 +12,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering scroll shapes
  */
 export interface ScrollShapeContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
