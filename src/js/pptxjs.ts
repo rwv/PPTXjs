@@ -16,11 +16,61 @@ import { processPPTX } from "./utils/pptx";
 import { registerDivs2Slides } from "./divs2slides";
 import { createPptxArchive } from "./archive";
 
+type SlideModeConfig = {
+  first: number;
+  nav: boolean;
+  navTxtColor: string;
+  keyBoardShortCut: boolean;
+  showSlideNum: boolean;
+  showTotalSlideNum: boolean;
+  autoSlide: boolean | number;
+  randomAutoSlide: boolean;
+  loop: boolean;
+  background: false | string;
+  transition: "slid" | "fade" | "default" | "random";
+  transitionTime: number;
+};
+
+type PptxToHtmlOptions = {
+  pptxFileUrl?: string;
+  fileInputId?: string;
+  slidesScale?: string;
+  slideMode?: boolean;
+  slideType?: "divs2slidesjs" | "revealjs";
+  revealjsPath?: string;
+  keyBoardShortCut?: boolean;
+  mediaProcess?: boolean;
+  jsZipV2?: string | false;
+  themeProcess?: boolean | "colorsAndImageOnly";
+  incSlide?: { width: number; height: number };
+  slideModeConfig?: SlideModeConfig;
+  revealjsConfig?: Record<string, unknown>;
+};
+
+type PptxToHtmlSettings = {
+  pptxFileUrl: string;
+  fileInputId: string;
+  slidesScale: string;
+  slideMode: boolean;
+  slideType: "divs2slidesjs" | "revealjs";
+  revealjsPath: string;
+  keyBoardShortCut: boolean;
+  mediaProcess: boolean;
+  jsZipV2: string | false;
+  themeProcess: boolean | "colorsAndImageOnly";
+  incSlide: { width: number; height: number };
+  slideModeConfig: SlideModeConfig;
+  revealjsConfig: Record<string, unknown>;
+};
+
+type PptxToHtmlPlugin = (this: JQuery, options?: PptxToHtmlOptions) => void;
+
 // Register divs2slides jQuery plugin
 registerDivs2Slides();
 
 (function ($) {
-  ($.fn as any).pptxToHtml = function (options: any) {
+  const pluginHost = $.fn as JQuery & { pptxToHtml?: PptxToHtmlPlugin };
+  pluginHost.pptxToHtml = function (this: JQuery, options?: PptxToHtmlOptions) {
     //var worker;
     const $result = $(this);
     const divId = $result.attr("id");
@@ -38,44 +88,42 @@ registerDivs2Slides();
     const fontSizeFactor = 4 / 3.2;
     let isSlideMode = false;
     const styleTable = {};
-    const settings = $.extend(
-      true,
-      {
-        // These are the defaults.
-        pptxFileUrl: "",
-        fileInputId: "",
-        slidesScale: "", //Change Slides scale by percent
-        slideMode: false /** true,false*/,
-        slideType:
-          "divs2slidesjs" /*'divs2slidesjs' (default) , 'revealjs'(https://revealjs.com)  -TODO*/,
-        revealjsPath: "" /*path to js file of revealjs - TODO*/,
-        keyBoardShortCut: false /** true,false ,condition: slideMode: true XXXXX - need to remove - this is doublcated*/,
-        mediaProcess: true /** true,false: if true then process video and audio files */,
-        jsZipV2: false,
-        themeProcess: true /*true (default) , false, "colorsAndImageOnly"*/,
-        incSlide: {
-          width: 0,
-          height: 0,
-        },
-        slideModeConfig: {
-          first: 1,
-          nav: true /** true,false : show or not nav buttons*/,
-          navTxtColor: "black" /** color */,
-          keyBoardShortCut: true /** true,false ,condition: */,
-          showSlideNum: true /** true,false */,
-          showTotalSlideNum: true /** true,false */,
-          autoSlide: true /** false or seconds , F8 to active ,keyBoardShortCut: true */,
-          randomAutoSlide: false /** true,false ,autoSlide:true */,
-          loop: false /** true,false */,
-          background: false /** false or color*/,
-          transition:
-            "default" /** transition type: "slid","fade","default","random" , to show transition efects :transitionTime > 0.5 */,
-          transitionTime: 1 /** transition time between slides in seconds */,
-        },
-        revealjsConfig: {},
+    const defaultSettings: PptxToHtmlSettings = {
+      // These are the defaults.
+      pptxFileUrl: "",
+      fileInputId: "",
+      slidesScale: "", //Change Slides scale by percent
+      slideMode: false /** true,false*/,
+      slideType:
+        "divs2slidesjs" /*'divs2slidesjs' (default) , 'revealjs'(https://revealjs.com)  -TODO*/,
+      revealjsPath: "" /*path to js file of revealjs - TODO*/,
+      keyBoardShortCut: false /** true,false ,condition: slideMode: true XXXXX - need to remove - this is doublcated*/,
+      mediaProcess: true /** true,false: if true then process video and audio files */,
+      jsZipV2: false,
+      themeProcess: true /*true (default) , false, "colorsAndImageOnly"*/,
+      incSlide: {
+        width: 0,
+        height: 0,
       },
-      options
-    );
+      slideModeConfig: {
+        first: 1,
+        nav: true /** true,false : show or not nav buttons*/,
+        navTxtColor: "black" /** color */,
+        keyBoardShortCut: true /** true,false ,condition: */,
+        showSlideNum: true /** true,false */,
+        showTotalSlideNum: true /** true,false */,
+        autoSlide: true /** false or seconds , F8 to active ,keyBoardShortCut: true */,
+        randomAutoSlide: false /** true,false ,autoSlide:true */,
+        loop: false /** true,false */,
+        background: false /** false or color*/,
+        transition:
+          "default" /** transition type: "slid","fade","default","random" , to show transition efects :transitionTime > 0.5 */,
+        transitionTime: 1 /** transition time between slides in seconds */,
+      },
+      revealjsConfig: {},
+    };
+
+    const settings = $.extend(true, {}, defaultSettings, options) as PptxToHtmlSettings;
 
     $("#" + divId).prepend(
       $("<div></div>")
@@ -101,7 +149,7 @@ registerDivs2Slides();
     }
 
     if (settings.keyBoardShortCut) {
-      $(document).bind("keydown", function (event: any) {
+      $(document).bind("keydown", function (event: JQueryEventObject) {
         event.preventDefault();
         const key = event.keyCode;
         console.log(key, isDone);
@@ -134,16 +182,22 @@ registerDivs2Slides();
       $(".slides-loadnig-msg").remove();
     }
     if (settings.fileInputId !== "") {
-      $("#" + settings.fileInputId).on("change", function (evt: any) {
+      $("#" + settings.fileInputId).on("change", function (evt: JQueryEventObject) {
         $result.html("");
-        const file = evt.target.files[0];
+        const target = evt.target as {
+          files?: { [index: number]: Blob | undefined } | null;
+        } | null;
+        const file = target?.files?.[0];
+        if (!file) {
+          return;
+        }
         // var fileName = file[0].name;
         //var fileSize = file[0].size;
         const fileType = file.type;
         if (
           fileType === "application/vnd.openxmlformats-officedocument.presentationml.presentation"
         ) {
-          file.arrayBuffer().then(function (arrayBuffer: any) {
+          file.arrayBuffer().then(function (arrayBuffer: ArrayBuffer) {
             convertToHtml(arrayBuffer);
           });
         } else {
@@ -152,7 +206,7 @@ registerDivs2Slides();
       });
     }
 
-    function convertToHtml(file: any) {
+    function convertToHtml(file: ArrayBuffer) {
       //'use strict';
       //console.log("file", file, "size:", file.byteLength);
       if (file.byteLength < 10) {
