@@ -18,28 +18,28 @@ import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
  * @returns CSS class name for text direction (pregraph-rtl, pregraph-ltr, or pregraph-inherit)
  */
 export function getPregraphDir(
-  node: Record<string, unknown>,
+  paragraphNode: Record<string, unknown>,
   textBodyNode: Record<string, unknown> | undefined,
   idx: number | string | undefined,
   type: string | undefined,
   warpObj: Record<string, unknown>
 ): string {
-  let rtl = getTextByPathList(node, ["a:pPr", "attrs", "rtl"]);
-  //console.log("getPregraphDir node:", node, "textBodyNode", textBodyNode, "rtl:", rtl, "idx", idx, "type", type, "warpObj", warpObj)
+  let rtlValue = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "rtl"]);
+  //console.log("getPregraphDir node:", paragraphNode, "textBodyNode", textBodyNode, "rtl:", rtlValue, "idx", idx, "type", type, "warpObj", warpObj)
 
-  if (rtl === undefined) {
-    const layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
-    const pPrNodeLaout = layoutMasterNode.nodeLaout;
-    const pPrNodeMaster = layoutMasterNode.nodeMaster;
-    rtl = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
-    if (rtl === undefined && type !== "shape") {
-      rtl = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
+  if (rtlValue === undefined) {
+    const layoutMasterNodes = getLayoutAndMasterNode(paragraphNode, idx, type, warpObj);
+    const layoutParagraphPropsNode = layoutMasterNodes.nodeLaout;
+    const masterParagraphPropsNode = layoutMasterNodes.nodeMaster;
+    rtlValue = getTextByPathList(layoutParagraphPropsNode, ["attrs", "rtl"]);
+    if (rtlValue === undefined && type !== "shape") {
+      rtlValue = getTextByPathList(masterParagraphPropsNode, ["attrs", "rtl"]);
     }
   }
 
-  if (rtl === "1") {
+  if (rtlValue === "1") {
     return "pregraph-rtl";
-  } else if (rtl === "0") {
+  } else if (rtlValue === "0") {
     return "pregraph-ltr";
   }
   return "pregraph-inherit";
