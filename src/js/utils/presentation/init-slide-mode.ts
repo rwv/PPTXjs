@@ -47,7 +47,7 @@ function removeLoadingMessage(): void {
   document.querySelectorAll(".slides-loadnig-msg").forEach((element) => element.remove());
 }
 
-export function initSlideMode(divId: string, settings: SlideModeSettings): void {
+export async function initSlideMode(divId: string, settings: SlideModeSettings): Promise<void> {
   //console.log(settings.slideType)
   if (settings.slideType === "" || settings.slideType === "divs2slidesjs") {
     const container = document.getElementById(divId);
@@ -59,48 +59,49 @@ export function initSlideMode(divId: string, settings: SlideModeSettings): void 
     slides.forEach((slide) => {
       slide.style.display = "none";
     });
-    setTimeout(function () {
-      const slideConf = settings.slideModeConfig;
-      const showPlayPauseBtn = settings.showPlayPauseBtn ?? slideConf.showPlayPauseBtn ?? true;
-      const showFullscreenBtn = settings.showFullscreenBtn ?? slideConf.showFullscreenBtn ?? true;
-      removeLoadingMessage();
-      initDivs2Slides(container, {
-        first: slideConf.first,
-        nav: slideConf.nav,
-        showPlayPauseBtn: showPlayPauseBtn,
-        showFullscreenBtn: showFullscreenBtn,
-        navTxtColor: slideConf.navTxtColor,
-        keyBoardShortCut: slideConf.keyBoardShortCut,
-        showSlideNum: slideConf.showSlideNum,
-        showTotalSlideNum: slideConf.showTotalSlideNum,
-        autoSlide: slideConf.autoSlide,
-        randomAutoSlide: slideConf.randomAutoSlide,
-        loop: slideConf.loop,
-        background: slideConf.background,
-        transition: slideConf.transition,
-        transitionTime: slideConf.transitionTime,
-      });
+    await new Promise<void>((resolve) => {
+      setTimeout(() => resolve(), 1500);
+    });
+    const slideConf = settings.slideModeConfig;
+    const showPlayPauseBtn = settings.showPlayPauseBtn ?? slideConf.showPlayPauseBtn ?? true;
+    const showFullscreenBtn = settings.showFullscreenBtn ?? slideConf.showFullscreenBtn ?? true;
+    removeLoadingMessage();
+    initDivs2Slides(container, {
+      first: slideConf.first,
+      nav: slideConf.nav,
+      showPlayPauseBtn: showPlayPauseBtn,
+      showFullscreenBtn: showFullscreenBtn,
+      navTxtColor: slideConf.navTxtColor,
+      keyBoardShortCut: slideConf.keyBoardShortCut,
+      showSlideNum: slideConf.showSlideNum,
+      showTotalSlideNum: slideConf.showTotalSlideNum,
+      autoSlide: slideConf.autoSlide,
+      randomAutoSlide: slideConf.randomAutoSlide,
+      loop: slideConf.loop,
+      background: slideConf.background,
+      transition: slideConf.transition,
+      transitionTime: slideConf.transitionTime,
+    });
 
-      const sScale = settings.slidesScale;
-      let trnsfrmScl = "";
-      let scaleVal = 1;
-      if (sScale !== "") {
-        const numsScale = parseInt(sScale);
-        scaleVal = numsScale / 100;
-        trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
-      }
+    const sScale = settings.slidesScale;
+    let trnsfrmScl = "";
+    let scaleVal = 1;
+    if (sScale !== "") {
+      const numsScale = parseInt(sScale);
+      scaleVal = numsScale / 100;
+      trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
+    }
 
-      const numOfSlides = 1;
-      const sScaleVal = scaleVal;
-      //console.log(slidesHeight);
-      const wrapper = document.getElementById("all_slides_warpper");
-      if (wrapper) {
-        wrapper.setAttribute(
-          "style",
-          trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px"
-        );
-      }
-    }, 1500);
+    const numOfSlides = 1;
+    const sScaleVal = scaleVal;
+    //console.log(slidesHeight);
+    const wrapper = document.getElementById("all_slides_warpper");
+    if (wrapper) {
+      wrapper.setAttribute(
+        "style",
+        trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px"
+      );
+    }
   } else if (settings.slideType === "revealjs") {
     removeLoadingMessage();
     let revealjsPath = "";
@@ -109,14 +110,13 @@ export function initSlideMode(divId: string, settings: SlideModeSettings): void 
     } else {
       revealjsPath = "./revealjs/reveal.js";
     }
-    loadScript(revealjsPath)
-      .then(() => {
-        // $("section").removeClass("slide");
-        // @ts-expect-error TS(2304): Cannot find name 'Reveal'.
-        Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    try {
+      await loadScript(revealjsPath);
+      // $("section").removeClass("slide");
+      // @ts-expect-error TS(2304): Cannot find name 'Reveal'.
+      Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

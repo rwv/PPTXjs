@@ -25,7 +25,7 @@ export async function getPageElementsFromPPTX(file: Blob) {
     keyBoardShortCut: false,
     mediaProcess: false,
   };
-  pptxToHtml(element, options);
+  await pptxToHtml(element, options);
 
   // Wait until slides are loaded
   await new Promise<void>((resolve) => {

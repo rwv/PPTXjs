@@ -79,7 +79,7 @@ await ensurePptxDependencies();
  add javascript:
  ```
 await ensurePptxDependencies();
-pptxToHtml("#your_div_id_result", {
+await pptxToHtml("#your_div_id_result", {
   pptxFileUrl: "path/to/yore_pptx_file.pptx",
   fileInputId: "upload_pptx_fiile",
   slidesScale: "", //Change Slides scale by percent

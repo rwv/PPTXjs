@@ -137,7 +137,10 @@ function createLoadingMessage(): HTMLElement {
   return loading;
 }
 
-export function pptxToHtml(container: HTMLElement | string, options?: PptxToHtmlOptions): void {
+export async function pptxToHtml(
+  container: HTMLElement | string,
+  options?: PptxToHtmlOptions
+): Promise<void> {
   //var worker;
   const result = resolveContainer(container);
   const divId = ensureElementId(result);
@@ -217,14 +220,14 @@ export function pptxToHtml(container: HTMLElement | string, options?: PptxToHtml
   }
 
   if (settings.keyBoardShortCut) {
-    document.addEventListener("keydown", function (event: KeyboardEvent) {
+    document.addEventListener("keydown", async function (event: KeyboardEvent) {
       event.preventDefault();
       const key = event.keyCode;
       console.log(key, isDone);
       if (key === 116 && !isSlideMode) {
         //F5
         isSlideMode = true;
-        initSlideMode(divId, settings);
+        await initSlideMode(divId, settings);
       } else if (key === 116 && isSlideMode) {
         //exit slide mode - TODO
       }
@@ -232,27 +235,24 @@ export function pptxToHtml(container: HTMLElement | string, options?: PptxToHtml
   }
   if (settings.pptxFileUrl !== "") {
     // Use native fetch API to load PPTX file
-    fetch(settings.pptxFileUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.arrayBuffer();
-      })
-      .then((arrayBuffer) => {
-        convertToHtml(arrayBuffer);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch PPTX file:", err);
-        removeLoadingMessage();
-      });
+    try {
+      const response = await fetch(settings.pptxFileUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      await convertToHtml(arrayBuffer);
+    } catch (err) {
+      console.error("Failed to fetch PPTX file:", err);
+      removeLoadingMessage();
+    }
   } else {
     removeLoadingMessage();
   }
   if (settings.fileInputId !== "") {
     const input = document.getElementById(settings.fileInputId) as HTMLInputElement | null;
     if (input) {
-      input.addEventListener("change", function (evt) {
+      input.addEventListener("change", async function (evt) {
         result.innerHTML = "";
         const target = evt.target as {
           files?: { [index: number]: Blob | undefined } | null;
@@ -267,9 +267,13 @@ export function pptxToHtml(container: HTMLElement | string, options?: PptxToHtml
         if (
           fileType === "application/vnd.openxmlformats-officedocument.presentationml.presentation"
         ) {
-          file.arrayBuffer().then(function (arrayBuffer: ArrayBuffer) {
-            convertToHtml(arrayBuffer);
-          });
+          try {
+            const arrayBuffer = await file.arrayBuffer();
+            await convertToHtml(arrayBuffer);
+          } catch (error) {
+            console.error("Failed to read PPTX file:", error);
+            removeLoadingMessage();
+          }
         } else {
           alert("This is not pptx file");
         }
@@ -277,7 +281,7 @@ export function pptxToHtml(container: HTMLElement | string, options?: PptxToHtml
     }
   }
 
-  function convertToHtml(file: ArrayBuffer) {
+  async function convertToHtml(file: ArrayBuffer): Promise<void> {
     //'use strict';
     //console.log("file", file, "size:", file.byteLength);
     if (file.byteLength < 10) {
@@ -324,7 +328,7 @@ export function pptxToHtml(container: HTMLElement | string, options?: PptxToHtml
 
           if (settings.slideMode && !isSlideMode) {
             isSlideMode = true;
-            initSlideMode(divId, settings);
+            await initSlideMode(divId, settings);
           } else if (!settings.slideMode) {
             removeLoadingMessage();
           }
