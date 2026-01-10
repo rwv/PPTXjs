@@ -33,23 +33,24 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @returns HTML string for the graphic frame content
  */
 export function processGraphicFrameNode(
-  node: any,
-  warpObj: any,
+  node: unknown,
+  warpObj: unknown,
   source: string,
   sType: string,
-  tableStyles: any,
+  tableStyles: unknown,
   isFirstBr: { value: boolean },
-  styleTable: any,
+  styleTable: unknown,
   rtlLangsArray: string[],
   slideFactor: number,
   fontSizeFactor: number,
   chartID: { value: number },
-  MsgQueue: any,
-  settings: any
+  MsgQueue: unknown,
+  settings: { mediaProcess: boolean } & Record<string, unknown>
 ): string {
   let result = "";
   const chartIdRef = chartID ?? { value: 0 };
   const graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
+  const msgQueue: unknown[] = Array.isArray(MsgQueue) ? MsgQueue : [];
 
   switch (graphicTypeUri) {
     case "http://schemas.openxmlformats.org/drawingml/2006/table":
@@ -65,7 +66,7 @@ export function processGraphicFrameNode(
       );
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/chart":
-      [result, chartIdRef.value] = genChart(node, warpObj, chartIdRef.value, MsgQueue, slideFactor);
+      [result, chartIdRef.value] = genChart(node, warpObj, chartIdRef.value, msgQueue, slideFactor);
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
       result = genDiagram(
