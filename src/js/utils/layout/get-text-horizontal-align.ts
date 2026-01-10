@@ -14,65 +14,65 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * - "ctr" → "center"
  * - "just"/"dist" → "justify"
  *
- * @param node - Text node from PPTX
- * @param pNode - Parent paragraph node for fallback
+ * @param textNode - Text node from PPTX
+ * @param paragraphNode - Parent paragraph node for fallback
  * @param type - Shape type (title, body, etc.)
  * @param warpObj - Container object with layout tables and master styles
  * @returns CSS text-align value ("left", "right", "center", "justify", or "inherit")
  */
 export function getTextHorizontalAlign(
-  node: Record<string, unknown>,
-  pNode: Record<string, unknown>,
+  textNode: Record<string, unknown>,
+  paragraphNode: Record<string, unknown>,
   type: string | undefined,
   warpObj: Record<string, unknown>
 ): string {
-  //console.log("getTextHorizontalAlign: type: ", type, ", node: ", node)
-  let getAlgn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
-  if (getAlgn === undefined) {
-    getAlgn = getTextByPathList(pNode, ["a:pPr", "attrs", "algn"]);
+  //console.log("getTextHorizontalAlign: type: ", type, ", node: ", textNode)
+  let alignmentValue = getTextByPathList(textNode, ["a:pPr", "attrs", "algn"]);
+  if (alignmentValue === undefined) {
+    alignmentValue = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "algn"]);
   }
-  if (getAlgn === undefined) {
+  if (alignmentValue === undefined) {
     if (type === "title" || type === "ctrTitle" || type === "subTitle") {
-      let lvlIdx = 1;
-      const lvlNode = getTextByPathList(pNode, ["a:pPr", "attrs", "lvl"]);
-      if (lvlNode !== undefined) {
-        lvlIdx = parseInt(lvlNode) + 1;
+      let levelIndex = 1;
+      const levelNode = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "lvl"]);
+      if (levelNode !== undefined) {
+        levelIndex = parseInt(levelNode) + 1;
       }
-      const lvlStr = "a:lvl" + lvlIdx + "pPr";
-      getAlgn = getTextByPathList(warpObj, [
+      const levelKey = "a:lvl" + levelIndex + "pPr";
+      alignmentValue = getTextByPathList(warpObj, [
         "slideLayoutTables",
         "typeTable",
         type,
         "p:txBody",
         "a:lstStyle",
-        lvlStr,
+        levelKey,
         "attrs",
         "algn",
       ]);
-      if (getAlgn === undefined) {
-        getAlgn = getTextByPathList(warpObj, [
+      if (alignmentValue === undefined) {
+        alignmentValue = getTextByPathList(warpObj, [
           "slideMasterTables",
           "typeTable",
           type,
           "p:txBody",
           "a:lstStyle",
-          lvlStr,
+          levelKey,
           "attrs",
           "algn",
         ]);
-        if (getAlgn === undefined) {
-          getAlgn = getTextByPathList(warpObj, [
+        if (alignmentValue === undefined) {
+          alignmentValue = getTextByPathList(warpObj, [
             "slideMasterTextStyles",
             "p:titleStyle",
-            lvlStr,
+            levelKey,
             "attrs",
             "algn",
           ]);
-          if (getAlgn === undefined && type === "subTitle") {
-            getAlgn = getTextByPathList(warpObj, [
+          if (alignmentValue === undefined && type === "subTitle") {
+            alignmentValue = getTextByPathList(warpObj, [
               "slideMasterTextStyles",
               "p:bodyStyle",
-              lvlStr,
+              levelKey,
               "attrs",
               "algn",
             ]);
@@ -80,7 +80,7 @@ export function getTextHorizontalAlign(
         }
       }
     } else if (type === "body") {
-      getAlgn = getTextByPathList(warpObj, [
+      alignmentValue = getTextByPathList(warpObj, [
         "slideMasterTextStyles",
         "p:bodyStyle",
         "a:lvl1pPr",
@@ -88,7 +88,7 @@ export function getTextHorizontalAlign(
         "algn",
       ]);
     } else {
-      getAlgn = getTextByPathList(warpObj, [
+      alignmentValue = getTextByPathList(warpObj, [
         "slideMasterTables",
         "typeTable",
         type,
@@ -101,27 +101,27 @@ export function getTextHorizontalAlign(
     }
   }
 
-  let align = "inherit";
-  if (getAlgn !== undefined) {
-    switch (getAlgn) {
+  let textAlign = "inherit";
+  if (alignmentValue !== undefined) {
+    switch (alignmentValue) {
       case "l":
-        align = "left";
+        textAlign = "left";
         break;
       case "r":
-        align = "right";
+        textAlign = "right";
         break;
       case "ctr":
-        align = "center";
+        textAlign = "center";
         break;
       case "just":
-        align = "justify";
+        textAlign = "justify";
         break;
       case "dist":
-        align = "justify";
+        textAlign = "justify";
         break;
       default:
-        align = "inherit";
+        textAlign = "inherit";
     }
   }
-  return align;
+  return textAlign;
 }
