@@ -18,29 +18,29 @@ import { processSpNode } from "../node";
  * - Processes each shape using processSpNode
  * - Returns HTML div with positioned diagram content
  *
- * @param node - Diagram node (dgm:relIds containing file references)
- * @param warpObj - Warp object containing zip, slideResObj, digramFileContent
- * @param source - Source context (e.g., "diagramBg")
- * @param sType - Shape type context
- * @param slideFactor - EMU to pixel conversion factor
+ * @param diagramNode - Diagram node (dgm:relIds containing file references)
+ * @param warpContext - Warp object containing zip, slideResObj, digramFileContent
+ * @param sourceType - Source context (e.g., "diagramBg")
+ * @param shapeType - Shape type context
+ * @param emuToPx - EMU to pixel conversion factor
  * @param styleTable - Global CSS style table
  * @param fontSizeFactor - Font size scaling factor
- * @param rtlLangsArray - Array of RTL language codes
- * @param isFirstBr - Mutable object tracking first line break state
+ * @param rtlLanguages - Array of RTL language codes
+ * @param firstLineBreak - Mutable object tracking first line break state
  * @returns HTML string for the diagram
  */
 export async function genDiagram(
-  node: any,
-  warpObj: any,
-  source: string,
-  sType: string,
-  slideFactor: number,
+  diagramNode: any,
+  warpContext: any,
+  sourceType: string,
+  shapeType: string,
+  emuToPx: number,
   styleTable: any,
   fontSizeFactor: number,
-  rtlLangsArray: string[],
-  isFirstBr: { value: boolean }
+  rtlLanguages: string[],
+  firstLineBreak: { value: boolean }
 ): Promise<string> {
-  //console.log(warpObj)
+  //console.log(warpContext)
   //readXmlFile(archive, sldFileName)
   /**files define the diagram:
    * 1-colors#.xml,
@@ -50,7 +50,7 @@ export async function genDiagram(
    * 5-drawing#.xml, which Microsoft added as an extension for persisting diagram layout information.
    */
   ///get colors#.xml, data#.xml , layout#.xml , quickStyle#.xml
-  const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
+  const transformNode = getTextByPathList(diagramNode, ["p:xfrm"]);
   //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
   ///get drawing#.xml
   // var dgmDrwFileName = "";
@@ -64,33 +64,33 @@ export async function genDiagram(
   //     dgmDrwFile = readXmlFile(archive, dgmDrwFileName);
   // }
   // var dgmDrwSpArray = getTextByPathList(dgmDrwFile, ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
-  //var dgmDrwSpArray = getTextByPathList(warpObj["digramFileContent"], ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
-  const dgmDrwSpArray = getTextByPathList(warpObj["digramFileContent"], [
+  //var dgmDrwSpArray = getTextByPathList(warpContext["digramFileContent"], ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
+  const diagramShapeNodes = getTextByPathList(warpContext["digramFileContent"], [
     "p:drawing",
     "p:spTree",
     "p:sp",
   ]);
-  let rslt = "";
-  if (dgmDrwSpArray !== undefined) {
-    const dgmDrwSpArrayLen = dgmDrwSpArray.length;
-    for (let i = 0; i < dgmDrwSpArrayLen; i++) {
-      const dspSp = dgmDrwSpArray[i];
+  let diagramHtml = "";
+  if (diagramShapeNodes !== undefined) {
+    const diagramShapeCount = diagramShapeNodes.length;
+    for (let i = 0; i < diagramShapeCount; i++) {
+      const diagramShapeNode = diagramShapeNodes[i];
       // var dspSpObjToStr = JSON.stringify(dspSp);
       // var pSpStr = dspSpObjToStr.replace(/dsp:/g, "p:");
       // var pSpStrToObj = JSON.parse(pSpStr);
       //console.log("pSpStrToObj[" + i + "]: ", pSpStrToObj);
       //rslt += processSpNode(pSpStrToObj, node, warpObj, "diagramBg", sType)
-      rslt += await processSpNode(
-        dspSp,
-        node,
-        warpObj,
+      diagramHtml += await processSpNode(
+        diagramShapeNode,
+        diagramNode,
+        warpContext,
         "diagramBg",
-        sType,
-        slideFactor,
+        shapeType,
+        emuToPx,
         styleTable,
         fontSizeFactor,
-        rtlLangsArray,
-        isFirstBr
+        rtlLanguages,
+        firstLineBreak
       );
     }
     // dgmDrwFile: "dsp:"-> "p:"
@@ -98,10 +98,10 @@ export async function genDiagram(
 
   return (
     "<div class='block diagram-content' style='" +
-    getPosition(xfrmNode, node, undefined, undefined, sType, slideFactor) +
-    getSize(xfrmNode, undefined, undefined, slideFactor) +
+    getPosition(transformNode, diagramNode, undefined, undefined, shapeType, emuToPx) +
+    getSize(transformNode, undefined, undefined, emuToPx) +
     "'>" +
-    rslt +
+    diagramHtml +
     "</div>"
   );
 }
