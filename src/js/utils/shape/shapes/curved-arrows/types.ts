@@ -2,7 +2,7 @@
  * Context for rendering curved arrow shapes
  */
 export interface CurvedArrowContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
