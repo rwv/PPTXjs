@@ -1,3 +1,14 @@
+interface StyleTableEntry {
+  name: string;
+  suffix?: string;
+  text: string;
+}
+
+interface GlobalSettings {
+  slideMode?: boolean;
+  slideType?: string;
+}
+
 /**
  * Generate global CSS text from style table
  *
@@ -6,7 +17,11 @@
  * @param slideWidth - Width of slides in pixels
  * @returns CSS text string
  */
-export function genGlobalCSS(styleTable: any, settings: any, slideWidth: number): string {
+export function genGlobalCSS(
+  styleTable: Record<string, StyleTableEntry>,
+  settings: GlobalSettings,
+  slideWidth: number
+): string {
   let cssText = "";
   //console.log("styleTable: ", styleTable)
   for (const key in styleTable) {
