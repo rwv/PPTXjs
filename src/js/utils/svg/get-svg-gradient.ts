@@ -5,36 +5,36 @@ import { svgAngle } from "./svg-angle";
 /**
  * Generates SVG linear gradient definition
  *
- * @param w - Width of the gradient
- * @param h - Height of the gradient
- * @param angl - Angle of the gradient in degrees
- * @param color_arry - Array of color hex strings
- * @param shpId - Shape ID for unique gradient reference
+ * @param width - Width of the gradient
+ * @param height - Height of the gradient
+ * @param angleDegrees - Angle of the gradient in degrees
+ * @param colorStops - Array of color hex strings
+ * @param shapeId - Shape ID for unique gradient reference
  * @returns SVG linearGradient element string
  */
 export function getSvgGradient(
-  w: number,
-  h: number,
-  angl: number,
-  color_arry: string[],
-  shpId: string
+  width: number,
+  height: number,
+  angleDegrees: number,
+  colorStops: string[],
+  shapeId: string
 ): string {
-  const stopsArray = getMiddleStops(color_arry.length - 2);
+  const middleStops = getMiddleStops(colorStops.length - 2);
 
-  const svgHeight = h;
-  const svgWidth = w;
-  let svg = "";
+  const svgHeight = height;
+  const svgWidth = width;
+  let svgMarkup = "";
 
-  const xy_ary = svgAngle(angl, svgHeight, svgWidth);
-  const x1 = xy_ary[0];
-  const y1 = xy_ary[1];
-  const x2 = xy_ary[2];
-  const y2 = xy_ary[3];
+  const angleCoords = svgAngle(angleDegrees, svgHeight, svgWidth);
+  const x1 = angleCoords[0];
+  const y1 = angleCoords[1];
+  const x2 = angleCoords[2];
+  const y2 = angleCoords[3];
 
-  const sal = stopsArray.length;
-  const sr = sal < 20 ? 100 : 1000;
+  const stopCount = middleStops.length;
+  const stopResolution = stopCount < 20 ? 100 : 1000;
 
-  const svgAngleAttr =
+  const gradientUnitsAttr =
     ' gradientUnits="userSpaceOnUse" x1="' +
     x1 +
     '%" y1="' +
@@ -44,25 +44,25 @@ export function getSvgGradient(
     '%" y2="' +
     y2 +
     '%"';
-  const gradientStart = '<linearGradient id="linGrd_' + shpId + '"' + svgAngleAttr + ">\n";
-  svg += gradientStart;
+  const gradientOpenTag = '<linearGradient id="linGrd_' + shapeId + '"' + gradientUnitsAttr + ">\n";
+  svgMarkup += gradientOpenTag;
 
-  for (let i = 0; i < sal; i++) {
-    const tinClr = tinycolor("#" + color_arry[i]);
-    const alpha = tinClr.getAlpha();
+  for (let i = 0; i < stopCount; i++) {
+    const stopColor = tinycolor("#" + colorStops[i]);
+    const stopOpacity = stopColor.getAlpha();
 
-    svg +=
+    svgMarkup +=
       '<stop offset="' +
-      Math.round((parseFloat(stopsArray[i]) / 100) * sr) / sr +
+      Math.round((parseFloat(middleStops[i]) / 100) * stopResolution) / stopResolution +
       '" style="stop-color:' +
-      tinClr.toHexString() +
+      stopColor.toHexString() +
       "; stop-opacity:" +
-      alpha +
+      stopOpacity +
       ';"';
-    svg += "/>\n";
+    svgMarkup += "/>\n";
   }
 
-  svg += "</linearGradient>\n";
+  svgMarkup += "</linearGradient>\n";
 
-  return svg;
+  return svgMarkup;
 }
