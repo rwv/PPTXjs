@@ -5,6 +5,12 @@ import { getSolidFill } from "../color";
 import { getHtmlBullet as _getHtmlBullet } from "./get-html-bullet";
 import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handlers";
 
+type BulletWarpObj = {
+  slideResObj: Record<string, { target: string }>;
+  archive: { readAsArrayBuffer: (path: string) => ArrayBuffer };
+  [key: string]: unknown;
+};
+
 /**
  * Generate bullet character HTML for a text paragraph
  *
@@ -29,23 +35,26 @@ import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handle
  * @returns Array [bulletHTML, marginValue, fontValue] or empty string if no bullet
  */
 export function genBuChar(
-  node: any,
+  node: Record<string, unknown>,
   i: number,
-  spNode: any,
-  textBodyNode: any,
-  pFontStyle: any,
+  spNode: Record<string, unknown>,
+  textBodyNode: Record<string, unknown>,
+  pFontStyle: Record<string, unknown> | undefined,
   idx: number | string | undefined,
   type: string | undefined,
-  warpObj: any,
+  warpObj: BulletWarpObj,
   slideFactor: number,
   fontSizeFactor: number
 ): string | [string, number, number] {
   //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
   ///////////////////////////////////////Amir///////////////////////////////
   const _sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
-  const lstStyle = textBodyNode["a:lstStyle"];
+  const lstStyle = textBodyNode["a:lstStyle"] as Record<string, unknown> | undefined;
 
-  let rNode = getTextByPathList(node, ["a:r"]);
+  let rNode = getTextByPathList(node, ["a:r"]) as
+    | Record<string, unknown>
+    | Record<string, unknown>[]
+    | undefined;
   if (rNode !== undefined && rNode.constructor === Array) {
     rNode = rNode[0]; //bullet only to first "a:r"
   }
@@ -57,8 +66,9 @@ export function genBuChar(
   let dfltBultColor, dfltBultSize, bultColor, bultSize, color_tye;
 
   if (rNode !== undefined) {
+    const rNodeRecord = rNode as Record<string, unknown>;
     dfltBultColor = getFontColorPr(
-      rNode,
+      rNodeRecord,
       spNode,
       lstStyle,
       pFontStyle,
@@ -69,7 +79,15 @@ export function genBuChar(
       slideFactor
     );
     color_tye = dfltBultColor[2];
-    dfltBultSize = getFontSize(rNode, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);
+    dfltBultSize = getFontSize(
+      rNodeRecord,
+      textBodyNode,
+      pFontStyle,
+      lvl,
+      type,
+      warpObj,
+      fontSizeFactor
+    );
   } else {
     return "";
   }
@@ -82,7 +100,7 @@ export function genBuChar(
     font_val = 0;
   /////////////////////////////////////////////////////////////////
 
-  let pPrNode = node["a:pPr"];
+  let pPrNode = node["a:pPr"] as Record<string, unknown> | undefined;
   let BullNONE = getTextByPathList(pPrNode, ["a:buNone"]);
   if (BullNONE !== undefined) {
     return "";
@@ -96,7 +114,7 @@ export function genBuChar(
 
   let buChar = getTextByPathList(pPrNode, ["a:buChar", "attrs", "char"]);
   let buNum = getTextByPathList(pPrNode, ["a:buAutoNum", "attrs", "type"]);
-  let buPic = getTextByPathList(pPrNode, ["a:buBlip"]);
+  let buPic = getTextByPathList(pPrNode, ["a:buBlip"]) as Record<string, unknown> | undefined;
   if (buChar !== undefined) {
     buType = "TYPE_BULLET";
   }
@@ -146,7 +164,7 @@ export function genBuChar(
         buType = "TYPE_BULPIC";
       }
       if (buChar !== undefined || buNum !== undefined || buPic !== undefined) {
-        pPrNode = lstStyle[lvlStr];
+        pPrNode = lstStyle[lvlStr] as Record<string, unknown> | undefined;
       }
     }
   }
@@ -358,7 +376,14 @@ export function genBuChar(
   } else if (buType === "TYPE_NUMERIC") {
     bullet = renderBulletNumeric(bultColor, bultSize, marLStr, marRStr, isRTL, buNum, lvl);
   } else if (buType === "TYPE_BULPIC") {
-    bullet = renderBulletPic(buPic, warpObj, marLStr, marRStr, bultSize, isRTL);
+    bullet = renderBulletPic(
+      buPic as Record<string, unknown>,
+      warpObj,
+      marLStr,
+      marRStr,
+      bultSize,
+      isRTL
+    );
   }
   // else {
   //     bullet = "<div style='margin-left: " + 328600 * slideFactor * lvl + "px" +
