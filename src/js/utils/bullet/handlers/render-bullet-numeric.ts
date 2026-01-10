@@ -9,26 +9,26 @@
  */
 
 export function renderBulletNumeric(
-  bultColor: string[],
-  bultSize: string,
-  marLStr: string,
-  marRStr: string,
-  isRTL: boolean,
-  buNum: string,
-  lvl: number
+  bulletColor: string[],
+  bulletSize: string,
+  marginLeftStyle: string,
+  marginRightStyle: string,
+  isRtl: boolean,
+  bulletType: string,
+  bulletLevel: number
 ): string {
   let bullet =
     "<div style='height: 100%;" +
-    marLStr +
-    marRStr +
+    marginLeftStyle +
+    marginRightStyle +
     "color:#" +
-    bultColor[0] +
+    bulletColor[0] +
     ";" +
     "font-size:" +
-    bultSize +
+    bulletSize +
     ";";
 
-  if (isRTL) {
+  if (isRtl) {
     bullet += "display: inline-block;white-space: nowrap ;direction:rtl;";
   } else {
     bullet += "display: inline-block;white-space: nowrap ;direction:ltr;";
@@ -36,9 +36,9 @@ export function renderBulletNumeric(
 
   bullet +=
     "' data-bulltname = '" +
-    buNum +
+    bulletType +
     "' data-bulltlvl = '" +
-    lvl +
+    bulletLevel +
     "' class='numeric-bullet-style'></div>";
 
   return bullet;
