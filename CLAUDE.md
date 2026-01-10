@@ -4,16 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-PPTXjs is a jQuery plugin that converts PowerPoint (PPTX) files to HTML using pure JavaScript. It parses the OOXML structure of PPTX files and renders slides as HTML/CSS with support for text, shapes, images, videos, charts, SmartArt diagrams, tables, and themes.
+PPTXjs converts PowerPoint (PPTX) files to HTML using pure JavaScript and native DOM APIs. It parses the OOXML structure of PPTX files and renders slides as HTML/CSS with support for text, shapes, images, videos, charts, SmartArt diagrams, tables, and themes.
 
-**Current Goal**: Migrating legacy JavaScript code to ESM TypeScript modules with proper modularization and test coverage. Verify all changes with `pnpm build && pnpm test`.
+**Current Goal**: Continue modernizing legacy JavaScript into ESM TypeScript modules while keeping checks passing (`pnpm build && pnpm test`).
 
 **Key Technologies:**
-- jQuery 1.x (legacy API patterns)
 - JSZip v2.x for PPTX file parsing (NOT v3.x - important constraint)
 - D3.js + NVD3 for chart rendering
 - TypeScript with `strict: false` (gradual migration from JavaScript)
-- Rollup for bundling two IIFE modules
+- Rollup for bundling the IIFE module
 
 ## Build Commands
 
@@ -36,19 +35,19 @@ pnpm test:ui
 
 ## Architecture Overview
 
-### Two-Module System
+### Bundle Overview
 
-The codebase builds two separate IIFE bundles:
+The codebase builds a single IIFE bundle:
 
 1. **pptxjs.js** (`src/js/pptxjs.ts`) - Main PPTX parser and renderer
-   - jQuery plugin that extends `$.fn.pptxToHtml`
+   - Exposes `pptxToHtml` (exported and attached to `window`)
    - Parses PPTX files using JSZip v2.x
    - Renders slides as HTML/CSS with inline styles
    - Handles XML parsing, theme processing, and layout calculations
    - Includes dingbat font mappings for bullet character rendering
 
-2. **divs2slides.js** (`src/js/divs2slides.ts`) - Slideshow presentation mode
-   - jQuery plugin for slide navigation and presentation
+2. **divs2slides** (`src/js/divs2slides.ts`) - Slideshow presentation mode
+   - Native DOM implementation for slide navigation and presentation
    - Adds slide transitions, keyboard shortcuts, auto-play
 
 ### Core PPTX Processing Flow
@@ -129,7 +128,7 @@ export function getVerticalMargins(
 ## Testing
 
 Tests use Vitest browser mode with Playwright:
-- Browser-based testing required (jQuery, DOM manipulation)
+- Browser-based testing required (DOM manipulation)
 - Tests load real PPTX files and render them
 - Visual regression testing with screenshot comparisons
 - Snapshot testing for DOM structure
@@ -177,7 +176,7 @@ For each function extraction:
 ## Important Constraints
 
 - **JSZip v2.x only** - v3.x has breaking API changes
-- **jQuery 1.x patterns** - uses legacy `$.fn.extend` plugin pattern
+- **Native DOM APIs** - slide mode and renderer use standard browser APIs
 - **IIFE output format** - not ES modules for browser compatibility
 - **Inline styles** - all CSS is inline, no external stylesheets for slide content
 - **No strict mode** - TypeScript strict checks disabled due to legacy code
