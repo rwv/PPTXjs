@@ -46,13 +46,16 @@ export default [
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         Element: 'readonly',
+        HTMLElement: 'readonly',
         Document: 'readonly',
         Image: 'readonly',
-        // jQuery globals and types
-        jQuery: 'readonly',
-        $: 'readonly',
-        JQuery: 'readonly',
-        JQueryEventObject: 'readonly',
+        HTMLImageElement: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLSpanElement: 'readonly',
+        KeyboardEvent: 'readonly',
+        Node: 'readonly',
+        NodeListOf: 'readonly',
+        getComputedStyle: 'readonly',
         // JSZip global
         JSZip: 'readonly',
         // D3/NVD3 globals

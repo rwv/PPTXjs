@@ -5,7 +5,11 @@
  */
 export function updateProgressBar(percent: number): void {
   //console.log("percent: ", percent)
-  const progressBarElemtnt = $(".slides-loading-progress-bar");
-  progressBarElemtnt.width(percent + "%");
-  progressBarElemtnt.html("<span style='text-align: center;'>Loading...(" + percent + "%)</span>");
+  const progressBarElement = document.querySelector(".slides-loading-progress-bar");
+  if (!progressBarElement) {
+    return;
+  }
+  const progressBar = progressBarElement as HTMLElement;
+  progressBar.style.width = percent + "%";
+  progressBar.innerHTML = "<span style='text-align: center;'>Loading...(" + percent + "%)</span>";
 }

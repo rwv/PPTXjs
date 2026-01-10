@@ -1,7 +1,5 @@
 import pptxjsCss from "../css/pptxjs.css?url";
 import nvD3MinCss from "nvd3/build/nv.d3.min.css?url";
-import jqueryMinJs from "jquery/dist/jquery.min.js?url";
-import jqueryFullscreenJs from "jquery-fullscreen-plugin/jquery.fullscreen-min.js?url";
 import jszipMinJs from "jszip/dist/jszip.min.js?url";
 import d3MinJs from "d3/d3.min.js?url";
 import nvD3MinJs from "nvd3/build/nv.d3.min.js?url";
@@ -25,7 +23,7 @@ export async function loadPPTXjs(document: Document) {
   ]);
 
   // Load JavaScript files in sequential order (important for dependencies)
-  const scripts = [jqueryMinJs, jqueryFullscreenJs, jszipMinJs, d3MinJs, nvD3MinJs, pptxjsJs];
+  const scripts = [jszipMinJs, d3MinJs, nvD3MinJs, pptxjsJs];
 
   // Load scripts sequentially
   for (const scriptSrc of scripts) {

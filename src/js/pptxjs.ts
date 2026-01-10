@@ -13,13 +13,14 @@ import { processMsgQueue } from "./utils/chart";
 import { updateProgressBar } from "./utils/ui";
 import { initSlideMode } from "./utils/presentation";
 import { processPPTX } from "./utils/pptx";
-import { registerDivs2Slides } from "./divs2slides";
 import { createPptxArchive } from "./archive";
 
 type SlideModeConfig = {
   first: number;
   nav: boolean;
   navTxtColor: string;
+  showPlayPauseBtn?: boolean;
+  showFullscreenBtn?: boolean;
   keyBoardShortCut: boolean;
   showSlideNum: boolean;
   showTotalSlideNum: boolean;
@@ -39,6 +40,8 @@ type PptxToHtmlOptions = {
   slideType?: "divs2slidesjs" | "revealjs";
   revealjsPath?: string;
   keyBoardShortCut?: boolean;
+  showPlayPauseBtn?: boolean;
+  showFullscreenBtn?: boolean;
   mediaProcess?: boolean;
   jsZipV2?: string | false;
   themeProcess?: boolean | "colorsAndImageOnly";
@@ -55,6 +58,8 @@ type PptxToHtmlSettings = {
   slideType: "divs2slidesjs" | "revealjs";
   revealjsPath: string;
   keyBoardShortCut: boolean;
+  showPlayPauseBtn?: boolean;
+  showFullscreenBtn?: boolean;
   mediaProcess: boolean;
   jsZipV2: string | false;
   themeProcess: boolean | "colorsAndImageOnly";
@@ -63,127 +68,192 @@ type PptxToHtmlSettings = {
   revealjsConfig: Record<string, unknown>;
 };
 
-type PptxToHtmlPlugin = (this: JQuery, options?: PptxToHtmlOptions) => void;
+function resolveContainer(target: HTMLElement | string): HTMLElement {
+  if (typeof target === "string") {
+    const element = document.querySelector<HTMLElement>(target);
+    if (!element) {
+      throw new Error(`Container not found for selector: ${target}`);
+    }
+    return element;
+  }
+  return target;
+}
 
-// Register divs2slides jQuery plugin
-registerDivs2Slides();
+function ensureElementId(element: HTMLElement): string {
+  if (!element.id) {
+    const uniqueId =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : Math.random().toString(36).slice(2);
+    element.id = `pptxjs-${uniqueId}`;
+  }
+  return element.id;
+}
 
-(function ($) {
-  const pluginHost = $.fn as JQuery & { pptxToHtml?: PptxToHtmlPlugin };
-  pluginHost.pptxToHtml = function (this: JQuery, options?: PptxToHtmlOptions) {
-    //var worker;
-    const $result = $(this);
-    const divId = $result.attr("id");
+function removeLoadingMessage(): void {
+  document.querySelectorAll(".slides-loadnig-msg").forEach((element) => element.remove());
+}
 
-    let isDone = false;
-    const is_first_br = false;
+function wrapAll(elements: Element[], wrapper: HTMLElement): void {
+  if (elements.length === 0) {
+    return;
+  }
+  const first = elements[0];
+  const parent = first.parentNode;
+  if (!parent) {
+    return;
+  }
+  parent.insertBefore(wrapper, first);
+  elements.forEach((element) => wrapper.appendChild(element));
+}
 
-    const MsgQueue = new Array();
+function appendResult(target: HTMLElement, data: unknown): void {
+  if (typeof data === "string") {
+    target.insertAdjacentHTML("beforeend", data);
+    return;
+  }
+  if (data instanceof Node) {
+    target.appendChild(data);
+  }
+}
 
-    const chartID = { value: 0 };
+function loadScript(src: string): void {
+  const script = document.createElement("script");
+  script.src = src;
+  document.body.appendChild(script);
+}
 
-    const rtl_langs_array = ["he-IL", "ar-AE", "ar-SA", "dv-MV", "fa-IR", "ur-PK"];
+function createLoadingMessage(): HTMLElement {
+  const loading = document.createElement("div");
+  loading.className = "slides-loadnig-msg";
+  loading.style.cssText = "display:block; width:100%; color:white; background-color: #ddd;";
 
-    const slideFactor = 96 / 914400;
-    const fontSizeFactor = 4 / 3.2;
-    let isSlideMode = false;
-    const styleTable = {};
-    const defaultSettings: PptxToHtmlSettings = {
-      // These are the defaults.
-      pptxFileUrl: "",
-      fileInputId: "",
-      slidesScale: "", //Change Slides scale by percent
-      slideMode: false /** true,false*/,
-      slideType:
-        "divs2slidesjs" /*'divs2slidesjs' (default) , 'revealjs'(https://revealjs.com)  -TODO*/,
-      revealjsPath: "" /*path to js file of revealjs - TODO*/,
-      keyBoardShortCut: false /** true,false ,condition: slideMode: true XXXXX - need to remove - this is doublcated*/,
-      mediaProcess: true /** true,false: if true then process video and audio files */,
-      jsZipV2: false,
-      themeProcess: true /*true (default) , false, "colorsAndImageOnly"*/,
-      incSlide: {
-        width: 0,
-        height: 0,
-      },
-      slideModeConfig: {
-        first: 1,
-        nav: true /** true,false : show or not nav buttons*/,
-        navTxtColor: "black" /** color */,
-        keyBoardShortCut: true /** true,false ,condition: */,
-        showSlideNum: true /** true,false */,
-        showTotalSlideNum: true /** true,false */,
-        autoSlide: true /** false or seconds , F8 to active ,keyBoardShortCut: true */,
-        randomAutoSlide: false /** true,false ,autoSlide:true */,
-        loop: false /** true,false */,
-        background: false /** false or color*/,
-        transition:
-          "default" /** transition type: "slid","fade","default","random" , to show transition efects :transitionTime > 0.5 */,
-        transitionTime: 1 /** transition time between slides in seconds */,
-      },
-      revealjsConfig: {},
-    };
+  const progress = document.createElement("div");
+  progress.className = "slides-loading-progress-bar";
+  progress.style.cssText = "width: 1%; background-color: #4775d1;";
+  progress.innerHTML = "<span style='text-align: center;'>Loading... (1%)</span>";
 
-    const settings = $.extend(true, {}, defaultSettings, options) as PptxToHtmlSettings;
+  loading.appendChild(progress);
+  return loading;
+}
 
-    $("#" + divId).prepend(
-      $("<div></div>")
-        .attr({
-          class: "slides-loadnig-msg",
-          style: "display:block; width:100%; color:white; background-color: #ddd;",
-        }) /*.html("Loading...")*/
-        .append(
-          $("<div></div>")
-            .attr({
-              class: "slides-loading-progress-bar",
-              style: "width: 1%; background-color: #4775d1;",
-            })
-            .html("<span style='text-align: center;'>Loading... (1%)</span>")
-        )
-    );
-    if (settings.jsZipV2 !== false) {
-      jQuery.getScript(settings.jsZipV2);
-      if (localStorage.getItem("isPPTXjsReLoaded") !== "yes") {
-        localStorage.setItem("isPPTXjsReLoaded", "yes");
-        location.reload();
+export function pptxToHtml(container: HTMLElement | string, options?: PptxToHtmlOptions): void {
+  //var worker;
+  const result = resolveContainer(container);
+  const divId = ensureElementId(result);
+
+  let isDone = false;
+  const is_first_br = false;
+
+  const MsgQueue: Array<{ data: unknown }> = [];
+
+  const chartID = { value: 0 };
+
+  const rtl_langs_array = ["he-IL", "ar-AE", "ar-SA", "dv-MV", "fa-IR", "ur-PK"];
+
+  const slideFactor = 96 / 914400;
+  const fontSizeFactor = 4 / 3.2;
+  let isSlideMode = false;
+  const styleTable: Record<string, unknown> = {};
+  const defaultSettings: PptxToHtmlSettings = {
+    // These are the defaults.
+    pptxFileUrl: "",
+    fileInputId: "",
+    slidesScale: "", //Change Slides scale by percent
+    slideMode: false /** true,false*/,
+    slideType:
+      "divs2slidesjs" /*'divs2slidesjs' (default) , 'revealjs'(https://revealjs.com)  -TODO*/,
+    revealjsPath: "" /*path to js file of revealjs - TODO*/,
+    keyBoardShortCut: false /** true,false ,condition: slideMode: true XXXXX - need to remove - this is doublcated*/,
+    mediaProcess: true /** true,false: if true then process video and audio files */,
+    jsZipV2: false,
+    themeProcess: true /*true (default) , false, "colorsAndImageOnly"*/,
+    incSlide: {
+      width: 0,
+      height: 0,
+    },
+    slideModeConfig: {
+      first: 1,
+      nav: true /** true,false : show or not nav buttons*/,
+      navTxtColor: "black" /** color */,
+      keyBoardShortCut: true /** true,false ,condition: */,
+      showSlideNum: true /** true,false */,
+      showTotalSlideNum: true /** true,false */,
+      autoSlide: true /** false or seconds , F8 to active ,keyBoardShortCut: true */,
+      randomAutoSlide: false /** true,false ,autoSlide:true */,
+      loop: false /** true,false */,
+      background: false /** false or color*/,
+      transition:
+        "default" /** transition type: "slid","fade","default","random" , to show transition efects :transitionTime > 0.5 */,
+      transitionTime: 1 /** transition time between slides in seconds */,
+    },
+    revealjsConfig: {},
+  };
+
+  const settings: PptxToHtmlSettings = {
+    ...defaultSettings,
+    ...options,
+    incSlide: {
+      ...defaultSettings.incSlide,
+      ...(options?.incSlide ?? {}),
+    },
+    slideModeConfig: {
+      ...defaultSettings.slideModeConfig,
+      ...(options?.slideModeConfig ?? {}),
+    },
+    revealjsConfig: {
+      ...defaultSettings.revealjsConfig,
+      ...(options?.revealjsConfig ?? {}),
+    },
+  };
+
+  result.prepend(createLoadingMessage());
+  if (settings.jsZipV2 !== false) {
+    loadScript(settings.jsZipV2);
+    if (localStorage.getItem("isPPTXjsReLoaded") !== "yes") {
+      localStorage.setItem("isPPTXjsReLoaded", "yes");
+      location.reload();
+    }
+  }
+
+  if (settings.keyBoardShortCut) {
+    document.addEventListener("keydown", function (event: KeyboardEvent) {
+      event.preventDefault();
+      const key = event.keyCode;
+      console.log(key, isDone);
+      if (key === 116 && !isSlideMode) {
+        //F5
+        isSlideMode = true;
+        initSlideMode(divId, settings);
+      } else if (key === 116 && isSlideMode) {
+        //exit slide mode - TODO
       }
-    }
-
-    if (settings.keyBoardShortCut) {
-      $(document).bind("keydown", function (event: JQueryEventObject) {
-        event.preventDefault();
-        const key = event.keyCode;
-        console.log(key, isDone);
-        if (key === 116 && !isSlideMode) {
-          //F5
-          isSlideMode = true;
-          initSlideMode(divId, settings);
-        } else if (key === 116 && isSlideMode) {
-          //exit slide mode - TODO
+    });
+  }
+  if (settings.pptxFileUrl !== "") {
+    // Use native fetch API to load PPTX file
+    fetch(settings.pptxFileUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        return response.arrayBuffer();
+      })
+      .then((arrayBuffer) => {
+        convertToHtml(arrayBuffer);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch PPTX file:", err);
+        removeLoadingMessage();
       });
-    }
-    if (settings.pptxFileUrl !== "") {
-      // Use native fetch API to load PPTX file
-      fetch(settings.pptxFileUrl)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.arrayBuffer();
-        })
-        .then((arrayBuffer) => {
-          convertToHtml(arrayBuffer);
-        })
-        .catch((err) => {
-          console.error("Failed to fetch PPTX file:", err);
-          $(".slides-loadnig-msg").remove();
-        });
-    } else {
-      $(".slides-loadnig-msg").remove();
-    }
-    if (settings.fileInputId !== "") {
-      $("#" + settings.fileInputId).on("change", function (evt: JQueryEventObject) {
-        $result.html("");
+  } else {
+    removeLoadingMessage();
+  }
+  if (settings.fileInputId !== "") {
+    const input = document.getElementById(settings.fileInputId) as HTMLInputElement | null;
+    if (input) {
+      input.addEventListener("change", function (evt) {
+        result.innerHTML = "";
         const target = evt.target as {
           files?: { [index: number]: Blob | undefined } | null;
         } | null;
@@ -205,98 +275,111 @@ registerDivs2Slides();
         }
       });
     }
+  }
 
-    function convertToHtml(file: ArrayBuffer) {
-      //'use strict';
-      //console.log("file", file, "size:", file.byteLength);
-      if (file.byteLength < 10) {
-        console.error("file url error (" + settings.pptxFileUrl + "0)");
-        $(".slides-loadnig-msg").remove();
-        return;
-      }
-      // Create archive instance using new interface
-      const archive = createPptxArchive(file);
-      const rslt_ary = processPPTX(
-        archive,
-        slideFactor,
-        settings,
-        styleTable,
-        rtl_langs_array,
-        fontSizeFactor,
-        chartID,
-        MsgQueue,
-        { value: is_first_br }
-      );
-      //s = readXmlFile(zip, 'ppt/tableStyles.xml');
-      //var slidesHeight = $("#" + divId + " .slide").height();
-      for (let i = 0; i < rslt_ary.length; i++) {
-        switch (rslt_ary[i]["type"]) {
-          case "slide":
-            $result.append(rslt_ary[i]["data"]);
-            break;
-          case "pptx-thumb":
-            //$("#pptx-thumb").attr("src", "data:image/jpeg;base64," +rslt_ary[i]["data"]);
-            break;
-          case "slideSize":
-            // Slide size is calculated but not currently used
-            break;
-          case "globalCSS":
-            //console.log(rslt_ary[i]["data"])
-            $result.append("<style>" + rslt_ary[i]["data"] + "</style>");
-            break;
-          case "ExecutionTime":
-            processMsgQueue(MsgQueue);
-            setNumericBullets($(".block"));
-            setNumericBullets($("table td"));
-
-            isDone = true;
-
-            if (settings.slideMode && !isSlideMode) {
-              isSlideMode = true;
-              initSlideMode(divId, settings);
-            } else if (!settings.slideMode) {
-              $(".slides-loadnig-msg").remove();
-            }
-            break;
-          case "progress-update":
-            //console.log(rslt_ary[i]["data"]); //update progress bar - TODO
-            updateProgressBar(rslt_ary[i]["data"]);
-            break;
-          default:
-        }
-      }
-      if (!settings.slideMode || (settings.slideMode && settings.slideType === "revealjs")) {
-        if (document.getElementById("all_slides_warpper") === null) {
-          $("#" + divId + " .slide").wrapAll("<div id='all_slides_warpper' class='slides'></div>");
-          //$("#" + divId + " .slides").wrap("<div class='reveal'></div>");
-        }
-
-        if (settings.slideMode && settings.slideType === "revealjs") {
-          $("#" + divId).addClass("reveal");
-        }
-      }
-
-      const sScale = settings.slidesScale;
-      let trnsfrmScl = "";
-      let scaleVal = 1;
-      if (sScale !== "") {
-        const numsScale = parseInt(sScale);
-        scaleVal = numsScale / 100;
-        if (settings.slideMode && settings.slideType !== "revealjs") {
-          trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
-        }
-      }
-
-      const slidesHeight = $("#" + divId + " .slide").height();
-      const numOfSlides = $("#" + divId + " .slide").length;
-      const sScaleVal = sScale !== "" ? scaleVal : 1;
-      //console.log("slidesHeight: " + slidesHeight + "\nnumOfSlides: " + numOfSlides + "\nScale: " + sScaleVal)
-
-      $("#all_slides_warpper").attr({
-        style: trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px",
-      });
-
-      //}
+  function convertToHtml(file: ArrayBuffer) {
+    //'use strict';
+    //console.log("file", file, "size:", file.byteLength);
+    if (file.byteLength < 10) {
+      console.error("file url error (" + settings.pptxFileUrl + "0)");
+      removeLoadingMessage();
+      return;
     }
-  };
-})(jQuery);
+    // Create archive instance using new interface
+    const archive = createPptxArchive(file);
+    const rslt_ary = processPPTX(
+      archive,
+      slideFactor,
+      settings,
+      styleTable,
+      rtl_langs_array,
+      fontSizeFactor,
+      chartID,
+      MsgQueue,
+      { value: is_first_br }
+    );
+    //s = readXmlFile(zip, 'ppt/tableStyles.xml');
+    //var slidesHeight = $("#" + divId + " .slide").height();
+    for (let i = 0; i < rslt_ary.length; i++) {
+      switch (rslt_ary[i]["type"]) {
+        case "slide":
+          appendResult(result, rslt_ary[i]["data"]);
+          break;
+        case "pptx-thumb":
+          //$("#pptx-thumb").attr("src", "data:image/jpeg;base64," +rslt_ary[i]["data"]);
+          break;
+        case "slideSize":
+          // Slide size is calculated but not currently used
+          break;
+        case "globalCSS":
+          //console.log(rslt_ary[i]["data"])
+          appendResult(result, "<style>" + rslt_ary[i]["data"] + "</style>");
+          break;
+        case "ExecutionTime":
+          processMsgQueue(MsgQueue);
+          setNumericBullets(document.querySelectorAll(".block"));
+          setNumericBullets(document.querySelectorAll("table td"));
+
+          isDone = true;
+
+          if (settings.slideMode && !isSlideMode) {
+            isSlideMode = true;
+            initSlideMode(divId, settings);
+          } else if (!settings.slideMode) {
+            removeLoadingMessage();
+          }
+          break;
+        case "progress-update":
+          //console.log(rslt_ary[i]["data"]); //update progress bar - TODO
+          updateProgressBar(rslt_ary[i]["data"]);
+          break;
+        default:
+      }
+    }
+    if (!settings.slideMode || (settings.slideMode && settings.slideType === "revealjs")) {
+      if (document.getElementById("all_slides_warpper") === null) {
+        const slides = Array.from(result.querySelectorAll(".slide"));
+        const wrapper = document.createElement("div");
+        wrapper.id = "all_slides_warpper";
+        wrapper.className = "slides";
+        wrapAll(slides, wrapper);
+        //$("#" + divId + " .slides").wrap("<div class='reveal'></div>");
+      }
+
+      if (settings.slideMode && settings.slideType === "revealjs") {
+        result.classList.add("reveal");
+      }
+    }
+
+    const sScale = settings.slidesScale;
+    let trnsfrmScl = "";
+    let scaleVal = 1;
+    if (sScale !== "") {
+      const numsScale = parseInt(sScale);
+      scaleVal = numsScale / 100;
+      if (settings.slideMode && settings.slideType !== "revealjs") {
+        trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
+      }
+    }
+
+    const firstSlide = result.querySelector<HTMLElement>(".slide");
+    const slidesHeight = firstSlide ? firstSlide.getBoundingClientRect().height : 0;
+    const numOfSlides = result.querySelectorAll(".slide").length;
+    const sScaleVal = sScale !== "" ? scaleVal : 1;
+    //console.log("slidesHeight: " + slidesHeight + "\nnumOfSlides: " + numOfSlides + "\nScale: " + sScaleVal)
+
+    const wrapper = document.getElementById("all_slides_warpper");
+    if (wrapper) {
+      wrapper.setAttribute(
+        "style",
+        trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px"
+      );
+    }
+
+    //}
+  }
+}
+
+if (typeof window !== "undefined") {
+  (window as unknown as { pptxToHtml?: typeof pptxToHtml }).pptxToHtml = pptxToHtml;
+}

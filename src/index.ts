@@ -8,9 +8,7 @@ type PptxToHtmlOptions = {
   mediaProcess: boolean;
 };
 
-type PptxToHtmlSelector = {
-  pptxToHtml: (options: PptxToHtmlOptions) => void;
-};
+type PptxToHtmlFn = (container: HTMLElement | string, options: PptxToHtmlOptions) => void;
 
 export async function getPageElementsFromPPTX(file: Blob) {
   const url = URL.createObjectURL(file);
@@ -22,8 +20,11 @@ export async function getPageElementsFromPPTX(file: Blob) {
   element.id = elementID;
   document.body.appendChild(element);
 
-  const selectElement = window.$ as unknown as (selector: string) => PptxToHtmlSelector;
-  selectElement(`#${elementID}`).pptxToHtml({
+  const pptxToHtml = (window as { pptxToHtml?: PptxToHtmlFn }).pptxToHtml;
+  if (!pptxToHtml) {
+    throw new Error("pptxToHtml is not available");
+  }
+  pptxToHtml(element, {
     pptxFileUrl: url,
     slidesScale: "100%",
     slideMode: false,

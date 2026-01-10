@@ -21,12 +21,12 @@ import { getNumTypeNum } from "../get-num-type-num";
  * //   <span class="numeric-bullet-style" data-bulltname="arabicPeriod" data-bulltlvl="0"></span>
  * // </div>
  *
- * setNumericBullets($('.paragraph-container'));
+ * setNumericBullets(document.querySelectorAll(".paragraph-container"));
  */
-export function setNumericBullets(elem: JQuery) {
-  const prgrphs_arry = elem;
-  for (let i = 0; i < prgrphs_arry.length; i++) {
-    const buSpan = $(prgrphs_arry[i]).find(".numeric-bullet-style");
+export function setNumericBullets(elem: NodeListOf<Element> | Element[]) {
+  const prgrphs = Array.from(elem);
+  for (let i = 0; i < prgrphs.length; i++) {
+    const buSpan = prgrphs[i]?.querySelectorAll(".numeric-bullet-style") ?? [];
     if (buSpan.length > 0) {
       let prevBultTyp = "";
       let prevBultLvl = "";
@@ -36,8 +36,8 @@ export function setNumericBullets(elem: JQuery) {
       const buletTypSrry = new Array();
 
       for (let j = 0; j < buSpan.length; j++) {
-        const bult_typ = $(buSpan[j]).data("bulltname");
-        const bult_lvl = $(buSpan[j]).data("bulltlvl");
+        const bult_typ = buSpan[j]?.getAttribute("data-bulltname") ?? "";
+        const bult_lvl = buSpan[j]?.getAttribute("data-bulltlvl") ?? "";
 
         if (buletIndex === 0) {
           prevBultTyp = bult_typ;
@@ -75,7 +75,7 @@ export function setNumericBullets(elem: JQuery) {
         }
 
         const numIdx = getNumTypeNum(buletTypSrry[tmpArryIndx], buletIndex);
-        $(buSpan[j]).html(numIdx);
+        buSpan[j]!.innerHTML = numIdx;
       }
     }
   }

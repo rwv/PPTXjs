@@ -8,6 +8,8 @@ type SlideModeConfig = {
   first: number;
   nav: boolean;
   navTxtColor: string;
+  showPlayPauseBtn?: boolean;
+  showFullscreenBtn?: boolean;
   keyBoardShortCut: boolean;
   showSlideNum: boolean;
   showTotalSlideNum: boolean;
@@ -15,7 +17,7 @@ type SlideModeConfig = {
   randomAutoSlide: boolean;
   loop: boolean;
   background: boolean | string;
-  transition: string;
+  transition: "default" | "slid" | "fade" | "random";
   transitionTime: number;
 };
 
@@ -23,26 +25,50 @@ type SlideModeSettings = {
   slideType: string;
   slideModeConfig: SlideModeConfig;
   showPlayPauseBtn?: boolean;
+  showFullscreenBtn?: boolean;
   slidesScale: string;
   revealjsPath: string;
   revealjsConfig: Record<string, unknown>;
 };
 
+import { initDivs2Slides } from "../../divs2slides";
+
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.addEventListener("load", () => resolve());
+    script.addEventListener("error", () => reject(new Error(`Failed to load script: ${src}`)));
+    document.body.appendChild(script);
+  });
+}
+
+function removeLoadingMessage(): void {
+  document.querySelectorAll(".slides-loadnig-msg").forEach((element) => element.remove());
+}
+
 export function initSlideMode(divId: string, settings: SlideModeSettings): void {
   //console.log(settings.slideType)
   if (settings.slideType === "" || settings.slideType === "divs2slidesjs") {
-    const slidesHeight = $("#" + divId + " .slide").height();
-    $("#" + divId + " .slide").hide();
+    const container = document.getElementById(divId);
+    if (!container) {
+      return;
+    }
+    const slides = Array.from(container.querySelectorAll<HTMLElement>(".slide"));
+    const slidesHeight = slides[0]?.getBoundingClientRect().height ?? 0;
+    slides.forEach((slide) => {
+      slide.style.display = "none";
+    });
     setTimeout(function () {
       const slideConf = settings.slideModeConfig;
-      $(".slides-loadnig-msg").remove();
-      const $container = $("#" + divId) as JQuery & {
-        divs2slides: (config: SlideModeConfig & { showPlayPauseBtn?: boolean }) => void;
-      };
-      $container.divs2slides({
+      const showPlayPauseBtn = settings.showPlayPauseBtn ?? slideConf.showPlayPauseBtn ?? true;
+      const showFullscreenBtn = settings.showFullscreenBtn ?? slideConf.showFullscreenBtn ?? true;
+      removeLoadingMessage();
+      initDivs2Slides(container, {
         first: slideConf.first,
         nav: slideConf.nav,
-        showPlayPauseBtn: settings.showPlayPauseBtn,
+        showPlayPauseBtn: showPlayPauseBtn,
+        showFullscreenBtn: showFullscreenBtn,
         navTxtColor: slideConf.navTxtColor,
         keyBoardShortCut: slideConf.keyBoardShortCut,
         showSlideNum: slideConf.showSlideNum,
@@ -67,24 +93,30 @@ export function initSlideMode(divId: string, settings: SlideModeSettings): void 
       const numOfSlides = 1;
       const sScaleVal = scaleVal;
       //console.log(slidesHeight);
-      $("#all_slides_warpper").attr({
-        style: trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px",
-      });
+      const wrapper = document.getElementById("all_slides_warpper");
+      if (wrapper) {
+        wrapper.setAttribute(
+          "style",
+          trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px"
+        );
+      }
     }, 1500);
   } else if (settings.slideType === "revealjs") {
-    $(".slides-loadnig-msg").remove();
+    removeLoadingMessage();
     let revealjsPath = "";
     if (settings.revealjsPath !== "") {
       revealjsPath = settings.revealjsPath;
     } else {
       revealjsPath = "./revealjs/reveal.js";
     }
-    $.getScript(revealjsPath, function (_response: unknown, status: string) {
-      if (status === "success") {
+    loadScript(revealjsPath)
+      .then(() => {
         // $("section").removeClass("slide");
         // @ts-expect-error TS(2304): Cannot find name 'Reveal'.
         Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
-      }
-    });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 }

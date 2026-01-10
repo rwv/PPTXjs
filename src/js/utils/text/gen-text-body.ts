@@ -8,6 +8,20 @@ import {
 import { genBuChar } from "../bullet";
 import { genSpanElement } from "./gen-span-element";
 
+function measureHtmlWidth(html: string): number {
+  const temp = document.createElement("div");
+  temp.style.position = "absolute";
+  temp.style.display = "inline-block";
+  temp.style.float = "left";
+  temp.style.whiteSpace = "nowrap";
+  temp.style.visibility = "hidden";
+  temp.innerHTML = html;
+  document.body.appendChild(temp);
+  const width = temp.getBoundingClientRect().width;
+  temp.remove();
+  return width;
+}
+
 /**
  * Generate HTML for text body containing paragraphs and runs
  *
@@ -198,16 +212,7 @@ export function genTextBody(
         fontSizeFactor
       );
       if (isBullate) {
-        const txt_obj = $(prgr_text)
-          .css({
-            position: "absolute",
-            float: "left",
-            "white-space": "nowrap",
-            visibility: "hidden",
-          })
-          .appendTo($("body"));
-        total_text_len += txt_obj.outerWidth();
-        txt_obj.remove();
+        total_text_len += measureHtmlWidth(prgr_text);
       }
       prgrph_text += prgr_text;
     } else if (rNode !== undefined) {
@@ -232,16 +237,7 @@ export function genTextBody(
           fontSizeFactor
         );
         if (isBullate) {
-          const txt_obj = $(prgr_text)
-            .css({
-              position: "absolute",
-              float: "left",
-              "white-space": "nowrap",
-              visibility: "hidden",
-            })
-            .appendTo($("body"));
-          total_text_len += txt_obj.outerWidth();
-          txt_obj.remove();
+          total_text_len += measureHtmlWidth(prgr_text);
         }
         prgrph_text += prgr_text;
       }

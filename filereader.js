@@ -19,6 +19,8 @@ See http://github.com/bgrins/filereader.js for documentation.
         setupBlob: setupBlob,
         setupDrop: setupDrop,
         setupClipboard: setupClipboard,
+        setupElement: setupElement,
+        setupElements: setupElements,
         setSync: function (value) {
             sync = value;
 
@@ -50,26 +52,6 @@ See http://github.com/bgrins/filereader.js for documentation.
             }
         }
     };
-
-    // Setup jQuery plugin (if available)
-    if (typeof(jQuery) !== "undefined") {
-        jQuery.fn.fileReaderJS = function(opts) {
-            return this.each(function() {
-                if (jQuery(this).is("input")) {
-                    setupInput(this, opts);
-                }
-                else {
-                    setupDrop(this, opts);
-                }
-            });
-        };
-
-        jQuery.fn.fileClipboard = function(opts) {
-            return this.each(function() {
-                setupClipboard(this, opts);
-            });
-        };
-    }
 
     // Not all browsers support the FileReader interface. Return with the enabled bit = false.
     if (!FileReader) {
@@ -150,6 +132,30 @@ See http://github.com/bgrins/filereader.js for documentation.
             e.stopPropagation();
             e.preventDefault();
             processFileList(e, e.dataTransfer.files, instanceOptions);
+        }
+    }
+
+    // setupElement: bind input or drop handlers based on element type
+    function setupElement(element, opts) {
+        if (!element) {
+            return;
+        }
+        var tagName = element.tagName ? element.tagName.toLowerCase() : "";
+        if (tagName === "input") {
+            setupInput(element, opts);
+        }
+        else {
+            setupDrop(element, opts);
+        }
+    }
+
+    // setupElements: bind handlers for a list of elements
+    function setupElements(elements, opts) {
+        if (!elements || !elements.length) {
+            return;
+        }
+        for (var i = 0; i < elements.length; i++) {
+            setupElement(elements[i], opts);
         }
     }
     // setupFile: bind the 'change' event to an input[type=file]
