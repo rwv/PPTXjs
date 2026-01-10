@@ -19,29 +19,38 @@ import { genShape } from "./gen-shape";
  * @returns HTML string for the connection shape
  */
 export function processCxnSpNode(
-  node: any,
-  pNode: any,
-  warpObj: any,
+  node: unknown,
+  pNode: unknown,
+  warpObj: unknown,
   source: string,
   sType: string,
   slideFactor: number,
-  styleTable: any,
+  styleTable: unknown,
   fontSizeFactor: number,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
 ): string {
-  const id = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["id"];
-  const name = node["p:nvCxnSpPr"]["p:cNvPr"]["attrs"]["name"];
-  const idx =
-    node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined
-      ? undefined
-      : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["idx"];
-  const type =
-    node["p:nvCxnSpPr"]["p:nvPr"]["p:ph"] === undefined
-      ? undefined
-      : node["p:nvSpPr"]["p:nvPr"]["p:ph"]["attrs"]["type"];
+  const nodeRecord = node as Record<string, unknown>;
+  const nvCxnSpPr = nodeRecord["p:nvCxnSpPr"] as Record<string, unknown>;
+  const cNvPrAttrs = (nvCxnSpPr["p:cNvPr"] as Record<string, unknown>)["attrs"] as Record<
+    string,
+    string | number
+  >;
+  const id = cNvPrAttrs["id"];
+  const name = cNvPrAttrs["name"] as string | undefined;
+  const phNode = (nvCxnSpPr["p:nvPr"] as Record<string, unknown>)["p:ph"];
+  let idx: string | number | undefined;
+  let type: string | undefined;
+  if (phNode !== undefined) {
+    const spNvPr = nodeRecord["p:nvSpPr"] as Record<string, unknown>;
+    const spNvPrPhAttrs = (
+      (spNvPr["p:nvPr"] as Record<string, unknown>)["p:ph"] as Record<string, unknown>
+    )["attrs"] as Record<string, string | number>;
+    idx = spNvPrPhAttrs["idx"];
+    type = spNvPrPhAttrs["type"] as string | undefined;
+  }
   // <p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
-  const order = node["attrs"]["order"];
+  const order = (nodeRecord["attrs"] as Record<string, string | number>)["order"];
 
   return genShape(
     node,
