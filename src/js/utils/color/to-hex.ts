@@ -1,23 +1,23 @@
 /**
  * Converts a number to a two-digit hexadecimal string
  *
- * @param n - Number to convert (0-255)
+ * @param value - Number to convert (0-255)
  * @returns Two-digit hex string (e.g., "0a", "ff")
  */
-export function toHex(n: number | string): string {
-  const num = typeof n === "number" ? n : parseFloat(n);
+export function toHex(value: number | string): string {
+  const numericValue = typeof value === "number" ? value : parseFloat(value);
 
   // Handle invalid input
-  if (isNaN(num)) {
+  if (isNaN(numericValue)) {
     return "00";
   }
 
   // Clamp to valid range 0-255
-  const clamped = Math.max(0, Math.min(255, Math.round(num)));
+  const clampedValue = Math.max(0, Math.min(255, Math.round(numericValue)));
 
-  let hex = clamped.toString(16);
-  while (hex.length < 2) {
-    hex = "0" + hex;
+  let hexValue = clampedValue.toString(16);
+  while (hexValue.length < 2) {
+    hexValue = "0" + hexValue;
   }
-  return hex;
+  return hexValue;
 }
