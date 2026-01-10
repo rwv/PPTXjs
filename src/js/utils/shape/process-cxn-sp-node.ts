@@ -6,70 +6,69 @@ import { genShape } from "./gen-shape";
  * Connection shapes are connector lines between shapes in PPTX.
  * This function extracts metadata and passes it to genShape for rendering.
  *
- * @param node - Connection shape node from PPTX
- * @param pNode - Parent node
- * @param warpObj - Warp object containing slide resources
- * @param source - Source type (slide, slideLayout, slideMaster, etc.)
- * @param sType - Shape type
- * @param slideFactor - EMU to pixel conversion factor
+ * @param connectionNode - Connection shape node from PPTX
+ * @param parentNode - Parent node
+ * @param warpContext - Warp object containing slide resources
+ * @param sourceType - Source type (slide, slideLayout, slideMaster, etc.)
+ * @param shapeContext - Shape type
+ * @param emuToPx - EMU to pixel conversion factor
  * @param styleTable - Global CSS style table
- * @param fontSizeFactor - Font size scaling factor
- * @param rtlLangsArray - Array of RTL language codes
- * @param isFirstBr - Mutable object tracking first line break state
+ * @param fontSizeScale - Font size scaling factor
+ * @param rtlLanguages - Array of RTL language codes
+ * @param isFirstLineBreak - Mutable object tracking first line break state
  * @returns HTML string for the connection shape
  */
 export async function processCxnSpNode(
-  node: unknown,
-  pNode: unknown,
-  warpObj: unknown,
-  source: string,
-  sType: string,
-  slideFactor: number,
+  connectionNode: unknown,
+  parentNode: unknown,
+  warpContext: unknown,
+  sourceType: string,
+  shapeContext: string,
+  emuToPx: number,
   styleTable: unknown,
-  fontSizeFactor: number,
-  rtlLangsArray: string[],
-  isFirstBr: { value: boolean }
+  fontSizeScale: number,
+  rtlLanguages: string[],
+  isFirstLineBreak: { value: boolean }
 ): Promise<string> {
-  const nodeRecord = node as Record<string, unknown>;
-  const nvCxnSpPr = nodeRecord["p:nvCxnSpPr"] as Record<string, unknown>;
-  const cNvPrAttrs = (nvCxnSpPr["p:cNvPr"] as Record<string, unknown>)["attrs"] as Record<
-    string,
-    string | number
-  >;
-  const id = cNvPrAttrs["id"];
-  const name = cNvPrAttrs["name"] as string | undefined;
-  const phNode = (nvCxnSpPr["p:nvPr"] as Record<string, unknown>)["p:ph"];
-  let idx: string | number | undefined;
-  let type: string | undefined;
-  if (phNode !== undefined) {
-    const spNvPr = nodeRecord["p:nvSpPr"] as Record<string, unknown>;
-    const spNvPrPhAttrs = (
-      (spNvPr["p:nvPr"] as Record<string, unknown>)["p:ph"] as Record<string, unknown>
+  const connectionNodeRecord = connectionNode as Record<string, unknown>;
+  const nonVisualConnectionProps = connectionNodeRecord["p:nvCxnSpPr"] as Record<string, unknown>;
+  const connectionPropsAttrs = (nonVisualConnectionProps["p:cNvPr"] as Record<string, unknown>)[
+    "attrs"
+  ] as Record<string, string | number>;
+  const shapeId = connectionPropsAttrs["id"];
+  const shapeName = connectionPropsAttrs["name"] as string | undefined;
+  const placeholderNode = (nonVisualConnectionProps["p:nvPr"] as Record<string, unknown>)["p:ph"];
+  let placeholderIndex: string | number | undefined;
+  let placeholderType: string | undefined;
+  if (placeholderNode !== undefined) {
+    const shapeNonVisualProps = connectionNodeRecord["p:nvSpPr"] as Record<string, unknown>;
+    const placeholderAttrs = (
+      (shapeNonVisualProps["p:nvPr"] as Record<string, unknown>)["p:ph"] as Record<string, unknown>
     )["attrs"] as Record<string, string | number>;
-    idx = spNvPrPhAttrs["idx"];
-    type = spNvPrPhAttrs["type"] as string | undefined;
+    placeholderIndex = placeholderAttrs["idx"];
+    placeholderType = placeholderAttrs["type"] as string | undefined;
   }
   // <p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
-  const order = (nodeRecord["attrs"] as Record<string, string | number>)["order"];
+  const zIndexOrder = (connectionNodeRecord["attrs"] as Record<string, string | number>)["order"];
 
   return await genShape(
-    node,
-    pNode,
+    connectionNode,
+    parentNode,
     undefined,
     undefined,
-    id,
-    name,
-    idx,
-    type,
-    order,
-    warpObj,
+    shapeId,
+    shapeName,
+    placeholderIndex,
+    placeholderType,
+    zIndexOrder,
+    warpContext,
     undefined,
-    sType,
-    source,
-    slideFactor,
+    shapeContext,
+    sourceType,
+    emuToPx,
     styleTable,
-    fontSizeFactor,
-    rtlLangsArray,
-    isFirstBr
+    fontSizeScale,
+    rtlLanguages,
+    isFirstLineBreak
   );
 }
