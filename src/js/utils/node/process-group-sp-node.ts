@@ -31,21 +31,22 @@ import { processNodesInSlide } from "./process-nodes-in-slide";
  * @returns HTML string for the group
  */
 export function processGroupSpNode(
-  node: any,
-  warpObj: any,
+  node: unknown,
+  warpObj: unknown,
   source: string,
   slideFactor: number,
-  tableStyles: any,
+  tableStyles: unknown,
   isFirstBr: { value: boolean },
-  styleTable: any,
+  styleTable: unknown,
   rtlLangsArray: string[],
   fontSizeFactor: number,
   chartID: { value: number },
-  MsgQueue: any,
-  settings: any
+  MsgQueue: unknown,
+  settings: { mediaProcess: boolean } & Record<string, unknown>
 ): string {
   //console.log("processGroupSpNode: node: ", node)
-  const xfrmNode = getTextByPathList(node, ["p:grpSpPr", "a:xfrm"]);
+  const nodeRecord = node as Record<string, unknown>;
+  const xfrmNode = getTextByPathList<Record<string, unknown>>(nodeRecord, ["p:grpSpPr", "a:xfrm"]);
   let rotStr = ""; //;" border: 3px solid black;";
   let top;
   let left;
@@ -53,15 +54,31 @@ export function processGroupSpNode(
   let height;
   let sType = "group";
   if (xfrmNode !== undefined) {
-    const x = parseInt(xfrmNode["a:off"]["attrs"]["x"]) * slideFactor;
-    const y = parseInt(xfrmNode["a:off"]["attrs"]["y"]) * slideFactor;
-    const chx = parseInt(xfrmNode["a:chOff"]["attrs"]["x"]) * slideFactor;
-    const chy = parseInt(xfrmNode["a:chOff"]["attrs"]["y"]) * slideFactor;
-    const cx = parseInt(xfrmNode["a:ext"]["attrs"]["cx"]) * slideFactor;
-    const cy = parseInt(xfrmNode["a:ext"]["attrs"]["cy"]) * slideFactor;
-    const chcx = parseInt(xfrmNode["a:chExt"]["attrs"]["cx"]) * slideFactor;
-    const chcy = parseInt(xfrmNode["a:chExt"]["attrs"]["cy"]) * slideFactor;
-    let rotate = parseInt(xfrmNode["attrs"]["rot"]);
+    const xfrmOffAttrs = (xfrmNode["a:off"] as Record<string, unknown>)["attrs"] as Record<
+      string,
+      string
+    >;
+    const xfrmChOffAttrs = (xfrmNode["a:chOff"] as Record<string, unknown>)["attrs"] as Record<
+      string,
+      string
+    >;
+    const xfrmExtAttrs = (xfrmNode["a:ext"] as Record<string, unknown>)["attrs"] as Record<
+      string,
+      string
+    >;
+    const xfrmChExtAttrs = (xfrmNode["a:chExt"] as Record<string, unknown>)["attrs"] as Record<
+      string,
+      string
+    >;
+    const x = parseInt(xfrmOffAttrs["x"]) * slideFactor;
+    const y = parseInt(xfrmOffAttrs["y"]) * slideFactor;
+    const chx = parseInt(xfrmChOffAttrs["x"]) * slideFactor;
+    const chy = parseInt(xfrmChOffAttrs["y"]) * slideFactor;
+    const cx = parseInt(xfrmExtAttrs["cx"]) * slideFactor;
+    const cy = parseInt(xfrmExtAttrs["cy"]) * slideFactor;
+    const chcx = parseInt(xfrmChExtAttrs["cx"]) * slideFactor;
+    const chcy = parseInt(xfrmChExtAttrs["cy"]) * slideFactor;
+    let rotate = parseInt((xfrmNode["attrs"] as Record<string, string>)["rot"]);
     // angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
     // var rotX = 0;
     // var rotY = 0;
@@ -103,7 +120,7 @@ export function processGroupSpNode(
   if (height !== undefined) {
     grpStyle += "height: " + height + "px;";
   }
-  const order = node["attrs"]["order"];
+  const order = (nodeRecord["attrs"] as Record<string, string | number>)["order"];
 
   let result =
     "<div class='block group' style='z-index: " +
@@ -113,13 +130,14 @@ export function processGroupSpNode(
     " border:1px solid red;'>";
 
   // Procsee all child nodes
-  for (const nodeKey in node) {
-    if (node[nodeKey].constructor === Array) {
-      for (let i = 0; i < node[nodeKey].length; i++) {
+  for (const nodeKey in nodeRecord) {
+    const child = nodeRecord[nodeKey] as Record<string, unknown> | Array<Record<string, unknown>>;
+    if (Array.isArray(child)) {
+      for (let i = 0; i < child.length; i++) {
         result += processNodesInSlide(
           nodeKey,
-          node[nodeKey][i],
-          node,
+          child[i],
+          nodeRecord,
           warpObj,
           source,
           sType,
@@ -137,8 +155,8 @@ export function processGroupSpNode(
     } else {
       result += processNodesInSlide(
         nodeKey,
-        node[nodeKey],
-        node,
+        child,
+        nodeRecord,
         warpObj,
         source,
         sType,
