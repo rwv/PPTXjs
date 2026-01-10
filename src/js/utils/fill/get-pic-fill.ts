@@ -11,9 +11,9 @@ import type { PptxArchive } from "../../archive/pptx-archive";
  * from the ZIP archive, and converts it to a base64 data URL for use in CSS.
  * Caches loaded images in warpObj to avoid duplicate processing.
  *
- * @param type - Source type (slide, slideBg, slideLayoutBg, slideMasterBg, themeBg, diagramBg)
- * @param node - Blip fill node containing image reference (a:blipFill)
- * @param warpObj - Container object with ZIP file and resource mappings
+ * @param sourceType - Source type (slide, slideBg, slideLayoutBg, slideMasterBg, themeBg, diagramBg)
+ * @param blipFillNode - Blip fill node containing image reference (a:blipFill)
+ * @param warpContext - Container object with ZIP file and resource mappings
  * @returns Base64 data URL of the image, or undefined if not found
  */
 type ResourceMap = Record<string, { target: string }>;
@@ -28,46 +28,46 @@ type PicWarpObj = {
 };
 
 export async function getPicFill(
-  type: string,
-  node: Record<string, unknown>,
-  warpObj: PicWarpObj
+  sourceType: string,
+  blipFillNode: Record<string, unknown>,
+  warpContext: PicWarpObj
 ): Promise<string | undefined> {
-  let img: string | undefined;
-  const rId = getTextByPathList<string>(node, ["a:blip", "attrs", "r:embed"]);
-  if (rId === undefined) {
+  let imageDataUrl: string | undefined;
+  const relationshipId = getTextByPathList<string>(blipFillNode, ["a:blip", "attrs", "r:embed"]);
+  if (relationshipId === undefined) {
     return undefined;
   }
-  let imgPath;
-  if (type === "slideBg" || type === "slide") {
-    imgPath = getTextByPathList<string>(warpObj, ["slideResObj", rId, "target"]);
-  } else if (type === "slideLayoutBg") {
-    imgPath = getTextByPathList<string>(warpObj, ["layoutResObj", rId, "target"]);
-  } else if (type === "slideMasterBg") {
-    imgPath = getTextByPathList<string>(warpObj, ["masterResObj", rId, "target"]);
-  } else if (type === "themeBg") {
-    imgPath = getTextByPathList<string>(warpObj, ["themeResObj", rId, "target"]);
-  } else if (type === "diagramBg") {
-    imgPath = getTextByPathList<string>(warpObj, ["diagramResObj", rId, "target"]);
+  let imagePath;
+  if (sourceType === "slideBg" || sourceType === "slide") {
+    imagePath = getTextByPathList<string>(warpContext, ["slideResObj", relationshipId, "target"]);
+  } else if (sourceType === "slideLayoutBg") {
+    imagePath = getTextByPathList<string>(warpContext, ["layoutResObj", relationshipId, "target"]);
+  } else if (sourceType === "slideMasterBg") {
+    imagePath = getTextByPathList<string>(warpContext, ["masterResObj", relationshipId, "target"]);
+  } else if (sourceType === "themeBg") {
+    imagePath = getTextByPathList<string>(warpContext, ["themeResObj", relationshipId, "target"]);
+  } else if (sourceType === "diagramBg") {
+    imagePath = getTextByPathList<string>(warpContext, ["diagramResObj", relationshipId, "target"]);
   }
-  if (imgPath === undefined) {
+  if (imagePath === undefined) {
     return undefined;
   }
-  img = getTextByPathList<string>(warpObj, ["loaded-images", imgPath]);
-  if (img === undefined) {
-    imgPath = escapeHtml(imgPath);
+  imageDataUrl = getTextByPathList<string>(warpContext, ["loaded-images", imagePath]);
+  if (imageDataUrl === undefined) {
+    imagePath = escapeHtml(imagePath);
 
-    const imgExt = imgPath.split(".").pop() ?? "";
-    if (imgExt === "xml") {
+    const imageExtension = imagePath.split(".").pop() ?? "";
+    if (imageExtension === "xml") {
       return undefined;
     }
-    const imgFile = await warpObj.archive.file(imgPath);
-    if (!imgFile) {
-      throw new Error(`File not found in archive: ${imgPath}`);
+    const imageFile = await warpContext.archive.file(imagePath);
+    if (!imageFile) {
+      throw new Error(`File not found in archive: ${imagePath}`);
     }
-    const imgArrayBuffer = await imgFile.arrayBuffer();
-    const imgMimeType = getMimeType(imgExt);
-    img = "data:" + imgMimeType + ";base64," + base64ArrayBuffer(imgArrayBuffer);
-    setTextByPathList(warpObj, ["loaded-images", imgPath], img);
+    const imageArrayBuffer = await imageFile.arrayBuffer();
+    const imageMimeType = getMimeType(imageExtension);
+    imageDataUrl = "data:" + imageMimeType + ";base64," + base64ArrayBuffer(imageArrayBuffer);
+    setTextByPathList(warpContext, ["loaded-images", imagePath], imageDataUrl);
   }
-  return img;
+  return imageDataUrl;
 }
