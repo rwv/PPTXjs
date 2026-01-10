@@ -10,29 +10,34 @@ import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
  * 3. Master slide rtl attribute (lowest priority)
  * 4. Default to "pregraph-inherit" if not specified
  *
- * @param node - Paragraph node from PPTX
+ * @param paragraphNode - Paragraph node from PPTX
  * @param textBodyNode - Text body node (unused but kept for consistency)
- * @param idx - Layout index for fallback lookup
- * @param type - Shape type (title, body, textBox, shape, etc.)
- * @param warpObj - Container object with layout tables and master styles
+ * @param paragraphIndex - Layout index for fallback lookup
+ * @param elementType - Shape type (title, body, textBox, shape, etc.)
+ * @param warpContext - Container object with layout tables and master styles
  * @returns CSS class name for text direction (pregraph-rtl, pregraph-ltr, or pregraph-inherit)
  */
 export function getPregraphDir(
   paragraphNode: Record<string, unknown>,
   textBodyNode: Record<string, unknown> | undefined,
-  idx: number | string | undefined,
-  type: string | undefined,
-  warpObj: Record<string, unknown>
+  paragraphIndex: number | string | undefined,
+  elementType: string | undefined,
+  warpContext: Record<string, unknown>
 ): string {
   let rtlValue = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "rtl"]);
-  //console.log("getPregraphDir node:", paragraphNode, "textBodyNode", textBodyNode, "rtl:", rtlValue, "idx", idx, "type", type, "warpObj", warpObj)
+  //console.log("getPregraphDir node:", paragraphNode, "textBodyNode", textBodyNode, "rtl:", rtlValue, "paragraphIndex", paragraphIndex, "elementType", elementType, "warpContext", warpContext)
 
   if (rtlValue === undefined) {
-    const layoutMasterNodes = getLayoutAndMasterNode(paragraphNode, idx, type, warpObj);
+    const layoutMasterNodes = getLayoutAndMasterNode(
+      paragraphNode,
+      paragraphIndex,
+      elementType,
+      warpContext
+    );
     const layoutParagraphPropsNode = layoutMasterNodes.nodeLaout;
     const masterParagraphPropsNode = layoutMasterNodes.nodeMaster;
     rtlValue = getTextByPathList(layoutParagraphPropsNode, ["attrs", "rtl"]);
-    if (rtlValue === undefined && type !== "shape") {
+    if (rtlValue === undefined && elementType !== "shape") {
       rtlValue = getTextByPathList(masterParagraphPropsNode, ["attrs", "rtl"]);
     }
   }
@@ -44,8 +49,8 @@ export function getPregraphDir(
   }
   return "pregraph-inherit";
 
-  // var contentDir = getContentDir(type, warpObj);
-  // console.log("getPregraphDir node:", node["a:r"], "rtl:", rtl, "idx", idx, "type", type, "contentDir:", contentDir)
+  // var contentDir = getContentDir(elementType, warpContext);
+  // console.log("getPregraphDir node:", node["a:r"], "rtl:", rtl, "paragraphIndex", paragraphIndex, "elementType", elementType, "contentDir:", contentDir)
 
   // if (contentDir == "content"){
   //     return "pregraph-ltr";
