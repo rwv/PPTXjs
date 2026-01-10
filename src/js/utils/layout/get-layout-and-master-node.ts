@@ -10,88 +10,88 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  *
  * The level (lvl) is determined from the paragraph properties or defaults to 1.
  *
- * @param node - Paragraph node from PPTX
- * @param idx - Layout index for lookup
- * @param type - Shape type (title, body, textBox, shape, etc.)
- * @param warpObj - Container object with layout tables and master styles
+ * @param paragraphNode - Paragraph node from PPTX
+ * @param layoutIndex - Layout index for lookup
+ * @param shapeType - Shape type (title, body, textBox, shape, etc.)
+ * @param warpContext - Container object with layout tables and master styles
  * @returns Object with nodeLaout and nodeMaster properties
  */
 export function getLayoutAndMasterNode(
   paragraphNode: Record<string, unknown>,
-  idx: number | string | undefined,
-  type: string | undefined,
-  warpObj: Record<string, unknown>
+  layoutIndex: number | string | undefined,
+  shapeType: string | undefined,
+  warpContext: Record<string, unknown>
 ): { nodeLaout: unknown; nodeMaster: unknown } {
   let layoutParagraphPropsNode: unknown;
   let masterParagraphPropsNode: unknown;
   const paragraphPropsNode = paragraphNode["a:pPr"] as Record<string, unknown> | undefined;
   //lvl
-  let level = 1;
-  const levelNode = getTextByPathList<string>(paragraphPropsNode, ["attrs", "lvl"]);
-  if (levelNode !== undefined) {
-    level = parseInt(levelNode) + 1;
+  let listLevel = 1;
+  const levelAttr = getTextByPathList<string>(paragraphPropsNode, ["attrs", "lvl"]);
+  if (levelAttr !== undefined) {
+    listLevel = parseInt(levelAttr) + 1;
   }
-  if (idx !== undefined) {
+  if (layoutIndex !== undefined) {
     //slidelayout
-    const slideLayoutTables = warpObj["slideLayoutTables"] as Record<string, unknown>;
-    const idxTable = slideLayoutTables["idxTable"] as Record<string | number, unknown>;
-    const layoutNode = idxTable[idx];
-    layoutParagraphPropsNode = getTextByPathList(layoutNode, [
+    const slideLayoutTables = warpContext["slideLayoutTables"] as Record<string, unknown>;
+    const indexTable = slideLayoutTables["idxTable"] as Record<string | number, unknown>;
+    const layoutTableEntry = indexTable[layoutIndex];
+    layoutParagraphPropsNode = getTextByPathList(layoutTableEntry, [
       "p:txBody",
       "a:lstStyle",
-      "a:lvl" + level + "pPr",
+      "a:lvl" + listLevel + "pPr",
     ]);
     if (layoutParagraphPropsNode === undefined) {
-      layoutParagraphPropsNode = getTextByPathList(layoutNode, ["p:txBody", "a:p", "a:pPr"]);
+      layoutParagraphPropsNode = getTextByPathList(layoutTableEntry, ["p:txBody", "a:p", "a:pPr"]);
       if (layoutParagraphPropsNode === undefined) {
-        layoutParagraphPropsNode = getTextByPathList(layoutNode, [
+        layoutParagraphPropsNode = getTextByPathList(layoutTableEntry, [
           "p:txBody",
           "a:p",
-          level - 1,
+          listLevel - 1,
           "a:pPr",
         ]);
       }
     }
   }
-  if (type !== undefined) {
+  if (shapeType !== undefined) {
     //slidelayout
-    const levelKey = "a:lvl" + level + "pPr";
+    const levelKey = "a:lvl" + listLevel + "pPr";
     if (layoutParagraphPropsNode === undefined) {
-      layoutParagraphPropsNode = getTextByPathList(warpObj, [
+      layoutParagraphPropsNode = getTextByPathList(warpContext, [
         "slideLayoutTables",
         "typeTable",
-        type,
+        shapeType,
         "p:txBody",
         "a:lstStyle",
         levelKey,
       ]);
     }
     //masterlayout
-    if (type === "title" || type === "ctrTitle") {
-      masterParagraphPropsNode = getTextByPathList(warpObj, [
+    if (shapeType === "title" || shapeType === "ctrTitle") {
+      masterParagraphPropsNode = getTextByPathList(warpContext, [
         "slideMasterTextStyles",
         "p:titleStyle",
         levelKey,
       ]);
-    } else if (type === "body" || type === "obj" || type === "subTitle") {
-      masterParagraphPropsNode = getTextByPathList(warpObj, [
+    } else if (shapeType === "body" || shapeType === "obj" || shapeType === "subTitle") {
+      masterParagraphPropsNode = getTextByPathList(warpContext, [
         "slideMasterTextStyles",
         "p:bodyStyle",
         levelKey,
       ]);
-    } else if (type === "shape" || type === "diagram") {
-      masterParagraphPropsNode = getTextByPathList(warpObj, [
+    } else if (shapeType === "shape" || shapeType === "diagram") {
+      masterParagraphPropsNode = getTextByPathList(warpContext, [
         "slideMasterTextStyles",
         "p:otherStyle",
         levelKey,
       ]);
-    } else if (type === "textBox") {
-      masterParagraphPropsNode = getTextByPathList(warpObj, ["defaultTextStyle", levelKey]);
+    } else if (shapeType === "textBox") {
+      masterParagraphPropsNode = getTextByPathList(warpContext, ["defaultTextStyle", levelKey]);
     } else {
-      masterParagraphPropsNode = getTextByPathList(warpObj, [
+      masterParagraphPropsNode = getTextByPathList(warpContext, [
         "slideMasterTables",
         "typeTable",
-        type,
+        shapeType,
         "p:txBody",
         "a:lstStyle",
         levelKey,
