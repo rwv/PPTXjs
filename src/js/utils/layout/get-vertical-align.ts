@@ -14,33 +14,38 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * - "b" (bottom) → "v-down"
  * - "t" (top) or undefined → "v-up"
  *
- * @param node - Node containing text body
- * @param slideLayoutSpNode - Layout node with text body
- * @param slideMasterSpNode - Master slide node with text body
- * @param type - Shape type (for debugging)
+ * @param textBodyContainerNode - Node containing text body
+ * @param layoutShapeNode - Layout node with text body
+ * @param masterShapeNode - Master slide node with text body
+ * @param shapeType - Shape type (for debugging)
  * @returns CSS class name for vertical alignment ("v-mid", "v-down", or "v-up")
  */
 export function getVerticalAlign(
-  node: Record<string, unknown>,
-  slideLayoutSpNode: Record<string, unknown> | undefined,
-  slideMasterSpNode: Record<string, unknown> | undefined,
-  _type: string | undefined
+  textBodyContainerNode: Record<string, unknown>,
+  layoutShapeNode: Record<string, unknown> | undefined,
+  masterShapeNode: Record<string, unknown> | undefined,
+  _shapeType: string | undefined
 ): string {
-  void _type;
+  void _shapeType;
   // Find anchor with fallback hierarchy: node -> layout -> master -> default
-  let anchor = getTextByPathList(node, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
+  let anchorValue = getTextByPathList(textBodyContainerNode, [
+    "p:txBody",
+    "a:bodyPr",
+    "attrs",
+    "anchor",
+  ]);
 
-  if (anchor === undefined) {
-    anchor = getTextByPathList(slideLayoutSpNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
-    if (anchor === undefined) {
-      anchor = getTextByPathList(slideMasterSpNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
-      if (anchor === undefined) {
+  if (anchorValue === undefined) {
+    anchorValue = getTextByPathList(layoutShapeNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
+    if (anchorValue === undefined) {
+      anchorValue = getTextByPathList(masterShapeNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
+      if (anchorValue === undefined) {
         // "If this attribute is omitted, then a value of t, or top is implied."
-        anchor = "t";
+        anchorValue = "t";
       }
     }
   }
 
   // Map PPTX anchor values to CSS classes
-  return anchor === "ctr" ? "v-mid" : anchor === "b" ? "v-down" : "v-up";
+  return anchorValue === "ctr" ? "v-mid" : anchorValue === "b" ? "v-down" : "v-up";
 }
