@@ -13,36 +13,45 @@ import { getBase64ImageDimensions } from "../media/get-base64-image-dimensions";
 import { escapeHtml } from "../string/escape-html";
 import tinycolor from "tinycolor2";
 
+type XmlNode = Record<string, unknown>;
+type AttrsNode = Record<string, string>;
+type RgbColor = { r: number; g: number; b: number; a?: number };
+
 export function getSvgImagePattern(
-  node: any,
+  node: XmlNode,
   fill: string,
   shpId: string | number,
-  warpObj: any
+  warpObj: unknown
 ): string {
   const pic_dim = getBase64ImageDimensions(fill);
   const width = pic_dim?.[0];
   const height = pic_dim?.[1];
 
-  const blipFillNode = node["p:spPr"]["a:blipFill"];
-  const tileNode = getTextByPathList(blipFillNode, ["a:tile", "attrs"]);
+  const blipFillNode = (node["p:spPr"] as XmlNode)["a:blipFill"] as XmlNode;
+  const tileNode = getTextByPathList<AttrsNode>(blipFillNode, ["a:tile", "attrs"]);
   let sx: number | undefined;
   let sy: number | undefined;
 
-  if (tileNode !== undefined && tileNode["sx"] !== undefined && width && height) {
-    sx = (parseInt(tileNode["sx"]) / 100000) * width;
-    sy = (parseInt(tileNode["sy"]) / 100000) * height;
+  const tileSx = tileNode?.["sx"];
+  const tileSy = tileNode?.["sy"];
+  if (
+    tileNode !== undefined &&
+    typeof tileSx === "string" &&
+    typeof tileSy === "string" &&
+    width &&
+    height
+  ) {
+    sx = (parseInt(tileSx) / 100000) * width;
+    sy = (parseInt(tileSy) / 100000) * height;
   }
 
-  const blipNode = node["p:spPr"]["a:blipFill"]["a:blip"];
-  const tialphaModFixNode = getTextByPathList(blipNode, ["a:alphaModFix", "attrs"]);
+  const blipNode = blipFillNode["a:blip"] as XmlNode;
+  const tialphaModFixNode = getTextByPathList<AttrsNode>(blipNode, ["a:alphaModFix", "attrs"]);
   let imgOpacity = "";
 
-  if (
-    tialphaModFixNode !== undefined &&
-    tialphaModFixNode["amt"] !== undefined &&
-    tialphaModFixNode["amt"] !== ""
-  ) {
-    const amt = parseInt(tialphaModFixNode["amt"]) / 100000;
+  const alphaAmt = tialphaModFixNode?.["amt"];
+  if (typeof alphaAmt === "string" && alphaAmt !== "") {
+    const amt = parseInt(alphaAmt) / 100000;
     const opacity = amt;
     imgOpacity = "opacity='" + opacity + "'";
   }
@@ -64,15 +73,15 @@ export function getSvgImagePattern(
       '"  patternContentUnits="objectBoundingBox"  width="1" height="1">';
   }
 
-  const duotoneNode = getTextByPathList(blipNode, ["a:duotone"]);
+  const duotoneNode = getTextByPathList<Record<string, unknown>>(blipNode, ["a:duotone"]);
   let fillterNode = "";
   let filterUrl = "";
 
   if (duotoneNode !== undefined) {
-    const clr_ary: any[] = [];
+    const clr_ary: RgbColor[] = [];
     Object.keys(duotoneNode).forEach(function (clr_type) {
       if (clr_type !== "attrs") {
-        const obj: any = {};
+        const obj: Record<string, unknown> = {};
         obj[clr_type] = duotoneNode[clr_type];
         const hexClr = getSolidFill(obj, undefined, undefined, warpObj);
         const color = tinycolor("#" + hexClr);
