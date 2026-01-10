@@ -45,7 +45,7 @@ import { genTable as _genTable } from "../table";
 import { genChart as _genChart } from "../chart";
 import { genDiagram as _genDiagram } from "../diagram";
 
-export function processSingleSlide(
+export async function processSingleSlide(
   archive: PptxArchive,
   sldFileName: string,
   index: number,
@@ -62,7 +62,7 @@ export function processSingleSlide(
   chartID: { value: number },
   MsgQueue: any,
   settings: any
-): string {
+): Promise<string> {
   /*
             self.postMessage({
                 "type": "INFO",
@@ -74,7 +74,7 @@ export function processSingleSlide(
   // @sldFileName: ppt/slides/slide1.xml
   // @resName: ppt/slides/_rels/slide1.xml.rels
   const resName = sldFileName.replace("slides/slide", "slides/_rels/slide") + ".rels";
-  const resContent = readXmlFile(archive, resName);
+  const resContent = await readXmlFile(archive, resName);
   let RelationshipArray = resContent["Relationships"]["Relationship"];
   //console.log("RelationshipArray: " , RelationshipArray)
   let layoutFilename = "";
@@ -115,7 +115,7 @@ export function processSingleSlide(
   }
   //console.log(slideResObj);
   // Open slideLayoutXX.xml
-  const slideLayoutContent = readXmlFile(archive, layoutFilename);
+  const slideLayoutContent = await readXmlFile(archive, layoutFilename);
   const slideLayoutTables = indexNodes(slideLayoutContent);
   const sldLayoutClrOvr = getTextByPathList(slideLayoutContent, [
     "p:sldLayout",
@@ -134,7 +134,7 @@ export function processSingleSlide(
   // @masterName: ppt/slideLayouts/_rels/slideLayout1.xml.rels
   const slideLayoutResFilename =
     layoutFilename.replace("slideLayouts/slideLayout", "slideLayouts/_rels/slideLayout") + ".rels";
-  const slideLayoutResContent = readXmlFile(archive, slideLayoutResFilename);
+  const slideLayoutResContent = await readXmlFile(archive, slideLayoutResFilename);
   RelationshipArray = slideLayoutResContent["Relationships"]["Relationship"];
   let masterFilename = "";
   const layoutResObj = {};
@@ -158,7 +158,7 @@ export function processSingleSlide(
     masterFilename = RelationshipArray["attrs"]["Target"].replace("../", "ppt/");
   }
   // Open slideMasterXX.xml
-  const slideMasterContent = readXmlFile(archive, masterFilename);
+  const slideMasterContent = await readXmlFile(archive, masterFilename);
   const slideMasterTextStyles = getTextByPathList(slideMasterContent, [
     "p:sldMaster",
     "p:txStyles",
@@ -169,7 +169,7 @@ export function processSingleSlide(
   //Open slideMasterXX.xml.rels
   const slideMasterResFilename =
     masterFilename.replace("slideMasters/slideMaster", "slideMasters/_rels/slideMaster") + ".rels";
-  const slideMasterResContent = readXmlFile(archive, slideMasterResFilename);
+  const slideMasterResContent = await readXmlFile(archive, slideMasterResFilename);
   RelationshipArray = slideMasterResContent["Relationships"]["Relationship"];
   let themeFilename = "";
   const masterResObj = {};
@@ -200,8 +200,8 @@ export function processSingleSlide(
     const themeName = themeFilename.split("/").pop();
     const themeResFileName = themeFilename.replace(themeName, "_rels/" + themeName) + ".rels";
     //console.log("themeFilename: ", themeFilename, ", themeName: ", themeName, ", themeResFileName: ", themeResFileName)
-    themeContent = readXmlFile(archive, themeFilename);
-    const themeResContent = readXmlFile(archive, themeResFileName);
+    themeContent = await readXmlFile(archive, themeFilename);
+    const themeResContent = await readXmlFile(archive, themeResFileName);
     if (themeResContent !== null) {
       const relationshipArray = themeResContent["Relationships"]["Relationship"];
       if (relationshipArray !== undefined) {
@@ -235,14 +235,14 @@ export function processSingleSlide(
     const diagName = diagramFilename.split("/").pop();
     const diagramResFileName = diagramFilename.replace(diagName, "_rels/" + diagName) + ".rels";
     //console.log("diagramFilename: ", diagramFilename, ", themeName: ", themeName, ", diagramResFileName: ", diagramResFileName)
-    digramFileContent = readXmlFile(archive, diagramFilename);
+    digramFileContent = await readXmlFile(archive, diagramFilename);
     if (digramFileContent !== null && digramFileContent !== undefined && digramFileContent !== "") {
       let digramFileContentObjToStr = JSON.stringify(digramFileContent);
       digramFileContentObjToStr = digramFileContentObjToStr.replace(/dsp:/g, "p:");
       digramFileContent = JSON.parse(digramFileContentObjToStr);
     }
 
-    const digramResContent = readXmlFile(archive, diagramResFileName);
+    const digramResContent = await readXmlFile(archive, diagramResFileName);
     if (digramResContent !== null) {
       const relationshipArray = digramResContent["Relationships"]["Relationship"];
       if (relationshipArray.constructor === Array) {
@@ -269,7 +269,7 @@ export function processSingleSlide(
   }
   //console.log("diagramResObj: " , diagramResObj)
   // =====< Step 3 >=====
-  const slideContent = readXmlFile(archive, sldFileName, true, slideSize.appVersion);
+  const slideContent = await readXmlFile(archive, sldFileName, true, slideSize.appVersion);
   const nodes = slideContent["p:sld"]["p:cSld"]["p:spTree"];
   const warpObj = {
     archive: archive,
@@ -290,7 +290,7 @@ export function processSingleSlide(
   };
   let bgResult = "";
   if (settings.themeProcess === true) {
-    bgResult = getBackground(
+    bgResult = await getBackground(
       warpObj,
       slideSize,
       index,
@@ -308,7 +308,7 @@ export function processSingleSlide(
 
   let bgColor = "";
   if (settings.themeProcess === "colorsAndImageOnly") {
-    const fillResult = getSlideBackgroundFill(warpObj, index);
+    const fillResult = await getSlideBackgroundFill(warpObj, index);
     bgColor = fillResult !== undefined ? fillResult : "";
   }
 
@@ -336,7 +336,7 @@ export function processSingleSlide(
   for (const nodeKey in nodes) {
     if (nodes[nodeKey].constructor === Array) {
       for (let i = 0; i < nodes[nodeKey].length; i++) {
-        result += processNodesInSlide(
+        result += await processNodesInSlide(
           nodeKey,
           nodes[nodeKey][i],
           nodes,
@@ -355,7 +355,7 @@ export function processSingleSlide(
         );
       }
     } else {
-      result += processNodesInSlide(
+      result += await processNodesInSlide(
         nodeKey,
         nodes[nodeKey],
         nodes,

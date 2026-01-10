@@ -9,7 +9,7 @@ export interface PptxArchive {
    * @param path - File path within the PPTX archive (e.g., "ppt/slides/slide1.xml")
    * @returns true if file exists, false otherwise
    */
-  hasFile(path: string): boolean;
+  hasFile(path: string): Promise<boolean>;
 
   /**
    * Read file as ArrayBuffer
@@ -17,7 +17,7 @@ export interface PptxArchive {
    * @returns ArrayBuffer of file contents
    * @throws Error if file not found
    */
-  readAsArrayBuffer(path: string): ArrayBuffer;
+  readAsArrayBuffer(path: string): Promise<ArrayBuffer>;
 
   /**
    * Read file as text string
@@ -25,5 +25,5 @@ export interface PptxArchive {
    * @returns String content of file
    * @throws Error if file not found
    */
-  readAsText(path: string): string;
+  readAsText(path: string): Promise<string>;
 }

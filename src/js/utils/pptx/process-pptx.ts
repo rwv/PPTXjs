@@ -34,7 +34,7 @@ import { getContentTypes, getSlideSizeAndSetDefaultTextStyle, readXmlFile } from
 import { processSingleSlide } from "../slide";
 import { genGlobalCSS } from "../css";
 
-export function processPPTX(
+export async function processPPTX(
   archive: PptxArchive,
   slideFactor: number,
   settings: any,
@@ -44,12 +44,14 @@ export function processPPTX(
   chartID: { value: number },
   MsgQueue: any,
   isFirstBr: { value: boolean }
-): any[] {
+): Promise<any[]> {
   const post_ary = [];
   const dateBefore = new Date();
 
-  if (archive.hasFile("docProps/thumbnail.jpeg")) {
-    const pptxThumbImg = base64ArrayBuffer(archive.readAsArrayBuffer("docProps/thumbnail.jpeg"));
+  if (await archive.hasFile("docProps/thumbnail.jpeg")) {
+    const pptxThumbImg = base64ArrayBuffer(
+      await archive.readAsArrayBuffer("docProps/thumbnail.jpeg")
+    );
     post_ary.push({
       type: "pptx-thumb",
       data: pptxThumbImg,
@@ -57,14 +59,14 @@ export function processPPTX(
     });
   }
 
-  const filesInfo = getContentTypes(archive);
-  const slideSize = getSlideSizeAndSetDefaultTextStyle(archive, slideFactor, settings);
+  const filesInfo = await getContentTypes(archive);
+  const slideSize = await getSlideSizeAndSetDefaultTextStyle(archive, slideFactor, settings);
   const app_verssion = slideSize.appVersion;
   const defaultTextStyle = slideSize.defaultTextStyle;
   const slideWidth = slideSize.width;
   const _slideHeight = slideSize.height;
   const processFullTheme = settings.themeProcess;
-  const tableStyles = readXmlFile(archive, "ppt/tableStyles.xml");
+  const tableStyles = await readXmlFile(archive, "ppt/tableStyles.xml");
   //console.log("slideSize: ", slideSize)
   post_ary.push({
     type: "slideSize",
@@ -93,7 +95,7 @@ export function processPPTX(
     if (filename_no_path_no_ext !== "" && filename_no_path.indexOf("slide") !== -1) {
       slide_number = Number(filename_no_path_no_ext.substr(5));
     }
-    const slideHtml = processSingleSlide(
+    const slideHtml = await processSingleSlide(
       archive,
       filename,
       i,

@@ -25,15 +25,15 @@ type SolidFillNode = Parameters<typeof getSolidFill>[0];
  * @param index - Slide index for CSS class naming
  * @returns CSS background style string with z-index
  */
-export function getBgPicFill(
+export async function getBgPicFill(
   bgPr: Record<string, unknown>,
   sorce: string,
   warpObj: Record<string, unknown>,
   phClr: string | undefined,
   _index: number | string
-): string {
+): Promise<string> {
   const blipFillNode = bgPr["a:blipFill"] as Record<string, unknown>;
-  const picFillBase64 = getPicFill(sorce, blipFillNode, warpObj as PicFillWarpObj);
+  const picFillBase64 = await getPicFill(sorce, blipFillNode, warpObj as PicFillWarpObj);
   const ordr = (bgPr["attrs"] as Record<string, string | number>)["order"];
   const aBlipNode = getTextByPathList<Record<string, unknown>>(bgPr, ["a:blipFill", "a:blip"]);
 

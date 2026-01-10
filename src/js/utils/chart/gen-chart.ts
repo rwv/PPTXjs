@@ -14,13 +14,13 @@ import { getSize } from "../layout/get-size";
 import { readXmlFile } from "../xml/read-xml-file";
 import { extractChartData } from "./extract-chart-data";
 
-export function genChart(
+export async function genChart(
   node: any,
   warpObj: any,
   chartID: number,
   MsgQueue: any[],
   slideFactor: number
-): [string, number] {
+): Promise<[string, number]> {
   const order = node["attrs"]["order"];
   const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
   const result =
@@ -35,7 +35,11 @@ export function genChart(
 
   const rid = node["a:graphic"]["a:graphicData"]["c:chart"]["attrs"]["r:id"];
   const refName = warpObj["slideResObj"][rid]["target"];
-  const content = readXmlFile(warpObj["archive"], refName);
+  const content = await readXmlFile(warpObj["archive"], refName);
+  if (!content) {
+    chartID++;
+    return [result, chartID];
+  }
   const plotArea = getTextByPathList(content, ["c:chartSpace", "c:chart", "c:plotArea"]);
 
   let chartData = null;

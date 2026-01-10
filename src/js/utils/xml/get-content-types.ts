@@ -9,8 +9,14 @@ import type { PptxArchive } from "../../archive/pptx-archive";
  * @param archive - PPTX archive instance
  * @returns Object containing arrays of slide and slideLayout file paths
  */
-export function getContentTypes(archive: PptxArchive) {
-  const ContentTypesJson = readXmlFile(archive, "[Content_Types].xml");
+export async function getContentTypes(archive: PptxArchive): Promise<{
+  slides: string[];
+  slideLayouts: string[];
+}> {
+  const ContentTypesJson = await readXmlFile(archive, "[Content_Types].xml");
+  if (!ContentTypesJson) {
+    return { slides: [], slideLayouts: [] };
+  }
 
   const subObj = ContentTypesJson["Types"]["Override"];
   const slidesLocArray = [];

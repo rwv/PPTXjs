@@ -35,7 +35,7 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @param settings - Plugin settings
  * @returns HTML string for the node
  */
-export function processNodesInSlide(
+export async function processNodesInSlide(
   nodeKey: string,
   nodeValue: unknown,
   nodes: unknown,
@@ -51,12 +51,12 @@ export function processNodesInSlide(
   chartID: { value: number },
   MsgQueue: unknown,
   settings: { mediaProcess: boolean } & Record<string, unknown>
-): string {
+): Promise<string> {
   let result = "";
 
   switch (nodeKey) {
     case "p:sp": // Shape, Text
-      result = processSpNode(
+      result = await processSpNode(
         nodeValue,
         nodes,
         warpObj,
@@ -70,7 +70,7 @@ export function processNodesInSlide(
       );
       break;
     case "p:cxnSp": // Shape, Text (with connection)
-      result = processCxnSpNode(
+      result = await processCxnSpNode(
         nodeValue,
         nodes,
         warpObj,
@@ -84,10 +84,10 @@ export function processNodesInSlide(
       );
       break;
     case "p:pic": // Picture
-      result = processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
+      result = await processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
       break;
     case "p:graphicFrame": // Chart, Diagram, Table
-      result = processGraphicFrameNode(
+      result = await processGraphicFrameNode(
         nodeValue,
         warpObj,
         source,
@@ -104,7 +104,7 @@ export function processNodesInSlide(
       );
       break;
     case "p:grpSp":
-      result = processGroupSpNode(
+      result = await processGroupSpNode(
         nodeValue,
         warpObj,
         source,
@@ -123,7 +123,7 @@ export function processNodesInSlide(
       //Equations and formulas as Image
       //console.log("mc:AlternateContent nodeValue:" , nodeValue , "nodes:",nodes, "sType:",sType)
       const mcFallbackNode = getTextByPathList(nodeValue, ["mc:Fallback"]);
-      result = processGroupSpNode(
+      result = await processGroupSpNode(
         mcFallbackNode,
         warpObj,
         source,

@@ -16,7 +16,7 @@ import { getVerticalAlign, getPosition, getSize, getContentDir } from "../../lay
 import { shapeArc } from "./helpers/arc";
 import { genTextBody } from "../../text";
 
-export function renderCustomGeometry(
+export async function renderCustomGeometry(
   custShapType: any,
   node: any,
   slideLayoutSpNode: any,
@@ -46,7 +46,7 @@ export function renderCustomGeometry(
   rtlLangsArray: string[],
   slideFactor: number,
   fontSizeFactor: number
-): string {
+): Promise<string> {
   let result = "";
 
   //custGeom here - Amir ///////////////////////////////////////////////////////
@@ -330,7 +330,7 @@ export function renderCustomGeometry(
     if (type !== "diagram" && type !== "textBox") {
       type = "shape";
     }
-    result += genTextBody(
+    result += await genTextBody(
       node["p:txBody"],
       node,
       slideLayoutSpNode,

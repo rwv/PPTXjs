@@ -274,7 +274,7 @@ export async function pptxToHtml(
     }
     // Create archive instance using new interface
     const archive = await createPptxArchive(file);
-    const rslt_ary = processPPTX(
+    const rslt_ary = await processPPTX(
       archive,
       slideFactor,
       settings,

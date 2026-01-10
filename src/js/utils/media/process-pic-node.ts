@@ -19,21 +19,21 @@ import { escapeHtml } from "../string";
  * @param settings - Settings object containing mediaProcess flag
  * @returns HTML string for the picture/video/audio element
  */
-export function processPicNode(
+export async function processPicNode(
   node: unknown,
   warpObj: unknown,
   source: string,
   sType: string,
   slideFactor: number,
   settings: { mediaProcess: boolean }
-): string {
+): Promise<string> {
   //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
   type ResourceMap = Record<string, { target: string }>;
   type WarpObj = {
     masterResObj?: ResourceMap;
     layoutResObj?: ResourceMap;
     slideResObj: ResourceMap;
-    archive: { readAsArrayBuffer: (path: string) => ArrayBuffer };
+    archive: { readAsArrayBuffer: (path: string) => Promise<ArrayBuffer> };
     slideLayoutTables?: Record<string, unknown>;
   };
   const nodeRecord = node as Record<string, unknown>;
@@ -59,7 +59,7 @@ export function processPicNode(
   //console.log("processPicNode imgName:", imgName);
   const imgFileExt = extractFileExtension(imgName).toLowerCase();
   const archive = warp.archive;
-  const imgArrayBuffer = archive.readAsArrayBuffer(imgName);
+  const imgArrayBuffer = await archive.readAsArrayBuffer(imgName);
   let mimeType = "";
   const spPrNode = nodeRecord["p:spPr"] as Record<string, unknown>;
   let xfrmNode = spPrNode["a:xfrm"] as Record<string, unknown> | undefined;
@@ -128,7 +128,7 @@ export function processPicNode(
     } else {
       vdoFileExt = extractFileExtension(vdoFile).toLowerCase();
       if (vdoFileExt === "mp4" || vdoFileExt === "webm" || vdoFileExt === "ogg") {
-        uInt8Array = archive.readAsArrayBuffer(vdoFile);
+        uInt8Array = await archive.readAsArrayBuffer(vdoFile);
         vdoMimeType = getMimeType(vdoFileExt);
         blob = new Blob([uInt8Array], {
           type: vdoMimeType,
@@ -160,7 +160,7 @@ export function processPicNode(
     audioFile = resObj[audioRid]["target"];
     audioFileExt = extractFileExtension(audioFile).toLowerCase();
     if (audioFileExt === "mp3" || audioFileExt === "wav" || audioFileExt === "ogg") {
-      uInt8ArrayAudio = archive.readAsArrayBuffer(audioFile);
+      uInt8ArrayAudio = await archive.readAsArrayBuffer(audioFile);
       blobAudio = new Blob([uInt8ArrayAudio]);
       audioBlob = URL.createObjectURL(blobAudio);
       const xfrmAttrs = xfrmNode as Record<string, unknown>;

@@ -18,7 +18,7 @@ import { genShape } from "./gen-shape";
  * @param isFirstBr - Mutable object tracking first line break state
  * @returns HTML string for the connection shape
  */
-export function processCxnSpNode(
+export async function processCxnSpNode(
   node: unknown,
   pNode: unknown,
   warpObj: unknown,
@@ -29,7 +29,7 @@ export function processCxnSpNode(
   fontSizeFactor: number,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
-): string {
+): Promise<string> {
   const nodeRecord = node as Record<string, unknown>;
   const nvCxnSpPr = nodeRecord["p:nvCxnSpPr"] as Record<string, unknown>;
   const cNvPrAttrs = (nvCxnSpPr["p:cNvPr"] as Record<string, unknown>)["attrs"] as Record<
@@ -52,7 +52,7 @@ export function processCxnSpNode(
   // <p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
   const order = (nodeRecord["attrs"] as Record<string, string | number>)["order"];
 
-  return genShape(
+  return await genShape(
     node,
     pNode,
     undefined,

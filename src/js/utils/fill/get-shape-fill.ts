@@ -16,13 +16,13 @@ import { getPatternFill } from "./get-pattern-fill";
 import { getPicFill } from "./get-pic-fill";
 import tinycolor from "tinycolor2";
 
-export function getShapeFill(
+export async function getShapeFill(
   node: any,
   pNode: any,
   isSvgMode: boolean,
   warpObj: any,
   source: string
-): any {
+): Promise<any> {
   // 1. presentationML
   // p:spPr/ [a:noFill, solidFill, gradFill, blipFill, pattFill, grpFill]
   // From slide
@@ -43,7 +43,7 @@ export function getShapeFill(
     fillColor = getPatternFill(shpFill, warpObj);
   } else if (fillType === "PIC_FILL") {
     const shpFill = node["p:spPr"]["a:blipFill"];
-    fillColor = getPicFill(source, shpFill, warpObj);
+    fillColor = await getPicFill(source, shpFill, warpObj);
   }
 
   // 2. drawingML namespace
@@ -68,7 +68,7 @@ export function getShapeFill(
       // get parent fill style
       const grpShpFill = pNode["p:grpSpPr"];
       const spShpNode = { "p:spPr": grpShpFill };
-      return getShapeFill(spShpNode, node, isSvgMode, warpObj, source);
+      return await getShapeFill(spShpNode, node, isSvgMode, warpObj, source);
     } else if (fillType === "NO_FILL") {
       return isSvgMode ? "none" : "";
     }

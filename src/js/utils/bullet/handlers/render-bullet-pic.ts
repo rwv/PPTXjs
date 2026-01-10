@@ -16,24 +16,24 @@ type BulletPicNode = Record<string, unknown>;
 type BulletWarpObj = {
   slideResObj: Record<string, { target: string }>;
   archive: {
-    readAsArrayBuffer: (path: string) => ArrayBuffer;
+    readAsArrayBuffer: (path: string) => Promise<ArrayBuffer>;
   };
 };
 
-export function renderBulletPic(
+export async function renderBulletPic(
   buPic: BulletPicNode,
   warpObj: BulletWarpObj,
   marLStr: string,
   marRStr: string,
   bultSize: string,
   isRTL: boolean
-): string {
+): Promise<string> {
   const buPicId = getTextByPathList<string>(buPic, ["a:blip", "attrs", "r:embed"]);
   let buImg = "";
 
   if (buPicId !== undefined) {
     const imgPath = warpObj["slideResObj"][buPicId]["target"];
-    const imgArrayBuffer = warpObj["archive"].readAsArrayBuffer(imgPath);
+    const imgArrayBuffer = await warpObj["archive"].readAsArrayBuffer(imgPath);
     const imgExt = imgPath.split(".").pop() ?? "";
     const imgMimeType = getMimeType(imgExt);
     buImg =

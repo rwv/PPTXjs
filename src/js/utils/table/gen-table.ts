@@ -34,7 +34,7 @@ import { getTableRowStyle, getTableStyleById } from "./helpers";
  * @param fontSizeFactor - Font size scaling factor
  * @returns HTML string for the table
  */
-export function genTable(
+export async function genTable(
   node: any,
   warpObj: any,
   tableStyles: any,
@@ -43,7 +43,7 @@ export function genTable(
   rtlLangsArray: string[],
   slideFactor: number,
   fontSizeFactor: number
-): string {
+): Promise<string> {
   const order = node["attrs"]["order"];
   const tableNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl"]);
   const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
@@ -222,7 +222,7 @@ export function genTable(
               }
             }
 
-            const cellParmAry = getTableCellParams(
+            const cellParmAry = await getTableCellParams(
               tcNodes[j],
               getColsGrid,
               i,
@@ -324,7 +324,7 @@ export function genTable(
           a_sorce = "a:lastCol";
         }
 
-        const cellParmAry = getTableCellParams(
+        const cellParmAry = await getTableCellParams(
           tcNodes,
           getColsGrid,
           i,

@@ -30,7 +30,7 @@ import { processSpNode } from "../node";
  * @param isFirstBr - Mutable object tracking first line break state
  * @returns HTML string for the diagram
  */
-export function genDiagram(
+export async function genDiagram(
   node: any,
   warpObj: any,
   source: string,
@@ -40,7 +40,7 @@ export function genDiagram(
   fontSizeFactor: number,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
-): string {
+): Promise<string> {
   //console.log(warpObj)
   //readXmlFile(archive, sldFileName)
   /**files define the diagram:
@@ -65,10 +65,10 @@ export function genDiagram(
     dgmLayoutFileName = warpObj["slideResObj"][dgmLayoutFileId].target,
     dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
   //console.log("dgmClrFileName: " , dgmClrFileName,", dgmDataFileName: ",dgmDataFileName,", dgmLayoutFileName: ",dgmLayoutFileName,", dgmQuickStyleFileName: ",dgmQuickStyleFileName);
-  const _dgmClr = readXmlFile(archive, dgmClrFileName);
-  const _dgmData = readXmlFile(archive, dgmDataFileName);
-  const _dgmLayout = readXmlFile(archive, dgmLayoutFileName);
-  const _dgmQuickStyle = readXmlFile(archive, dgmQuickStyleFileName);
+  const _dgmClr = await readXmlFile(archive, dgmClrFileName);
+  const _dgmData = await readXmlFile(archive, dgmDataFileName);
+  const _dgmLayout = await readXmlFile(archive, dgmLayoutFileName);
+  const _dgmQuickStyle = await readXmlFile(archive, dgmQuickStyleFileName);
   //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
   ///get drawing#.xml
   // var dgmDrwFileName = "";
@@ -98,7 +98,7 @@ export function genDiagram(
       // var pSpStrToObj = JSON.parse(pSpStr);
       //console.log("pSpStrToObj[" + i + "]: ", pSpStrToObj);
       //rslt += processSpNode(pSpStrToObj, node, warpObj, "diagramBg", sType)
-      rslt += processSpNode(
+      rslt += await processSpNode(
         dspSp,
         node,
         warpObj,

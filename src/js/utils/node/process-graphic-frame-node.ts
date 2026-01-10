@@ -32,7 +32,7 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @param settings - Plugin settings
  * @returns HTML string for the graphic frame content
  */
-export function processGraphicFrameNode(
+export async function processGraphicFrameNode(
   node: unknown,
   warpObj: unknown,
   source: string,
@@ -46,7 +46,7 @@ export function processGraphicFrameNode(
   chartID: { value: number },
   MsgQueue: unknown,
   settings: { mediaProcess: boolean } & Record<string, unknown>
-): string {
+): Promise<string> {
   let result = "";
   const chartIdRef = chartID ?? { value: 0 };
   const graphicTypeUri = getTextByPathList(node, ["a:graphic", "a:graphicData", "attrs", "uri"]);
@@ -54,7 +54,7 @@ export function processGraphicFrameNode(
 
   switch (graphicTypeUri) {
     case "http://schemas.openxmlformats.org/drawingml/2006/table":
-      result = genTable(
+      result = await genTable(
         node,
         warpObj,
         tableStyles,
@@ -66,10 +66,16 @@ export function processGraphicFrameNode(
       );
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/chart":
-      [result, chartIdRef.value] = genChart(node, warpObj, chartIdRef.value, msgQueue, slideFactor);
+      [result, chartIdRef.value] = await genChart(
+        node,
+        warpObj,
+        chartIdRef.value,
+        msgQueue,
+        slideFactor
+      );
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
-      result = genDiagram(
+      result = await genDiagram(
         node,
         warpObj,
         source,
@@ -96,7 +102,7 @@ export function processGraphicFrameNode(
       }
       //console.log("node:", node, "oleObjNode:", oleObjNode)
       if (oleObjNode !== undefined) {
-        result = processGroupSpNode(
+        result = await processGroupSpNode(
           oleObjNode,
           warpObj,
           source,

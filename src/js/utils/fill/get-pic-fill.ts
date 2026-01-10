@@ -22,15 +22,15 @@ type PicWarpObj = {
   masterResObj?: ResourceMap;
   themeResObj?: ResourceMap;
   diagramResObj?: ResourceMap;
-  archive: { readAsArrayBuffer: (path: string) => ArrayBuffer };
+  archive: { readAsArrayBuffer: (path: string) => Promise<ArrayBuffer> };
   [key: string]: unknown;
 };
 
-export function getPicFill(
+export async function getPicFill(
   type: string,
   node: Record<string, unknown>,
   warpObj: PicWarpObj
-): string | undefined {
+): Promise<string | undefined> {
   let img: string | undefined;
   const rId = getTextByPathList<string>(node, ["a:blip", "attrs", "r:embed"]);
   if (rId === undefined) {
@@ -59,7 +59,7 @@ export function getPicFill(
     if (imgExt === "xml") {
       return undefined;
     }
-    const imgArrayBuffer = warpObj["archive"].readAsArrayBuffer(imgPath);
+    const imgArrayBuffer = await warpObj["archive"].readAsArrayBuffer(imgPath);
     const imgMimeType = getMimeType(imgExt);
     img = "data:" + imgMimeType + ";base64," + base64ArrayBuffer(imgArrayBuffer);
     setTextByPathList(warpObj, ["loaded-images", imgPath], img);

@@ -7,7 +7,7 @@ import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handle
 
 type BulletWarpObj = {
   slideResObj: Record<string, { target: string }>;
-  archive: { readAsArrayBuffer: (path: string) => ArrayBuffer };
+  archive: { readAsArrayBuffer: (path: string) => Promise<ArrayBuffer> };
   [key: string]: unknown;
 };
 
@@ -34,7 +34,7 @@ type BulletWarpObj = {
  * @param fontSizeFactor - Font size scaling factor
  * @returns Array [bulletHTML, marginValue, fontValue] or empty string if no bullet
  */
-export function genBuChar(
+export async function genBuChar(
   node: Record<string, unknown>,
   i: number,
   spNode: Record<string, unknown>,
@@ -45,7 +45,7 @@ export function genBuChar(
   warpObj: BulletWarpObj,
   slideFactor: number,
   fontSizeFactor: number
-): string | [string, number, number] {
+): Promise<string | [string, number, number]> {
   //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
   ///////////////////////////////////////Amir///////////////////////////////
   const _sldMstrTxtStyles = warpObj["slideMasterTextStyles"];
@@ -376,7 +376,7 @@ export function genBuChar(
   } else if (buType === "TYPE_NUMERIC") {
     bullet = renderBulletNumeric(bultColor, bultSize, marLStr, marRStr, isRTL, buNum, lvl);
   } else if (buType === "TYPE_BULPIC") {
-    bullet = renderBulletPic(
+    bullet = await renderBulletPic(
       buPic as Record<string, unknown>,
       warpObj,
       marLStr,

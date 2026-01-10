@@ -25,7 +25,7 @@ import { genShape } from "../shape";
  * @param isFirstBr - Mutable object tracking first line break state
  * @returns HTML string for the shape
  */
-export function processSpNode(
+export async function processSpNode(
   node: unknown,
   pNode: unknown,
   warpObj: unknown,
@@ -36,7 +36,7 @@ export function processSpNode(
   fontSizeFactor: number,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
-): string {
+): Promise<string> {
   /*
    *  958    <xsd:complexType name="CT_GvmlShape">
    *  959   <xsd:sequence>
@@ -124,7 +124,7 @@ export function processSpNode(
     }
   }
   //console.log("processSpNode type:", type, "idx:", idx);
-  return genShape(
+  return await genShape(
     node,
     pNode,
     slideLayoutSpNode,

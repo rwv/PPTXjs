@@ -30,7 +30,7 @@ import { processNodesInSlide } from "./process-nodes-in-slide";
  * @param settings - Plugin settings
  * @returns HTML string for the group
  */
-export function processGroupSpNode(
+export async function processGroupSpNode(
   node: unknown,
   warpObj: unknown,
   source: string,
@@ -43,7 +43,7 @@ export function processGroupSpNode(
   chartID: { value: number },
   MsgQueue: unknown,
   settings: { mediaProcess: boolean } & Record<string, unknown>
-): string {
+): Promise<string> {
   //console.log("processGroupSpNode: node: ", node)
   const nodeRecord = node as Record<string, unknown>;
   const xfrmNode = getTextByPathList<Record<string, unknown>>(nodeRecord, ["p:grpSpPr", "a:xfrm"]);
@@ -134,7 +134,7 @@ export function processGroupSpNode(
     const child = nodeRecord[nodeKey] as Record<string, unknown> | Array<Record<string, unknown>>;
     if (Array.isArray(child)) {
       for (let i = 0; i < child.length; i++) {
-        result += processNodesInSlide(
+        result += await processNodesInSlide(
           nodeKey,
           child[i],
           nodeRecord,
@@ -153,7 +153,7 @@ export function processGroupSpNode(
         );
       }
     } else {
-      result += processNodesInSlide(
+      result += await processNodesInSlide(
         nodeKey,
         child,
         nodeRecord,

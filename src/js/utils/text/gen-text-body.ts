@@ -52,7 +52,7 @@ function measureHtmlWidth(html: string): number {
  * @param fontSizeFactor - Font size scaling factor
  * @returns HTML string for the text body
  */
-export function genTextBody(
+export async function genTextBody(
   textBodyNode: any,
   spNode: any,
   slideLayoutSpNode: any,
@@ -66,7 +66,7 @@ export function genTextBody(
   rtlLangsArray: string[],
   slideFactor: number,
   fontSizeFactor: number
-): string {
+): Promise<string> {
   let text = "";
   const _slideMasterTextStyles = warpObj["slideMasterTextStyles"];
 
@@ -160,7 +160,7 @@ export function genTextBody(
       " " +
       cssName +
       "' >";
-    const buText_ary = genBuChar(
+    const buText_ary = await genBuChar(
       pNode,
       i,
       spNode,

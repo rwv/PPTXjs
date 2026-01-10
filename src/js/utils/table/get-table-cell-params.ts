@@ -31,7 +31,7 @@ import { genTextBody } from "../text";
  * @param fontSizeFactor - Font size scaling factor
  * @returns Array [text, colStyl, cssName, rowSpan, colSpan]
  */
-export function getTableCellParams(
+export async function getTableCellParams(
   tcNodes: any,
   getColsGrid: any,
   row_idx: number,
@@ -44,7 +44,7 @@ export function getTableCellParams(
   rtlLangsArray: string[],
   slideFactor: number,
   fontSizeFactor: number
-): [string, string, string, any, any] {
+): Promise<[string, string, string, any, any]> {
   //thisTblStyle["a:band1V"] => thisTblStyle[cellSource]
   //text, cell-width, cell-borders,
   //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpObj);//tableStyles
@@ -78,7 +78,7 @@ export function getTableCellParams(
     );
   }
 
-  const text = genTextBody(
+  const text = await genTextBody(
     tcNodes["a:txBody"],
     tcNodes,
     undefined,
@@ -210,7 +210,7 @@ export function getTableCellParams(
     const cellObj = {
       "p:spPr": getCelFill,
     };
-    celFillColor = getShapeFill(cellObj, undefined, false, warpObj, "slide");
+    celFillColor = await getShapeFill(cellObj, undefined, false, warpObj, "slide");
   }
 
   //cell fill color theme

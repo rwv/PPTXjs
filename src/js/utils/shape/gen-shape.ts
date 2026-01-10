@@ -82,7 +82,7 @@ import {
 } from "./shapes";
 import { isBasicShape, renderBasicShape } from "./shapes/basic-shapes";
 
-export function genShape(
+export async function genShape(
   node: any,
   pNode: any,
   slideLayoutSpNode: any,
@@ -101,9 +101,9 @@ export function genShape(
   fontSizeFactor: number,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
-): string {
+): Promise<string> {
   // Initialize shape rendering context
-  const context = initShapeContext(
+  const context = await initShapeContext(
     node,
     pNode,
     slideLayoutSpNode,
@@ -423,7 +423,7 @@ export function genShape(
       if (type !== "diagram" && type !== "textBox") {
         type = "shape";
       }
-      result += genTextBody(
+      result += await genTextBody(
         node["p:txBody"],
         node,
         slideLayoutSpNode,
@@ -441,7 +441,7 @@ export function genShape(
     }
     result += "</div>";
   } else if (custShapType !== undefined) {
-    result += renderCustomGeometry(
+    result += await renderCustomGeometry(
       custShapType,
       node,
       slideLayoutSpNode,
@@ -497,7 +497,7 @@ export function genShape(
       ) +
       getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, slideFactor) +
       getBorder(node, pNode, false, "shape", warpObj) +
-      getShapeFill(node, pNode, false, warpObj, source) +
+      (await getShapeFill(node, pNode, false, warpObj, source)) +
       " z-index: " +
       order +
       ";" +
@@ -508,7 +508,7 @@ export function genShape(
 
     // TextBody
     if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
-      result += genTextBody(
+      result += await genTextBody(
         node["p:txBody"],
         node,
         slideLayoutSpNode,

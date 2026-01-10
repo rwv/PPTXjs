@@ -9,19 +9,25 @@ import type { PptxArchive } from "../../archive/pptx-archive";
  * @param settings - Settings object containing incSlide dimensions
  * @returns Object containing width, height, appVersion, and defaultTextStyle
  */
-export function getSlideSizeAndSetDefaultTextStyle(
+export async function getSlideSizeAndSetDefaultTextStyle(
   archive: PptxArchive,
   slideFactor: number,
   settings: { incSlide: { width: number; height: number } }
-): { width: number; height: number; appVersion: number; defaultTextStyle: unknown } {
+): Promise<{ width: number; height: number; appVersion: number; defaultTextStyle: unknown }> {
   //get app version
-  const app = readXmlFile(archive, "docProps/app.xml");
+  const app = await readXmlFile(archive, "docProps/app.xml");
+  if (!app) {
+    throw new Error("Missing docProps/app.xml in PPTX.");
+  }
   const app_verssion_str = app["Properties"]["AppVersion"];
   const app_verssion = parseInt(app_verssion_str);
   console.log("create by Office PowerPoint app verssion: ", app_verssion_str);
 
   //get slide dimensions
-  const content = readXmlFile(archive, "ppt/presentation.xml");
+  const content = await readXmlFile(archive, "ppt/presentation.xml");
+  if (!content) {
+    throw new Error("Missing ppt/presentation.xml in PPTX.");
+  }
   const sldSzAttrs = content["p:presentation"]["p:sldSz"]["attrs"];
   const sldSzWidth = parseInt(sldSzAttrs["cx"]);
   const sldSzHeight = parseInt(sldSzAttrs["cy"]);

@@ -10,18 +10,18 @@ import { tXml } from "../vendors/txml";
  * @param appVersion - Office application version (only used when isSlideContent is true)
  * @returns Parsed XML data object or null if file doesn't exist
  */
-export function readXmlFile(
+export async function readXmlFile(
   archive: PptxArchive,
   filename: string,
   isSlideContent?: boolean,
   appVersion?: number
-): any | null {
+): Promise<any | null> {
   try {
-    if (!archive.hasFile(filename)) {
+    if (!(await archive.hasFile(filename))) {
       return null;
     }
 
-    let fileContent = archive.readAsText(filename);
+    let fileContent = await archive.readAsText(filename);
 
     if (isSlideContent && appVersion !== undefined && appVersion <= 12) {
       // Office 2007 and earlier

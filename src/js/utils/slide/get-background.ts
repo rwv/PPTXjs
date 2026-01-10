@@ -30,7 +30,7 @@ import { processNodesInSlide } from "../node";
  * @param settings - Plugin settings
  * @returns HTML string for slide background
  */
-export function getBackground(
+export async function getBackground(
   warpObj: any,
   slideSize: { width: number; height: number },
   index: number,
@@ -43,7 +43,7 @@ export function getBackground(
   chartID: { value: number },
   MsgQueue: any,
   settings: any
-): string {
+): Promise<string> {
   //var rslt = "";
   const _slideContent = warpObj["slideContent"];
   const slideLayoutContent = warpObj["slideLayoutContent"];
@@ -69,7 +69,7 @@ export function getBackground(
     "showMasterSp",
   ]);
   //console.log("slideLayoutContent : ", slideLayoutContent, ", showMasterSp: ", showMasterSp)
-  const bgColor = getSlideBackgroundFill(warpObj, index);
+  const bgColor = await getSlideBackgroundFill(warpObj, index);
   let result =
     "<div class='slide-background-" +
     index +
@@ -96,7 +96,7 @@ export function getBackground(
           //     _nodePhTypeAry.push(phType);
           // }
           if (phType !== "pic") {
-            result += processNodesInSlide(
+            result += await processNodesInSlide(
               nodeKey,
               nodesSldLayout[nodeKey][i],
               nodesSldLayout,
@@ -127,7 +127,7 @@ export function getBackground(
         //     _nodePhTypeAry.push(phType);
         // }
         if (phType !== "pic") {
-          result += processNodesInSlide(
+          result += await processNodesInSlide(
             nodeKey,
             nodesSldLayout[nodeKey],
             nodesSldLayout,
@@ -160,7 +160,7 @@ export function getBackground(
             "type",
           ]);
           //if (_nodePhTypeAry.indexOf(_phType) > -1) {
-          result += processNodesInSlide(
+          result += await processNodesInSlide(
             nodeKey,
             nodesSldMaster[nodeKey][i],
             nodesSldMaster,
@@ -188,7 +188,7 @@ export function getBackground(
           "type",
         ]);
         //if (_nodePhTypeAry.indexOf(_phType) > -1) {
-        result += processNodesInSlide(
+        result += await processNodesInSlide(
           nodeKey,
           nodesSldMaster[nodeKey],
           nodesSldMaster,

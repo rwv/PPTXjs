@@ -57,7 +57,7 @@ export interface ShapeContext {
 /**
  * Initialize shape rendering context
  */
-export function initShapeContext(
+export async function initShapeContext(
   node: any,
   pNode: any,
   slideLayoutSpNode: any,
@@ -72,7 +72,7 @@ export function initShapeContext(
   warpObj: any,
   slideFactor: number,
   styleTable: any
-): ShapeContext | null {
+): Promise<ShapeContext | null> {
   //var dltX = 0;
   //var dltY = 0;
   const xfrmList = ["p:spPr", "a:xfrm"];
@@ -163,7 +163,7 @@ export function initShapeContext(
     let defsContent = "";
 
     // Fill Color
-    let fillColor = getShapeFill(node, pNode, true, warpObj, source);
+    let fillColor = await getShapeFill(node, pNode, true, warpObj, source);
     //console.log("genShape: fillColor: ", fillColor)
     let grndFillFlg = false;
     let imgFillFlg = false;
