@@ -119,8 +119,7 @@ export async function processPicNode(
   let mediaSupportFlag = false;
   let isVdeoLink = false;
   const mediaProcess = settings.mediaProcess;
-  // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
-  if ((vdoNode !== undefined) & mediaProcess) {
+  if (vdoNode !== undefined && mediaProcess) {
     vdoRid = (vdoNode["attrs"] as Record<string, string>)["r:link"];
     vdoFile = resObj[vdoRid]?.target;
     if (vdoFile) {
@@ -165,8 +164,7 @@ export async function processPicNode(
   let audioBlob: string | undefined;
   let audioPlayerFlag = false;
   let audioObjc: Record<string, unknown> | undefined;
-  // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
-  if ((audioNode !== undefined) & mediaProcess) {
+  if (audioNode !== undefined && mediaProcess) {
     audioRid = (audioNode["attrs"] as Record<string, string>)["r:link"];
     audioFile = resObj[audioRid]?.target;
     if (audioFile) {
