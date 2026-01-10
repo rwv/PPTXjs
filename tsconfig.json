@@ -15,7 +15,7 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "types": ["vite/client", "vitest", "jquery", "d3", "nvd3"]
+    "types": ["vite/client", "vitest", "d3", "nvd3"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "other-repo-code"]

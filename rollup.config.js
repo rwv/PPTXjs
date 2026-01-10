@@ -7,12 +7,9 @@ export default {
       file: 'dist/js/pptxjs.js',
       format: 'iife',
       strict: false,
-      sourcemap: true,
-      globals: {
-        jquery: 'jQuery'
-      }
+      sourcemap: true
     },
-    external: ['jquery', 'fs'],
+    external: ['fs'],
     plugins: [
       resolve(),
       typescript()

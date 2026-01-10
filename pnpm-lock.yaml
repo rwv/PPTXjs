@@ -11,12 +11,6 @@ importers:
       d3:
         specifier: ^3.5.17
         version: 3.5.17
-      jquery:
-        specifier: ^1.12.4
-        version: 1.12.4
-      jquery-fullscreen-plugin:
-        specifier: ^1.1.5
-        version: 1.1.5
       jszip:
         specifier: ^2.7.0
         version: 2.7.0
@@ -39,9 +33,6 @@ importers:
       '@types/d3':
         specifier: ^3.5.53
         version: 3.5.53
-      '@types/jquery':
-        specifier: ^1.10.45
-        version: 1.10.45
       '@types/jszip':
         specifier: ^3.4.1
         version: 3.4.1
@@ -1116,9 +1107,6 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
-  '@types/jquery@1.10.45':
-    resolution: {integrity: sha512-JvoVtPbu1wrcOldn5gvuyJqr7DLX6I657N68Fqj5S7AUutdYZqabQjfP7dY6Gee7/Afo1uajwcORVlQfnsjkLQ==}
-
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -2166,13 +2154,6 @@ packages:
   jest-worker@24.9.0:
     resolution: {integrity: sha512-51PE4haMSXcHohnSMdM42anbvZANYTqMrr52tVKPqqsPJMzoP6FYYDVqahX/HrAoKEKz3uUPzSvKs9A3qR4iVw==}
     engines: {node: '>= 6'}
-
-  jquery-fullscreen-plugin@1.1.5:
-    resolution: {integrity: sha512-/kGQZmXlIRIgS6sHmFwHqYDSH46NvksuUGDN3o/o8z+IED23JFHj8rRv53Ee1zsN04SMnb3jQKyDS0RvXN52Xg==}
-
-  jquery@1.12.4:
-    resolution: {integrity: sha512-UEVp7PPK9xXYSk8xqXCJrkXnKZtlgWkd2GsAQbMRFK6S/ePU2JN5G2Zum8hIVjzR3CpdfSqdqAzId/xd4TJHeg==}
-    deprecated: This version is deprecated. Please upgrade to the latest version or find support at https://www.herodevs.com/support/jquery-nes.
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -4338,8 +4319,6 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@types/jquery@1.10.45': {}
-
   '@types/json-schema@7.0.15': {}
 
   '@types/jszip@3.4.1':
@@ -5581,12 +5560,6 @@ snapshots:
     dependencies:
       merge-stream: 2.0.0
       supports-color: 6.1.0
-
-  jquery-fullscreen-plugin@1.1.5:
-    dependencies:
-      jquery: 1.12.4
-
-  jquery@1.12.4: {}
 
   js-tokens@4.0.0: {}
 
