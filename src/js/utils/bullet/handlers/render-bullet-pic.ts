@@ -12,21 +12,29 @@
 import { getTextByPathList } from "../../object";
 import { getMimeType, base64ArrayBuffer } from "../../media";
 
+type BulletPicNode = Record<string, unknown>;
+type BulletWarpObj = {
+  slideResObj: Record<string, { target: string }>;
+  archive: {
+    readAsArrayBuffer: (path: string) => ArrayBuffer;
+  };
+};
+
 export function renderBulletPic(
-  buPic: any,
-  warpObj: any,
+  buPic: BulletPicNode,
+  warpObj: BulletWarpObj,
   marLStr: string,
   marRStr: string,
   bultSize: string,
   isRTL: boolean
 ): string {
-  const buPicId = getTextByPathList(buPic, ["a:blip", "attrs", "r:embed"]);
-  let buImg;
+  const buPicId = getTextByPathList<string>(buPic, ["a:blip", "attrs", "r:embed"]);
+  let buImg = "";
 
   if (buPicId !== undefined) {
     const imgPath = warpObj["slideResObj"][buPicId]["target"];
     const imgArrayBuffer = warpObj["archive"].readAsArrayBuffer(imgPath);
-    const imgExt = imgPath.split(".").pop();
+    const imgExt = imgPath.split(".").pop() ?? "";
     const imgMimeType = getMimeType(imgExt);
     buImg =
       "<img src='data:" +
