@@ -23,59 +23,59 @@ import { escapeHtml } from "../string";
  * - Letter spacing, text capitalization
  * - CSS class generation for style reuse
  *
- * @param node - Text run node (a:r) or paragraph node containing text
- * @param rIndex - Index of text run in paragraph (for direction logic)
- * @param pNode - Parent paragraph node for property inheritance
+ * @param runNode - Text run node (a:r) or paragraph node containing text
+ * @param runIndex - Index of text run in paragraph (for direction logic)
+ * @param paragraphNode - Parent paragraph node for property inheritance
  * @param textBodyNode - Text body node containing list styles
- * @param pFontStyle - Parent font style for color/font inheritance
- * @param slideLayoutSpNode - Shape node from slide layout for fallback
- * @param idx - Placeholder index for layout lookup
- * @param type - Shape type for layout resolution
- * @param rNodeLength - Total number of runs in paragraph
- * @param warpObj - Warp object containing slide resources and styles
- * @param isBullate - Whether this text is part of a bulleted paragraph
+ * @param parentFontStyle - Parent font style for color/font inheritance
+ * @param layoutShapeNode - Shape node from slide layout for fallback
+ * @param placeholderIndex - Placeholder index for layout lookup
+ * @param shapeType - Shape type for layout resolution
+ * @param runNodeCount - Total number of runs in paragraph
+ * @param warpContext - Warp object containing slide resources and styles
+ * @param isBullet - Whether this text is part of a bulleted paragraph
  * @param styleTable - CSS style table for class generation (modified in place)
- * @param isFirstBr - Object {value: boolean} tracking if this is first line break (modified in place)
- * @param rtlLangsArray - Array of RTL language codes
- * @param slideFactor - EMU to pixel conversion factor
- * @param fontSizeFactor - Font size scaling factor
+ * @param firstLineBreak - Object {value: boolean} tracking if this is first line break (modified in place)
+ * @param rtlLanguages - Array of RTL language codes
+ * @param emuToPx - EMU to pixel conversion factor
+ * @param fontSizeScale - Font size scaling factor
  * @returns HTML string for the span element with styling
  */
 export function genSpanElement(
-  node: any,
-  rIndex: number | undefined,
-  pNode: any,
+  runNode: any,
+  runIndex: number | undefined,
+  paragraphNode: any,
   textBodyNode: any,
-  pFontStyle: any,
-  slideLayoutSpNode: any,
-  idx: number | string | undefined,
-  type: string | undefined,
-  rNodeLength: number,
-  warpObj: any,
-  isBullate: boolean,
+  parentFontStyle: any,
+  layoutShapeNode: any,
+  placeholderIndex: number | string | undefined,
+  shapeType: string | undefined,
+  runNodeCount: number,
+  warpContext: any,
+  isBullet: boolean,
   styleTable: any,
-  isFirstBr: { value: boolean },
-  rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  firstLineBreak: { value: boolean },
+  rtlLanguages: string[],
+  emuToPx: number,
+  fontSizeScale: number
 ): string {
   //https://codepen.io/imdunn/pen/GRgwaye ?
-  let text_style = "";
-  const lstStyle = textBodyNode["a:lstStyle"];
-  const slideMasterTextStyles = warpObj["slideMasterTextStyles"];
+  let textStyle = "";
+  const listStyleNode = textBodyNode["a:lstStyle"];
+  const slideMasterTextStyles = warpContext["slideMasterTextStyles"];
 
-  let text = node["a:t"];
-  //var text_count = text.length;
+  let textValue = runNode["a:t"];
+  //var text_count = textValue.length;
 
-  const openElemnt = "<span"; //"<bdi";
-  const closeElemnt = "</span>"; // "</bdi>";
-  let styleText = "";
-  if (text === undefined && node["type"] !== undefined) {
-    if (isFirstBr.value) {
+  const openElement = "<span"; //"<bdi";
+  const closeElement = "</span>"; // "</bdi>";
+  let classStyleText = "";
+  if (textValue === undefined && runNode["type"] !== undefined) {
+    if (firstLineBreak.value) {
       //openElemnt = "<br";
       //closeElemnt = "";
       //return "<br style='font-size: initial'>"
-      isFirstBr.value = false;
+      firstLineBreak.value = false;
       return "<span class='line-break-br' ></span>";
     } else {
       // styleText += "display: block;";
@@ -83,16 +83,16 @@ export function genSpanElement(
       // closeElemnt = "</span>";
     }
 
-    styleText += "display: block;";
+    classStyleText += "display: block;";
     //openElemnt = "<span";
     //closeElemnt = "</span>";
   } else {
-    isFirstBr.value = true;
+    firstLineBreak.value = true;
   }
-  if (typeof text !== "string") {
-    text = getTextByPathList(node, ["a:fld", "a:t"]);
-    if (typeof text !== "string") {
-      text = "&nbsp;";
+  if (typeof textValue !== "string") {
+    textValue = getTextByPathList(runNode, ["a:fld", "a:t"]);
+    if (typeof textValue !== "string") {
+      textValue = "&nbsp;";
       //return "<span class='text-block '>&nbsp;</span>";
     }
     // if (text === undefined) {
@@ -100,106 +100,128 @@ export function genSpanElement(
     // }
   }
 
-  const pPrNode = pNode["a:pPr"];
+  const paragraphPropsNode = paragraphNode["a:pPr"];
   //lvl
-  let lvl = 1;
-  const lvlNode = getTextByPathList(pPrNode, ["attrs", "lvl"]);
-  if (lvlNode !== undefined) {
-    lvl = parseInt(lvlNode) + 1;
+  let listLevel = 1;
+  const listLevelNode = getTextByPathList(paragraphPropsNode, ["attrs", "lvl"]);
+  if (listLevelNode !== undefined) {
+    listLevel = parseInt(listLevelNode) + 1;
   }
-  //console.log("genSpanElement node: ", node, "rIndex: ", rIndex, ", pNode: ", pNode, ",pPrNode: ", pPrNode, "pFontStyle:", pFontStyle, ", idx: ", idx, "type:", type, warpObj);
-  const layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
-  const pPrNodeLaout = layoutMasterNode.nodeLaout;
-  const pPrNodeMaster = layoutMasterNode.nodeMaster;
+  //console.log("genSpanElement node: ", runNode, "runIndex: ", runIndex, ", paragraphNode: ", paragraphNode, ",paragraphPropsNode: ", paragraphPropsNode, "parentFontStyle:", parentFontStyle, ", placeholderIndex: ", placeholderIndex, "shapeType:", shapeType, warpContext);
+  const layoutMasterNode = getLayoutAndMasterNode(
+    paragraphNode,
+    placeholderIndex,
+    shapeType,
+    warpContext
+  );
+  const paragraphPropsLayoutNode = layoutMasterNode.nodeLaout;
+  const paragraphPropsMasterNode = layoutMasterNode.nodeMaster;
 
   //Language
-  const lang = getTextByPathList(node, ["a:rPr", "attrs", "lang"]);
-  const isRtlLan = lang !== undefined && rtlLangsArray.indexOf(lang) !== -1 ? true : false;
+  const language = getTextByPathList(runNode, ["a:rPr", "attrs", "lang"]);
+  const isRtlLanguage =
+    language !== undefined && rtlLanguages.indexOf(language) !== -1 ? true : false;
   //rtl
-  let getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
-  if (getRtlVal === undefined) {
-    getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
-    if (getRtlVal === undefined && type !== "shape") {
-      getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
+  let rtlValue = getTextByPathList(paragraphPropsNode, ["attrs", "rtl"]);
+  if (rtlValue === undefined) {
+    rtlValue = getTextByPathList(paragraphPropsLayoutNode, ["attrs", "rtl"]);
+    if (rtlValue === undefined && shapeType !== "shape") {
+      rtlValue = getTextByPathList(paragraphPropsMasterNode, ["attrs", "rtl"]);
     }
   }
 
-  const linkID = getTextByPathList(node, ["a:rPr", "a:hlinkClick", "attrs", "r:id"]);
-  let linkTooltip = "";
-  let defLinkClr;
-  if (linkID !== undefined) {
-    linkTooltip = getTextByPathList(node, ["a:rPr", "a:hlinkClick", "attrs", "tooltip"]);
-    if (linkTooltip !== undefined) {
-      linkTooltip = "title='" + linkTooltip + "'";
+  const linkId = getTextByPathList(runNode, ["a:rPr", "a:hlinkClick", "attrs", "r:id"]);
+  let linkTooltipAttr = "";
+  let defaultLinkColor;
+  if (linkId !== undefined) {
+    linkTooltipAttr = getTextByPathList(runNode, ["a:rPr", "a:hlinkClick", "attrs", "tooltip"]);
+    if (linkTooltipAttr !== undefined) {
+      linkTooltipAttr = "title='" + linkTooltipAttr + "'";
     }
-    defLinkClr = getSchemeColorFromTheme("a:hlink", undefined, undefined, warpObj);
+    defaultLinkColor = getSchemeColorFromTheme("a:hlink", undefined, undefined, warpContext);
 
-    const linkClrNode = getTextByPathList(node, ["a:rPr", "a:solidFill"]); // getTextByPathList(node, ["a:rPr", "a:solidFill"]);
-    const rPrlinkClr = getSolidFill(linkClrNode, undefined, undefined, warpObj);
+    const linkColorNode = getTextByPathList(runNode, ["a:rPr", "a:solidFill"]); // getTextByPathList(node, ["a:rPr", "a:solidFill"]);
+    const linkColorOverride = getSolidFill(linkColorNode, undefined, undefined, warpContext);
 
     //console.log("genSpanElement defLinkClr: ", defLinkClr, "rPrlinkClr:", rPrlinkClr)
-    if (rPrlinkClr !== undefined && rPrlinkClr !== "") {
-      defLinkClr = rPrlinkClr;
+    if (linkColorOverride !== undefined && linkColorOverride !== "") {
+      defaultLinkColor = linkColorOverride;
     }
   }
   /////////////////////////////////////////////////////////////////////////////////////
   //getFontColor
-  const fontClrPr = getFontColorPr(
-    node,
-    pNode,
-    lstStyle,
-    pFontStyle,
-    lvl,
-    idx,
-    type,
-    warpObj,
-    slideFactor
+  const fontColorResult = getFontColorPr(
+    runNode,
+    paragraphNode,
+    listStyleNode,
+    parentFontStyle,
+    listLevel,
+    placeholderIndex,
+    shapeType,
+    warpContext,
+    emuToPx
   );
-  const fontClrType = fontClrPr[2];
-  //console.log("genSpanElement fontClrPr: ", fontClrPr, "linkID", linkID);
-  if (fontClrType === "solid") {
-    if (linkID === undefined && fontClrPr[0] !== undefined && fontClrPr[0] !== "") {
-      styleText += "color: #" + fontClrPr[0] + ";";
-    } else if (linkID !== undefined && defLinkClr !== undefined) {
-      styleText += "color: #" + defLinkClr + ";";
+  const fontColorType = fontColorResult[2];
+  //console.log("genSpanElement fontClrPr: ", fontColorResult, "linkID", linkId);
+  if (fontColorType === "solid") {
+    if (linkId === undefined && fontColorResult[0] !== undefined && fontColorResult[0] !== "") {
+      classStyleText += "color: #" + fontColorResult[0] + ";";
+    } else if (linkId !== undefined && defaultLinkColor !== undefined) {
+      classStyleText += "color: #" + defaultLinkColor + ";";
     }
 
-    if (fontClrPr[1] !== undefined && fontClrPr[1] !== "" && fontClrPr[1] !== ";") {
-      styleText += "text-shadow:" + fontClrPr[1] + ";";
+    if (
+      fontColorResult[1] !== undefined &&
+      fontColorResult[1] !== "" &&
+      fontColorResult[1] !== ";"
+    ) {
+      classStyleText += "text-shadow:" + fontColorResult[1] + ";";
     }
-    if (fontClrPr[3] !== undefined && fontClrPr[3] !== "") {
-      styleText += "background-color: #" + fontClrPr[3] + ";";
+    if (fontColorResult[3] !== undefined && fontColorResult[3] !== "") {
+      classStyleText += "background-color: #" + fontColorResult[3] + ";";
     }
-  } else if (fontClrType === "pattern" || fontClrType === "pic" || fontClrType === "gradient") {
-    if (fontClrType === "pattern") {
-      styleText += "background:" + fontClrPr[0][0] + ";";
-      if (fontClrPr[0][1] !== null && fontClrPr[0][1] !== undefined && fontClrPr[0][1] !== "") {
-        styleText += "background-size:" + fontClrPr[0][1] + ";"; //" 2px 2px;" +
+  } else if (
+    fontColorType === "pattern" ||
+    fontColorType === "pic" ||
+    fontColorType === "gradient"
+  ) {
+    if (fontColorType === "pattern") {
+      classStyleText += "background:" + fontColorResult[0][0] + ";";
+      if (
+        fontColorResult[0][1] !== null &&
+        fontColorResult[0][1] !== undefined &&
+        fontColorResult[0][1] !== ""
+      ) {
+        classStyleText += "background-size:" + fontColorResult[0][1] + ";"; //" 2px 2px;" +
       }
-      if (fontClrPr[0][2] !== null && fontClrPr[0][2] !== undefined && fontClrPr[0][2] !== "") {
-        styleText += "background-position:" + fontClrPr[0][2] + ";"; //" 2px 2px;" +
+      if (
+        fontColorResult[0][2] !== null &&
+        fontColorResult[0][2] !== undefined &&
+        fontColorResult[0][2] !== ""
+      ) {
+        classStyleText += "background-position:" + fontColorResult[0][2] + ";"; //" 2px 2px;" +
       }
       // styleText += "-webkit-background-clip: text;" +
       //     "background-clip: text;" +
       //     "color: transparent;" +
       //     "-webkit-text-stroke: " + fontClrPr[1].border + ";" +
       //     "filter: " + fontClrPr[1].effcts + ";";
-    } else if (fontClrType === "pic") {
-      styleText += fontClrPr[0] + ";";
+    } else if (fontColorType === "pic") {
+      classStyleText += fontColorResult[0] + ";";
       // styleText += "-webkit-background-clip: text;" +
       //     "background-clip: text;" +
       //     "color: transparent;" +
       //     "-webkit-text-stroke: " + fontClrPr[1].border + ";";
-    } else if (fontClrType === "gradient") {
-      const colorAry = fontClrPr[0].color;
-      const rot = fontClrPr[0].rot;
+    } else if (fontColorType === "gradient") {
+      const colorStops = fontColorResult[0].color;
+      const rotationDegrees = fontColorResult[0].rot;
 
-      styleText += "background: linear-gradient(" + rot + "deg,";
-      for (let i = 0; i < colorAry.length; i++) {
-        if (i === colorAry.length - 1) {
-          styleText += "#" + colorAry[i] + ");";
+      classStyleText += "background: linear-gradient(" + rotationDegrees + "deg,";
+      for (let i = 0; i < colorStops.length; i++) {
+        if (i === colorStops.length - 1) {
+          classStyleText += "#" + colorStops[i] + ");";
         } else {
-          styleText += "#" + colorAry[i] + ", ";
+          classStyleText += "#" + colorStops[i] + ", ";
         }
       }
       // styleText += "-webkit-background-clip: text;" +
@@ -207,49 +229,57 @@ export function genSpanElement(
       //     "color: transparent;" +
       //     "-webkit-text-stroke: " + fontClrPr[1].border + ";";
     }
-    styleText +=
+    classStyleText +=
       "-webkit-background-clip: text;" + "background-clip: text;" + "color: transparent;";
-    if (fontClrPr[1].border !== undefined && fontClrPr[1].border !== "") {
-      styleText += "-webkit-text-stroke: " + fontClrPr[1].border + ";";
+    if (fontColorResult[1].border !== undefined && fontColorResult[1].border !== "") {
+      classStyleText += "-webkit-text-stroke: " + fontColorResult[1].border + ";";
     }
-    if (fontClrPr[1].effcts !== undefined && fontClrPr[1].effcts !== "") {
-      styleText += "filter: " + fontClrPr[1].effcts + ";";
+    if (fontColorResult[1].effcts !== undefined && fontColorResult[1].effcts !== "") {
+      classStyleText += "filter: " + fontColorResult[1].effcts + ";";
     }
   }
-  const font_size = getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj, fontSizeFactor);
-  //text_style += "font-size:" + font_size + ";"
+  const fontSize = getFontSize(
+    runNode,
+    textBodyNode,
+    parentFontStyle,
+    listLevel,
+    shapeType,
+    warpContext,
+    fontSizeScale
+  );
+  //text_style += "font-size:" + fontSize + ";"
 
-  text_style +=
+  textStyle +=
     "font-size:" +
-    font_size +
+    fontSize +
     ";" +
     // marLStr +
     "font-family:" +
-    getFontType(node, type, warpObj, pFontStyle) +
+    getFontType(runNode, shapeType, warpContext, parentFontStyle) +
     ";" +
     "font-weight:" +
-    getFontBold(node, type, slideMasterTextStyles) +
+    getFontBold(runNode, shapeType, slideMasterTextStyles) +
     ";" +
     "font-style:" +
-    getFontItalic(node, type, slideMasterTextStyles) +
+    getFontItalic(runNode, shapeType, slideMasterTextStyles) +
     ";" +
     "text-decoration:" +
-    getFontDecoration(node, type, slideMasterTextStyles) +
+    getFontDecoration(runNode, shapeType, slideMasterTextStyles) +
     ";" +
     "text-align:" +
-    getTextHorizontalAlign(node, pNode, type, warpObj) +
+    getTextHorizontalAlign(runNode, paragraphNode, shapeType, warpContext) +
     ";" +
     "vertical-align:" +
-    getTextVerticalAlign(node, type, slideMasterTextStyles) +
+    getTextVerticalAlign(runNode, shapeType, slideMasterTextStyles) +
     ";";
   //rNodeLength
-  //console.log("genSpanElement node:", node, "lang:", lang, "isRtlLan:", isRtlLan, "span parent dir:", dirStr)
-  if (isRtlLan) {
+  //console.log("genSpanElement node:", runNode, "lang:", language, "isRtlLan:", isRtlLanguage, "span parent dir:", dirStr)
+  if (isRtlLanguage) {
     //|| rIndex === undefined
-    styleText += "direction:rtl;";
+    classStyleText += "direction:rtl;";
   } else {
     //|| rIndex === undefined
-    styleText += "direction:ltr;";
+    classStyleText += "direction:ltr;";
   }
   // } else if (dirStr == "rtl" && isRtlLan ) {
   //     styleText += "direction:rtl;";
@@ -278,86 +308,90 @@ export function genSpanElement(
   //if (rNodeLength == 1 || rIndex == 0 ){
   //styleText += "display: table-cell;white-space: nowrap;";
   //}
-  const highlight = getTextByPathList(node, ["a:rPr", "a:highlight"]);
-  if (highlight !== undefined) {
-    styleText +=
-      "background-color:#" + getSolidFill(highlight, undefined, undefined, warpObj) + ";";
+  const highlightNode = getTextByPathList(runNode, ["a:rPr", "a:highlight"]);
+  if (highlightNode !== undefined) {
+    classStyleText +=
+      "background-color:#" + getSolidFill(highlightNode, undefined, undefined, warpContext) + ";";
     //styleText += "Opacity:" + getColorOpacity(highlight) + ";";
   }
 
   //letter-spacing:
-  let spcNode = getTextByPathList(node, ["a:rPr", "attrs", "spc"]);
-  if (spcNode === undefined) {
-    spcNode = getTextByPathList(pPrNodeLaout, ["a:defRPr", "attrs", "spc"]);
-    if (spcNode === undefined) {
-      spcNode = getTextByPathList(pPrNodeMaster, ["a:defRPr", "attrs", "spc"]);
+  let spacingNode = getTextByPathList(runNode, ["a:rPr", "attrs", "spc"]);
+  if (spacingNode === undefined) {
+    spacingNode = getTextByPathList(paragraphPropsLayoutNode, ["a:defRPr", "attrs", "spc"]);
+    if (spacingNode === undefined) {
+      spacingNode = getTextByPathList(paragraphPropsMasterNode, ["a:defRPr", "attrs", "spc"]);
     }
   }
-  if (spcNode !== undefined) {
-    const ltrSpc = parseInt(spcNode) / 100; //pt
-    styleText += "letter-spacing: " + ltrSpc + "px;"; // + "pt;";
+  if (spacingNode !== undefined) {
+    const letterSpacingPx = parseInt(spacingNode) / 100; //pt
+    classStyleText += "letter-spacing: " + letterSpacingPx + "px;"; // + "pt;";
   }
 
   //Text Cap Types
-  let capNode = getTextByPathList(node, ["a:rPr", "attrs", "cap"]);
-  if (capNode === undefined) {
-    capNode = getTextByPathList(pPrNodeLaout, ["a:defRPr", "attrs", "cap"]);
-    if (capNode === undefined) {
-      capNode = getTextByPathList(pPrNodeMaster, ["a:defRPr", "attrs", "cap"]);
+  let capitalizationNode = getTextByPathList(runNode, ["a:rPr", "attrs", "cap"]);
+  if (capitalizationNode === undefined) {
+    capitalizationNode = getTextByPathList(paragraphPropsLayoutNode, ["a:defRPr", "attrs", "cap"]);
+    if (capitalizationNode === undefined) {
+      capitalizationNode = getTextByPathList(paragraphPropsMasterNode, [
+        "a:defRPr",
+        "attrs",
+        "cap",
+      ]);
     }
   }
-  if (capNode === "small" || capNode === "all") {
-    styleText += "text-transform: uppercase";
+  if (capitalizationNode === "small" || capitalizationNode === "all") {
+    classStyleText += "text-transform: uppercase";
   }
   //styleText += "word-break: break-word;";
-  //console.log("genSpanElement node: ", node, ", capNode: ", capNode, ",pPrNodeLaout: ", pPrNodeLaout, ", pPrNodeMaster: ", pPrNodeMaster, "warpObj:", warpObj);
+  //console.log("genSpanElement node: ", runNode, ", capNode: ", capitalizationNode, ",paragraphPropsLayoutNode: ", paragraphPropsLayoutNode, ", paragraphPropsMasterNode: ", paragraphPropsMasterNode, "warpContext:", warpContext);
 
-  let cssName = "";
+  let cssClassName = "";
 
-  if (styleText in styleTable) {
-    cssName = styleTable[styleText]["name"];
+  if (classStyleText in styleTable) {
+    cssClassName = styleTable[classStyleText]["name"];
   } else {
-    cssName = "_css_" + (Object.keys(styleTable).length + 1);
-    styleTable[styleText] = {
-      name: cssName,
-      text: styleText,
+    cssClassName = "_css_" + (Object.keys(styleTable).length + 1);
+    styleTable[classStyleText] = {
+      name: cssClassName,
+      text: classStyleText,
     };
   }
-  let linkColorSyle = "";
-  if (fontClrType === "solid" && linkID !== undefined) {
-    linkColorSyle = "style='color: inherit;'";
+  let linkColorStyle = "";
+  if (fontColorType === "solid" && linkId !== undefined) {
+    linkColorStyle = "style='color: inherit;'";
   }
 
-  if (linkID !== undefined && linkID !== "") {
-    let linkURL = warpObj["slideResObj"][linkID]["target"];
-    linkURL = escapeHtml(linkURL);
+  if (linkId !== undefined && linkId !== "") {
+    let linkUrl = warpContext["slideResObj"][linkId]["target"];
+    linkUrl = escapeHtml(linkUrl);
     return (
-      openElemnt +
+      openElement +
       " class='text-block " +
-      cssName +
+      cssClassName +
       "' style='" +
-      text_style +
+      textStyle +
       "'><a href='" +
-      linkURL +
+      linkUrl +
       "' " +
-      linkColorSyle +
+      linkColorStyle +
       "  " +
-      linkTooltip +
+      linkTooltipAttr +
       " target='_blank'>" +
-      text.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;").replace(/\s/g, "&nbsp;") +
+      textValue.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;").replace(/\s/g, "&nbsp;") +
       "</a>" +
-      closeElemnt
+      closeElement
     );
   } else {
     return (
-      openElemnt +
+      openElement +
       " class='text-block " +
-      cssName +
+      cssClassName +
       "' style='" +
-      text_style +
+      textStyle +
       "'>" +
-      text.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;").replace(/\s/g, "&nbsp;") +
-      closeElemnt
+      textValue.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;").replace(/\s/g, "&nbsp;") +
+      closeElement
     ); //"</bdi>";
   }
 }
