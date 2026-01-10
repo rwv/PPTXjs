@@ -15,7 +15,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering polygon shapes
  */
 export interface PolygonShapeContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
