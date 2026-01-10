@@ -13,29 +13,29 @@ import { genShape } from "../shape";
  * - Diagrams (from diagram backgrounds)
  * - Generic objects (default type)
  *
- * @param node - Shape node (p:sp) containing shape data
- * @param pNode - Parent node for context
- * @param warpObj - Warp object containing slide resources, layout/master tables
- * @param source - Source context (e.g., "slideLayoutBg", "slideMasterBg", "diagramBg")
- * @param sType - Shape type context
- * @param slideFactor - EMU to pixel conversion factor
+ * @param shapeNode - Shape node (p:sp) containing shape data
+ * @param parentNode - Parent node for context
+ * @param warpContext - Warp object containing slide resources, layout/master tables
+ * @param sourceType - Source context (e.g., "slideLayoutBg", "slideMasterBg", "diagramBg")
+ * @param shapeContext - Shape type context
+ * @param emuToPx - EMU to pixel conversion factor
  * @param styleTable - Global CSS style table
- * @param fontSizeFactor - Font size scaling factor
- * @param rtlLangsArray - Array of RTL language codes
- * @param isFirstBr - Mutable object tracking first line break state
+ * @param fontSizeScale - Font size scaling factor
+ * @param rtlLanguages - Array of RTL language codes
+ * @param isFirstLineBreak - Mutable object tracking first line break state
  * @returns HTML string for the shape
  */
 export async function processSpNode(
-  node: unknown,
-  pNode: unknown,
-  warpObj: unknown,
-  source: string,
-  sType: string,
-  slideFactor: number,
+  shapeNode: unknown,
+  parentNode: unknown,
+  warpContext: unknown,
+  sourceType: string,
+  shapeContext: string,
+  emuToPx: number,
   styleTable: unknown,
-  fontSizeFactor: number,
-  rtlLangsArray: string[],
-  isFirstBr: { value: boolean }
+  fontSizeScale: number,
+  rtlLanguages: string[],
+  isFirstLineBreak: { value: boolean }
 ): Promise<string> {
   /*
    *  958    <xsd:complexType name="CT_GvmlShape">
@@ -49,99 +49,125 @@ export async function processSpNode(
    *  966 </xsd:complexType>
    */
 
-  const nodeRecord = node as Record<string, unknown>;
-  const warpRecord = warpObj as Record<string, unknown>;
-  const id = getTextByPathList<string | number>(nodeRecord, ["p:nvSpPr", "p:cNvPr", "attrs", "id"]);
-  const name = getTextByPathList<string>(nodeRecord, ["p:nvSpPr", "p:cNvPr", "attrs", "name"]);
-  const idx = getTextByPathList<string | number>(nodeRecord, [
+  const shapeNodeRecord = shapeNode as Record<string, unknown>;
+  const warpContextRecord = warpContext as Record<string, unknown>;
+  const shapeId = getTextByPathList<string | number>(shapeNodeRecord, [
+    "p:nvSpPr",
+    "p:cNvPr",
+    "attrs",
+    "id",
+  ]);
+  const shapeName = getTextByPathList<string>(shapeNodeRecord, [
+    "p:nvSpPr",
+    "p:cNvPr",
+    "attrs",
+    "name",
+  ]);
+  const placeholderIndex = getTextByPathList<string | number>(shapeNodeRecord, [
     "p:nvSpPr",
     "p:nvPr",
     "p:ph",
     "attrs",
     "idx",
   ]);
-  let type = getTextByPathList<string>(nodeRecord, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
-  const order = getTextByPathList<string | number>(nodeRecord, ["attrs", "order"]);
-  let isUserDrawnBg;
-  if (source === "slideLayoutBg" || source === "slideMasterBg") {
-    const userDrawn = getTextByPathList<string>(nodeRecord, [
+  let placeholderType = getTextByPathList<string>(shapeNodeRecord, [
+    "p:nvSpPr",
+    "p:nvPr",
+    "p:ph",
+    "attrs",
+    "type",
+  ]);
+  const zIndexOrder = getTextByPathList<string | number>(shapeNodeRecord, ["attrs", "order"]);
+  let isUserDrawnBackground;
+  if (sourceType === "slideLayoutBg" || sourceType === "slideMasterBg") {
+    const userDrawn = getTextByPathList<string>(shapeNodeRecord, [
       "p:nvSpPr",
       "p:nvPr",
       "attrs",
       "userDrawn",
     ]);
     if (userDrawn === "1") {
-      isUserDrawnBg = true;
+      isUserDrawnBackground = true;
     } else {
-      isUserDrawnBg = false;
+      isUserDrawnBackground = false;
     }
   }
-  let slideLayoutSpNode = undefined;
-  let slideMasterSpNode = undefined;
+  let layoutShapeNode = undefined;
+  let masterShapeNode = undefined;
 
-  const slideLayoutTables = warpRecord["slideLayoutTables"] as Record<string, unknown>;
-  const slideMasterTables = warpRecord["slideMasterTables"] as Record<string, unknown>;
-  if (idx !== undefined) {
-    slideLayoutSpNode = (slideLayoutTables["idxTable"] as Record<string | number, unknown>)[idx];
-    if (type !== undefined) {
-      slideMasterSpNode = (slideMasterTables["typeTable"] as Record<string, unknown>)[type];
+  const slideLayoutTables = warpContextRecord["slideLayoutTables"] as Record<string, unknown>;
+  const slideMasterTables = warpContextRecord["slideMasterTables"] as Record<string, unknown>;
+  if (placeholderIndex !== undefined) {
+    layoutShapeNode = (slideLayoutTables["idxTable"] as Record<string | number, unknown>)[
+      placeholderIndex
+    ];
+    if (placeholderType !== undefined) {
+      masterShapeNode = (slideMasterTables["typeTable"] as Record<string, unknown>)[
+        placeholderType
+      ];
     } else {
-      slideMasterSpNode = (slideMasterTables["idxTable"] as Record<string | number, unknown>)[idx];
+      masterShapeNode = (slideMasterTables["idxTable"] as Record<string | number, unknown>)[
+        placeholderIndex
+      ];
     }
   } else {
-    if (type !== undefined) {
-      slideLayoutSpNode = (slideLayoutTables["typeTable"] as Record<string, unknown>)[type];
-      slideMasterSpNode = (slideMasterTables["typeTable"] as Record<string, unknown>)[type];
+    if (placeholderType !== undefined) {
+      layoutShapeNode = (slideLayoutTables["typeTable"] as Record<string, unknown>)[
+        placeholderType
+      ];
+      masterShapeNode = (slideMasterTables["typeTable"] as Record<string, unknown>)[
+        placeholderType
+      ];
     }
   }
 
-  if (type === undefined) {
-    const txBoxVal = getTextByPathList<string>(nodeRecord, [
+  if (placeholderType === undefined) {
+    const txBoxVal = getTextByPathList<string>(shapeNodeRecord, [
       "p:nvSpPr",
       "p:cNvSpPr",
       "attrs",
       "txBox",
     ]);
     if (txBoxVal === "1") {
-      type = "textBox";
+      placeholderType = "textBox";
     }
   }
-  if (type === undefined) {
-    type = getTextByPathList<string>(slideLayoutSpNode, [
+  if (placeholderType === undefined) {
+    placeholderType = getTextByPathList<string>(layoutShapeNode, [
       "p:nvSpPr",
       "p:nvPr",
       "p:ph",
       "attrs",
       "type",
     ]);
-    if (type === undefined) {
-      //type = getTextByPathList(slideMasterSpNode, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
-      if (source === "diagramBg") {
-        type = "diagram";
+    if (placeholderType === undefined) {
+      //placeholderType = getTextByPathList(masterShapeNode, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
+      if (sourceType === "diagramBg") {
+        placeholderType = "diagram";
       } else {
-        type = "obj"; //default type
+        placeholderType = "obj"; //default type
       }
     }
   }
-  //console.log("processSpNode type:", type, "idx:", idx);
+  //console.log("processSpNode type:", placeholderType, "idx:", placeholderIndex);
   return await genShape(
-    node,
-    pNode,
-    slideLayoutSpNode,
-    slideMasterSpNode,
-    id,
-    name,
-    idx,
-    type,
-    order,
-    warpObj,
-    isUserDrawnBg,
-    sType,
-    source,
-    slideFactor,
+    shapeNode,
+    parentNode,
+    layoutShapeNode,
+    masterShapeNode,
+    shapeId,
+    shapeName,
+    placeholderIndex,
+    placeholderType,
+    zIndexOrder,
+    warpContext,
+    isUserDrawnBackground,
+    shapeContext,
+    sourceType,
+    emuToPx,
     styleTable,
-    fontSizeFactor,
-    rtlLangsArray,
-    isFirstBr
+    fontSizeScale,
+    rtlLanguages,
+    isFirstLineBreak
   );
 }
