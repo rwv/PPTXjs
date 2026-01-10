@@ -20,41 +20,66 @@ import { escapeHtml } from "../string";
  * @returns HTML string for the picture/video/audio element
  */
 export function processPicNode(
-  node: any,
-  warpObj: any,
+  node: unknown,
+  warpObj: unknown,
   source: string,
   sType: string,
   slideFactor: number,
   settings: { mediaProcess: boolean }
 ): string {
   //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
+  type ResourceMap = Record<string, { target: string }>;
+  type WarpObj = {
+    masterResObj?: ResourceMap;
+    layoutResObj?: ResourceMap;
+    slideResObj: ResourceMap;
+    archive: { readAsArrayBuffer: (path: string) => ArrayBuffer };
+    slideLayoutTables?: Record<string, unknown>;
+  };
+  const nodeRecord = node as Record<string, unknown>;
+  const warp = warpObj as WarpObj;
   let rtrnData = "";
   let mediaPicFlag = false;
-  const order = node["attrs"]["order"];
+  const order = (nodeRecord["attrs"] as Record<string, string | number>)["order"];
 
-  const rid = node["p:blipFill"]["a:blip"]["attrs"]["r:embed"];
-  let resObj;
+  const blipFill = nodeRecord["p:blipFill"] as Record<string, unknown>;
+  const blip = blipFill["a:blip"] as Record<string, unknown>;
+  const rid = (blip["attrs"] as Record<string, string>)["r:embed"];
+  let resObj: ResourceMap;
   if (source === "slideMasterBg") {
-    resObj = warpObj["masterResObj"];
+    resObj = warp.masterResObj as ResourceMap;
   } else if (source === "slideLayoutBg") {
-    resObj = warpObj["layoutResObj"];
+    resObj = warp.layoutResObj as ResourceMap;
   } else {
     //imgName = warpObj["slideResObj"][rid]["target"];
-    resObj = warpObj["slideResObj"];
+    resObj = warp.slideResObj;
   }
   const imgName = resObj[rid]["target"];
 
   //console.log("processPicNode imgName:", imgName);
   const imgFileExt = extractFileExtension(imgName).toLowerCase();
-  const archive = warpObj["archive"];
+  const archive = warp.archive;
   const imgArrayBuffer = archive.readAsArrayBuffer(imgName);
   let mimeType = "";
-  let xfrmNode = node["p:spPr"]["a:xfrm"];
+  const spPrNode = nodeRecord["p:spPr"] as Record<string, unknown>;
+  let xfrmNode = spPrNode["a:xfrm"] as Record<string, unknown> | undefined;
   if (xfrmNode === undefined) {
-    const idx = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "idx"]);
-    const _type = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "type"]);
+    const idx = getTextByPathList<string | number>(nodeRecord, [
+      "p:nvPicPr",
+      "p:nvPr",
+      "p:ph",
+      "attrs",
+      "idx",
+    ]);
+    const _type = getTextByPathList<string>(nodeRecord, [
+      "p:nvPicPr",
+      "p:nvPr",
+      "p:ph",
+      "attrs",
+      "type",
+    ]);
     if (idx !== undefined) {
-      xfrmNode = getTextByPathList(warpObj["slideLayoutTables"], [
+      xfrmNode = getTextByPathList<Record<string, unknown>>(warp.slideLayoutTables, [
         "idxTable",
         idx,
         "p:spPr",
@@ -64,25 +89,34 @@ export function processPicNode(
   }
   ///////////////////////////////////////Amir//////////////////////////////
   let rotate = 0;
-  const rotateNode = getTextByPathList(node, ["p:spPr", "a:xfrm", "attrs", "rot"]);
+  const rotateNode = getTextByPathList<number | string | null>(nodeRecord, [
+    "p:spPr",
+    "a:xfrm",
+    "attrs",
+    "rot",
+  ]);
   if (rotateNode !== undefined) {
     rotate = angleToDegrees(rotateNode);
   }
   //video
-  const vdoNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:videoFile"]);
-  let vdoRid,
-    vdoFile,
-    vdoFileExt,
-    vdoMimeType,
-    uInt8Array,
-    blob,
-    vdoBlob,
-    mediaSupportFlag = false,
-    isVdeoLink = false;
+  const vdoNode = getTextByPathList<Record<string, unknown>>(nodeRecord, [
+    "p:nvPicPr",
+    "p:nvPr",
+    "a:videoFile",
+  ]);
+  let vdoRid: string | undefined;
+  let vdoFile: string | undefined;
+  let vdoFileExt: string | undefined;
+  let vdoMimeType: string | undefined;
+  let uInt8Array: ArrayBuffer | undefined;
+  let blob: Blob | undefined;
+  let vdoBlob: string | undefined;
+  let mediaSupportFlag = false;
+  let isVdeoLink = false;
   const mediaProcess = settings.mediaProcess;
   // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
   if ((vdoNode !== undefined) & mediaProcess) {
-    vdoRid = vdoNode["attrs"]["r:link"];
+    vdoRid = (vdoNode["attrs"] as Record<string, string>)["r:link"];
     vdoFile = resObj[vdoRid]["target"];
     const checkIfLink = isVideoLink(vdoFile);
     if (checkIfLink) {
@@ -106,23 +140,42 @@ export function processPicNode(
     }
   }
   //Audio
-  const audioNode = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "a:audioFile"]);
-  let audioRid, audioFile, audioFileExt, _audioMimeType, uInt8ArrayAudio, blobAudio, audioBlob;
+  const audioNode = getTextByPathList<Record<string, unknown>>(nodeRecord, [
+    "p:nvPicPr",
+    "p:nvPr",
+    "a:audioFile",
+  ]);
+  let audioRid: string | undefined;
+  let audioFile: string | undefined;
+  let audioFileExt: string | undefined;
+  let _audioMimeType: string | undefined;
+  let uInt8ArrayAudio: ArrayBuffer | undefined;
+  let blobAudio: Blob | undefined;
+  let audioBlob: string | undefined;
   let audioPlayerFlag = false;
-  let audioObjc;
+  let audioObjc: Record<string, unknown> | undefined;
   // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
   if ((audioNode !== undefined) & mediaProcess) {
-    audioRid = audioNode["attrs"]["r:link"];
+    audioRid = (audioNode["attrs"] as Record<string, string>)["r:link"];
     audioFile = resObj[audioRid]["target"];
     audioFileExt = extractFileExtension(audioFile).toLowerCase();
     if (audioFileExt === "mp3" || audioFileExt === "wav" || audioFileExt === "ogg") {
       uInt8ArrayAudio = archive.readAsArrayBuffer(audioFile);
       blobAudio = new Blob([uInt8ArrayAudio]);
       audioBlob = URL.createObjectURL(blobAudio);
-      const cx = parseInt(xfrmNode["a:ext"]["attrs"]["cx"]) * 20;
-      const cy = xfrmNode["a:ext"]["attrs"]["cy"];
-      const x = parseInt(xfrmNode["a:off"]["attrs"]["x"]) / 2.5;
-      const y = xfrmNode["a:off"]["attrs"]["y"];
+      const xfrmAttrs = xfrmNode as Record<string, unknown>;
+      const extAttrs = (xfrmAttrs["a:ext"] as Record<string, unknown>)["attrs"] as Record<
+        string,
+        string
+      >;
+      const offAttrs = (xfrmAttrs["a:off"] as Record<string, unknown>)["attrs"] as Record<
+        string,
+        string
+      >;
+      const cx = parseInt(extAttrs["cx"]) * 20;
+      const cy = extAttrs["cy"];
+      const x = parseInt(offAttrs["x"]) / 2.5;
+      const y = offAttrs["y"];
       audioObjc = {
         "a:ext": {
           attrs: {
@@ -148,8 +201,8 @@ export function processPicNode(
   rtrnData =
     "<div class='block content' style='" +
     (mediaProcess && audioPlayerFlag
-      ? getPosition(audioObjc, node, undefined, undefined, undefined, slideFactor)
-      : getPosition(xfrmNode, node, undefined, undefined, undefined, slideFactor)) +
+      ? getPosition(audioObjc, nodeRecord, undefined, undefined, undefined, slideFactor)
+      : getPosition(xfrmNode, nodeRecord, undefined, undefined, undefined, slideFactor)) +
     (mediaProcess && audioPlayerFlag
       ? getSize(audioObjc, undefined, undefined, slideFactor)
       : getSize(xfrmNode, undefined, undefined, slideFactor)) +
