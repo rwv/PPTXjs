@@ -17,39 +17,30 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns Object with nodeLaout and nodeMaster properties
  */
 export function getLayoutAndMasterNode(
-  node: any,
+  node: Record<string, unknown>,
   idx: number | string | undefined,
   type: string | undefined,
-  warpObj: any
-): { nodeLaout: any; nodeMaster: any } {
-  let pPrNodeLaout, pPrNodeMaster;
-  const pPrNode = node["a:pPr"];
+  warpObj: Record<string, unknown>
+): { nodeLaout: unknown; nodeMaster: unknown } {
+  let pPrNodeLaout: unknown;
+  let pPrNodeMaster: unknown;
+  const pPrNode = node["a:pPr"] as Record<string, unknown> | undefined;
   //lvl
   let lvl = 1;
-  const lvlNode = getTextByPathList(pPrNode, ["attrs", "lvl"]);
+  const lvlNode = getTextByPathList<string>(pPrNode, ["attrs", "lvl"]);
   if (lvlNode !== undefined) {
     lvl = parseInt(lvlNode) + 1;
   }
   if (idx !== undefined) {
     //slidelayout
-    pPrNodeLaout = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
-      "p:txBody",
-      "a:lstStyle",
-      "a:lvl" + lvl + "pPr",
-    ]);
+    const slideLayoutTables = warpObj["slideLayoutTables"] as Record<string, unknown>;
+    const idxTable = slideLayoutTables["idxTable"] as Record<string | number, unknown>;
+    const idxNode = idxTable[idx];
+    pPrNodeLaout = getTextByPathList(idxNode, ["p:txBody", "a:lstStyle", "a:lvl" + lvl + "pPr"]);
     if (pPrNodeLaout === undefined) {
-      pPrNodeLaout = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
-        "p:txBody",
-        "a:p",
-        "a:pPr",
-      ]);
+      pPrNodeLaout = getTextByPathList(idxNode, ["p:txBody", "a:p", "a:pPr"]);
       if (pPrNodeLaout === undefined) {
-        pPrNodeLaout = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
-          "p:txBody",
-          "a:p",
-          lvl - 1,
-          "a:pPr",
-        ]);
+        pPrNodeLaout = getTextByPathList(idxNode, ["p:txBody", "a:p", lvl - 1, "a:pPr"]);
       }
     }
   }
