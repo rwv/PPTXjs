@@ -15,7 +15,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering plate and cylinder shapes
  */
 export interface PlateCylinderContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
