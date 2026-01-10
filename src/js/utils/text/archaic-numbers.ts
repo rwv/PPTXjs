@@ -10,33 +10,33 @@ type ArchaicRule = [number | RegExp, string];
  * This function processes an array of conversion rules to format numbers
  * into archaic numeral systems
  *
- * @param arr - Array of conversion rules [value, character] or [regex, replacement]
+ * @param rules - Array of conversion rules [value, character] or [regex, replacement]
  * @returns Object with format method to convert numbers
  */
-export function archaicNumbers(arr: ArchaicRule[]) {
+export function archaicNumbers(rules: ArchaicRule[]) {
   return {
-    format: function (n: number): string {
-      let ret = "";
+    format: function (value: number): string {
+      let formatted = "";
 
       // Process each rule in order
-      for (let i = 0; i < arr.length; i++) {
-        const rule = arr[i];
+      for (let i = 0; i < rules.length; i++) {
+        const rule = rules[i];
         const num = rule[0];
         const char = rule[1];
 
         if (typeof num === "number" && num > 0) {
           // For numeric rules, repeatedly subtract and append character
-          while (n >= num) {
-            ret += char;
-            n -= num;
+          while (value >= num) {
+            formatted += char;
+            value -= num;
           }
         } else if (num instanceof RegExp) {
           // For regex rules, perform replacement
-          ret = ret.replace(num, char);
+          formatted = formatted.replace(num, char);
         }
       }
 
-      return ret;
+      return formatted;
     },
   };
 }
