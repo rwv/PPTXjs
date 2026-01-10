@@ -2,7 +2,7 @@
  * Context for rendering ribbon shapes
  */
 export interface RibbonContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
