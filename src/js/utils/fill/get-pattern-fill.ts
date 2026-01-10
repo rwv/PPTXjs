@@ -10,7 +10,7 @@ import { getLinerGrandient } from "./get-liner-grandient";
  * Pattern types include: grids, diagonals, checks, bricks, waves, dots, etc.
  * See OOXML spec or getLinerGrandient for full list of pattern presets.
  *
- * @param node - Pattern fill node from PPTX (a:pattFill)
+ * @param patternFillNode - Pattern fill node from PPTX (a:pattFill)
  * @param warpObj - Container object with theme and color information
  * @returns Array with CSS gradient string, size, and position
  */
@@ -23,12 +23,12 @@ type PatternFillNode = {
   [key: string]: unknown;
 };
 
-export function getPatternFill(node: PatternFillNode, warpObj: SolidFillWarpObj) {
-  const prst = node["attrs"]?.prst ?? "";
-  const bgClr = node["a:bgClr"] as SolidFillNode;
-  const fgClr = node["a:fgClr"] as SolidFillNode;
-  const fgColor = getSolidFill(fgClr, undefined, undefined, warpObj) || "";
-  const bgColor = getSolidFill(bgClr, undefined, undefined, warpObj) || "";
-  const linear_gradient = getLinerGrandient(prst, bgColor, fgColor);
-  return linear_gradient;
+export function getPatternFill(patternFillNode: PatternFillNode, warpObj: SolidFillWarpObj) {
+  const patternPreset = patternFillNode["attrs"]?.prst ?? "";
+  const backgroundColorNode = patternFillNode["a:bgClr"] as SolidFillNode;
+  const foregroundColorNode = patternFillNode["a:fgClr"] as SolidFillNode;
+  const foregroundColor = getSolidFill(foregroundColorNode, undefined, undefined, warpObj) || "";
+  const backgroundColor = getSolidFill(backgroundColorNode, undefined, undefined, warpObj) || "";
+  const linearGradient = getLinerGrandient(patternPreset, backgroundColor, foregroundColor);
+  return linearGradient;
 }
