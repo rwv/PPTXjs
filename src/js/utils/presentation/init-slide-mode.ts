@@ -62,56 +62,57 @@ export async function initSlideMode(divId: string, settings: SlideModeSettings):
     await new Promise<void>((resolve) => {
       setTimeout(() => resolve(), 1500);
     });
-    const slideConf = settings.slideModeConfig;
-    const showPlayPauseBtn = settings.showPlayPauseBtn ?? slideConf.showPlayPauseBtn ?? true;
-    const showFullscreenBtn = settings.showFullscreenBtn ?? slideConf.showFullscreenBtn ?? true;
+    const slideModeConfig = settings.slideModeConfig;
+    const showPlayPauseBtn = settings.showPlayPauseBtn ?? slideModeConfig.showPlayPauseBtn ?? true;
+    const showFullscreenBtn =
+      settings.showFullscreenBtn ?? slideModeConfig.showFullscreenBtn ?? true;
     removeLoadingMessage();
     initDivs2Slides(container, {
-      first: slideConf.first,
-      nav: slideConf.nav,
+      first: slideModeConfig.first,
+      nav: slideModeConfig.nav,
       showPlayPauseBtn: showPlayPauseBtn,
       showFullscreenBtn: showFullscreenBtn,
-      navTxtColor: slideConf.navTxtColor,
-      keyBoardShortCut: slideConf.keyBoardShortCut,
-      showSlideNum: slideConf.showSlideNum,
-      showTotalSlideNum: slideConf.showTotalSlideNum,
-      autoSlide: slideConf.autoSlide,
-      randomAutoSlide: slideConf.randomAutoSlide,
-      loop: slideConf.loop,
-      background: slideConf.background,
-      transition: slideConf.transition,
-      transitionTime: slideConf.transitionTime,
+      navTxtColor: slideModeConfig.navTxtColor,
+      keyBoardShortCut: slideModeConfig.keyBoardShortCut,
+      showSlideNum: slideModeConfig.showSlideNum,
+      showTotalSlideNum: slideModeConfig.showTotalSlideNum,
+      autoSlide: slideModeConfig.autoSlide,
+      randomAutoSlide: slideModeConfig.randomAutoSlide,
+      loop: slideModeConfig.loop,
+      background: slideModeConfig.background,
+      transition: slideModeConfig.transition,
+      transitionTime: slideModeConfig.transitionTime,
     });
 
-    const sScale = settings.slidesScale;
-    let trnsfrmScl = "";
-    let scaleVal = 1;
-    if (sScale !== "") {
-      const numsScale = parseInt(sScale);
-      scaleVal = numsScale / 100;
-      trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
+    const slidesScale = settings.slidesScale;
+    let transformScaleStyle = "";
+    let scaleValue = 1;
+    if (slidesScale !== "") {
+      const parsedScale = parseInt(slidesScale);
+      scaleValue = parsedScale / 100;
+      transformScaleStyle = "transform:scale(" + scaleValue + "); transform-origin:top";
     }
 
-    const numOfSlides = 1;
-    const sScaleVal = scaleVal;
+    const slideCount = 1;
+    const slideScaleValue = scaleValue;
     //console.log(slidesHeight);
     const wrapper = document.getElementById("all_slides_warpper");
     if (wrapper) {
       wrapper.setAttribute(
         "style",
-        trnsfrmScl + ";height: " + numOfSlides * slidesHeight * sScaleVal + "px"
+        transformScaleStyle + ";height: " + slideCount * slidesHeight * slideScaleValue + "px"
       );
     }
   } else if (settings.slideType === "revealjs") {
     removeLoadingMessage();
-    let revealjsPath = "";
+    let revealJsPath = "";
     if (settings.revealjsPath !== "") {
-      revealjsPath = settings.revealjsPath;
+      revealJsPath = settings.revealjsPath;
     } else {
-      revealjsPath = "./revealjs/reveal.js";
+      revealJsPath = "./revealjs/reveal.js";
     }
     try {
-      await loadScript(revealjsPath);
+      await loadScript(revealJsPath);
       // $("section").removeClass("slide");
       const reveal = (window as { Reveal?: { initialize: (config?: unknown) => void } }).Reveal;
       if (!reveal) {
