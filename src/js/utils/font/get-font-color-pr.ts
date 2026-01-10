@@ -1,13 +1,13 @@
 /**
  * Get font color and text effects properties
  *
- * @param node - The text run node
- * @param pNode - Parent paragraph node
- * @param lstStyle - List style node
- * @param pFontStyle - Paragraph font style
- * @param lvl - List level
- * @param idx - Index
- * @param type - Element type
+ * @param textRunNode - The text run node
+ * @param paragraphNode - Parent paragraph node
+ * @param listStyleNode - List style node
+ * @param paragraphFontStyle - Paragraph font style
+ * @param level - List level
+ * @param layoutIndex - Index
+ * @param shapeType - Element type
  * @param warpObj - The warp object containing theme and other resources
  * @param slideFactor - Conversion factor from EMU to pixels
  * @returns Array [color, text effects, color type, highlight color]
@@ -22,91 +22,94 @@ import { getLayoutAndMasterNode } from "../layout/get-layout-and-master-node";
 import { getBorder } from "../border/get-border";
 
 export function getFontColorPr(
-  node: Record<string, unknown>,
-  pNode: Record<string, unknown>,
-  lstStyle: Record<string, unknown> | undefined,
-  pFontStyle: Record<string, unknown> | undefined,
-  lvl: number | string,
-  idx: number | string | undefined,
-  type: string | undefined,
+  textRunNode: Record<string, unknown>,
+  paragraphNode: Record<string, unknown>,
+  listStyleNode: Record<string, unknown> | undefined,
+  paragraphFontStyle: Record<string, unknown> | undefined,
+  level: number | string,
+  layoutIndex: number | string | undefined,
+  shapeType: string | undefined,
   warpObj: Record<string, unknown>,
   slideFactor: number
 ): [any, any, string, string] {
-  const rPrNode = getTextByPathList(node, ["a:rPr"]);
-  let filTyp,
+  const runPropsNode = getTextByPathList(textRunNode, ["a:rPr"]);
+  let fillType,
     color,
-    textBordr,
+    textBorder,
     colorType = "",
     highlightColor = "";
 
-  if (rPrNode !== undefined) {
-    filTyp = getFillType(rPrNode);
-    if (filTyp === "SOLID_FILL") {
-      const solidFillNode = rPrNode["a:solidFill"];
+  if (runPropsNode !== undefined) {
+    fillType = getFillType(runPropsNode);
+    if (fillType === "SOLID_FILL") {
+      const solidFillNode = runPropsNode["a:solidFill"];
       color = getSolidFill(solidFillNode, undefined, undefined, warpObj);
-      const highlightNode = rPrNode["a:highlight"];
+      const highlightNode = runPropsNode["a:highlight"];
       if (highlightNode !== undefined) {
         highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
       }
       colorType = "solid";
-    } else if (filTyp === "PATTERN_FILL") {
-      const pattFill = rPrNode["a:pattFill"];
-      color = getPatternFill(pattFill, warpObj);
+    } else if (fillType === "PATTERN_FILL") {
+      const patternFillNode = runPropsNode["a:pattFill"];
+      color = getPatternFill(patternFillNode, warpObj);
       colorType = "pattern";
-    } else if (filTyp === "PIC_FILL") {
-      color = getBgPicFill(rPrNode, "slideBg", warpObj, undefined);
+    } else if (fillType === "PIC_FILL") {
+      color = getBgPicFill(runPropsNode, "slideBg", warpObj, undefined);
       colorType = "pic";
-    } else if (filTyp === "GRADIENT_FILL") {
-      const shpFill = rPrNode["a:gradFill"];
-      color = getGradientFill(shpFill, warpObj);
+    } else if (fillType === "GRADIENT_FILL") {
+      const gradientFillNode = runPropsNode["a:gradFill"];
+      color = getGradientFill(gradientFillNode, warpObj);
       colorType = "gradient";
     }
   }
 
   if (
     color === undefined &&
-    getTextByPathList(lstStyle, ["a:lvl" + lvl + "pPr", "a:defRPr"]) !== undefined
+    getTextByPathList(listStyleNode, ["a:lvl" + level + "pPr", "a:defRPr"]) !== undefined
   ) {
-    // lstStyle
-    const lstStyledefRPr = getTextByPathList(lstStyle, ["a:lvl" + lvl + "pPr", "a:defRPr"]);
-    filTyp = getFillType(lstStyledefRPr);
-    if (filTyp === "SOLID_FILL") {
-      const solidFillNode = lstStyledefRPr["a:solidFill"];
+    // listStyleNode
+    const listStyleDefaultRunProps = getTextByPathList(listStyleNode, [
+      "a:lvl" + level + "pPr",
+      "a:defRPr",
+    ]);
+    fillType = getFillType(listStyleDefaultRunProps);
+    if (fillType === "SOLID_FILL") {
+      const solidFillNode = listStyleDefaultRunProps["a:solidFill"];
       color = getSolidFill(solidFillNode, undefined, undefined, warpObj);
-      const highlightNode = lstStyledefRPr["a:highlight"];
+      const highlightNode = listStyleDefaultRunProps["a:highlight"];
       if (highlightNode !== undefined) {
         highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
       }
       colorType = "solid";
-    } else if (filTyp === "PATTERN_FILL") {
-      const pattFill = lstStyledefRPr["a:pattFill"];
-      color = getPatternFill(pattFill, warpObj);
+    } else if (fillType === "PATTERN_FILL") {
+      const patternFillNode = listStyleDefaultRunProps["a:pattFill"];
+      color = getPatternFill(patternFillNode, warpObj);
       colorType = "pattern";
-    } else if (filTyp === "PIC_FILL") {
-      color = getBgPicFill(lstStyledefRPr, "slideBg", warpObj, undefined);
+    } else if (fillType === "PIC_FILL") {
+      color = getBgPicFill(listStyleDefaultRunProps, "slideBg", warpObj, undefined);
       colorType = "pic";
-    } else if (filTyp === "GRADIENT_FILL") {
-      const shpFill = lstStyledefRPr["a:gradFill"];
-      color = getGradientFill(shpFill, warpObj);
+    } else if (fillType === "GRADIENT_FILL") {
+      const gradientFillNode = listStyleDefaultRunProps["a:gradFill"];
+      color = getGradientFill(gradientFillNode, warpObj);
       colorType = "gradient";
     }
   }
 
   if (color === undefined) {
-    const sPstyle = getTextByPathList(pNode, ["p:style", "a:fontRef"]);
-    if (sPstyle !== undefined) {
-      color = getSolidFill(sPstyle, undefined, undefined, warpObj);
+    const shapeStyleNode = getTextByPathList(paragraphNode, ["p:style", "a:fontRef"]);
+    if (shapeStyleNode !== undefined) {
+      color = getSolidFill(shapeStyleNode, undefined, undefined, warpObj);
       if (color !== undefined) {
         colorType = "solid";
       }
-      const highlightNode = sPstyle["a:highlight"];
+      const highlightNode = shapeStyleNode["a:highlight"];
       if (highlightNode !== undefined) {
         highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
       }
     }
     if (color === undefined) {
-      if (pFontStyle !== undefined) {
-        color = getSolidFill(pFontStyle, undefined, undefined, warpObj);
+      if (paragraphFontStyle !== undefined) {
+        color = getSolidFill(paragraphFontStyle, undefined, undefined, warpObj);
         if (color !== undefined) {
           colorType = "solid";
         }
@@ -115,15 +118,26 @@ export function getFontColorPr(
   }
 
   if (color === undefined) {
-    const layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
-    const pPrNodeLaout = layoutMasterNode.nodeLaout;
-    const pPrNodeMaster = layoutMasterNode.nodeMaster;
+    const layoutMasterNodes = getLayoutAndMasterNode(
+      paragraphNode,
+      layoutIndex,
+      shapeType,
+      warpObj
+    );
+    const layoutParagraphPropsNode = layoutMasterNodes.nodeLaout;
+    const masterParagraphPropsNode = layoutMasterNodes.nodeMaster;
 
-    if (pPrNodeLaout !== undefined) {
-      const defRpRLaout = getTextByPathList(pPrNodeLaout, ["a:defRPr", "a:solidFill"]);
-      if (defRpRLaout !== undefined) {
-        color = getSolidFill(defRpRLaout, undefined, undefined, warpObj);
-        const highlightNode = getTextByPathList(pPrNodeLaout, ["a:defRPr", "a:highlight"]);
+    if (layoutParagraphPropsNode !== undefined) {
+      const layoutDefaultRunProps = getTextByPathList(layoutParagraphPropsNode, [
+        "a:defRPr",
+        "a:solidFill",
+      ]);
+      if (layoutDefaultRunProps !== undefined) {
+        color = getSolidFill(layoutDefaultRunProps, undefined, undefined, warpObj);
+        const highlightNode = getTextByPathList(layoutParagraphPropsNode, [
+          "a:defRPr",
+          "a:highlight",
+        ]);
         if (highlightNode !== undefined) {
           highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
         }
@@ -131,11 +145,17 @@ export function getFontColorPr(
       }
     }
     if (color === undefined) {
-      if (pPrNodeMaster !== undefined) {
-        const defRprMaster = getTextByPathList(pPrNodeMaster, ["a:defRPr", "a:solidFill"]);
-        if (defRprMaster !== undefined) {
-          color = getSolidFill(defRprMaster, undefined, undefined, warpObj);
-          const highlightNode = getTextByPathList(pPrNodeMaster, ["a:defRPr", "a:highlight"]);
+      if (masterParagraphPropsNode !== undefined) {
+        const masterDefaultRunProps = getTextByPathList(masterParagraphPropsNode, [
+          "a:defRPr",
+          "a:solidFill",
+        ]);
+        if (masterDefaultRunProps !== undefined) {
+          color = getSolidFill(masterDefaultRunProps, undefined, undefined, warpObj);
+          const highlightNode = getTextByPathList(masterParagraphPropsNode, [
+            "a:defRPr",
+            "a:highlight",
+          ]);
           if (highlightNode !== undefined) {
             highlightColor = getSolidFill(highlightNode, undefined, undefined, warpObj) || "";
           }
@@ -145,141 +165,144 @@ export function getFontColorPr(
     }
   }
 
-  const txtEffects: string[] = [];
-  const txtEffObj: Record<string, string> = {};
+  const textEffects: string[] = [];
+  const textEffectsConfig: Record<string, string> = {};
 
-  // textBordr
-  const txtBrdrNode = getTextByPathList(node, ["a:rPr", "a:ln"]);
-  textBordr = "";
-  if (txtBrdrNode !== undefined && txtBrdrNode["a:noFill"] === undefined) {
-    const txBrd = getBorder(node, pNode, false, "text", warpObj);
-    if (typeof txBrd === "string") {
-      const txBrdAry = txBrd.split(" ");
-      const brdSize = parseInt(txBrdAry[0].substring(0, txBrdAry[0].indexOf("px"))) + "px";
-      const brdClr = txBrdAry[2];
+  // textBorder
+  const textBorderNode = getTextByPathList(textRunNode, ["a:rPr", "a:ln"]);
+  textBorder = "";
+  if (textBorderNode !== undefined && textBorderNode["a:noFill"] === undefined) {
+    const textBorderStyle = getBorder(textRunNode, paragraphNode, false, "text", warpObj);
+    if (typeof textBorderStyle === "string") {
+      const textBorderParts = textBorderStyle.split(" ");
+      const borderSize =
+        parseInt(textBorderParts[0].substring(0, textBorderParts[0].indexOf("px"))) + "px";
+      const borderColor = textBorderParts[2];
       if (colorType === "solid") {
-        textBordr =
+        textBorder =
           "-" +
-          brdSize +
+          borderSize +
           " 0 " +
-          brdClr +
+          borderColor +
           ", 0 " +
-          brdSize +
+          borderSize +
           " " +
-          brdClr +
+          borderColor +
           ", " +
-          brdSize +
+          borderSize +
           " 0 " +
-          brdClr +
+          borderColor +
           ", 0 -" +
-          brdSize +
+          borderSize +
           " " +
-          brdClr;
-        txtEffects.push(textBordr);
+          borderColor;
+        textEffects.push(textBorder);
       } else {
-        txtEffObj.border = brdSize + " " + brdClr;
+        textEffectsConfig.border = borderSize + " " + borderColor;
       }
     }
   }
 
   // glow
-  const txtGlowNode = getTextByPathList(node, ["a:rPr", "a:effectLst", "a:glow"]);
-  let oGlowStr = "";
-  if (txtGlowNode !== undefined) {
-    const glowClr = getSolidFill(txtGlowNode, undefined, undefined, warpObj);
-    const rad = txtGlowNode["attrs"]["rad"] ? txtGlowNode["attrs"]["rad"] * slideFactor : 0;
-    oGlowStr =
+  const textGlowNode = getTextByPathList(textRunNode, ["a:rPr", "a:effectLst", "a:glow"]);
+  let glowShadow = "";
+  if (textGlowNode !== undefined) {
+    const glowColor = getSolidFill(textGlowNode, undefined, undefined, warpObj);
+    const glowRadius = textGlowNode["attrs"]["rad"]
+      ? textGlowNode["attrs"]["rad"] * slideFactor
+      : 0;
+    glowShadow =
       "0 0 " +
-      rad +
+      glowRadius +
       "px #" +
-      glowClr +
+      glowColor +
       ", 0 0 " +
-      rad +
+      glowRadius +
       "px #" +
-      glowClr +
+      glowColor +
       ", 0 0 " +
-      rad +
+      glowRadius +
       "px #" +
-      glowClr +
+      glowColor +
       ", 0 0 " +
-      rad +
+      glowRadius +
       "px #" +
-      glowClr +
+      glowColor +
       ", 0 0 " +
-      rad +
+      glowRadius +
       "px #" +
-      glowClr +
+      glowColor +
       ", 0 0 " +
-      rad +
+      glowRadius +
       "px #" +
-      glowClr +
+      glowColor +
       ", 0 0 " +
-      rad +
+      glowRadius +
       "px #" +
-      glowClr;
+      glowColor;
     if (colorType === "solid") {
-      txtEffects.push(oGlowStr);
+      textEffects.push(glowShadow);
     } else {
-      txtEffects.push(
+      textEffects.push(
         "drop-shadow(0 0 " +
-          rad / 3 +
+          glowRadius / 3 +
           "px #" +
-          glowClr +
+          glowColor +
           ") " +
           "drop-shadow(0 0 " +
-          (rad * 2) / 3 +
+          (glowRadius * 2) / 3 +
           "px #" +
-          glowClr +
+          glowColor +
           ") " +
           "drop-shadow(0 0 " +
-          rad +
+          glowRadius +
           "px #" +
-          glowClr +
+          glowColor +
           ")"
       );
     }
   }
 
   // shadow
-  const txtShadow = getTextByPathList(node, ["a:rPr", "a:effectLst", "a:outerShdw"]);
-  let oShadowStr = "";
-  if (txtShadow !== undefined) {
-    const shadowClr = getSolidFill(txtShadow, undefined, undefined, warpObj);
-    const outerShdwAttrs = txtShadow["attrs"];
-    const dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
-    const dist = parseInt(outerShdwAttrs["dist"]) * slideFactor;
-    const blurRad = outerShdwAttrs["blurRad"]
-      ? parseInt(outerShdwAttrs["blurRad"]) * slideFactor + "px"
+  const textShadowNode = getTextByPathList(textRunNode, ["a:rPr", "a:effectLst", "a:outerShdw"]);
+  let shadowStyle = "";
+  if (textShadowNode !== undefined) {
+    const shadowColor = getSolidFill(textShadowNode, undefined, undefined, warpObj);
+    const outerShadowAttrs = textShadowNode["attrs"];
+    const direction = outerShadowAttrs["dir"] ? parseInt(outerShadowAttrs["dir"]) / 60000 : 0;
+    const distance = parseInt(outerShadowAttrs["dist"]) * slideFactor;
+    const blurRadius = outerShadowAttrs["blurRad"]
+      ? parseInt(outerShadowAttrs["blurRad"]) * slideFactor + "px"
       : "";
-    const vx = dist * Math.sin((dir * Math.PI) / 180);
-    const hx = dist * Math.cos((dir * Math.PI) / 180);
+    const offsetY = distance * Math.sin((direction * Math.PI) / 180);
+    const offsetX = distance * Math.cos((direction * Math.PI) / 180);
 
-    if (!isNaN(vx) && !isNaN(hx)) {
-      oShadowStr = hx + "px " + vx + "px " + blurRad + " #" + shadowClr;
+    if (!isNaN(offsetY) && !isNaN(offsetX)) {
+      shadowStyle = offsetX + "px " + offsetY + "px " + blurRadius + " #" + shadowColor;
       if (colorType === "solid") {
-        txtEffects.push(oShadowStr);
+        textEffects.push(shadowStyle);
       } else {
-        txtEffects.push(
-          "drop-shadow(" + hx + "px " + vx + "px " + blurRad + " #" + shadowClr + ")"
+        textEffects.push(
+          "drop-shadow(" + offsetX + "px " + offsetY + "px " + blurRadius + " #" + shadowColor + ")"
         );
       }
     }
   }
 
-  let text_effcts = "";
-  let txt_effects: string | Record<string, string>;
+  let effectsValue = "";
+  let effectsOutput: string | Record<string, string>;
   if (colorType === "solid") {
-    if (txtEffects.length > 0) {
-      text_effcts = txtEffects.join(",");
+    if (textEffects.length > 0) {
+      effectsValue = textEffects.join(",");
     }
-    txt_effects = text_effcts + ";";
+    effectsOutput = effectsValue + ";";
   } else {
-    if (txtEffects.length > 0) {
-      text_effcts = txtEffects.join(" ");
+    if (textEffects.length > 0) {
+      effectsValue = textEffects.join(" ");
     }
-    txtEffObj.effcts = text_effcts;
-    txt_effects = txtEffObj;
+    textEffectsConfig.effcts = effectsValue;
+    effectsOutput = textEffectsConfig;
   }
 
-  return [color, txt_effects, colorType, highlightColor];
+  return [color, effectsOutput, colorType, highlightColor];
 }
