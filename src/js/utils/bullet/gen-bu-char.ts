@@ -4,10 +4,11 @@ import { getLayoutAndMasterNode } from "../layout";
 import { getSolidFill } from "../color";
 import { getHtmlBullet as _getHtmlBullet } from "./get-html-bullet";
 import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handlers";
+import type { PptxArchive } from "../../archive/pptx-archive";
 
 type BulletWarpObj = {
   slideResObj: Record<string, { target: string }>;
-  archive: { readAsArrayBuffer: (path: string) => Promise<ArrayBuffer> };
+  archive: PptxArchive;
   [key: string]: unknown;
 };
 

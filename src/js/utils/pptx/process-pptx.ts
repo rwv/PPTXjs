@@ -48,10 +48,9 @@ export async function processPPTX(
   const post_ary = [];
   const dateBefore = new Date();
 
-  if (await archive.hasFile("docProps/thumbnail.jpeg")) {
-    const pptxThumbImg = base64ArrayBuffer(
-      await archive.readAsArrayBuffer("docProps/thumbnail.jpeg")
-    );
+  const thumbFile = await archive.file("docProps/thumbnail.jpeg");
+  if (thumbFile) {
+    const pptxThumbImg = base64ArrayBuffer(await thumbFile.arrayBuffer());
     post_ary.push({
       type: "pptx-thumb",
       data: pptxThumbImg,

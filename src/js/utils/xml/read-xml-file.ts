@@ -17,11 +17,12 @@ export async function readXmlFile(
   appVersion?: number
 ): Promise<any | null> {
   try {
-    if (!(await archive.hasFile(filename))) {
+    const file = await archive.file(filename);
+    if (!file) {
       return null;
     }
 
-    let fileContent = await archive.readAsText(filename);
+    let fileContent = await file.text();
 
     if (isSlideContent && appVersion !== undefined && appVersion <= 12) {
       // Office 2007 and earlier

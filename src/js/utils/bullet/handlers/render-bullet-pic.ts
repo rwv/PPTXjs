@@ -11,13 +11,12 @@
 
 import { getTextByPathList } from "../../object";
 import { getMimeType, base64ArrayBuffer } from "../../media";
+import type { PptxArchive } from "../../../archive/pptx-archive";
 
 type BulletPicNode = Record<string, unknown>;
 type BulletWarpObj = {
   slideResObj: Record<string, { target: string }>;
-  archive: {
-    readAsArrayBuffer: (path: string) => Promise<ArrayBuffer>;
-  };
+  archive: PptxArchive;
 };
 
 export async function renderBulletPic(
@@ -33,15 +32,20 @@ export async function renderBulletPic(
 
   if (buPicId !== undefined) {
     const imgPath = warpObj["slideResObj"][buPicId]["target"];
-    const imgArrayBuffer = await warpObj["archive"].readAsArrayBuffer(imgPath);
-    const imgExt = imgPath.split(".").pop() ?? "";
-    const imgMimeType = getMimeType(imgExt);
-    buImg =
-      "<img src='data:" +
-      imgMimeType +
-      ";base64," +
-      base64ArrayBuffer(imgArrayBuffer) +
-      "' style='width: 100%;'/>";
+    const imgFile = await warpObj.archive.file(imgPath);
+    if (!imgFile) {
+      buImg = "&#8227;";
+    } else {
+      const imgArrayBuffer = await imgFile.arrayBuffer();
+      const imgExt = imgPath.split(".").pop() ?? "";
+      const imgMimeType = getMimeType(imgExt);
+      buImg =
+        "<img src='data:" +
+        imgMimeType +
+        ";base64," +
+        base64ArrayBuffer(imgArrayBuffer) +
+        "' style='width: 100%;'/>";
+    }
   }
 
   if (buPicId === undefined) {

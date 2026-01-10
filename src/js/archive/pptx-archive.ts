@@ -1,29 +1,34 @@
+/* global ReadableStream */
 /**
  * Abstract interface for PPTX archive file access
  * Isolates zip library implementation details to allow future migration
  * between archive backends (zip.js, JSZip, or other libraries)
  */
-export interface PptxArchive {
-  /**
-   * Check if a file exists in the archive
-   * @param path - File path within the PPTX archive (e.g., "ppt/slides/slide1.xml")
-   * @returns true if file exists, false otherwise
-   */
-  hasFile(path: string): Promise<boolean>;
-
+export interface PPTXArchiveFile {
   /**
    * Read file as ArrayBuffer
-   * @param path - File path within the PPTX archive
    * @returns ArrayBuffer of file contents
-   * @throws Error if file not found
    */
-  readAsArrayBuffer(path: string): Promise<ArrayBuffer>;
+  arrayBuffer(): Promise<ArrayBuffer>;
 
   /**
    * Read file as text string
-   * @param path - File path within the PPTX archive
    * @returns String content of file
-   * @throws Error if file not found
    */
-  readAsText(path: string): Promise<string>;
+  text(): Promise<string>;
+
+  /**
+   * Stream file contents as bytes
+   * @returns ReadableStream of Uint8Array chunks
+   */
+  stream(): ReadableStream<Uint8Array>;
+}
+
+export interface PptxArchive {
+  /**
+   * Get a file accessor from the archive
+   * @param path - File path within the PPTX archive (e.g., "ppt/slides/slide1.xml")
+   * @returns PPTXArchiveFile if found, otherwise undefined
+   */
+  file(path: string): Promise<PPTXArchiveFile | undefined>;
 }

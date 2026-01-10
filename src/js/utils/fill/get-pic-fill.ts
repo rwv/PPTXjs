@@ -2,6 +2,7 @@ import { getTextByPathList, setTextByPathList } from "../object";
 import { escapeHtml } from "../string/escape-html";
 import { getMimeType } from "../media/get-mime-type";
 import { base64ArrayBuffer } from "../media/base64-array-buffer";
+import type { PptxArchive } from "../../archive/pptx-archive";
 
 /**
  * Extracts picture fill from PPTX and returns base64 data URL
@@ -22,7 +23,7 @@ type PicWarpObj = {
   masterResObj?: ResourceMap;
   themeResObj?: ResourceMap;
   diagramResObj?: ResourceMap;
-  archive: { readAsArrayBuffer: (path: string) => Promise<ArrayBuffer> };
+  archive: PptxArchive;
   [key: string]: unknown;
 };
 
@@ -59,7 +60,11 @@ export async function getPicFill(
     if (imgExt === "xml") {
       return undefined;
     }
-    const imgArrayBuffer = await warpObj["archive"].readAsArrayBuffer(imgPath);
+    const imgFile = await warpObj.archive.file(imgPath);
+    if (!imgFile) {
+      throw new Error(`File not found in archive: ${imgPath}`);
+    }
+    const imgArrayBuffer = await imgFile.arrayBuffer();
     const imgMimeType = getMimeType(imgExt);
     img = "data:" + imgMimeType + ";base64," + base64ArrayBuffer(imgArrayBuffer);
     setTextByPathList(warpObj, ["loaded-images", imgPath], img);

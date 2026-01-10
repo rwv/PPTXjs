@@ -7,6 +7,7 @@ import { isVideoLink } from "./is-video-link";
 import { getMimeType } from "./get-mime-type";
 import { base64ArrayBuffer } from "./base64-array-buffer";
 import { escapeHtml } from "../string";
+import type { PptxArchive } from "../../archive/pptx-archive";
 
 /**
  * Process picture/video/audio node and generate HTML
@@ -33,7 +34,7 @@ export async function processPicNode(
     masterResObj?: ResourceMap;
     layoutResObj?: ResourceMap;
     slideResObj: ResourceMap;
-    archive: { readAsArrayBuffer: (path: string) => Promise<ArrayBuffer> };
+    archive: PptxArchive;
     slideLayoutTables?: Record<string, unknown>;
   };
   const nodeRecord = node as Record<string, unknown>;
@@ -59,7 +60,11 @@ export async function processPicNode(
   //console.log("processPicNode imgName:", imgName);
   const imgFileExt = extractFileExtension(imgName).toLowerCase();
   const archive = warp.archive;
-  const imgArrayBuffer = await archive.readAsArrayBuffer(imgName);
+  const imgFile = await archive.file(imgName);
+  if (!imgFile) {
+    throw new Error(`File not found in archive: ${imgName}`);
+  }
+  const imgArrayBuffer = await imgFile.arrayBuffer();
   let mimeType = "";
   const spPrNode = nodeRecord["p:spPr"] as Record<string, unknown>;
   let xfrmNode = spPrNode["a:xfrm"] as Record<string, unknown> | undefined;
@@ -117,25 +122,31 @@ export async function processPicNode(
   // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
   if ((vdoNode !== undefined) & mediaProcess) {
     vdoRid = (vdoNode["attrs"] as Record<string, string>)["r:link"];
-    vdoFile = resObj[vdoRid]["target"];
-    const checkIfLink = isVideoLink(vdoFile);
-    if (checkIfLink) {
-      vdoFile = escapeHtml(vdoFile);
-      //vdoBlob = vdoFile;
-      isVdeoLink = true;
-      mediaSupportFlag = true;
-      mediaPicFlag = true;
-    } else {
-      vdoFileExt = extractFileExtension(vdoFile).toLowerCase();
-      if (vdoFileExt === "mp4" || vdoFileExt === "webm" || vdoFileExt === "ogg") {
-        uInt8Array = await archive.readAsArrayBuffer(vdoFile);
-        vdoMimeType = getMimeType(vdoFileExt);
-        blob = new Blob([uInt8Array], {
-          type: vdoMimeType,
-        });
-        vdoBlob = URL.createObjectURL(blob);
+    vdoFile = resObj[vdoRid]?.target;
+    if (vdoFile) {
+      const checkIfLink = isVideoLink(vdoFile);
+      if (checkIfLink) {
+        vdoFile = escapeHtml(vdoFile);
+        //vdoBlob = vdoFile;
+        isVdeoLink = true;
         mediaSupportFlag = true;
         mediaPicFlag = true;
+      } else {
+        vdoFileExt = extractFileExtension(vdoFile).toLowerCase();
+        if (vdoFileExt === "mp4" || vdoFileExt === "webm" || vdoFileExt === "ogg") {
+          const vdoArchiveFile = await archive.file(vdoFile);
+          if (!vdoArchiveFile) {
+            throw new Error(`File not found in archive: ${vdoFile}`);
+          }
+          uInt8Array = await vdoArchiveFile.arrayBuffer();
+          vdoMimeType = getMimeType(vdoFileExt);
+          blob = new Blob([uInt8Array], {
+            type: vdoMimeType,
+          });
+          vdoBlob = URL.createObjectURL(blob);
+          mediaSupportFlag = true;
+          mediaPicFlag = true;
+        }
       }
     }
   }
@@ -157,42 +168,48 @@ export async function processPicNode(
   // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
   if ((audioNode !== undefined) & mediaProcess) {
     audioRid = (audioNode["attrs"] as Record<string, string>)["r:link"];
-    audioFile = resObj[audioRid]["target"];
-    audioFileExt = extractFileExtension(audioFile).toLowerCase();
-    if (audioFileExt === "mp3" || audioFileExt === "wav" || audioFileExt === "ogg") {
-      uInt8ArrayAudio = await archive.readAsArrayBuffer(audioFile);
-      blobAudio = new Blob([uInt8ArrayAudio]);
-      audioBlob = URL.createObjectURL(blobAudio);
-      const xfrmAttrs = xfrmNode as Record<string, unknown>;
-      const extAttrs = (xfrmAttrs["a:ext"] as Record<string, unknown>)["attrs"] as Record<
-        string,
-        string
-      >;
-      const offAttrs = (xfrmAttrs["a:off"] as Record<string, unknown>)["attrs"] as Record<
-        string,
-        string
-      >;
-      const cx = parseInt(extAttrs["cx"]) * 20;
-      const cy = extAttrs["cy"];
-      const x = parseInt(offAttrs["x"]) / 2.5;
-      const y = offAttrs["y"];
-      audioObjc = {
-        "a:ext": {
-          attrs: {
-            cx: cx,
-            cy: cy,
+    audioFile = resObj[audioRid]?.target;
+    if (audioFile) {
+      audioFileExt = extractFileExtension(audioFile).toLowerCase();
+      if (audioFileExt === "mp3" || audioFileExt === "wav" || audioFileExt === "ogg") {
+        const audioArchiveFile = await archive.file(audioFile);
+        if (!audioArchiveFile) {
+          throw new Error(`File not found in archive: ${audioFile}`);
+        }
+        uInt8ArrayAudio = await audioArchiveFile.arrayBuffer();
+        blobAudio = new Blob([uInt8ArrayAudio]);
+        audioBlob = URL.createObjectURL(blobAudio);
+        const xfrmAttrs = xfrmNode as Record<string, unknown>;
+        const extAttrs = (xfrmAttrs["a:ext"] as Record<string, unknown>)["attrs"] as Record<
+          string,
+          string
+        >;
+        const offAttrs = (xfrmAttrs["a:off"] as Record<string, unknown>)["attrs"] as Record<
+          string,
+          string
+        >;
+        const cx = parseInt(extAttrs["cx"]) * 20;
+        const cy = extAttrs["cy"];
+        const x = parseInt(offAttrs["x"]) / 2.5;
+        const y = offAttrs["y"];
+        audioObjc = {
+          "a:ext": {
+            attrs: {
+              cx: cx,
+              cy: cy,
+            },
           },
-        },
-        "a:off": {
-          attrs: {
-            x: x,
-            y: y,
+          "a:off": {
+            attrs: {
+              x: x,
+              y: y,
+            },
           },
-        },
-      };
-      audioPlayerFlag = true;
-      mediaSupportFlag = true;
-      mediaPicFlag = true;
+        };
+        audioPlayerFlag = true;
+        mediaSupportFlag = true;
+        mediaPicFlag = true;
+      }
     }
   }
   //console.log(node)
