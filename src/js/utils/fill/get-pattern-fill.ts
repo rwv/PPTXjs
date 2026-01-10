@@ -14,15 +14,21 @@ import { getLinerGrandient } from "./get-liner-grandient";
  * @param warpObj - Container object with theme and color information
  * @returns Array with CSS gradient string, size, and position
  */
-export function getPatternFill(node: any, warpObj: any) {
-  let fgColor = "",
-    bgColor = "",
-    prst = "";
-  const bgClr = node["a:bgClr"];
-  const fgClr = node["a:fgClr"];
-  prst = node["attrs"]["prst"];
-  fgColor = getSolidFill(fgClr, undefined, undefined, warpObj);
-  bgColor = getSolidFill(bgClr, undefined, undefined, warpObj);
+type SolidFillNode = Parameters<typeof getSolidFill>[0];
+type SolidFillWarpObj = Parameters<typeof getSolidFill>[3];
+type PatternFillNode = {
+  "a:bgClr"?: unknown;
+  "a:fgClr"?: unknown;
+  attrs?: { prst?: string };
+  [key: string]: unknown;
+};
+
+export function getPatternFill(node: PatternFillNode, warpObj: SolidFillWarpObj) {
+  const prst = node["attrs"]?.prst ?? "";
+  const bgClr = node["a:bgClr"] as SolidFillNode;
+  const fgClr = node["a:fgClr"] as SolidFillNode;
+  const fgColor = getSolidFill(fgClr, undefined, undefined, warpObj) || "";
+  const bgColor = getSolidFill(bgClr, undefined, undefined, warpObj) || "";
   const linear_gradient = getLinerGrandient(prst, bgColor, fgColor);
   return linear_gradient;
 }
