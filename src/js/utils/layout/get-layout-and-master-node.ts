@@ -17,68 +17,89 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns Object with nodeLaout and nodeMaster properties
  */
 export function getLayoutAndMasterNode(
-  node: Record<string, unknown>,
+  paragraphNode: Record<string, unknown>,
   idx: number | string | undefined,
   type: string | undefined,
   warpObj: Record<string, unknown>
 ): { nodeLaout: unknown; nodeMaster: unknown } {
-  let pPrNodeLaout: unknown;
-  let pPrNodeMaster: unknown;
-  const pPrNode = node["a:pPr"] as Record<string, unknown> | undefined;
+  let layoutParagraphPropsNode: unknown;
+  let masterParagraphPropsNode: unknown;
+  const paragraphPropsNode = paragraphNode["a:pPr"] as Record<string, unknown> | undefined;
   //lvl
-  let lvl = 1;
-  const lvlNode = getTextByPathList<string>(pPrNode, ["attrs", "lvl"]);
-  if (lvlNode !== undefined) {
-    lvl = parseInt(lvlNode) + 1;
+  let level = 1;
+  const levelNode = getTextByPathList<string>(paragraphPropsNode, ["attrs", "lvl"]);
+  if (levelNode !== undefined) {
+    level = parseInt(levelNode) + 1;
   }
   if (idx !== undefined) {
     //slidelayout
     const slideLayoutTables = warpObj["slideLayoutTables"] as Record<string, unknown>;
     const idxTable = slideLayoutTables["idxTable"] as Record<string | number, unknown>;
-    const idxNode = idxTable[idx];
-    pPrNodeLaout = getTextByPathList(idxNode, ["p:txBody", "a:lstStyle", "a:lvl" + lvl + "pPr"]);
-    if (pPrNodeLaout === undefined) {
-      pPrNodeLaout = getTextByPathList(idxNode, ["p:txBody", "a:p", "a:pPr"]);
-      if (pPrNodeLaout === undefined) {
-        pPrNodeLaout = getTextByPathList(idxNode, ["p:txBody", "a:p", lvl - 1, "a:pPr"]);
+    const layoutNode = idxTable[idx];
+    layoutParagraphPropsNode = getTextByPathList(layoutNode, [
+      "p:txBody",
+      "a:lstStyle",
+      "a:lvl" + level + "pPr",
+    ]);
+    if (layoutParagraphPropsNode === undefined) {
+      layoutParagraphPropsNode = getTextByPathList(layoutNode, ["p:txBody", "a:p", "a:pPr"]);
+      if (layoutParagraphPropsNode === undefined) {
+        layoutParagraphPropsNode = getTextByPathList(layoutNode, [
+          "p:txBody",
+          "a:p",
+          level - 1,
+          "a:pPr",
+        ]);
       }
     }
   }
   if (type !== undefined) {
     //slidelayout
-    const lvlStr = "a:lvl" + lvl + "pPr";
-    if (pPrNodeLaout === undefined) {
-      pPrNodeLaout = getTextByPathList(warpObj, [
+    const levelKey = "a:lvl" + level + "pPr";
+    if (layoutParagraphPropsNode === undefined) {
+      layoutParagraphPropsNode = getTextByPathList(warpObj, [
         "slideLayoutTables",
         "typeTable",
         type,
         "p:txBody",
         "a:lstStyle",
-        lvlStr,
+        levelKey,
       ]);
     }
     //masterlayout
     if (type === "title" || type === "ctrTitle") {
-      pPrNodeMaster = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:titleStyle", lvlStr]);
+      masterParagraphPropsNode = getTextByPathList(warpObj, [
+        "slideMasterTextStyles",
+        "p:titleStyle",
+        levelKey,
+      ]);
     } else if (type === "body" || type === "obj" || type === "subTitle") {
-      pPrNodeMaster = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:bodyStyle", lvlStr]);
+      masterParagraphPropsNode = getTextByPathList(warpObj, [
+        "slideMasterTextStyles",
+        "p:bodyStyle",
+        levelKey,
+      ]);
     } else if (type === "shape" || type === "diagram") {
-      pPrNodeMaster = getTextByPathList(warpObj, ["slideMasterTextStyles", "p:otherStyle", lvlStr]);
+      masterParagraphPropsNode = getTextByPathList(warpObj, [
+        "slideMasterTextStyles",
+        "p:otherStyle",
+        levelKey,
+      ]);
     } else if (type === "textBox") {
-      pPrNodeMaster = getTextByPathList(warpObj, ["defaultTextStyle", lvlStr]);
+      masterParagraphPropsNode = getTextByPathList(warpObj, ["defaultTextStyle", levelKey]);
     } else {
-      pPrNodeMaster = getTextByPathList(warpObj, [
+      masterParagraphPropsNode = getTextByPathList(warpObj, [
         "slideMasterTables",
         "typeTable",
         type,
         "p:txBody",
         "a:lstStyle",
-        lvlStr,
+        levelKey,
       ]);
     }
   }
   return {
-    nodeLaout: pPrNodeLaout,
-    nodeMaster: pPrNodeMaster,
+    nodeLaout: layoutParagraphPropsNode,
+    nodeMaster: masterParagraphPropsNode,
   };
 }
