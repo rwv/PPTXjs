@@ -26,13 +26,13 @@ import { genShape } from "../shape";
  * @returns HTML string for the shape
  */
 export function processSpNode(
-  node: any,
-  pNode: any,
-  warpObj: any,
+  node: unknown,
+  pNode: unknown,
+  warpObj: unknown,
   source: string,
   sType: string,
   slideFactor: number,
-  styleTable: any,
+  styleTable: unknown,
   fontSizeFactor: number,
   rtlLangsArray: string[],
   isFirstBr: { value: boolean }
@@ -49,20 +49,27 @@ export function processSpNode(
    *  966 </xsd:complexType>
    */
 
-  const id = getTextByPathList(node, ["p:nvSpPr", "p:cNvPr", "attrs", "id"]);
-  const name = getTextByPathList(node, ["p:nvSpPr", "p:cNvPr", "attrs", "name"]);
-  const idx =
-    getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "idx"]) === undefined
-      ? undefined
-      : getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "idx"]);
-  let type =
-    getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]) === undefined
-      ? undefined
-      : getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
-  const order = getTextByPathList(node, ["attrs", "order"]);
+  const nodeRecord = node as Record<string, unknown>;
+  const warpRecord = warpObj as Record<string, unknown>;
+  const id = getTextByPathList<string | number>(nodeRecord, ["p:nvSpPr", "p:cNvPr", "attrs", "id"]);
+  const name = getTextByPathList<string>(nodeRecord, ["p:nvSpPr", "p:cNvPr", "attrs", "name"]);
+  const idx = getTextByPathList<string | number>(nodeRecord, [
+    "p:nvSpPr",
+    "p:nvPr",
+    "p:ph",
+    "attrs",
+    "idx",
+  ]);
+  let type = getTextByPathList<string>(nodeRecord, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
+  const order = getTextByPathList<string | number>(nodeRecord, ["attrs", "order"]);
   let isUserDrawnBg;
   if (source === "slideLayoutBg" || source === "slideMasterBg") {
-    const userDrawn = getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "attrs", "userDrawn"]);
+    const userDrawn = getTextByPathList<string>(nodeRecord, [
+      "p:nvSpPr",
+      "p:nvPr",
+      "attrs",
+      "userDrawn",
+    ]);
     if (userDrawn === "1") {
       isUserDrawnBg = true;
     } else {
@@ -72,28 +79,41 @@ export function processSpNode(
   let slideLayoutSpNode = undefined;
   let slideMasterSpNode = undefined;
 
+  const slideLayoutTables = warpRecord["slideLayoutTables"] as Record<string, unknown>;
+  const slideMasterTables = warpRecord["slideMasterTables"] as Record<string, unknown>;
   if (idx !== undefined) {
-    slideLayoutSpNode = warpObj["slideLayoutTables"]["idxTable"][idx];
+    slideLayoutSpNode = (slideLayoutTables["idxTable"] as Record<string | number, unknown>)[idx];
     if (type !== undefined) {
-      slideMasterSpNode = warpObj["slideMasterTables"]["typeTable"][type];
+      slideMasterSpNode = (slideMasterTables["typeTable"] as Record<string, unknown>)[type];
     } else {
-      slideMasterSpNode = warpObj["slideMasterTables"]["idxTable"][idx];
+      slideMasterSpNode = (slideMasterTables["idxTable"] as Record<string | number, unknown>)[idx];
     }
   } else {
     if (type !== undefined) {
-      slideLayoutSpNode = warpObj["slideLayoutTables"]["typeTable"][type];
-      slideMasterSpNode = warpObj["slideMasterTables"]["typeTable"][type];
+      slideLayoutSpNode = (slideLayoutTables["typeTable"] as Record<string, unknown>)[type];
+      slideMasterSpNode = (slideMasterTables["typeTable"] as Record<string, unknown>)[type];
     }
   }
 
   if (type === undefined) {
-    const txBoxVal = getTextByPathList(node, ["p:nvSpPr", "p:cNvSpPr", "attrs", "txBox"]);
+    const txBoxVal = getTextByPathList<string>(nodeRecord, [
+      "p:nvSpPr",
+      "p:cNvSpPr",
+      "attrs",
+      "txBox",
+    ]);
     if (txBoxVal === "1") {
       type = "textBox";
     }
   }
   if (type === undefined) {
-    type = getTextByPathList(slideLayoutSpNode, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
+    type = getTextByPathList<string>(slideLayoutSpNode, [
+      "p:nvSpPr",
+      "p:nvPr",
+      "p:ph",
+      "attrs",
+      "type",
+    ]);
     if (type === undefined) {
       //type = getTextByPathList(slideMasterSpNode, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
       if (source === "diagramBg") {
