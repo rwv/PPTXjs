@@ -14,59 +14,59 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * - Left alignment in RTL becomes "h-left-rtl"
  * - Right alignment in RTL becomes "h-right-rtl"
  *
- * @param node - Paragraph node from PPTX
+ * @param paragraphNode - Paragraph node from PPTX
  * @param textBodyNode - Text body node containing list styles
  * @param idx - Layout index for fallback lookup
  * @param type - Shape type (title, body, textBox, shape, etc.)
- * @param prg_dir - Paragraph direction (pregraph-rtl or pregraph-ltr)
+ * @param paragraphDirection - Paragraph direction (pregraph-rtl or pregraph-ltr)
  * @param warpObj - Container object with layout tables and master styles
  * @returns CSS class name for horizontal alignment (h-left, h-right, h-mid, etc.)
  */
 export function getHorizontalAlign(
-  node: Record<string, unknown>,
+  paragraphNode: Record<string, unknown>,
   textBodyNode: Record<string, unknown>,
   idx: number | string | undefined,
   type: string | undefined,
-  prg_dir: string | undefined,
+  paragraphDirection: string | undefined,
   warpObj: Record<string, unknown>
 ): string {
-  let algn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
-  if (algn === undefined) {
+  let alignment = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "algn"]);
+  if (alignment === undefined) {
     //var layoutMasterNode = getLayoutAndMasterNode(node, idx, type, warpObj);
     // var pPrNodeLaout = layoutMasterNode.nodeLaout;
     // var pPrNodeMaster = layoutMasterNode.nodeMaster;
-    let lvlIdx = 1;
-    const lvlNode = getTextByPathList(node, ["a:pPr", "attrs", "lvl"]);
-    if (lvlNode !== undefined) {
-      lvlIdx = parseInt(lvlNode) + 1;
+    let levelIndex = 1;
+    const levelNode = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "lvl"]);
+    if (levelNode !== undefined) {
+      levelIndex = parseInt(levelNode) + 1;
     }
-    const lvlStr = "a:lvl" + lvlIdx + "pPr";
+    const levelKey = "a:lvl" + levelIndex + "pPr";
 
-    const lstStyle = textBodyNode["a:lstStyle"];
-    algn = getTextByPathList(lstStyle, [lvlStr, "attrs", "algn"]);
+    const listStyle = textBodyNode["a:lstStyle"];
+    alignment = getTextByPathList(listStyle, [levelKey, "attrs", "algn"]);
 
-    if (algn === undefined && idx !== undefined) {
+    if (alignment === undefined && idx !== undefined) {
       //slidelayout
-      algn = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
+      alignment = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
         "p:txBody",
         "a:lstStyle",
-        lvlStr,
+        levelKey,
         "attrs",
         "algn",
       ]);
-      if (algn === undefined) {
-        algn = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
+      if (alignment === undefined) {
+        alignment = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
           "p:txBody",
           "a:p",
           "a:pPr",
           "attrs",
           "algn",
         ]);
-        if (algn === undefined) {
-          algn = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
+        if (alignment === undefined) {
+          alignment = getTextByPathList(warpObj["slideLayoutTables"]["idxTable"][idx], [
             "p:txBody",
             "a:p",
-            lvlIdx - 1,
+            levelIndex - 1,
             "a:pPr",
             "attrs",
             "algn",
@@ -74,66 +74,66 @@ export function getHorizontalAlign(
         }
       }
     }
-    if (algn === undefined) {
+    if (alignment === undefined) {
       if (type !== undefined) {
         //slidelayout
-        algn = getTextByPathList(warpObj, [
+        alignment = getTextByPathList(warpObj, [
           "slideLayoutTables",
           "typeTable",
           type,
           "p:txBody",
           "a:lstStyle",
-          lvlStr,
+          levelKey,
           "attrs",
           "algn",
         ]);
 
-        if (algn === undefined) {
+        if (alignment === undefined) {
           //masterlayout
           if (type === "title" || type === "ctrTitle") {
-            algn = getTextByPathList(warpObj, [
+            alignment = getTextByPathList(warpObj, [
               "slideMasterTextStyles",
               "p:titleStyle",
-              lvlStr,
+              levelKey,
               "attrs",
               "algn",
             ]);
           } else if (type === "body" || type === "obj" || type === "subTitle") {
-            algn = getTextByPathList(warpObj, [
+            alignment = getTextByPathList(warpObj, [
               "slideMasterTextStyles",
               "p:bodyStyle",
-              lvlStr,
+              levelKey,
               "attrs",
               "algn",
             ]);
           } else if (type === "shape" || type === "diagram") {
-            algn = getTextByPathList(warpObj, [
+            alignment = getTextByPathList(warpObj, [
               "slideMasterTextStyles",
               "p:otherStyle",
-              lvlStr,
+              levelKey,
               "attrs",
               "algn",
             ]);
           } else if (type === "textBox") {
-            algn = getTextByPathList(warpObj, ["defaultTextStyle", lvlStr, "attrs", "algn"]);
+            alignment = getTextByPathList(warpObj, ["defaultTextStyle", levelKey, "attrs", "algn"]);
           } else {
-            algn = getTextByPathList(warpObj, [
+            alignment = getTextByPathList(warpObj, [
               "slideMasterTables",
               "typeTable",
               type,
               "p:txBody",
               "a:lstStyle",
-              lvlStr,
+              levelKey,
               "attrs",
               "algn",
             ]);
           }
         }
       } else {
-        algn = getTextByPathList(warpObj, [
+        alignment = getTextByPathList(warpObj, [
           "slideMasterTextStyles",
           "p:bodyStyle",
-          lvlStr,
+          levelKey,
           "attrs",
           "algn",
         ]);
@@ -141,24 +141,24 @@ export function getHorizontalAlign(
     }
   }
 
-  if (algn === undefined) {
+  if (alignment === undefined) {
     if (type === "title" || type === "subTitle" || type === "ctrTitle") {
       return "h-mid";
     } else if (type === "sldNum") {
       return "h-right";
     }
   }
-  if (algn !== undefined) {
-    switch (algn) {
+  if (alignment !== undefined) {
+    switch (alignment) {
       case "l":
-        if (prg_dir === "pregraph-rtl") {
+        if (paragraphDirection === "pregraph-rtl") {
           //return "h-right";
           return "h-left-rtl";
         } else {
           return "h-left";
         }
       case "r":
-        if (prg_dir === "pregraph-rtl") {
+        if (paragraphDirection === "pregraph-rtl") {
           //return "h-left";
           return "h-right-rtl";
         } else {
@@ -169,7 +169,7 @@ export function getHorizontalAlign(
       case "just":
       case "dist":
       default:
-        return "h-" + algn;
+        return "h-" + alignment;
     }
   }
   //return algn === "ctr" ? "h-mid" : algn === "r" ? "h-right" : "h-left";
