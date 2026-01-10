@@ -17,9 +17,9 @@
  * - Special: plaid, sphere, weave, shingle, trellis, divot
  * - Percentages: pct5-pct90 (dot density patterns)
  *
- * @param prst - Pattern preset name from PPTX
- * @param bgColor - Background color (hex without #)
- * @param fgColor - Foreground color (hex without #)
+ * @param patternPreset - Pattern preset name from PPTX
+ * @param backgroundColor - Background color (hex without #)
+ * @param foregroundColor - Foreground color (hex without #)
  * @returns Array: [CSS gradient string, optional size, optional position]
  */
 
@@ -30,23 +30,23 @@ import { getSpecialPattern } from "./liner-grandient/special";
 import { getPercentPattern } from "./liner-grandient/percent";
 
 export function getLinerGrandient(
-  prst: string,
-  bgColor: string,
-  fgColor: string
+  patternPreset: string,
+  backgroundColor: string,
+  foregroundColor: string
 ): Array<string | number> {
-  const gridPattern = getGridPattern(prst, bgColor, fgColor);
+  const gridPattern = getGridPattern(patternPreset, backgroundColor, foregroundColor);
   if (gridPattern) return gridPattern;
 
-  const linePattern = getLinePattern(prst, bgColor, fgColor);
+  const linePattern = getLinePattern(patternPreset, backgroundColor, foregroundColor);
   if (linePattern) return linePattern;
 
-  const tilePattern = getTilePattern(prst, bgColor, fgColor);
+  const tilePattern = getTilePattern(patternPreset, backgroundColor, foregroundColor);
   if (tilePattern) return tilePattern;
 
-  const specialPattern = getSpecialPattern(prst, bgColor, fgColor);
+  const specialPattern = getSpecialPattern(patternPreset, backgroundColor, foregroundColor);
   if (specialPattern) return specialPattern;
 
-  const percentPattern = getPercentPattern(prst, bgColor, fgColor);
+  const percentPattern = getPercentPattern(patternPreset, backgroundColor, foregroundColor);
   if (percentPattern) return percentPattern;
 
   return [0, 0];
