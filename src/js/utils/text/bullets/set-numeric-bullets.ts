@@ -7,7 +7,7 @@ import { getNumTypeNum } from "../get-num-type-num";
  * based on bullet type and level. It handles nested bullets by tracking the
  * bullet type and level hierarchy.
  *
- * @param elem - Array-like collection of DOM elements containing bullet spans
+ * @param elements - Array-like collection of DOM elements containing bullet spans
  *
  * @remarks
  * This function expects elements with class 'numeric-bullet-style' that have
@@ -23,59 +23,65 @@ import { getNumTypeNum } from "../get-num-type-num";
  *
  * setNumericBullets(document.querySelectorAll(".paragraph-container"));
  */
-export function setNumericBullets(elem: NodeListOf<Element> | Element[]) {
-  const prgrphs = Array.from(elem);
-  for (let i = 0; i < prgrphs.length; i++) {
-    const buSpan = prgrphs[i]?.querySelectorAll(".numeric-bullet-style") ?? [];
-    if (buSpan.length > 0) {
-      let prevBultTyp = "";
-      let prevBultLvl = "";
-      let buletIndex = 0;
-      const tmpArry = new Array();
-      let tmpArryIndx = 0;
-      const buletTypSrry = new Array();
+export function setNumericBullets(elements: NodeListOf<Element> | Element[]) {
+  const paragraphs = Array.from(elements);
+  for (let i = 0; i < paragraphs.length; i++) {
+    const bulletSpans = paragraphs[i]?.querySelectorAll(".numeric-bullet-style") ?? [];
+    if (bulletSpans.length > 0) {
+      let prevBulletType = "";
+      let prevBulletLevel = "";
+      let bulletIndex = 0;
+      const levelCounters = new Array();
+      let levelIndex = 0;
+      const bulletTypeStack = new Array();
 
-      for (let j = 0; j < buSpan.length; j++) {
-        const bult_typ = buSpan[j]?.getAttribute("data-bulltname") ?? "";
-        const bult_lvl = buSpan[j]?.getAttribute("data-bulltlvl") ?? "";
+      for (let j = 0; j < bulletSpans.length; j++) {
+        const bulletType = bulletSpans[j]?.getAttribute("data-bulltname") ?? "";
+        const bulletLevel = bulletSpans[j]?.getAttribute("data-bulltlvl") ?? "";
 
-        if (buletIndex === 0) {
-          prevBultTyp = bult_typ;
-          prevBultLvl = bult_lvl;
-          tmpArry[tmpArryIndx] = buletIndex;
-          buletTypSrry[tmpArryIndx] = bult_typ;
-          buletIndex++;
+        if (bulletIndex === 0) {
+          prevBulletType = bulletType;
+          prevBulletLevel = bulletLevel;
+          levelCounters[levelIndex] = bulletIndex;
+          bulletTypeStack[levelIndex] = bulletType;
+          bulletIndex++;
         } else {
-          if (bult_typ === prevBultTyp && bult_lvl === prevBultLvl) {
-            prevBultTyp = bult_typ;
-            prevBultLvl = bult_lvl;
-            buletIndex++;
-            tmpArry[tmpArryIndx] = buletIndex;
-            buletTypSrry[tmpArryIndx] = bult_typ;
-          } else if (bult_typ !== prevBultTyp && bult_lvl === prevBultLvl) {
-            prevBultTyp = bult_typ;
-            prevBultLvl = bult_lvl;
-            tmpArryIndx++;
-            tmpArry[tmpArryIndx] = buletIndex;
-            buletTypSrry[tmpArryIndx] = bult_typ;
-            buletIndex = 1;
-          } else if (bult_typ !== prevBultTyp && Number(bult_lvl) > Number(prevBultLvl)) {
-            prevBultTyp = bult_typ;
-            prevBultLvl = bult_lvl;
-            tmpArryIndx++;
-            tmpArry[tmpArryIndx] = buletIndex;
-            buletTypSrry[tmpArryIndx] = bult_typ;
-            buletIndex = 1;
-          } else if (bult_typ !== prevBultTyp && Number(bult_lvl) < Number(prevBultLvl)) {
-            prevBultTyp = bult_typ;
-            prevBultLvl = bult_lvl;
-            tmpArryIndx--;
-            buletIndex = tmpArry[tmpArryIndx] + 1;
+          if (bulletType === prevBulletType && bulletLevel === prevBulletLevel) {
+            prevBulletType = bulletType;
+            prevBulletLevel = bulletLevel;
+            bulletIndex++;
+            levelCounters[levelIndex] = bulletIndex;
+            bulletTypeStack[levelIndex] = bulletType;
+          } else if (bulletType !== prevBulletType && bulletLevel === prevBulletLevel) {
+            prevBulletType = bulletType;
+            prevBulletLevel = bulletLevel;
+            levelIndex++;
+            levelCounters[levelIndex] = bulletIndex;
+            bulletTypeStack[levelIndex] = bulletType;
+            bulletIndex = 1;
+          } else if (
+            bulletType !== prevBulletType &&
+            Number(bulletLevel) > Number(prevBulletLevel)
+          ) {
+            prevBulletType = bulletType;
+            prevBulletLevel = bulletLevel;
+            levelIndex++;
+            levelCounters[levelIndex] = bulletIndex;
+            bulletTypeStack[levelIndex] = bulletType;
+            bulletIndex = 1;
+          } else if (
+            bulletType !== prevBulletType &&
+            Number(bulletLevel) < Number(prevBulletLevel)
+          ) {
+            prevBulletType = bulletType;
+            prevBulletLevel = bulletLevel;
+            levelIndex--;
+            bulletIndex = levelCounters[levelIndex] + 1;
           }
         }
 
-        const numIdx = getNumTypeNum(buletTypSrry[tmpArryIndx], buletIndex);
-        buSpan[j]!.innerHTML = numIdx;
+        const bulletLabel = getNumTypeNum(bulletTypeStack[levelIndex], bulletIndex);
+        bulletSpans[j]!.innerHTML = bulletLabel;
       }
     }
   }
