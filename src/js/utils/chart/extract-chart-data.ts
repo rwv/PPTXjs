@@ -18,72 +18,77 @@ import { getTextByPathList } from "../object";
  * const chartData = extractChartData(serNode);
  * // [{ key: "Series1", values: [{x: "0", y: 10}], xlabels: {"0": "Jan"} }]
  */
-export function extractChartData(serNode: any) {
-  const dataMat = new Array();
+export function extractChartData(seriesNode: any) {
+  const dataSeries = [];
 
-  if (serNode === undefined) {
-    return dataMat;
+  if (seriesNode === undefined) {
+    return dataSeries;
   }
 
-  if (serNode["c:xVal"] !== undefined) {
-    let dataRow = new Array();
-    eachElement(serNode["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any) {
-      dataRow.push(parseFloat(innerNode["c:v"]));
+  if (seriesNode["c:xVal"] !== undefined) {
+    let valueSeries: number[] = [];
+    eachElement(seriesNode["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"], function (pointNode: any) {
+      valueSeries.push(parseFloat(pointNode["c:v"]));
       return "";
     });
-    dataMat.push(dataRow);
-    dataRow = new Array();
-    eachElement(serNode["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"], function (innerNode: any) {
-      dataRow.push(parseFloat(innerNode["c:v"]));
+    dataSeries.push(valueSeries);
+    valueSeries = [];
+    eachElement(seriesNode["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"], function (pointNode: any) {
+      valueSeries.push(parseFloat(pointNode["c:v"]));
       return "";
     });
-    dataMat.push(dataRow);
+    dataSeries.push(valueSeries);
   } else {
-    eachElement(serNode, function (innerNode: any, index: number) {
-      const dataRow = new Array();
-      const colName =
-        getTextByPathList(innerNode, ["c:tx", "c:strRef", "c:strCache", "c:pt", "c:v"]) || index;
+    eachElement(seriesNode, function (seriesNodeItem: any, index: number) {
+      const seriesValues: Array<{ x: string | number; y: number }> = [];
+      const seriesLabel =
+        getTextByPathList(seriesNodeItem, ["c:tx", "c:strRef", "c:strCache", "c:pt", "c:v"]) ||
+        index;
 
       // Category (string or number)
-      const rowNames = {};
-      if (getTextByPathList(innerNode, ["c:cat", "c:strRef", "c:strCache", "c:pt"]) !== undefined) {
+      const categoryLabels: Record<string, string> = {};
+      if (
+        getTextByPathList(seriesNodeItem, ["c:cat", "c:strRef", "c:strCache", "c:pt"]) !== undefined
+      ) {
         eachElement(
-          innerNode["c:cat"]["c:strRef"]["c:strCache"]["c:pt"],
-          function (innerNode: any) {
-            rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
+          seriesNodeItem["c:cat"]["c:strRef"]["c:strCache"]["c:pt"],
+          function (pointNode: any) {
+            categoryLabels[pointNode["attrs"]["idx"]] = pointNode["c:v"];
             return "";
           }
         );
       } else if (
-        getTextByPathList(innerNode, ["c:cat", "c:numRef", "c:numCache", "c:pt"]) !== undefined
+        getTextByPathList(seriesNodeItem, ["c:cat", "c:numRef", "c:numCache", "c:pt"]) !== undefined
       ) {
         eachElement(
-          innerNode["c:cat"]["c:numRef"]["c:numCache"]["c:pt"],
-          function (innerNode: any) {
-            rowNames[innerNode["attrs"]["idx"]] = innerNode["c:v"];
+          seriesNodeItem["c:cat"]["c:numRef"]["c:numCache"]["c:pt"],
+          function (pointNode: any) {
+            categoryLabels[pointNode["attrs"]["idx"]] = pointNode["c:v"];
             return "";
           }
         );
       }
 
       // Value
-      if (getTextByPathList(innerNode, ["c:val", "c:numRef", "c:numCache", "c:pt"]) !== undefined) {
+      if (
+        getTextByPathList(seriesNodeItem, ["c:val", "c:numRef", "c:numCache", "c:pt"]) !== undefined
+      ) {
         eachElement(
-          innerNode["c:val"]["c:numRef"]["c:numCache"]["c:pt"],
-          function (innerNode: any) {
-            dataRow.push({
-              x: innerNode["attrs"]["idx"],
-              y: parseFloat(innerNode["c:v"]),
+          seriesNodeItem["c:val"]["c:numRef"]["c:numCache"]["c:pt"],
+          function (pointNode: any) {
+            seriesValues.push({
+              x: pointNode["attrs"]["idx"],
+              y: parseFloat(pointNode["c:v"]),
             });
             return "";
           }
         );
       }
 
-      dataMat.push({ key: colName, values: dataRow, xlabels: rowNames });
+      dataSeries.push({ key: seriesLabel, values: seriesValues, xlabels: categoryLabels });
       return "";
     });
   }
 
-  return dataMat;
+  return dataSeries;
 }
