@@ -16,7 +16,7 @@ import { shapeArc } from "./helpers/arc";
  * Context for rendering flowchart shapes
  */
 export interface FlowchartShapeContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
