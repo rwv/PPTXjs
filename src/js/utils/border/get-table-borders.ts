@@ -7,13 +7,20 @@
  */
 import { getBorder } from "./get-border";
 
-export function getTableBorders(node: any, warpObj: any): string {
+type BorderSideNode = {
+  "a:ln"?: unknown;
+};
+
+type BorderTableNode = Record<string, BorderSideNode | undefined>;
+
+export function getTableBorders(node: BorderTableNode, warpObj: unknown): string {
   let borderStyle = "";
 
-  if (node["a:bottom"] !== undefined) {
+  const bottom = node["a:bottom"];
+  if (bottom?.["a:ln"] !== undefined) {
     const obj = {
       "p:spPr": {
-        "a:ln": node["a:bottom"]["a:ln"],
+        "a:ln": bottom["a:ln"],
       },
     };
     const borders = getBorder(obj, undefined, false, "shape", warpObj);
@@ -22,10 +29,11 @@ export function getTableBorders(node: any, warpObj: any): string {
     }
   }
 
-  if (node["a:top"] !== undefined) {
+  const top = node["a:top"];
+  if (top?.["a:ln"] !== undefined) {
     const obj = {
       "p:spPr": {
-        "a:ln": node["a:top"]["a:ln"],
+        "a:ln": top["a:ln"],
       },
     };
     const borders = getBorder(obj, undefined, false, "shape", warpObj);
@@ -34,10 +42,11 @@ export function getTableBorders(node: any, warpObj: any): string {
     }
   }
 
-  if (node["a:right"] !== undefined) {
+  const right = node["a:right"];
+  if (right?.["a:ln"] !== undefined) {
     const obj = {
       "p:spPr": {
-        "a:ln": node["a:right"]["a:ln"],
+        "a:ln": right["a:ln"],
       },
     };
     const borders = getBorder(obj, undefined, false, "shape", warpObj);
@@ -46,10 +55,11 @@ export function getTableBorders(node: any, warpObj: any): string {
     }
   }
 
-  if (node["a:left"] !== undefined) {
+  const left = node["a:left"];
+  if (left?.["a:ln"] !== undefined) {
     const obj = {
       "p:spPr": {
-        "a:ln": node["a:left"]["a:ln"],
+        "a:ln": left["a:ln"],
       },
     };
     const borders = getBorder(obj, undefined, false, "shape", warpObj);
