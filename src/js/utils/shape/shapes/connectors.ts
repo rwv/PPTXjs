@@ -14,7 +14,7 @@ import { getTextByPathList } from "../../object";
  * Context for rendering connector shapes
  */
 export interface ConnectorContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
@@ -25,13 +25,31 @@ export interface ConnectorContext {
   };
 }
 
+interface MarkerEndAttrs {
+  type?: string;
+  [key: string]: unknown;
+}
+
 /**
  * Extract arrow marker attributes from node
  */
-function getMarkerNodeAttrs(node: any): { headEndNodeAttrs: any; tailEndNodeAttrs: any } {
+function getMarkerNodeAttrs(node: unknown): {
+  headEndNodeAttrs: MarkerEndAttrs | undefined;
+  tailEndNodeAttrs: MarkerEndAttrs | undefined;
+} {
   return {
-    headEndNodeAttrs: getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]),
-    tailEndNodeAttrs: getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]),
+    headEndNodeAttrs: getTextByPathList<MarkerEndAttrs>(node, [
+      "p:spPr",
+      "a:ln",
+      "a:headEnd",
+      "attrs",
+    ]),
+    tailEndNodeAttrs: getTextByPathList<MarkerEndAttrs>(node, [
+      "p:spPr",
+      "a:ln",
+      "a:tailEnd",
+      "attrs",
+    ]),
   };
 }
 
@@ -69,13 +87,13 @@ function getMarkerAttrs(ctx: ConnectorContext): string {
 
   if (
     headEndNodeAttrs !== undefined &&
-    (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")
+    (headEndNodeAttrs.type === "triangle" || headEndNodeAttrs.type === "arrow")
   ) {
     attrs += `marker-start='url(#markerTriangle_${shpId})' `;
   }
   if (
     tailEndNodeAttrs !== undefined &&
-    (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")
+    (tailEndNodeAttrs.type === "triangle" || tailEndNodeAttrs.type === "arrow")
   ) {
     attrs += `marker-end='url(#markerTriangle_${shpId})' `;
   }
@@ -104,7 +122,7 @@ function renderBentConnector2(ctx: ConnectorContext): string {
 function renderBentConnector3(ctx: ConnectorContext): string {
   const { node, w, h } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
