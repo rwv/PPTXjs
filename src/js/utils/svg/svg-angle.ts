@@ -2,80 +2,80 @@
  * Calculates SVG gradient angle coordinates
  * Converts a degree angle to SVG gradient x1, y1, x2, y2 percentages
  *
- * @param deg - Angle in degrees (0-360)
- * @param svgHeight - SVG height
- * @param svgWidth - SVG width
+ * @param angleDegrees - Angle in degrees (0-360)
+ * @param svgHeightInput - SVG height
+ * @param svgWidthInput - SVG width
  * @returns Array of [x1, y1, x2, y2] as percentages
  */
 export function svgAngle(
-  deg: number | string,
-  svgHeight: number | string,
-  svgWidth: number | string
+  angleDegrees: number | string,
+  svgHeightInput: number | string,
+  svgWidthInput: number | string
 ): [number, number, number, number] {
-  const w = parseFloat(String(svgWidth));
-  const h = parseFloat(String(svgHeight));
-  const ang = parseFloat(String(deg));
+  const width = parseFloat(String(svgWidthInput));
+  const height = parseFloat(String(svgHeightInput));
+  const angle = parseFloat(String(angleDegrees));
 
-  let o = 2;
-  let n = 2;
-  const wc = w / 2;
-  const hc = h / 2;
-  let tx1 = 2;
-  let ty1 = 2;
-  let tx2 = 2;
-  let ty2 = 2;
+  let edgeY = 2;
+  let edgeX = 2;
+  const widthCenter = width / 2;
+  const heightCenter = height / 2;
+  let tempX1 = 2;
+  let tempY1 = 2;
+  let tempX2 = 2;
+  let tempY2 = 2;
 
-  const k = ((ang % 360) + 360) % 360;
-  const j = ((360 - k) * Math.PI) / 180;
-  const i = Math.tan(j);
-  const l = hc - i * wc;
+  const normalizedAngle = ((angle % 360) + 360) % 360;
+  const angleRadians = ((360 - normalizedAngle) * Math.PI) / 180;
+  const slope = Math.tan(angleRadians);
+  const yIntercept = heightCenter - slope * widthCenter;
 
   // Handle special angles
-  if (k === 0) {
-    tx1 = w;
-    ty1 = hc;
-    tx2 = 0;
-    ty2 = hc;
-  } else if (k < 90) {
-    n = w;
-    o = 0;
-  } else if (k === 90) {
-    tx1 = wc;
-    ty1 = 0;
-    tx2 = wc;
-    ty2 = h;
-  } else if (k < 180) {
-    n = 0;
-    o = 0;
-  } else if (k === 180) {
-    tx1 = 0;
-    ty1 = hc;
-    tx2 = w;
-    ty2 = hc;
-  } else if (k < 270) {
-    n = 0;
-    o = h;
-  } else if (k === 270) {
-    tx1 = wc;
-    ty1 = h;
-    tx2 = wc;
-    ty2 = 0;
+  if (normalizedAngle === 0) {
+    tempX1 = width;
+    tempY1 = heightCenter;
+    tempX2 = 0;
+    tempY2 = heightCenter;
+  } else if (normalizedAngle < 90) {
+    edgeX = width;
+    edgeY = 0;
+  } else if (normalizedAngle === 90) {
+    tempX1 = widthCenter;
+    tempY1 = 0;
+    tempX2 = widthCenter;
+    tempY2 = height;
+  } else if (normalizedAngle < 180) {
+    edgeX = 0;
+    edgeY = 0;
+  } else if (normalizedAngle === 180) {
+    tempX1 = 0;
+    tempY1 = heightCenter;
+    tempX2 = width;
+    tempY2 = heightCenter;
+  } else if (normalizedAngle < 270) {
+    edgeX = 0;
+    edgeY = height;
+  } else if (normalizedAngle === 270) {
+    tempX1 = widthCenter;
+    tempY1 = height;
+    tempX2 = widthCenter;
+    tempY2 = 0;
   } else {
-    n = w;
-    o = h;
+    edgeX = width;
+    edgeY = height;
   }
 
   // Calculate gradient line coordinates
-  const m = o + n / i;
-  tx1 = tx1 === 2 ? (i * (m - l)) / (Math.pow(i, 2) + 1) : tx1;
-  ty1 = ty1 === 2 ? i * tx1 + l : ty1;
-  tx2 = tx2 === 2 ? w - tx1 : tx2;
-  ty2 = ty2 === 2 ? h - ty1 : ty2;
+  const lineOffset = edgeY + edgeX / slope;
+  tempX1 = tempX1 === 2 ? (slope * (lineOffset - yIntercept)) / (Math.pow(slope, 2) + 1) : tempX1;
+  tempY1 = tempY1 === 2 ? slope * tempX1 + yIntercept : tempY1;
+  tempX2 = tempX2 === 2 ? width - tempX1 : tempX2;
+  tempY2 = tempY2 === 2 ? height - tempY1 : tempY2;
 
-  const x1 = Math.round((tx2 / w) * 100 * 100) / 100;
-  const y1 = Math.round((ty2 / h) * 100 * 100) / 100;
-  const x2 = Math.round((tx1 / w) * 100 * 100) / 100;
-  const y2 = Math.round((ty1 / h) * 100 * 100) / 100;
+  const x1Percent = Math.round((tempX2 / width) * 100 * 100) / 100;
+  const y1Percent = Math.round((tempY2 / height) * 100 * 100) / 100;
+  const x2Percent = Math.round((tempX1 / width) * 100 * 100) / 100;
+  const y2Percent = Math.round((tempY1 / height) * 100 * 100) / 100;
 
-  return [x1, y1, x2, y2];
+  return [x1Percent, y1Percent, x2Percent, y2Percent];
 }
