@@ -31,44 +31,44 @@ interface WarpObject {
  * - Master slide color maps
  * - Theme color scheme elements
  *
- * @param schemeClr - Scheme color reference (e.g., "a:tx1", "a:bg2", "a:accent1")
+ * @param schemeColorKey - Scheme color reference (e.g., "a:tx1", "a:bg2", "a:accent1")
  * @param clrMap - Color mapping object from theme
  * @param phClr - Placeholder color to use for "phClr" references
  * @param warpObj - Warp object containing slide, layout, master, and theme content
  * @returns Hex color string
  */
 export function getSchemeColorFromTheme(
-  schemeClr: string,
+  schemeColorKey: string,
   clrMap: ColorMap | undefined,
   phClr: string | undefined,
   warpObj: WarpObject
 ): string {
   //<p:clrMap ...> in slide master
-  // e.g. tx2="dk2" bg2="lt2" tx1="dk1" bg1="lt1" slideLayoutClrOvride
-  //console.log("getSchemeColorFromTheme: schemeClr: ", schemeClr, ",clrMap: ", clrMap)
-  let slideLayoutClrOvride: ColorMap | undefined;
+  // e.g. tx2="dk2" bg2="lt2" tx1="dk1" bg1="lt1" slideLayoutColorOverride
+  //console.log("getSchemeColorFromTheme: schemeColorKey: ", schemeColorKey, ",clrMap: ", clrMap)
+  let slideLayoutColorOverride: ColorMap | undefined;
   if (clrMap !== undefined) {
-    slideLayoutClrOvride = clrMap; //getTextByPathList(clrMap, ["p:sldMaster", "p:clrMap", "attrs"])
+    slideLayoutColorOverride = clrMap; //getTextByPathList(clrMap, ["p:sldMaster", "p:clrMap", "attrs"])
   } else {
-    let sldClrMapOvr = getTextByPathList(warpObj["slideContent"], [
+    let slideColorMapOverride = getTextByPathList(warpObj["slideContent"], [
       "p:sld",
       "p:clrMapOvr",
       "a:overrideClrMapping",
       "attrs",
     ]);
-    if (sldClrMapOvr !== undefined) {
-      slideLayoutClrOvride = sldClrMapOvr;
+    if (slideColorMapOverride !== undefined) {
+      slideLayoutColorOverride = slideColorMapOverride;
     } else {
-      sldClrMapOvr = getTextByPathList(warpObj["slideLayoutContent"], [
+      slideColorMapOverride = getTextByPathList(warpObj["slideLayoutContent"], [
         "p:sldLayout",
         "p:clrMapOvr",
         "a:overrideClrMapping",
         "attrs",
       ]);
-      if (sldClrMapOvr !== undefined) {
-        slideLayoutClrOvride = sldClrMapOvr;
+      if (slideColorMapOverride !== undefined) {
+        slideLayoutColorOverride = slideColorMapOverride;
       } else {
-        slideLayoutClrOvride = getTextByPathList(warpObj["slideMasterContent"], [
+        slideLayoutColorOverride = getTextByPathList(warpObj["slideMasterContent"], [
           "p:sldMaster",
           "p:clrMap",
           "attrs",
@@ -76,43 +76,43 @@ export function getSchemeColorFromTheme(
       }
     }
   }
-  //console.log("getSchemeColorFromTheme slideLayoutClrOvride: ", slideLayoutClrOvride);
-  const schmClrName = schemeClr.substring(2);
+  //console.log("getSchemeColorFromTheme slideLayoutColorOverride: ", slideLayoutColorOverride);
+  const schemeColorName = schemeColorKey.substring(2);
   let color: string | undefined;
-  if (schmClrName === "phClr" && phClr !== undefined) {
+  if (schemeColorName === "phClr" && phClr !== undefined) {
     color = phClr;
   } else {
-    if (slideLayoutClrOvride !== undefined) {
-      switch (schmClrName) {
+    if (slideLayoutColorOverride !== undefined) {
+      switch (schemeColorName) {
         case "tx1":
         case "tx2":
         case "bg1":
         case "bg2":
-          schemeClr = "a:" + slideLayoutClrOvride[schmClrName];
+          schemeColorKey = "a:" + slideLayoutColorOverride[schemeColorName];
           break;
       }
     } else {
-      switch (schmClrName) {
+      switch (schemeColorName) {
         case "tx1":
-          schemeClr = "a:dk1";
+          schemeColorKey = "a:dk1";
           break;
         case "tx2":
-          schemeClr = "a:dk2";
+          schemeColorKey = "a:dk2";
           break;
         case "bg1":
-          schemeClr = "a:lt1";
+          schemeColorKey = "a:lt1";
           break;
         case "bg2":
-          schemeClr = "a:lt2";
+          schemeColorKey = "a:lt2";
           break;
       }
     }
-    //console.log("getSchemeColorFromTheme:  schemeClr: ", schemeClr);
+    //console.log("getSchemeColorFromTheme:  schemeColorKey: ", schemeColorKey);
     const refNode = getTextByPathList(warpObj["themeContent"], [
       "a:theme",
       "a:themeElements",
       "a:clrScheme",
-      schemeClr,
+      schemeColorKey,
     ]);
     color = getTextByPathList(refNode, ["a:srgbClr", "attrs", "val"]);
     //console.log("themeContent: color", color);
