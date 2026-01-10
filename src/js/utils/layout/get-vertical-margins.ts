@@ -27,7 +27,7 @@ import { getFontSize } from "../font/get-font-size";
  * @returns CSS string with margin and padding styles
  */
 export function getVerticalMargins(
-  pNode: Record<string, unknown>,
+  paragraphNode: Record<string, unknown>,
   textBodyNode: Record<string, unknown> | undefined,
   type: string | undefined,
   idx: number | string | undefined,
@@ -40,30 +40,54 @@ export function getVerticalMargins(
   //a:pPr => a:spcAft => a:spcPts (/100) | a:spcPct (/?)
   //+
   //a:pPr =>a:lnSpc => a:spcPts (/?) | a:spcPct (/?)
-  //console.log("getVerticalMargins ", pNode, type,idx, warpObj)
+  //console.log("getVerticalMargins ", paragraphNode, type,idx, warpObj)
   //var lstStyle = textBodyNode["a:lstStyle"];
-  let lvl = 1;
-  let spcBefNode = getTextByPathList(pNode, ["a:pPr", "a:spcBef", "a:spcPts", "attrs", "val"]);
-  let spcAftNode = getTextByPathList(pNode, ["a:pPr", "a:spcAft", "a:spcPts", "attrs", "val"]);
-  let lnSpcNode = getTextByPathList(pNode, ["a:pPr", "a:lnSpc", "a:spcPct", "attrs", "val"]);
-  let lnSpcNodeType = "Pct";
-  if (lnSpcNode === undefined) {
-    lnSpcNode = getTextByPathList(pNode, ["a:pPr", "a:lnSpc", "a:spcPts", "attrs", "val"]);
-    if (lnSpcNode !== undefined) {
-      lnSpcNodeType = "Pts";
+  let level = 1;
+  let spaceBeforeNode = getTextByPathList(paragraphNode, [
+    "a:pPr",
+    "a:spcBef",
+    "a:spcPts",
+    "attrs",
+    "val",
+  ]);
+  let spaceAfterNode = getTextByPathList(paragraphNode, [
+    "a:pPr",
+    "a:spcAft",
+    "a:spcPts",
+    "attrs",
+    "val",
+  ]);
+  let lineSpacingNode = getTextByPathList(paragraphNode, [
+    "a:pPr",
+    "a:lnSpc",
+    "a:spcPct",
+    "attrs",
+    "val",
+  ]);
+  let lineSpacingNodeType = "Pct";
+  if (lineSpacingNode === undefined) {
+    lineSpacingNode = getTextByPathList(paragraphNode, [
+      "a:pPr",
+      "a:lnSpc",
+      "a:spcPts",
+      "attrs",
+      "val",
+    ]);
+    if (lineSpacingNode !== undefined) {
+      lineSpacingNodeType = "Pts";
     }
   }
-  const lvlNode = getTextByPathList(pNode, ["a:pPr", "attrs", "lvl"]);
-  if (lvlNode !== undefined) {
-    lvl = parseInt(lvlNode) + 1;
+  const levelNode = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "lvl"]);
+  if (levelNode !== undefined) {
+    level = parseInt(levelNode) + 1;
   }
-  let fontSize;
-  if (getTextByPathList(pNode, ["a:r"]) !== undefined) {
+  let fontSizePt;
+  if (getTextByPathList(paragraphNode, ["a:r"]) !== undefined) {
     const fontSizeStr = getFontSize(
-      pNode["a:r"],
+      paragraphNode["a:r"],
       textBodyNode,
       undefined,
-      lvl,
+      level,
       type,
       warpObj,
       fontSizeFactor
@@ -71,12 +95,12 @@ export function getVerticalMargins(
     if (fontSizeStr !== "inherit") {
       const parsedFontSize = Number.parseFloat(fontSizeStr);
       if (!Number.isNaN(parsedFontSize)) {
-        fontSize = parsedFontSize; //pt
+        fontSizePt = parsedFontSize; //pt
       }
     }
   }
   //var spcBef = "";
-  //console.log("getVerticalMargins 1", fontSizeStr, fontSize, lnSpcNode, parseInt(lnSpcNode) / 100000, spcBefNode, spcAftNode)
+  //console.log("getVerticalMargins 1", fontSizeStr, fontSizePt, lineSpacingNode, parseInt(lineSpacingNode) / 100000, spaceBeforeNode, spaceAfterNode)
   // if(spcBefNode !== undefined){
   //     spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "pt;"
   // }
@@ -107,22 +131,27 @@ export function getVerticalMargins(
   }
   if (
     isInLayoutOrMaster &&
-    (spcBefNode === undefined || spcAftNode === undefined || lnSpcNode === undefined)
+    (spaceBeforeNode === undefined || spaceAfterNode === undefined || lineSpacingNode === undefined)
   ) {
     //check in layout
     if (idx !== undefined) {
-      const laypPrNode = getTextByPathList(warpObj, [
+      const layoutParagraphPropsNode = getTextByPathList(warpObj, [
         "slideLayoutTables",
         "idxTable",
         idx,
         "p:txBody",
         "a:p",
-        lvl - 1,
+        level - 1,
         "a:pPr",
       ]);
 
-      if (spcBefNode === undefined) {
-        spcBefNode = getTextByPathList(laypPrNode, ["a:spcBef", "a:spcPts", "attrs", "val"]);
+      if (spaceBeforeNode === undefined) {
+        spaceBeforeNode = getTextByPathList(layoutParagraphPropsNode, [
+          "a:spcBef",
+          "a:spcPts",
+          "attrs",
+          "val",
+        ]);
         // if(spcBefNode !== undefined){
         //     spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "pt;"
         // }
@@ -135,8 +164,13 @@ export function getVerticalMargins(
         // }
       }
 
-      if (spcAftNode === undefined) {
-        spcAftNode = getTextByPathList(laypPrNode, ["a:spcAft", "a:spcPts", "attrs", "val"]);
+      if (spaceAfterNode === undefined) {
+        spaceAfterNode = getTextByPathList(layoutParagraphPropsNode, [
+          "a:spcAft",
+          "a:spcPts",
+          "attrs",
+          "val",
+        ]);
         // if(spcAftNode !== undefined){
         //     spcAft = "margin-bottom:" + parseInt(spcAftNode)/100 + "pt;"
         // }
@@ -149,18 +183,23 @@ export function getVerticalMargins(
         // }
       }
 
-      if (lnSpcNode === undefined) {
-        lnSpcNode = getTextByPathList(laypPrNode, ["a:lnSpc", "a:spcPct", "attrs", "val"]);
-        if (lnSpcNode === undefined) {
-          lnSpcNode = getTextByPathList(laypPrNode, [
+      if (lineSpacingNode === undefined) {
+        lineSpacingNode = getTextByPathList(layoutParagraphPropsNode, [
+          "a:lnSpc",
+          "a:spcPct",
+          "attrs",
+          "val",
+        ]);
+        if (lineSpacingNode === undefined) {
+          lineSpacingNode = getTextByPathList(layoutParagraphPropsNode, [
             "a:pPr",
             "a:lnSpc",
             "a:spcPts",
             "attrs",
             "val",
           ]);
-          if (lnSpcNode !== undefined) {
-            lnSpcNodeType = "Pts";
+          if (lineSpacingNode !== undefined) {
+            lineSpacingNodeType = "Pts";
           }
         }
       }
@@ -168,17 +207,17 @@ export function getVerticalMargins(
   }
   if (
     isInLayoutOrMaster &&
-    (spcBefNode === undefined || spcAftNode === undefined || lnSpcNode === undefined)
+    (spaceBeforeNode === undefined || spaceAfterNode === undefined || lineSpacingNode === undefined)
   ) {
     //check in master
     //slideMasterTextStyles
     const slideMasterTextStyles = warpObj["slideMasterTextStyles"];
-    let dirLoc = "";
-    const lvlKey = "a:lvl" + lvl + "pPr";
+    let styleKey = "";
+    const levelKey = "a:lvl" + level + "pPr";
     switch (type) {
       case "title":
       case "ctrTitle":
-        dirLoc = "p:titleStyle";
+        styleKey = "p:titleStyle";
         break;
       case "body":
       case "obj":
@@ -187,22 +226,27 @@ export function getVerticalMargins(
       case "sldNum":
       case "textBox":
         // case "shape":
-        dirLoc = "p:bodyStyle";
+        styleKey = "p:bodyStyle";
         break;
       case "shape":
         //case "textBox":
-        dirLoc = "p:otherStyle";
+        styleKey = "p:otherStyle";
         break;
       default:
-        dirLoc = "p:otherStyle";
+        styleKey = "p:otherStyle";
     }
     // if (type === "shape" || type === "textBox") {
     //     lvlKey = "a:lvl1pPr";
     // }
-    const inLvlNode = getTextByPathList(slideMasterTextStyles, [dirLoc, lvlKey]);
-    if (inLvlNode !== undefined) {
-      if (spcBefNode === undefined) {
-        spcBefNode = getTextByPathList(inLvlNode, ["a:spcBef", "a:spcPts", "attrs", "val"]);
+    const levelStyleNode = getTextByPathList(slideMasterTextStyles, [styleKey, levelKey]);
+    if (levelStyleNode !== undefined) {
+      if (spaceBeforeNode === undefined) {
+        spaceBeforeNode = getTextByPathList(levelStyleNode, [
+          "a:spcBef",
+          "a:spcPts",
+          "attrs",
+          "val",
+        ]);
         // if(spcBefNode !== undefined){
         //     spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "pt;"
         // }
@@ -215,8 +259,13 @@ export function getVerticalMargins(
         // }
       }
 
-      if (spcAftNode === undefined) {
-        spcAftNode = getTextByPathList(inLvlNode, ["a:spcAft", "a:spcPts", "attrs", "val"]);
+      if (spaceAfterNode === undefined) {
+        spaceAfterNode = getTextByPathList(levelStyleNode, [
+          "a:spcAft",
+          "a:spcPts",
+          "attrs",
+          "val",
+        ]);
         // if(spcAftNode !== undefined){
         //     spcAft = "margin-bottom:" + parseInt(spcAftNode)/100 + "pt;"
         // }
@@ -229,60 +278,65 @@ export function getVerticalMargins(
         // }
       }
 
-      if (lnSpcNode === undefined) {
-        lnSpcNode = getTextByPathList(inLvlNode, ["a:lnSpc", "a:spcPct", "attrs", "val"]);
-        if (lnSpcNode === undefined) {
-          lnSpcNode = getTextByPathList(inLvlNode, [
+      if (lineSpacingNode === undefined) {
+        lineSpacingNode = getTextByPathList(levelStyleNode, [
+          "a:lnSpc",
+          "a:spcPct",
+          "attrs",
+          "val",
+        ]);
+        if (lineSpacingNode === undefined) {
+          lineSpacingNode = getTextByPathList(levelStyleNode, [
             "a:pPr",
             "a:lnSpc",
             "a:spcPts",
             "attrs",
             "val",
           ]);
-          if (lnSpcNode !== undefined) {
-            lnSpcNodeType = "Pts";
+          if (lineSpacingNode !== undefined) {
+            lineSpacingNodeType = "Pts";
           }
         }
       }
     }
   }
-  let spcBefor = 0,
-    spcAfter = 0,
-    spcLines = 0;
-  let marginTopBottomStr = "";
-  if (spcBefNode !== undefined) {
-    spcBefor = parseInt(spcBefNode) / 100;
+  let spaceBefore = 0,
+    spaceAfter = 0,
+    lineSpacingPadding = 0;
+  let marginStyles = "";
+  if (spaceBeforeNode !== undefined) {
+    spaceBefore = parseInt(spaceBeforeNode) / 100;
   }
-  if (spcAftNode !== undefined) {
-    spcAfter = parseInt(spcAftNode) / 100;
+  if (spaceAfterNode !== undefined) {
+    spaceAfter = parseInt(spaceAfterNode) / 100;
   }
 
-  if (lnSpcNode !== undefined && fontSize !== undefined) {
-    if (lnSpcNodeType === "Pts") {
-      marginTopBottomStr += "padding-top: " + (parseInt(lnSpcNode) / 100 - fontSize) + "px;"; //+ "pt;";
+  if (lineSpacingNode !== undefined && fontSizePt !== undefined) {
+    if (lineSpacingNodeType === "Pts") {
+      marginStyles += "padding-top: " + (parseInt(lineSpacingNode) / 100 - fontSizePt) + "px;"; //+ "pt;";
     } else {
-      const fct = parseInt(lnSpcNode) / 100000;
-      spcLines = fontSize * (fct - 1) - fontSize; // fontSize *
-      const pBottom = fct > 1 ? fontSize : 0;
+      const spacingFactor = parseInt(lineSpacingNode) / 100000;
+      lineSpacingPadding = fontSizePt * (spacingFactor - 1) - fontSizePt; // fontSize *
+      const paddingTop = spacingFactor > 1 ? fontSizePt : 0;
       // marginTopBottomStr += "padding-top: " + spcLines + "pt;";
       // marginTopBottomStr += "padding-bottom: " + pBottom + "pt;";
-      marginTopBottomStr += "padding-top: " + pBottom + "px;"; // + "pt;";
-      marginTopBottomStr += "padding-bottom: " + spcLines + "px;"; // + "pt;";
+      marginStyles += "padding-top: " + paddingTop + "px;"; // + "pt;";
+      marginStyles += "padding-bottom: " + lineSpacingPadding + "px;"; // + "pt;";
     }
   }
 
   //if (spcBefNode !== undefined || lnSpcNode !== undefined) {
-  marginTopBottomStr += "margin-top: " + (spcBefor - 1) + "px;"; // + "pt;"; //margin-top: + spcLines // minus 1 - to fix space
+  marginStyles += "margin-top: " + (spaceBefore - 1) + "px;"; // + "pt;"; //margin-top: + spcLines // minus 1 - to fix space
   //}
-  if (spcAftNode !== undefined || lnSpcNode !== undefined) {
+  if (spaceAfterNode !== undefined || lineSpacingNode !== undefined) {
     //marginTopBottomStr += "margin-bottom: " + ((spcAfter - fontSize < 0) ? 0 : (spcAfter - fontSize)) + "pt;"; //margin-bottom: + spcLines
     //marginTopBottomStr += "margin-bottom: " + spcAfter * (1 / 4) + "px;";// + "pt;";
-    marginTopBottomStr += "margin-bottom: " + spcAfter + "px;"; // + "pt;";
+    marginStyles += "margin-bottom: " + spaceAfter + "px;"; // + "pt;";
   }
 
-  //console.log("getVerticalMargins 2 fontSize:", fontSize, "lnSpcNode:", lnSpcNode, "spcLines:", spcLines, "spcBefor:", spcBefor, "spcAfter:", spcAfter)
-  //console.log("getVerticalMargins 3 ", marginTopBottomStr, pNode, warpObj)
+  //console.log("getVerticalMargins 2 fontSize:", fontSizePt, "lnSpcNode:", lineSpacingNode, "spcLines:", lineSpacingPadding, "spcBefor:", spaceBefore, "spcAfter:", spaceAfter)
+  //console.log("getVerticalMargins 3 ", marginStyles, paragraphNode, warpObj)
 
   //return spcAft + spcBef;
-  return marginTopBottomStr;
+  return marginStyles;
 }
