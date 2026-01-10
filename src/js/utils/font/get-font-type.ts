@@ -8,38 +8,38 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * 2. Font scheme from theme (major for titles, minor for body text)
  *
  * @param textRunNode - Text run node from PPTX
- * @param type - Shape type (title, body, etc.) - determines major vs minor font
- * @param warpObj - Container object with theme content
+ * @param shapeType - Shape type (title, body, etc.) - determines major vs minor font
+ * @param warpContext - Container object with theme content
  * @param paragraphFontStyle - Paragraph font style (may specify font index)
  * @returns Font family name or "inherit"
  */
 export function getFontType(
   textRunNode: Record<string, unknown>,
-  type: string | undefined,
-  warpObj: Record<string, unknown>,
+  shapeType: string | undefined,
+  warpContext: Record<string, unknown>,
   paragraphFontStyle: Record<string, unknown> | undefined
 ): string {
   let typefaceValue = getTextByPathList(textRunNode, ["a:rPr", "a:latin", "attrs", "typeface"]);
 
   if (typefaceValue === undefined) {
-    let fontIndex = "";
+    let fontIndexKey = "";
     let fontGroupKey = "";
     if (paragraphFontStyle !== undefined) {
-      fontIndex = getTextByPathList(paragraphFontStyle, ["attrs", "idx"]);
+      fontIndexKey = getTextByPathList(paragraphFontStyle, ["attrs", "idx"]);
     }
-    const fontSchemeNode = getTextByPathList(warpObj["themeContent"], [
+    const fontSchemeNode = getTextByPathList(warpContext["themeContent"], [
       "a:theme",
       "a:themeElements",
       "a:fontScheme",
     ]);
-    if (fontIndex === "") {
-      if (type === "title" || type === "subTitle" || type === "ctrTitle") {
-        fontIndex = "major";
+    if (fontIndexKey === "") {
+      if (shapeType === "title" || shapeType === "subTitle" || shapeType === "ctrTitle") {
+        fontIndexKey = "major";
       } else {
-        fontIndex = "minor";
+        fontIndexKey = "minor";
       }
     }
-    fontGroupKey = "a:" + fontIndex + "Font";
+    fontGroupKey = "a:" + fontIndexKey + "Font";
     typefaceValue = getTextByPathList(fontSchemeNode, [
       fontGroupKey,
       "a:latin",
