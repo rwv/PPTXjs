@@ -12,248 +12,255 @@ import type { PptxArchive } from "../../archive/pptx-archive";
 /**
  * Process picture/video/audio node and generate HTML
  *
- * @param node - Picture node from PPTX
- * @param warpObj - Warp object containing slide resources and zip
- * @param source - Source type (slideMasterBg, slideLayoutBg, etc.)
- * @param sType - Shape type
- * @param slideFactor - EMU to pixel conversion factor
- * @param settings - Settings object containing mediaProcess flag
+ * @param picNode - Picture node from PPTX
+ * @param warpContext - Warp object containing slide resources and zip
+ * @param sourceType - Source type (slideMasterBg, slideLayoutBg, etc.)
+ * @param shapeType - Shape type
+ * @param emuToPx - EMU to pixel conversion factor
+ * @param renderSettings - Settings object containing mediaProcess flag
  * @returns HTML string for the picture/video/audio element
  */
 export async function processPicNode(
-  node: unknown,
-  warpObj: unknown,
-  source: string,
-  sType: string,
-  slideFactor: number,
-  settings: { mediaProcess: boolean }
+  picNode: unknown,
+  warpContext: unknown,
+  sourceType: string,
+  shapeType: string,
+  emuToPx: number,
+  renderSettings: { mediaProcess: boolean }
 ): Promise<string> {
+  void shapeType;
   //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
   type ResourceMap = Record<string, { target: string }>;
-  type WarpObj = {
+  type WarpContext = {
     masterResObj?: ResourceMap;
     layoutResObj?: ResourceMap;
     slideResObj: ResourceMap;
     archive: PptxArchive;
     slideLayoutTables?: Record<string, unknown>;
   };
-  const nodeRecord = node as Record<string, unknown>;
-  const warp = warpObj as WarpObj;
-  let rtrnData = "";
-  let mediaPicFlag = false;
-  const order = (nodeRecord["attrs"] as Record<string, string | number>)["order"];
+  const picNodeRecord = picNode as Record<string, unknown>;
+  const warpContextTyped = warpContext as WarpContext;
+  let htmlOutput = "";
+  let hasMediaAsset = false;
+  const zIndexOrder = (picNodeRecord["attrs"] as Record<string, string | number>)["order"];
 
-  const blipFill = nodeRecord["p:blipFill"] as Record<string, unknown>;
-  const blip = blipFill["a:blip"] as Record<string, unknown>;
-  const rid = (blip["attrs"] as Record<string, string>)["r:embed"];
-  let resObj: ResourceMap;
-  if (source === "slideMasterBg") {
-    resObj = warp.masterResObj as ResourceMap;
-  } else if (source === "slideLayoutBg") {
-    resObj = warp.layoutResObj as ResourceMap;
+  const blipFillNode = picNodeRecord["p:blipFill"] as Record<string, unknown>;
+  const blipNode = blipFillNode["a:blip"] as Record<string, unknown>;
+  const relationshipId = (blipNode["attrs"] as Record<string, string>)["r:embed"];
+  let resourceMap: ResourceMap;
+  if (sourceType === "slideMasterBg") {
+    resourceMap = warpContextTyped.masterResObj as ResourceMap;
+  } else if (sourceType === "slideLayoutBg") {
+    resourceMap = warpContextTyped.layoutResObj as ResourceMap;
   } else {
     //imgName = warpObj["slideResObj"][rid]["target"];
-    resObj = warp.slideResObj;
+    resourceMap = warpContextTyped.slideResObj;
   }
-  const imgName = resObj[rid]["target"];
+  const imagePath = resourceMap[relationshipId]["target"];
 
   //console.log("processPicNode imgName:", imgName);
-  const imgFileExt = extractFileExtension(imgName).toLowerCase();
-  const archive = warp.archive;
-  const imgFile = await archive.file(imgName);
-  if (!imgFile) {
-    throw new Error(`File not found in archive: ${imgName}`);
+  const imageExtension = extractFileExtension(imagePath).toLowerCase();
+  const archive = warpContextTyped.archive;
+  const imageFile = await archive.file(imagePath);
+  if (!imageFile) {
+    throw new Error(`File not found in archive: ${imagePath}`);
   }
-  const imgArrayBuffer = await imgFile.arrayBuffer();
-  let mimeType = "";
-  const spPrNode = nodeRecord["p:spPr"] as Record<string, unknown>;
-  let xfrmNode = spPrNode["a:xfrm"] as Record<string, unknown> | undefined;
-  if (xfrmNode === undefined) {
-    const idx = getTextByPathList<string | number>(nodeRecord, [
+  const imageArrayBuffer = await imageFile.arrayBuffer();
+  let imageMimeType = "";
+  const shapePropsNode = picNodeRecord["p:spPr"] as Record<string, unknown>;
+  let transformNode = shapePropsNode["a:xfrm"] as Record<string, unknown> | undefined;
+  if (transformNode === undefined) {
+    const placeholderIndex = getTextByPathList<string | number>(picNodeRecord, [
       "p:nvPicPr",
       "p:nvPr",
       "p:ph",
       "attrs",
       "idx",
     ]);
-    if (idx !== undefined) {
-      xfrmNode = getTextByPathList<Record<string, unknown>>(warp.slideLayoutTables, [
-        "idxTable",
-        idx,
-        "p:spPr",
-        "a:xfrm",
-      ]);
+    if (placeholderIndex !== undefined) {
+      transformNode = getTextByPathList<Record<string, unknown>>(
+        warpContextTyped.slideLayoutTables,
+        ["idxTable", placeholderIndex, "p:spPr", "a:xfrm"]
+      );
     }
   }
   ///////////////////////////////////////Amir//////////////////////////////
-  let rotate = 0;
-  const rotateNode = getTextByPathList<number | string | null>(nodeRecord, [
+  let rotationDegrees = 0;
+  const rotationNode = getTextByPathList<number | string | null>(picNodeRecord, [
     "p:spPr",
     "a:xfrm",
     "attrs",
     "rot",
   ]);
-  if (rotateNode !== undefined) {
-    rotate = angleToDegrees(rotateNode);
+  if (rotationNode !== undefined) {
+    rotationDegrees = angleToDegrees(rotationNode);
   }
   //video
-  const vdoNode = getTextByPathList<Record<string, unknown>>(nodeRecord, [
+  const videoNode = getTextByPathList<Record<string, unknown>>(picNodeRecord, [
     "p:nvPicPr",
     "p:nvPr",
     "a:videoFile",
   ]);
-  let vdoRid: string | undefined;
-  let vdoFile: string | undefined;
-  let vdoFileExt: string | undefined;
-  let vdoMimeType: string | undefined;
-  let uInt8Array: ArrayBuffer | undefined;
-  let blob: Blob | undefined;
-  let vdoBlob: string | undefined;
-  let mediaSupportFlag = false;
-  let isVdeoLink = false;
-  const mediaProcess = settings.mediaProcess;
-  if (vdoNode !== undefined && mediaProcess) {
-    vdoRid = (vdoNode["attrs"] as Record<string, string>)["r:link"];
-    vdoFile = resObj[vdoRid]?.target;
-    if (vdoFile) {
-      const checkIfLink = isVideoLink(vdoFile);
-      if (checkIfLink) {
-        vdoFile = escapeHtml(vdoFile);
-        //vdoBlob = vdoFile;
-        isVdeoLink = true;
-        mediaSupportFlag = true;
-        mediaPicFlag = true;
+  let videoRelId: string | undefined;
+  let videoPath: string | undefined;
+  let videoExtension: string | undefined;
+  let videoMimeType: string | undefined;
+  let videoBuffer: ArrayBuffer | undefined;
+  let videoBlob: Blob | undefined;
+  let videoUrl: string | undefined;
+  let mediaSupported = false;
+  let isVideoLinkSource = false;
+  const shouldProcessMedia = renderSettings.mediaProcess;
+  if (videoNode !== undefined && shouldProcessMedia) {
+    videoRelId = (videoNode["attrs"] as Record<string, string>)["r:link"];
+    videoPath = resourceMap[videoRelId]?.target;
+    if (videoPath) {
+      const isLink = isVideoLink(videoPath);
+      if (isLink) {
+        videoPath = escapeHtml(videoPath);
+        //videoUrl = videoPath;
+        isVideoLinkSource = true;
+        mediaSupported = true;
+        hasMediaAsset = true;
       } else {
-        vdoFileExt = extractFileExtension(vdoFile).toLowerCase();
-        if (vdoFileExt === "mp4" || vdoFileExt === "webm" || vdoFileExt === "ogg") {
-          const vdoArchiveFile = await archive.file(vdoFile);
-          if (!vdoArchiveFile) {
-            throw new Error(`File not found in archive: ${vdoFile}`);
+        videoExtension = extractFileExtension(videoPath).toLowerCase();
+        if (videoExtension === "mp4" || videoExtension === "webm" || videoExtension === "ogg") {
+          const videoArchiveFile = await archive.file(videoPath);
+          if (!videoArchiveFile) {
+            throw new Error(`File not found in archive: ${videoPath}`);
           }
-          uInt8Array = await vdoArchiveFile.arrayBuffer();
-          vdoMimeType = getMimeType(vdoFileExt);
-          blob = new Blob([uInt8Array], {
-            type: vdoMimeType,
+          videoBuffer = await videoArchiveFile.arrayBuffer();
+          videoMimeType = getMimeType(videoExtension);
+          videoBlob = new Blob([videoBuffer], {
+            type: videoMimeType,
           });
-          vdoBlob = URL.createObjectURL(blob);
-          mediaSupportFlag = true;
-          mediaPicFlag = true;
+          videoUrl = URL.createObjectURL(videoBlob);
+          mediaSupported = true;
+          hasMediaAsset = true;
         }
       }
     }
   }
   //Audio
-  const audioNode = getTextByPathList<Record<string, unknown>>(nodeRecord, [
+  const audioNode = getTextByPathList<Record<string, unknown>>(picNodeRecord, [
     "p:nvPicPr",
     "p:nvPr",
     "a:audioFile",
   ]);
-  let audioRid: string | undefined;
-  let audioFile: string | undefined;
-  let audioFileExt: string | undefined;
-  let uInt8ArrayAudio: ArrayBuffer | undefined;
-  let blobAudio: Blob | undefined;
-  let audioBlob: string | undefined;
-  let audioPlayerFlag = false;
-  let audioObjc: Record<string, unknown> | undefined;
-  if (audioNode !== undefined && mediaProcess) {
-    audioRid = (audioNode["attrs"] as Record<string, string>)["r:link"];
-    audioFile = resObj[audioRid]?.target;
-    if (audioFile) {
-      audioFileExt = extractFileExtension(audioFile).toLowerCase();
-      if (audioFileExt === "mp3" || audioFileExt === "wav" || audioFileExt === "ogg") {
-        const audioArchiveFile = await archive.file(audioFile);
+  let audioRelId: string | undefined;
+  let audioPath: string | undefined;
+  let audioExtension: string | undefined;
+  let audioBuffer: ArrayBuffer | undefined;
+  let audioBlob: Blob | undefined;
+  let audioUrl: string | undefined;
+  let audioPlayerEnabled = false;
+  let audioTransformNode: Record<string, unknown> | undefined;
+  if (audioNode !== undefined && shouldProcessMedia) {
+    audioRelId = (audioNode["attrs"] as Record<string, string>)["r:link"];
+    audioPath = resourceMap[audioRelId]?.target;
+    if (audioPath) {
+      audioExtension = extractFileExtension(audioPath).toLowerCase();
+      if (audioExtension === "mp3" || audioExtension === "wav" || audioExtension === "ogg") {
+        const audioArchiveFile = await archive.file(audioPath);
         if (!audioArchiveFile) {
-          throw new Error(`File not found in archive: ${audioFile}`);
+          throw new Error(`File not found in archive: ${audioPath}`);
         }
-        uInt8ArrayAudio = await audioArchiveFile.arrayBuffer();
-        blobAudio = new Blob([uInt8ArrayAudio]);
-        audioBlob = URL.createObjectURL(blobAudio);
-        const xfrmAttrs = xfrmNode as Record<string, unknown>;
-        const extAttrs = (xfrmAttrs["a:ext"] as Record<string, unknown>)["attrs"] as Record<
+        audioBuffer = await audioArchiveFile.arrayBuffer();
+        audioBlob = new Blob([audioBuffer]);
+        audioUrl = URL.createObjectURL(audioBlob);
+        const transformAttrs = transformNode as Record<string, unknown>;
+        const extAttrs = (transformAttrs["a:ext"] as Record<string, unknown>)["attrs"] as Record<
           string,
           string
         >;
-        const offAttrs = (xfrmAttrs["a:off"] as Record<string, unknown>)["attrs"] as Record<
+        const offAttrs = (transformAttrs["a:off"] as Record<string, unknown>)["attrs"] as Record<
           string,
           string
         >;
-        const cx = parseInt(extAttrs["cx"]) * 20;
-        const cy = extAttrs["cy"];
-        const x = parseInt(offAttrs["x"]) / 2.5;
-        const y = offAttrs["y"];
-        audioObjc = {
+        const cxValue = parseInt(extAttrs["cx"]) * 20;
+        const cyValue = extAttrs["cy"];
+        const xValue = parseInt(offAttrs["x"]) / 2.5;
+        const yValue = offAttrs["y"];
+        audioTransformNode = {
           "a:ext": {
             attrs: {
-              cx: cx,
-              cy: cy,
+              cx: cxValue,
+              cy: cyValue,
             },
           },
           "a:off": {
             attrs: {
-              x: x,
-              y: y,
+              x: xValue,
+              y: yValue,
             },
           },
         };
-        audioPlayerFlag = true;
-        mediaSupportFlag = true;
-        mediaPicFlag = true;
+        audioPlayerEnabled = true;
+        mediaSupported = true;
+        hasMediaAsset = true;
       }
     }
   }
   //console.log(node)
   //////////////////////////////////////////////////////////////////////////
-  mimeType = getMimeType(imgFileExt);
-  rtrnData =
+  imageMimeType = getMimeType(imageExtension);
+  htmlOutput =
     "<div class='block content' style='" +
-    (mediaProcess && audioPlayerFlag
-      ? getPosition(audioObjc, nodeRecord, undefined, undefined, undefined, slideFactor)
-      : getPosition(xfrmNode, nodeRecord, undefined, undefined, undefined, slideFactor)) +
-    (mediaProcess && audioPlayerFlag
-      ? getSize(audioObjc, undefined, undefined, slideFactor)
-      : getSize(xfrmNode, undefined, undefined, slideFactor)) +
+    (shouldProcessMedia && audioPlayerEnabled
+      ? getPosition(audioTransformNode, picNodeRecord, undefined, undefined, undefined, emuToPx)
+      : getPosition(transformNode, picNodeRecord, undefined, undefined, undefined, emuToPx)) +
+    (shouldProcessMedia && audioPlayerEnabled
+      ? getSize(audioTransformNode, undefined, undefined, emuToPx)
+      : getSize(transformNode, undefined, undefined, emuToPx)) +
     " z-index: " +
-    order +
+    zIndexOrder +
     ";" +
     "transform: rotate(" +
-    rotate +
+    rotationDegrees +
     "deg);'>";
-  if ((vdoNode === undefined && audioNode === undefined) || !mediaProcess || !mediaSupportFlag) {
-    rtrnData +=
+  if (
+    (videoNode === undefined && audioNode === undefined) ||
+    !shouldProcessMedia ||
+    !mediaSupported
+  ) {
+    htmlOutput +=
       "<img src='data:" +
-      mimeType +
+      imageMimeType +
       ";base64," +
-      base64ArrayBuffer(imgArrayBuffer) +
+      base64ArrayBuffer(imageArrayBuffer) +
       "' style='width: 100%; height: 100%'/>";
   } else if (
-    (vdoNode !== undefined || audioNode !== undefined) &&
-    mediaProcess &&
-    mediaSupportFlag
+    (videoNode !== undefined || audioNode !== undefined) &&
+    shouldProcessMedia &&
+    mediaSupported
   ) {
-    if (vdoNode !== undefined && !isVdeoLink) {
-      rtrnData +=
+    if (videoNode !== undefined && !isVideoLinkSource) {
+      htmlOutput +=
         "<video  src='" +
-        vdoBlob +
+        videoUrl +
         "' controls style='width: 100%; height: 100%'>Your browser does not support the video tag.</video>";
-    } else if (vdoNode !== undefined && isVdeoLink) {
-      rtrnData +=
-        "<iframe   src='" + vdoFile + "' controls style='width: 100%; height: 100%'></iframe >";
+    } else if (videoNode !== undefined && isVideoLinkSource) {
+      htmlOutput +=
+        "<iframe   src='" + videoPath + "' controls style='width: 100%; height: 100%'></iframe >";
     }
     if (audioNode !== undefined) {
-      rtrnData += '<audio id="audio_player" controls ><source src="' + audioBlob + '"></audio>';
+      htmlOutput += '<audio id="audio_player" controls ><source src="' + audioUrl + '"></audio>';
       //'<button onclick="audio_player.play()">Play</button>'+
       //'<button onclick="audio_player.pause()">Pause</button>';
     }
   }
-  if (!mediaSupportFlag && mediaPicFlag) {
-    rtrnData +=
+  if (!mediaSupported && hasMediaAsset) {
+    htmlOutput +=
       "<span style='color:red;font-size:40px;position: absolute;'>This media file Not supported by HTML5</span>";
   }
-  if ((vdoNode !== undefined || audioNode !== undefined) && !mediaProcess && mediaSupportFlag) {
+  if (
+    (videoNode !== undefined || audioNode !== undefined) &&
+    !shouldProcessMedia &&
+    mediaSupported
+  ) {
     console.log("Founded supported media file but media process disabled (mediaProcess=false)");
   }
-  rtrnData += "</div>";
+  htmlOutput += "</div>";
   //console.log(rtrnData)
-  return rtrnData;
+  return htmlOutput;
 }
