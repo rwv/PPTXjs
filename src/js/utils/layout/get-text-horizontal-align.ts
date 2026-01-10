@@ -16,33 +16,33 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  *
  * @param textNode - Text node from PPTX
  * @param paragraphNode - Parent paragraph node for fallback
- * @param type - Shape type (title, body, etc.)
- * @param warpObj - Container object with layout tables and master styles
+ * @param shapeType - Shape type (title, body, etc.)
+ * @param warpContext - Container object with layout tables and master styles
  * @returns CSS text-align value ("left", "right", "center", "justify", or "inherit")
  */
 export function getTextHorizontalAlign(
   textNode: Record<string, unknown>,
   paragraphNode: Record<string, unknown>,
-  type: string | undefined,
-  warpObj: Record<string, unknown>
+  shapeType: string | undefined,
+  warpContext: Record<string, unknown>
 ): string {
-  //console.log("getTextHorizontalAlign: type: ", type, ", node: ", textNode)
+  //console.log("getTextHorizontalAlign: type: ", shapeType, ", node: ", textNode)
   let alignmentValue = getTextByPathList(textNode, ["a:pPr", "attrs", "algn"]);
   if (alignmentValue === undefined) {
     alignmentValue = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "algn"]);
   }
   if (alignmentValue === undefined) {
-    if (type === "title" || type === "ctrTitle" || type === "subTitle") {
-      let levelIndex = 1;
-      const levelNode = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "lvl"]);
-      if (levelNode !== undefined) {
-        levelIndex = parseInt(levelNode) + 1;
+    if (shapeType === "title" || shapeType === "ctrTitle" || shapeType === "subTitle") {
+      let listLevel = 1;
+      const levelAttr = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "lvl"]);
+      if (levelAttr !== undefined) {
+        listLevel = parseInt(levelAttr) + 1;
       }
-      const levelKey = "a:lvl" + levelIndex + "pPr";
-      alignmentValue = getTextByPathList(warpObj, [
+      const levelKey = "a:lvl" + listLevel + "pPr";
+      alignmentValue = getTextByPathList(warpContext, [
         "slideLayoutTables",
         "typeTable",
-        type,
+        shapeType,
         "p:txBody",
         "a:lstStyle",
         levelKey,
@@ -50,10 +50,10 @@ export function getTextHorizontalAlign(
         "algn",
       ]);
       if (alignmentValue === undefined) {
-        alignmentValue = getTextByPathList(warpObj, [
+        alignmentValue = getTextByPathList(warpContext, [
           "slideMasterTables",
           "typeTable",
-          type,
+          shapeType,
           "p:txBody",
           "a:lstStyle",
           levelKey,
@@ -61,15 +61,15 @@ export function getTextHorizontalAlign(
           "algn",
         ]);
         if (alignmentValue === undefined) {
-          alignmentValue = getTextByPathList(warpObj, [
+          alignmentValue = getTextByPathList(warpContext, [
             "slideMasterTextStyles",
             "p:titleStyle",
             levelKey,
             "attrs",
             "algn",
           ]);
-          if (alignmentValue === undefined && type === "subTitle") {
-            alignmentValue = getTextByPathList(warpObj, [
+          if (alignmentValue === undefined && shapeType === "subTitle") {
+            alignmentValue = getTextByPathList(warpContext, [
               "slideMasterTextStyles",
               "p:bodyStyle",
               levelKey,
@@ -79,8 +79,8 @@ export function getTextHorizontalAlign(
           }
         }
       }
-    } else if (type === "body") {
-      alignmentValue = getTextByPathList(warpObj, [
+    } else if (shapeType === "body") {
+      alignmentValue = getTextByPathList(warpContext, [
         "slideMasterTextStyles",
         "p:bodyStyle",
         "a:lvl1pPr",
@@ -88,10 +88,10 @@ export function getTextHorizontalAlign(
         "algn",
       ]);
     } else {
-      alignmentValue = getTextByPathList(warpObj, [
+      alignmentValue = getTextByPathList(warpContext, [
         "slideMasterTables",
         "typeTable",
-        type,
+        shapeType,
         "p:txBody",
         "a:lstStyle",
         "a:lvl1pPr",
