@@ -27,12 +27,18 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns Font size as CSS string (e.g., "12px") or "inherit"/"initial"
  */
 export function getFontSize(
-  node: any,
-  textBodyNode: any,
-  pFontStyle: any,
+  node: unknown,
+  textBodyNode: Record<string, unknown> | undefined,
+  pFontStyle: unknown,
   lvl: number | string,
   type: string | undefined,
-  warpObj: any,
+  warpObj: {
+    slideLayoutTables?: Record<string, unknown>;
+    slideMasterTables?: Record<string, unknown>;
+    slideMasterTextStyles?: Record<string, unknown>;
+    defaultTextStyle?: Record<string, unknown>;
+    [key: string]: unknown;
+  },
   fontSizeFactor: number
 ): string {
   // if(type == "sldNum")
@@ -40,21 +46,25 @@ export function getFontSize(
   const lstStyle = textBodyNode !== undefined ? textBodyNode["a:lstStyle"] : undefined;
   const lvlpPr = "a:lvl" + lvl + "pPr";
   let fontSize: number | undefined = undefined;
-  let sz, kern;
-  if (node["a:rPr"] !== undefined) {
-    fontSize = parseInt(node["a:rPr"]["attrs"]["sz"]) / 100;
+  let sz: string | number | undefined;
+  let kern: string | number | undefined;
+  const runSize = getTextByPathList<string>(node, ["a:rPr", "attrs", "sz"]);
+  if (runSize !== undefined) {
+    fontSize = parseInt(runSize) / 100;
   }
-  if (isNaN(fontSize) || (fontSize === undefined && node["a:fld"] !== undefined)) {
-    sz = getTextByPathList(node["a:fld"], ["a:rPr", "attrs", "sz"]);
-    fontSize = parseInt(sz) / 100;
+  const fldNode = getTextByPathList<Record<string, unknown>>(node, ["a:fld"]);
+  if (isNaN(fontSize) || (fontSize === undefined && fldNode !== undefined)) {
+    sz = getTextByPathList<string>(fldNode, ["a:rPr", "attrs", "sz"]);
+    fontSize = parseInt(String(sz)) / 100;
   }
-  if ((isNaN(fontSize) || fontSize === undefined) && node["a:t"] === undefined) {
-    sz = getTextByPathList(node["a:endParaRPr"], ["attrs", "sz"]);
-    fontSize = parseInt(sz) / 100;
+  const nodeText = getTextByPathList<string>(node, ["a:t"]);
+  if ((isNaN(fontSize) || fontSize === undefined) && nodeText === undefined) {
+    sz = getTextByPathList<string>(node, ["a:endParaRPr", "attrs", "sz"]);
+    fontSize = parseInt(String(sz)) / 100;
   }
   if ((isNaN(fontSize) || fontSize === undefined) && lstStyle !== undefined) {
-    sz = getTextByPathList(lstStyle, [lvlpPr, "a:defRPr", "attrs", "sz"]);
-    fontSize = parseInt(sz) / 100;
+    sz = getTextByPathList<string>(lstStyle, [lvlpPr, "a:defRPr", "attrs", "sz"]);
+    fontSize = parseInt(String(sz)) / 100;
   }
   //a:spAutoFit
   let _isAutoFit = false;
@@ -74,7 +84,7 @@ export function getFontSize(
     //     type = "body";
     //     lvlpPr = "a:lvl1pPr";
     // }
-    sz = getTextByPathList(warpObj["slideLayoutTables"], [
+    sz = getTextByPathList<string>(warpObj["slideLayoutTables"], [
       "typeTable",
       type,
       "p:txBody",
@@ -84,8 +94,8 @@ export function getFontSize(
       "attrs",
       "sz",
     ]);
-    fontSize = parseInt(sz) / 100;
-    kern = getTextByPathList(warpObj["slideLayoutTables"], [
+    fontSize = parseInt(String(sz)) / 100;
+    kern = getTextByPathList<string>(warpObj["slideLayoutTables"], [
       "typeTable",
       type,
       "p:txBody",
@@ -99,9 +109,9 @@ export function getFontSize(
       isKerning &&
       kern !== undefined &&
       !isNaN(fontSize) &&
-      fontSize - parseInt(kern) / 100 > 0
+      fontSize - parseInt(String(kern)) / 100 > 0
     ) {
-      fontSize = fontSize - parseInt(kern) / 100;
+      fontSize = fontSize - parseInt(String(kern)) / 100;
     }
   }
 
@@ -110,7 +120,7 @@ export function getFontSize(
     //     type = "body";
     //     lvlpPr = "a:lvl1pPr";
     // }
-    sz = getTextByPathList(warpObj["slideMasterTables"], [
+    sz = getTextByPathList<string>(warpObj["slideMasterTables"], [
       "typeTable",
       type,
       "p:txBody",
@@ -120,7 +130,7 @@ export function getFontSize(
       "attrs",
       "sz",
     ]);
-    kern = getTextByPathList(warpObj["slideMasterTables"], [
+    kern = getTextByPathList<string>(warpObj["slideMasterTables"], [
       "typeTable",
       type,
       "p:txBody",
@@ -132,14 +142,14 @@ export function getFontSize(
     ]);
     if (sz === undefined) {
       if (type === "title" || type === "subTitle" || type === "ctrTitle") {
-        sz = getTextByPathList(warpObj["slideMasterTextStyles"], [
+        sz = getTextByPathList<string>(warpObj["slideMasterTextStyles"], [
           "p:titleStyle",
           lvlpPr,
           "a:defRPr",
           "attrs",
           "sz",
         ]);
-        kern = getTextByPathList(warpObj["slideMasterTextStyles"], [
+        kern = getTextByPathList<string>(warpObj["slideMasterTextStyles"], [
           "p:titleStyle",
           lvlpPr,
           "a:defRPr",
@@ -153,14 +163,14 @@ export function getFontSize(
         type === "sldNum" ||
         type === "textBox"
       ) {
-        sz = getTextByPathList(warpObj["slideMasterTextStyles"], [
+        sz = getTextByPathList<string>(warpObj["slideMasterTextStyles"], [
           "p:bodyStyle",
           lvlpPr,
           "a:defRPr",
           "attrs",
           "sz",
         ]);
-        kern = getTextByPathList(warpObj["slideMasterTextStyles"], [
+        kern = getTextByPathList<string>(warpObj["slideMasterTextStyles"], [
           "p:bodyStyle",
           lvlpPr,
           "a:defRPr",
@@ -169,14 +179,14 @@ export function getFontSize(
         ]);
       } else if (type === "shape") {
         //textBox and shape text does not indent
-        sz = getTextByPathList(warpObj["slideMasterTextStyles"], [
+        sz = getTextByPathList<string>(warpObj["slideMasterTextStyles"], [
           "p:otherStyle",
           lvlpPr,
           "a:defRPr",
           "attrs",
           "sz",
         ]);
-        kern = getTextByPathList(warpObj["slideMasterTextStyles"], [
+        kern = getTextByPathList<string>(warpObj["slideMasterTextStyles"], [
           "p:otherStyle",
           lvlpPr,
           "a:defRPr",
@@ -187,10 +197,20 @@ export function getFontSize(
       }
 
       if (sz === undefined) {
-        sz = getTextByPathList(warpObj["defaultTextStyle"], [lvlpPr, "a:defRPr", "attrs", "sz"]);
+        sz = getTextByPathList<string>(warpObj["defaultTextStyle"], [
+          lvlpPr,
+          "a:defRPr",
+          "attrs",
+          "sz",
+        ]);
         kern =
           kern === undefined
-            ? getTextByPathList(warpObj["defaultTextStyle"], [lvlpPr, "a:defRPr", "attrs", "kern"])
+            ? getTextByPathList<string>(warpObj["defaultTextStyle"], [
+                lvlpPr,
+                "a:defRPr",
+                "attrs",
+                "kern",
+              ])
             : undefined;
         isKerning = false;
       }
@@ -203,36 +223,37 @@ export function getFontSize(
       //     kern = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
       // }
     }
-    fontSize = parseInt(sz) / 100;
+    fontSize = parseInt(String(sz)) / 100;
     if (
       isKerning &&
       kern !== undefined &&
       !isNaN(fontSize) &&
-      fontSize - parseInt(kern) / 100 > parseInt(kern) / 100
+      fontSize - parseInt(String(kern)) / 100 > parseInt(String(kern)) / 100
     ) {
-      fontSize = fontSize - parseInt(kern) / 100;
+      fontSize = fontSize - parseInt(String(kern)) / 100;
       //fontSize =  parseInt(kern) / 100;
     }
   }
 
-  const baseline = getTextByPathList(node, ["a:rPr", "attrs", "baseline"]);
+  const baseline = getTextByPathList<string>(node, ["a:rPr", "attrs", "baseline"]);
   if (baseline !== undefined && !isNaN(fontSize)) {
-    const baselineVl = parseInt(baseline) / 100000;
+    const baselineVl = parseInt(String(baseline)) / 100000;
     //fontSize -= 10;
     // fontSize = fontSize * baselineVl;
     fontSize -= baselineVl;
   }
 
   if (!isNaN(fontSize)) {
-    const normAutofit = getTextByPathList(textBodyNode, [
+    const normAutofit = getTextByPathList<string | number>(textBodyNode, [
       "a:bodyPr",
       "a:normAutofit",
       "attrs",
       "fontScale",
     ]);
-    if (normAutofit !== undefined && Number(normAutofit) !== 0) {
+    const normAutofitValue = normAutofit !== undefined ? Number(normAutofit) : 0;
+    if (normAutofitValue !== 0) {
       //console.log("fontSize", fontSize, "normAutofit: ", normAutofit, normAutofit/100000)
-      fontSize = Math.round(fontSize * (normAutofit / 100000));
+      fontSize = Math.round(fontSize * (normAutofitValue / 100000));
     }
   }
 
