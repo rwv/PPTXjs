@@ -1,5 +1,15 @@
 import { PptxArchive } from "./pptx-archive";
 
+type JSZipV2File = {
+  asArrayBuffer: () => ArrayBuffer;
+  asText: () => string;
+};
+
+type JSZipV2 = {
+  load: (data: ArrayBuffer) => void;
+  file: (path: string) => JSZipV2File | null;
+};
+
 /**
  * JSZip v2.x adapter for PptxArchive interface
  * Wraps JSZip v2 API to isolate library-specific code
@@ -9,7 +19,7 @@ import { PptxArchive } from "./pptx-archive";
  * JSZip v3.x, only this adapter needs to be replaced.
  */
 export class JSZipV2Adapter implements PptxArchive {
-  private zip: any; // JSZip v2 instance (type is 'any' because JSZip v2 has no types)
+  private zip: JSZipV2; // JSZip v2 instance (no official types)
 
   /**
    * Create and load PPTX archive from file
