@@ -16,164 +16,167 @@ import { processNodesInSlide } from "./process-nodes-in-slide";
  * Creates wrapper div with positioning and recursively processes children
  * via processNodesInSlide.
  *
- * @param node - Group shape node (p:grpSp)
- * @param warpObj - Warp object containing slide resources
- * @param source - Source context
- * @param slideFactor - EMU to pixel conversion factor
+ * @param groupNode - Group shape node (p:grpSp)
+ * @param warpContext - Warp object containing slide resources
+ * @param sourceType - Source context
+ * @param emuToPx - EMU to pixel conversion factor
  * @param tableStyles - Table styles from presentation
- * @param isFirstBr - Object {value: boolean} for line break state
+ * @param isFirstLineBreak - Object {value: boolean} for line break state
  * @param styleTable - CSS style table
- * @param rtlLangsArray - RTL language codes
- * @param fontSizeFactor - Font size scaling factor
- * @param chartID - Chart ID counter
- * @param MsgQueue - Message queue for chart processing
- * @param settings - Plugin settings
+ * @param rtlLanguages - RTL language codes
+ * @param fontSizeScale - Font size scaling factor
+ * @param chartIdCounter - Chart ID counter
+ * @param messageQueue - Message queue for chart processing
+ * @param renderSettings - Plugin settings
  * @returns HTML string for the group
  */
 export async function processGroupSpNode(
-  node: unknown,
-  warpObj: unknown,
-  source: string,
-  slideFactor: number,
+  groupNode: unknown,
+  warpContext: unknown,
+  sourceType: string,
+  emuToPx: number,
   tableStyles: unknown,
-  isFirstBr: { value: boolean },
+  isFirstLineBreak: { value: boolean },
   styleTable: unknown,
-  rtlLangsArray: string[],
-  fontSizeFactor: number,
-  chartID: { value: number },
-  MsgQueue: unknown,
-  settings: { mediaProcess: boolean } & Record<string, unknown>
+  rtlLanguages: string[],
+  fontSizeScale: number,
+  chartIdCounter: { value: number },
+  messageQueue: unknown,
+  renderSettings: { mediaProcess: boolean } & Record<string, unknown>
 ): Promise<string> {
-  //console.log("processGroupSpNode: node: ", node)
-  const nodeRecord = node as Record<string, unknown>;
-  const xfrmNode = getTextByPathList<Record<string, unknown>>(nodeRecord, ["p:grpSpPr", "a:xfrm"]);
-  let rotStr = ""; //;" border: 3px solid black;";
-  let top;
-  let left;
-  let width;
-  let height;
-  let sType = "group";
-  if (xfrmNode !== undefined) {
-    const xfrmOffAttrs = (xfrmNode["a:off"] as Record<string, unknown>)["attrs"] as Record<
+  //console.log("processGroupSpNode: node: ", groupNode)
+  const groupNodeRecord = groupNode as Record<string, unknown>;
+  const transformNode = getTextByPathList<Record<string, unknown>>(groupNodeRecord, [
+    "p:grpSpPr",
+    "a:xfrm",
+  ]);
+  let rotationCss = ""; //;" border: 3px solid black;";
+  let topPx;
+  let leftPx;
+  let widthPx;
+  let heightPx;
+  let shapeType = "group";
+  if (transformNode !== undefined) {
+    const offsetAttrs = (transformNode["a:off"] as Record<string, unknown>)["attrs"] as Record<
       string,
       string
     >;
-    const xfrmChOffAttrs = (xfrmNode["a:chOff"] as Record<string, unknown>)["attrs"] as Record<
+    const childOffsetAttrs = (transformNode["a:chOff"] as Record<string, unknown>)[
+      "attrs"
+    ] as Record<string, string>;
+    const extentAttrs = (transformNode["a:ext"] as Record<string, unknown>)["attrs"] as Record<
       string,
       string
     >;
-    const xfrmExtAttrs = (xfrmNode["a:ext"] as Record<string, unknown>)["attrs"] as Record<
-      string,
-      string
-    >;
-    const xfrmChExtAttrs = (xfrmNode["a:chExt"] as Record<string, unknown>)["attrs"] as Record<
-      string,
-      string
-    >;
-    const x = parseInt(xfrmOffAttrs["x"]) * slideFactor;
-    const y = parseInt(xfrmOffAttrs["y"]) * slideFactor;
-    const chx = parseInt(xfrmChOffAttrs["x"]) * slideFactor;
-    const chy = parseInt(xfrmChOffAttrs["y"]) * slideFactor;
-    const cx = parseInt(xfrmExtAttrs["cx"]) * slideFactor;
-    const cy = parseInt(xfrmExtAttrs["cy"]) * slideFactor;
-    const chcx = parseInt(xfrmChExtAttrs["cx"]) * slideFactor;
-    const chcy = parseInt(xfrmChExtAttrs["cy"]) * slideFactor;
-    let rotate = parseInt((xfrmNode["attrs"] as Record<string, string>)["rot"]);
+    const childExtentAttrs = (transformNode["a:chExt"] as Record<string, unknown>)[
+      "attrs"
+    ] as Record<string, string>;
+    const offsetX = parseInt(offsetAttrs["x"]) * emuToPx;
+    const offsetY = parseInt(offsetAttrs["y"]) * emuToPx;
+    const childOffsetX = parseInt(childOffsetAttrs["x"]) * emuToPx;
+    const childOffsetY = parseInt(childOffsetAttrs["y"]) * emuToPx;
+    const extentWidth = parseInt(extentAttrs["cx"]) * emuToPx;
+    const extentHeight = parseInt(extentAttrs["cy"]) * emuToPx;
+    const childExtentWidth = parseInt(childExtentAttrs["cx"]) * emuToPx;
+    const childExtentHeight = parseInt(childExtentAttrs["cy"]) * emuToPx;
+    let rotation = parseInt((transformNode["attrs"] as Record<string, string>)["rot"]);
     // angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
     // var rotX = 0;
     // var rotY = 0;
-    top = y - chy;
-    left = x - chx;
-    width = cx - chcx;
-    height = cy - chcy;
-    if (!isNaN(rotate)) {
-      rotate = angleToDegrees(rotate);
-      rotStr += "transform: rotate(" + rotate + "deg) ; transform-origin: center;";
+    topPx = offsetY - childOffsetY;
+    leftPx = offsetX - childOffsetX;
+    widthPx = extentWidth - childExtentWidth;
+    heightPx = extentHeight - childExtentHeight;
+    if (!isNaN(rotation)) {
+      rotation = angleToDegrees(rotation);
+      rotationCss += "transform: rotate(" + rotation + "deg) ; transform-origin: center;";
       // var cLin = Math.sqrt(Math.pow((chy), 2) + Math.pow((chx), 2));
       // var rdian = degreesToRadians(rotate);
       // rotX = cLin * Math.cos(rdian);
       // rotY = cLin * Math.sin(rdian);
-      if (rotate !== 0) {
-        top = y;
-        left = x;
-        width = cx;
-        height = cy;
-        sType = "group-rotate";
+      if (rotation !== 0) {
+        topPx = offsetY;
+        leftPx = offsetX;
+        widthPx = extentWidth;
+        heightPx = extentHeight;
+        shapeType = "group-rotate";
       }
     }
   }
-  let grpStyle = "";
+  let groupStyle = "";
 
-  if (rotStr !== undefined && rotStr !== "") {
-    grpStyle += rotStr;
+  if (rotationCss !== undefined && rotationCss !== "") {
+    groupStyle += rotationCss;
   }
 
-  if (top !== undefined) {
-    grpStyle += "top: " + top + "px;";
+  if (topPx !== undefined) {
+    groupStyle += "top: " + topPx + "px;";
   }
-  if (left !== undefined) {
-    grpStyle += "left: " + left + "px;";
+  if (leftPx !== undefined) {
+    groupStyle += "left: " + leftPx + "px;";
   }
-  if (width !== undefined) {
-    grpStyle += "width:" + width + "px;";
+  if (widthPx !== undefined) {
+    groupStyle += "width:" + widthPx + "px;";
   }
-  if (height !== undefined) {
-    grpStyle += "height: " + height + "px;";
+  if (heightPx !== undefined) {
+    groupStyle += "height: " + heightPx + "px;";
   }
-  const order = (nodeRecord["attrs"] as Record<string, string | number>)["order"];
+  const zIndexOrder = (groupNodeRecord["attrs"] as Record<string, string | number>)["order"];
 
-  let result =
+  let htmlOutput =
     "<div class='block group' style='z-index: " +
-    order +
+    zIndexOrder +
     ";" +
-    grpStyle +
+    groupStyle +
     " border:1px solid red;'>";
 
-  // Procsee all child nodes
-  for (const nodeKey in nodeRecord) {
-    const child = nodeRecord[nodeKey] as Record<string, unknown> | Array<Record<string, unknown>>;
-    if (Array.isArray(child)) {
-      for (let i = 0; i < child.length; i++) {
-        result += await processNodesInSlide(
+  // Process all child nodes
+  for (const nodeKey in groupNodeRecord) {
+    const childNode = groupNodeRecord[nodeKey] as
+      | Record<string, unknown>
+      | Array<Record<string, unknown>>;
+    if (Array.isArray(childNode)) {
+      for (let i = 0; i < childNode.length; i++) {
+        htmlOutput += await processNodesInSlide(
           nodeKey,
-          child[i],
-          nodeRecord,
-          warpObj,
-          source,
-          sType,
+          childNode[i],
+          groupNodeRecord,
+          warpContext,
+          sourceType,
+          shapeType,
           tableStyles,
-          isFirstBr,
+          isFirstLineBreak,
           styleTable,
-          rtlLangsArray,
-          slideFactor,
-          fontSizeFactor,
-          chartID,
-          MsgQueue,
-          settings
+          rtlLanguages,
+          emuToPx,
+          fontSizeScale,
+          chartIdCounter,
+          messageQueue,
+          renderSettings
         );
       }
     } else {
-      result += await processNodesInSlide(
+      htmlOutput += await processNodesInSlide(
         nodeKey,
-        child,
-        nodeRecord,
-        warpObj,
-        source,
-        sType,
+        childNode,
+        groupNodeRecord,
+        warpContext,
+        sourceType,
+        shapeType,
         tableStyles,
-        isFirstBr,
+        isFirstLineBreak,
         styleTable,
-        rtlLangsArray,
-        slideFactor,
-        fontSizeFactor,
-        chartID,
-        MsgQueue,
-        settings
+        rtlLanguages,
+        emuToPx,
+        fontSizeScale,
+        chartIdCounter,
+        messageQueue,
+        renderSettings
       );
     }
   }
 
-  result += "</div>";
+  htmlOutput += "</div>";
 
-  return result;
+  return htmlOutput;
 }
