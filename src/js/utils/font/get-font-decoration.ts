@@ -5,31 +5,33 @@
  * - Underline (u attribute)
  * - Strikethrough (strike attribute)
  *
- * @param node - Text run node from PPTX
+ * @param textRunNode - Text run node from PPTX
  * @param type - Shape type (unused but kept for consistency)
  * @param slideMasterTextStyles - Master text styles (unused but kept for consistency)
  * @returns CSS text-decoration value ("underline", "line-through", "underline line-through", or "inherit")
  */
 export function getFontDecoration(
-  node: Record<string, unknown>,
-  _type: string | undefined,
-  _slideMasterTextStyles: unknown
+  textRunNode: Record<string, unknown>,
+  _shapeType: string | undefined,
+  _masterTextStyles: unknown
 ): string {
-  void _type;
-  void _slideMasterTextStyles;
-  if (node["a:rPr"] !== undefined) {
-    const underLine =
-      node["a:rPr"]["attrs"]["u"] !== undefined ? node["a:rPr"]["attrs"]["u"] : "none";
-    const strikethrough =
-      node["a:rPr"]["attrs"]["strike"] !== undefined
-        ? node["a:rPr"]["attrs"]["strike"]
+  void _shapeType;
+  void _masterTextStyles;
+  if (textRunNode["a:rPr"] !== undefined) {
+    const underlineStyle =
+      textRunNode["a:rPr"]["attrs"]["u"] !== undefined
+        ? textRunNode["a:rPr"]["attrs"]["u"]
+        : "none";
+    const strikethroughStyle =
+      textRunNode["a:rPr"]["attrs"]["strike"] !== undefined
+        ? textRunNode["a:rPr"]["attrs"]["strike"]
         : "noStrike";
 
-    if (underLine !== "none" && strikethrough === "noStrike") {
+    if (underlineStyle !== "none" && strikethroughStyle === "noStrike") {
       return "underline";
-    } else if (underLine === "none" && strikethrough !== "noStrike") {
+    } else if (underlineStyle === "none" && strikethroughStyle !== "noStrike") {
       return "line-through";
-    } else if (underLine !== "none" && strikethrough !== "noStrike") {
+    } else if (underlineStyle !== "none" && strikethroughStyle !== "noStrike") {
       return "underline line-through";
     } else {
       return "inherit";
