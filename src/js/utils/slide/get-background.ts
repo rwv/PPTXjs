@@ -45,7 +45,6 @@ export async function getBackground(
   settings: any
 ): Promise<string> {
   //var rslt = "";
-  const _slideContent = warpObj["slideContent"];
   const slideLayoutContent = warpObj["slideLayoutContent"];
   const slideMasterContent = warpObj["slideMasterContent"];
 
@@ -80,7 +79,6 @@ export async function getBackground(
     "px;" +
     bgColor +
     "'>";
-  const _nodePhTypeAry = [];
   if (nodesSldLayout !== undefined) {
     for (const nodeKey in nodesSldLayout) {
       if (nodesSldLayout[nodeKey].constructor === Array) {
@@ -152,7 +150,7 @@ export async function getBackground(
     for (const nodeKey in nodesSldMaster) {
       if (nodesSldMaster[nodeKey].constructor === Array) {
         for (let i = 0; i < nodesSldMaster[nodeKey].length; i++) {
-          const _phType = getTextByPathList(nodesSldMaster[nodeKey][i], [
+          void getTextByPathList(nodesSldMaster[nodeKey][i], [
             "p:nvSpPr",
             "p:nvPr",
             "p:ph",
@@ -180,7 +178,7 @@ export async function getBackground(
           //}
         }
       } else {
-        const _phType = getTextByPathList(nodesSldMaster[nodeKey], [
+        void getTextByPathList(nodesSldMaster[nodeKey], [
           "p:nvSpPr",
           "p:nvPr",
           "p:ph",

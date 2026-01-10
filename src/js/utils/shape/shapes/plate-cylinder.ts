@@ -207,7 +207,6 @@ function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
   const maxAdj = (cnstVal1 * h) / ss;
   const a = adj < 0 ? 0 : adj > maxAdj ? maxAdj : adj;
   const y1 = (ss * a) / cnstVal2;
-  const _y2 = y1 + y1;
   const y3 = h - y1;
   const cd2 = 180,
     wd2 = w / 2;

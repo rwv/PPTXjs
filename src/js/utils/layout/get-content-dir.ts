@@ -20,6 +20,9 @@ export function getContentDir(
   _type: string | undefined,
   _warpObj: Record<string, unknown>
 ): string {
+  void _node;
+  void _type;
+  void _warpObj;
   // NOTE: RTL (Right-to-Left) detection logic is currently disabled.
   // The early return below bypasses all RTL checks, always returning "content" (LTR).
   // To enable RTL support, comment out the line below and uncomment the logic beneath it.

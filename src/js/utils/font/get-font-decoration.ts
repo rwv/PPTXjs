@@ -15,6 +15,8 @@ export function getFontDecoration(
   _type: string | undefined,
   _slideMasterTextStyles: unknown
 ): string {
+  void _type;
+  void _slideMasterTextStyles;
   if (node["a:rPr"] !== undefined) {
     const underLine =
       node["a:rPr"]["attrs"]["u"] !== undefined ? node["a:rPr"]["attrs"]["u"] : "none";

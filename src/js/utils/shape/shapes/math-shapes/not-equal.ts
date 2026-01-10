@@ -52,14 +52,11 @@ export function renderMathNotEqual(ctx: MathShapeContext): string {
   const x4 = x7 - dx47;
   const dx37 = (xadj2 * y4) / hd2;
   const x3 = x7 - dx37;
-  const dx27 = xadj2 * 2;
-  const x2 = x7 - dx27;
   const rx7 = x7 + bhw;
   const rx6 = x6 + bhw;
   const rx5 = x5 + bhw;
   const rx4 = x4 + bhw;
   const rx3 = x3 + bhw;
-  const _rx2 = x2 + bhw;
   const dx7 = (dy1 * hd2) / len;
   const rxt = x7 + dx7;
   const lxt = rx7 - dx7;
@@ -73,12 +70,6 @@ export function renderMathNotEqual(ctx: MathShapeContext): string {
   const drx = w - lx;
   const dly = h - ry;
   const dry = h - ly;
-  const _xC1 = (rx + lx) / 2;
-  const _xC2 = (drx + dlx) / 2;
-  const _yC1 = (ry + ly) / 2;
-  const _yC2 = (y1 + y2) / 2;
-  const _yC3 = (y3 + y4) / 2;
-  const _yC4 = (dry + dly) / 2;
 
   dVal =
     "M" +

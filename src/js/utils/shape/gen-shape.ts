@@ -29,22 +29,10 @@
  * @returns HTML string with SVG shape
  */
 
-import { getTextByPathList as _getTextByPathList } from "../object";
-import {
-  getPosition,
-  getSize,
-  getVerticalAlign,
-  angleToDegrees as _angleToDegrees,
-  getContentDir,
-} from "../layout";
-import { getFillType as _getFillType, getShapeFill } from "../fill";
+import { getPosition, getSize, getVerticalAlign, getContentDir } from "../layout";
+import { getShapeFill } from "../fill";
 import { getBorder } from "../border";
 import { genTextBody } from "../text";
-import { getSolidFill as _getSolidFill } from "../color";
-import {
-  getSvgGradient as _getSvgGradient,
-  getSvgImagePattern as _getSvgImagePattern,
-} from "../svg";
 import { renderCustomGeometry } from "./shapes/custom-geometry";
 import { processShapeEffects } from "./process-shape-effects";
 import { initShapeContext } from "./init-shape-context";
@@ -133,18 +121,12 @@ export async function genShape(
     shpId,
     shapType,
     custShapType,
-    rotate: _rotate,
-    flip: _flip,
-    x: _x,
-    y: _y,
     w,
     h,
     svgCssName,
-    effectsClassName: _effectsClassName,
     fillColor,
     grndFillFlg,
     imgFillFlg,
-    clrFillType: _clrFillType,
     border,
   } = context;
 

@@ -69,6 +69,7 @@ export async function genTextBody(
 ): Promise<string> {
   let text = "";
   const _slideMasterTextStyles = warpObj["slideMasterTextStyles"];
+  void _slideMasterTextStyles;
 
   if (textBodyNode === undefined) {
     return text;
@@ -101,7 +102,7 @@ export async function genTextBody(
     if (rNode !== undefined && brNode !== undefined) {
       isFirstBr.value = true;
       brNode = brNode.constructor === Array ? brNode : [brNode];
-      brNode.forEach(function (item: any, _indx: number) {
+      brNode.forEach(function (item: any) {
         item.type = "br";
       });
       if (brNode.length > 1) {

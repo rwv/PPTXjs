@@ -44,7 +44,6 @@ export function renderMathDivide(ctx: MathShapeContext): string {
   const y5 = h - y1;
   const x1 = hc - dx1;
   const x3 = hc + dx1;
-  const _x2 = hc - rad;
   const cd4 = 90,
     c3d4 = 270;
   const cX1 = hc - Math.cos((c3d4 * Math.PI) / 180) * rad;

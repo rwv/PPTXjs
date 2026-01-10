@@ -109,14 +109,7 @@ export function renderCircularArrow(ctx: CurvedArrowContext): string {
 
   const xA = hc + dxA;
   const yA = vc + dyA;
-  const wtE = rw1 * Math.sin(stAng);
-  const htE = rh1 * Math.cos(stAng);
 
-  const dxE = rw1 * Math.cos(Math.atan2(wtE, htE));
-  const dyE = rh1 * Math.sin(Math.atan2(wtE, htE));
-
-  const _xE = hc + dxE;
-  const _yE = vc + dyE;
   const dxG = thh * Math.cos(ptAng);
   const dyG = thh * Math.sin(ptAng);
   const xG = xH + dxG;

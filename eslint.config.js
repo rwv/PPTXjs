@@ -71,13 +71,7 @@ export default [
     rules: {
       // TypeScript rules - Start permissive, gradually tighten
       '@typescript-eslint/no-explicit-any': 'off', // Allow 'any' for gradual migration
-      '@typescript-eslint/no-unused-vars': [
-        'warn',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-        },
-      ],
+      '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/ban-ts-comment': [
         'warn',
         {

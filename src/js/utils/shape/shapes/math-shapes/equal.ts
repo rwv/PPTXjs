@@ -32,8 +32,6 @@ export function renderMathEqual(ctx: MathShapeContext): string {
   const y4 = y3 + dy1;
   const x1 = hc - dx1;
   const x2 = hc + dx1;
-  const _yC1 = (y1 + y2) / 2;
-  const _yC2 = (y3 + y4) / 2;
   dVal =
     "M" +
     x1 +

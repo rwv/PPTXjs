@@ -16,6 +16,8 @@ export function getTextVerticalAlign(
   _type: string | undefined,
   _slideMasterTextStyles: unknown
 ): string {
+  void _type;
+  void _slideMasterTextStyles;
   const baseline = getTextByPathList(node, ["a:rPr", "attrs", "baseline"]);
   return baseline === undefined ? "baseline" : parseInt(baseline) / 1000 + "%";
 }

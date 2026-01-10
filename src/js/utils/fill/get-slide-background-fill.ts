@@ -15,6 +15,7 @@ export async function getSlideBackgroundFill(
   warpObj: any,
   index: number | string
 ): Promise<string | undefined> {
+  void index;
   const slideContent = warpObj["slideContent"];
   const slideLayoutContent = warpObj["slideLayoutContent"];
   const slideMasterContent = warpObj["slideMasterContent"];
@@ -55,7 +56,7 @@ export async function getSlideBackgroundFill(
     } else if (bgFillTyp === "GRADIENT_FILL") {
       bgcolor = getBgGradientFill(bgPr, undefined, slideMasterContent, warpObj);
     } else if (bgFillTyp === "PIC_FILL") {
-      bgcolor = await getBgPicFill(bgPr, "slideBg", warpObj, undefined, index);
+      bgcolor = await getBgPicFill(bgPr, "slideBg", warpObj, undefined);
     }
   } else if (bgRef !== undefined) {
     let clrMapOvr;
@@ -160,7 +161,7 @@ export async function getSlideBackgroundFill(
       } else if (bgFillTyp === "GRADIENT_FILL") {
         bgcolor = getBgGradientFill(bgPr, undefined, slideMasterContent, warpObj);
       } else if (bgFillTyp === "PIC_FILL") {
-        bgcolor = await getBgPicFill(bgPr, "slideLayoutBg", warpObj, undefined, index);
+        bgcolor = await getBgPicFill(bgPr, "slideLayoutBg", warpObj, undefined);
       }
     } else if (bgRef !== undefined) {
       console.log("slideLayoutContent: bgRef", bgRef);
@@ -214,7 +215,7 @@ export async function getSlideBackgroundFill(
         } else if (bgFillTyp === "GRADIENT_FILL") {
           bgcolor = getBgGradientFill(bgFillLstIdx, phClr, slideMasterContent, warpObj);
         } else if (bgFillTyp === "PIC_FILL") {
-          bgcolor = await getBgPicFill(bgFillLstIdx, "themeBg", warpObj, phClr, index);
+          bgcolor = await getBgPicFill(bgFillLstIdx, "themeBg", warpObj, phClr);
         } else {
           console.log(bgFillTyp);
         }
@@ -235,7 +236,7 @@ export async function getSlideBackgroundFill(
         } else if (bgFillTyp === "GRADIENT_FILL") {
           bgcolor = getBgGradientFill(bgPr, undefined, slideMasterContent, warpObj);
         } else if (bgFillTyp === "PIC_FILL") {
-          bgcolor = await getBgPicFill(bgPr, "slideMasterBg", warpObj, undefined, index);
+          bgcolor = await getBgPicFill(bgPr, "slideMasterBg", warpObj, undefined);
         }
       } else if (bgRef !== undefined) {
         const phClr = getSolidFill(bgRef, clrMap, undefined, warpObj);
@@ -290,7 +291,7 @@ export async function getSlideBackgroundFill(
           } else if (bgFillTyp === "GRADIENT_FILL") {
             bgcolor = getBgGradientFill(bgFillLstIdx, phClr, slideMasterContent, warpObj);
           } else if (bgFillTyp === "PIC_FILL") {
-            bgcolor = await getBgPicFill(bgFillLstIdx, "themeBg", warpObj, phClr, index);
+            bgcolor = await getBgPicFill(bgFillLstIdx, "themeBg", warpObj, phClr);
           } else {
             console.log(bgFillTyp);
           }

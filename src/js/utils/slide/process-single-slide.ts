@@ -33,17 +33,7 @@ import { readXmlFile, indexNodes } from "../xml";
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
 import { getBackground } from "./get-background";
-import {
-  processNodesInSlide,
-  processSpNode as _processSpNode,
-  processGraphicFrameNode as _processGraphicFrameNode,
-  processGroupSpNode as _processGroupSpNode,
-} from "../node";
-import { processCxnSpNode as _processCxnSpNode, genShape as _genShape } from "../shape";
-import { processPicNode as _processPicNode } from "../media";
-import { genTable as _genTable } from "../table";
-import { genChart as _genChart } from "../chart";
-import { genDiagram as _genDiagram } from "../diagram";
+import { processNodesInSlide } from "../node";
 
 export async function processSingleSlide(
   archive: PptxArchive,
@@ -124,9 +114,8 @@ export async function processSingleSlide(
   ]);
 
   //console.log(slideLayoutClrOvride);
-  let _slideLayoutClrOvride;
   if (sldLayoutClrOvr !== undefined) {
-    _slideLayoutClrOvride = sldLayoutClrOvr["attrs"];
+    void sldLayoutClrOvr["attrs"];
   }
   // =====< Step 2 >=====
   // Read slide master filename of the slidelayout (Get slideMasterXX.xml)

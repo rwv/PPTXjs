@@ -263,7 +263,6 @@ export function getVerticalMargins(
     } else {
       const fct = parseInt(lnSpcNode) / 100000;
       spcLines = fontSize * (fct - 1) - fontSize; // fontSize *
-      const _pTop = fct > 1 ? spcLines : 0;
       const pBottom = fct > 1 ? fontSize : 0;
       // marginTopBottomStr += "padding-top: " + spcLines + "pt;";
       // marginTopBottomStr += "padding-bottom: " + pBottom + "pt;";

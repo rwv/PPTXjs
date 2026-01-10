@@ -75,8 +75,6 @@ export function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
   const swAng = Math.atan(dx / ah);
   const swAngDeg = (swAng * 180) / Math.PI;
   const mswAng = -swAngDeg;
-  const _iy = b - idy;
-  const _ix = (wR + x3) / 2;
   const q12 = th / 2;
   const dang2 = Math.atan(q12 / idy);
   const dang2Deg = (dang2 * 180) / Math.PI;
@@ -314,8 +312,6 @@ export function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
   const swAng = Math.atan(dy / ah);
   const stAng = Math.PI - swAng;
   const mswAng = -swAng;
-  const _ix = r - iDx;
-  const _iy = (hR + y3) / 2;
   const q12 = th / 2;
   const dang2 = Math.atan(q12 / iDx);
   const swAng2 = dang2 - Math.PI / 2;
@@ -434,8 +430,6 @@ export function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
   const x6 = r - aw2;
   const y1 = t + ah;
   const swAng = Math.atan(dx / ah);
-  const _iy = t + idy;
-  const _ix = (wR + x3) / 2;
   const q12 = th / 2;
   const dang2 = Math.atan(q12 / idy);
   const swAng2 = dang2 - swAng;

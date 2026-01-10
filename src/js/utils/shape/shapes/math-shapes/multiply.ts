@@ -45,8 +45,6 @@ export function renderMathMultiply(ctx: MathShapeContext): string {
   const yG = h - yA;
   const yH = h - yB;
   const yI = h - yC;
-  const _xC2 = w - xM;
-  const _yC3 = h - yM;
 
   dVal =
     "M" +

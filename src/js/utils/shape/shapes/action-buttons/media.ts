@@ -11,7 +11,6 @@ export function renderActionButtonMovie(ctx: ActionButtonContext): string {
     ss = Math.min(w, h);
   const dx2 = (ss * 3) / 8;
   const g9 = vc - dx2;
-  const _g10 = vc + dx2;
   const g11 = hc - dx2;
   const g12 = hc + dx2;
   const g13 = (ss * 3) / 4;

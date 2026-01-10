@@ -83,8 +83,6 @@ export function renderEllipseRibbon(ctx: RibbonContext, shapType: string): strin
     const cy4 = q9 + rh;
     const cy6 = cy3 + rh;
     const y7 = y1 + dy3;
-    const _cy7 = q1 + q1 - y7;
-    const _y8 = b - dy1;
     //
     d_val =
       "M" +
@@ -223,8 +221,6 @@ export function renderEllipseRibbon(ctx: RibbonContext, shapType: string): strin
     const cy6 = b - cu6;
     const u7 = u1 + dy3;
     const y7 = b - u7;
-    const cu7 = q1 + q1 - u7;
-    const _cy7 = b - cu7;
     //
     d_val =
       "M" +

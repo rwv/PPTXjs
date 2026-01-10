@@ -89,7 +89,6 @@ export async function genTable(
     tbl_borders = getTableBorders(tblBorderStyl, warpObj);
   }
   let tbl_bgcolor = "";
-  const _tblOpacity = 1;
   let tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:tblBg", "a:fillRef"]);
   //console.log( "thisTblStyle:", thisTblStyle, "warpObj:", warpObj)
   if (tbl_bgFillschemeClr !== undefined) {
@@ -126,9 +125,7 @@ export async function genTable(
   if (trNodes.constructor !== Array) {
     trNodes = [trNodes];
   }
-  //if (trNodes.constructor === Array) {
   //multi rows
-  let _totalRowSpan = 0;
   let rowSpanAry: number[] = [];
   for (let i = 0; i < trNodes.length; i++) {
     //////////////rows Style ////////////Amir
@@ -243,7 +240,6 @@ export async function genTable(
             const colSpan = cellParmAry[4];
 
             if (rowSpan !== undefined) {
-              _totalRowSpan++;
               rowSpanAry[j] = parseInt(rowSpan) - 1;
               tableHtml +=
                 "<td class='" +

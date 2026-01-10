@@ -25,7 +25,6 @@ export function getPregraphMargn(
   }
 
   let marLStr = "",
-    _marRStr = "",
     maginVal = 0;
   const pPrNode = pNode["a:pPr"];
   const layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
@@ -41,10 +40,8 @@ export function getPregraphMargn(
     }
   }
   let isRTL = false;
-  let _dirStr = "ltr";
   if (getRtlVal !== undefined && getRtlVal === "1") {
     isRTL = true;
-    _dirStr = "rtl";
   }
 
   // align
@@ -105,15 +102,7 @@ export function getPregraphMargn(
       marRNode = getTextByPathList(pPrNodeMaster, ["attrs", "marR"]);
     }
   }
-  if (marRNode !== undefined && isBullate) {
-    const _marginRight = parseInt(marRNode) * slideFactor;
-    if (isRTL) {
-      _marRStr = "padding-right: ";
-    } else {
-      _marRStr = "padding-left: ";
-    }
-    _marRStr += Math.abs(0 - indent) + "px;";
-  }
+  void marRNode;
 
   return [marLStr, maginVal];
 }

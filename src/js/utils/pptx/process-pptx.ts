@@ -63,7 +63,6 @@ export async function processPPTX(
   const app_verssion = slideSize.appVersion;
   const defaultTextStyle = slideSize.defaultTextStyle;
   const slideWidth = slideSize.width;
-  const _slideHeight = slideSize.height;
   const processFullTheme = settings.themeProcess;
   const tableStyles = await readXmlFile(archive, "ppt/tableStyles.xml");
   //console.log("slideSize: ", slideSize)
@@ -87,7 +86,7 @@ export async function processPPTX(
     let filename_no_path_no_ext = "";
     if (filename_no_path.indexOf(".") !== -1) {
       const filename_no_path_no_ext_ary = filename_no_path.split(".");
-      const _slide_ext = filename_no_path_no_ext_ary.pop();
+      filename_no_path_no_ext_ary.pop();
       filename_no_path_no_ext = filename_no_path_no_ext_ary.join(".");
     }
     let slide_number = 1;

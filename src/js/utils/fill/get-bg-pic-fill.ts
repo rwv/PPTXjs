@@ -22,15 +22,13 @@ type SolidFillNode = Parameters<typeof getSolidFill>[0];
  * @param sorce - Source type (slide, slideLayoutBg, etc.)
  * @param warpObj - Container object with ZIP file and resources
  * @param phClr - Placeholder color for theme color resolution
- * @param index - Slide index for CSS class naming
  * @returns CSS background style string with z-index
  */
 export async function getBgPicFill(
   bgPr: Record<string, unknown>,
   sorce: string,
   warpObj: Record<string, unknown>,
-  phClr: string | undefined,
-  _index: number | string
+  phClr: string | undefined
 ): Promise<string> {
   const blipFillNode = bgPr["a:blipFill"] as Record<string, unknown>;
   const picFillBase64 = await getPicFill(sorce, blipFillNode, warpObj as PicFillWarpObj);

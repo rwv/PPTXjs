@@ -64,7 +64,6 @@ export async function renderCustomGeometry(
   //console.log("custShapType : ", custShapType, ", pathLstNode: ", pathLstNode, ", node: ", node);//, ", y:", y, ", w:", w, ", h:", h);
 
   let moveToNode = getTextByPathList(pathNodes, ["a:moveTo"]);
-  const _totalShapes = moveToNode.length;
 
   const lnToNodes = pathNodes["a:lnTo"]; //total a:pt : 1
   let cubicBezToNodes = pathNodes["a:cubicBezTo"]; //total a:pt : 3
@@ -208,7 +207,6 @@ export async function renderCustomGeometry(
     //console.log("custShapType >>sorted  multiSapeAry: ");
     //console.log(multiSapeAry);
     let k = 0;
-    const _isClose = false;
     let d = "";
     while (k < multiSapeAry.length) {
       if (multiSapeAry[k].type === "movto") {

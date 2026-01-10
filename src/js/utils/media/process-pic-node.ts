@@ -76,13 +76,6 @@ export async function processPicNode(
       "attrs",
       "idx",
     ]);
-    const _type = getTextByPathList<string>(nodeRecord, [
-      "p:nvPicPr",
-      "p:nvPr",
-      "p:ph",
-      "attrs",
-      "type",
-    ]);
     if (idx !== undefined) {
       xfrmNode = getTextByPathList<Record<string, unknown>>(warp.slideLayoutTables, [
         "idxTable",
@@ -158,7 +151,6 @@ export async function processPicNode(
   let audioRid: string | undefined;
   let audioFile: string | undefined;
   let audioFileExt: string | undefined;
-  let _audioMimeType: string | undefined;
   let uInt8ArrayAudio: ArrayBuffer | undefined;
   let blobAudio: Blob | undefined;
   let audioBlob: string | undefined;

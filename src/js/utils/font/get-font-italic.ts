@@ -11,5 +11,7 @@ export function getFontItalic(
   _type: string | undefined,
   _slideMasterTextStyles: unknown
 ): string {
+  void _type;
+  void _slideMasterTextStyles;
   return node["a:rPr"] !== undefined && node["a:rPr"]["attrs"]["i"] === "1" ? "italic" : "inherit";
 }

@@ -50,20 +50,15 @@ export async function getTableCellParams(
   //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpObj);//tableStyles
   const rowSpan = getTextByPathList(tcNodes, ["attrs", "rowSpan"]);
   const colSpan = getTextByPathList(tcNodes, ["attrs", "gridSpan"]);
-  const _vMerge = getTextByPathList(tcNodes, ["attrs", "vMerge"]);
-  const _hMerge = getTextByPathList(tcNodes, ["attrs", "hMerge"]);
   let colStyl = "word-wrap: break-word;";
   let colWidth;
   let celFillColor = "";
-  const _col_borders = "";
   let colFontClrPr = "";
   let colFontWeight = "";
   let lin_bottm = "",
     lin_top = "",
     lin_left = "",
-    lin_right = "",
-    _lin_bottom_left_to_top_right = "",
-    _lin_top_left_to_bottom_right = "";
+    lin_right = "";
 
   const colSpanInt = parseInt(colSpan);
   let total_col_width = 0;
@@ -176,8 +171,8 @@ export async function getTableCellParams(
       ]);
     }
   }
-  _lin_bottom_left_to_top_right = getTextByPathList(tcNodes, ["a:tcPr", "a:lnBlToTr"]);
-  _lin_top_left_to_bottom_right = getTextByPathList(tcNodes, ["a:tcPr", "a:InTlToBr"]);
+  void getTextByPathList(tcNodes, ["a:tcPr", "a:lnBlToTr"]);
+  void getTextByPathList(tcNodes, ["a:tcPr", "a:InTlToBr"]);
 
   if (lin_bottm !== undefined && lin_bottm !== "") {
     const bottom_line_border = getBorder(lin_bottm, undefined, false, "", warpObj);

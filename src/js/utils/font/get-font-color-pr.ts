@@ -54,7 +54,7 @@ export function getFontColorPr(
       color = getPatternFill(pattFill, warpObj);
       colorType = "pattern";
     } else if (filTyp === "PIC_FILL") {
-      color = getBgPicFill(rPrNode, "slideBg", warpObj, undefined, undefined);
+      color = getBgPicFill(rPrNode, "slideBg", warpObj, undefined);
       colorType = "pic";
     } else if (filTyp === "GRADIENT_FILL") {
       const shpFill = rPrNode["a:gradFill"];
@@ -83,7 +83,7 @@ export function getFontColorPr(
       color = getPatternFill(pattFill, warpObj);
       colorType = "pattern";
     } else if (filTyp === "PIC_FILL") {
-      color = getBgPicFill(lstStyledefRPr, "slideBg", warpObj, undefined, undefined);
+      color = getBgPicFill(lstStyledefRPr, "slideBg", warpObj, undefined);
       colorType = "pic";
     } else if (filTyp === "GRADIENT_FILL") {
       const shpFill = lstStyledefRPr["a:gradFill"];
@@ -246,15 +246,11 @@ export function getFontColorPr(
   if (txtShadow !== undefined) {
     const shadowClr = getSolidFill(txtShadow, undefined, undefined, warpObj);
     const outerShdwAttrs = txtShadow["attrs"];
-    const _algn = outerShdwAttrs["algn"];
     const dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
     const dist = parseInt(outerShdwAttrs["dist"]) * slideFactor;
-    const _rotWithShape = outerShdwAttrs["rotWithShape"];
     const blurRad = outerShdwAttrs["blurRad"]
       ? parseInt(outerShdwAttrs["blurRad"]) * slideFactor + "px"
       : "";
-    const _sx = outerShdwAttrs["sx"] ? parseInt(outerShdwAttrs["sx"]) / 100000 : 1;
-    const _sy = outerShdwAttrs["sy"] ? parseInt(outerShdwAttrs["sy"]) / 100000 : 1;
     const vx = dist * Math.sin((dir * Math.PI) / 180);
     const hx = dist * Math.cos((dir * Math.PI) / 180);
 

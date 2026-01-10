@@ -1,5 +1,4 @@
 import { getTextByPathList } from "../object";
-import { readXmlFile } from "../xml";
 import { getPosition, getSize } from "../layout";
 import { processSpNode } from "../node";
 
@@ -51,24 +50,7 @@ export async function genDiagram(
    * 5-drawing#.xml, which Microsoft added as an extension for persisting diagram layout information.
    */
   ///get colors#.xml, data#.xml , layout#.xml , quickStyle#.xml
-  const _order = node["attrs"]["order"];
-  const archive = warpObj["archive"];
   const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
-  const dgmRelIds = getTextByPathList(node, ["a:graphic", "a:graphicData", "dgm:relIds", "attrs"]);
-  //console.log(dgmRelIds)
-  const dgmClrFileId = dgmRelIds["r:cs"];
-  const dgmDataFileId = dgmRelIds["r:dm"];
-  const dgmLayoutFileId = dgmRelIds["r:lo"];
-  const dgmQuickStyleFileId = dgmRelIds["r:qs"];
-  const dgmClrFileName = warpObj["slideResObj"][dgmClrFileId].target,
-    dgmDataFileName = warpObj["slideResObj"][dgmDataFileId].target,
-    dgmLayoutFileName = warpObj["slideResObj"][dgmLayoutFileId].target,
-    dgmQuickStyleFileName = warpObj["slideResObj"][dgmQuickStyleFileId].target;
-  //console.log("dgmClrFileName: " , dgmClrFileName,", dgmDataFileName: ",dgmDataFileName,", dgmLayoutFileName: ",dgmLayoutFileName,", dgmQuickStyleFileName: ",dgmQuickStyleFileName);
-  const _dgmClr = await readXmlFile(archive, dgmClrFileName);
-  const _dgmData = await readXmlFile(archive, dgmDataFileName);
-  const _dgmLayout = await readXmlFile(archive, dgmLayoutFileName);
-  const _dgmQuickStyle = await readXmlFile(archive, dgmQuickStyleFileName);
   //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
   ///get drawing#.xml
   // var dgmDrwFileName = "";
