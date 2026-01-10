@@ -4,7 +4,6 @@
 - This repo modernizes the legacy PPTXjs jQuery plugin and now targets native DOM APIs for PPTX-to-HTML conversion.
 
 ## Scripts
-- build: `pnpm build`
 - test: `pnpm test`
 - format: `pnpm format`
 - lint: `pnpm lint`
@@ -15,8 +14,7 @@
 2) `pnpm format`
 3) `pnpm lint`
 4) `pnpm type-check`
-5) `pnpm build`
-6) `pnpm test`
+5) `pnpm test`
 All commands must pass before committing.
 
 ## Current goal
@@ -28,7 +26,6 @@ All commands must pass before committing.
 - `src/js/utils/**`: utility modules grouped by domain (layout, color, font, shape, media, chart, xml, vendors).
 - `src/pptxjs-entry.ts`: ESM entry that wires JSZip/D3/NVD3 globals and exports `pptxToHtml`.
 - `src/index.ts`: test helper that uses the ESM entry to render slides.
-- `rollup.config.js`: builds IIFE output to `dist/js/pptxjs.js`.
 - `css/`: runtime styles; `js/` and `js-original/`: built and legacy artifacts.
 - `src/__tests__/*.browser.test.ts`: browser tests (Vitest + Playwright).
 - `Sample_12.pptx`: sample PPTX for manual/testing.
