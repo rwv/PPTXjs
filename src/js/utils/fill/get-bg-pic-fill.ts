@@ -2,6 +2,9 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
 import { getSolidFill } from "../color/get-solid-fill";
 import { getPicFill } from "./get-pic-fill";
 
+type PicFillWarpObj = Parameters<typeof getPicFill>[2];
+type SolidFillNode = Parameters<typeof getSolidFill>[0];
+
 /**
  * Extracts background picture fill with advanced styling options
  *
@@ -23,29 +26,33 @@ import { getPicFill } from "./get-pic-fill";
  * @returns CSS background style string with z-index
  */
 export function getBgPicFill(
-  bgPr: any,
+  bgPr: Record<string, unknown>,
   sorce: string,
-  warpObj: any,
+  warpObj: Record<string, unknown>,
   phClr: string | undefined,
   _index: number | string
 ): string {
-  const picFillBase64 = getPicFill(sorce, bgPr["a:blipFill"], warpObj);
-  const ordr = bgPr["attrs"]["order"];
-  const aBlipNode = bgPr["a:blipFill"]["a:blip"];
+  const blipFillNode = bgPr["a:blipFill"] as Record<string, unknown>;
+  const picFillBase64 = getPicFill(sorce, blipFillNode, warpObj as PicFillWarpObj);
+  const ordr = (bgPr["attrs"] as Record<string, string | number>)["order"];
+  const aBlipNode = getTextByPathList<Record<string, unknown>>(bgPr, ["a:blipFill", "a:blip"]);
 
-  const duotone = getTextByPathList(aBlipNode, ["a:duotone"]);
+  const duotone = getTextByPathList<Record<string, unknown>>(aBlipNode, ["a:duotone"]);
   if (duotone !== undefined) {
-    const clr_ary = [];
+    const clr_ary: Array<string | undefined> = [];
     Object.keys(duotone).forEach(function (clr_type) {
       if (clr_type !== "attrs") {
-        const obj = {};
+        const obj: Record<string, unknown> = {};
         obj[clr_type] = duotone[clr_type];
-        clr_ary.push(getSolidFill(obj, undefined, phClr, warpObj));
+        clr_ary.push(getSolidFill(obj as SolidFillNode, undefined, phClr, warpObj));
       }
     });
   }
 
-  const aphaModFixNode = getTextByPathList(aBlipNode, ["a:alphaModFix", "attrs"]);
+  const aphaModFixNode = getTextByPathList<Record<string, string>>(aBlipNode, [
+    "a:alphaModFix",
+    "attrs",
+  ]);
   let imgOpacity = "";
   if (
     aphaModFixNode !== undefined &&
@@ -56,15 +63,19 @@ export function getBgPicFill(
     imgOpacity = "opacity:" + amt + ";";
   }
 
-  const tileNode = getTextByPathList(bgPr, ["a:blipFill", "a:tile", "attrs"]);
+  const tileNode = getTextByPathList<Record<string, string>>(bgPr, [
+    "a:blipFill",
+    "a:tile",
+    "attrs",
+  ]);
   let prop_style = "";
   if (tileNode !== undefined && tileNode["sx"] !== undefined) {
     prop_style += "background-repeat: round;";
   }
 
-  const stretch = getTextByPathList(bgPr, ["a:blipFill", "a:stretch"]);
+  const stretch = getTextByPathList<Record<string, unknown>>(bgPr, ["a:blipFill", "a:stretch"]);
   if (stretch !== undefined) {
-    const fillRect = getTextByPathList(stretch, ["a:fillRect", "attrs"]);
+    const fillRect = getTextByPathList<Record<string, string>>(stretch, ["a:fillRect", "attrs"]);
     prop_style += "background-repeat: no-repeat;";
     prop_style += "background-position: center;";
     if (fillRect !== undefined) {
