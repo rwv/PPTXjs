@@ -1,11 +1,11 @@
 /**
  * Get border style for shapes and text
  *
- * @param node - The XML node containing border properties
- * @param pNode - Parent node
+ * @param shapeNode - The XML node containing border properties
+ * @param parentNode - Parent node
  * @param isSvgMode - Whether to return SVG format or CSS format
- * @param bType - Border type: "shape" or "text"
- * @param warpObj - The warp object containing theme and other resources
+ * @param targetType - Border type: "shape" or "text"
+ * @param warpContext - The warp object containing theme and other resources
  * @returns Border style as CSS string or SVG object
  */
 import { getTextByPathList } from "../object";
@@ -14,124 +14,131 @@ import { getSolidFill } from "../color/get-solid-fill";
 import { getGradientFill } from "../fill/get-gradient-fill";
 import { getPatternFill } from "../fill/get-pattern-fill";
 
-export function getBorder(node: any, pNode: any, isSvgMode: boolean, bType: string, warpObj: any) {
-  let cssText, lineNode;
+export function getBorder(
+  shapeNode: any,
+  parentNode: any,
+  isSvgMode: boolean,
+  targetType: string,
+  warpContext: any
+) {
+  void parentNode;
+  let borderStyleText, lineStyleNode;
 
-  if (bType === "shape") {
-    cssText = "border: ";
-    lineNode = node["p:spPr"]["a:ln"];
-  } else if (bType === "text") {
-    cssText = "";
-    lineNode = node["a:rPr"]["a:ln"];
+  if (targetType === "shape") {
+    borderStyleText = "border: ";
+    lineStyleNode = shapeNode["p:spPr"]["a:ln"];
+  } else if (targetType === "text") {
+    borderStyleText = "";
+    lineStyleNode = shapeNode["a:rPr"]["a:ln"];
   }
 
-  const is_noFill = getTextByPathList(lineNode, ["a:noFill"]);
-  if (is_noFill !== undefined) {
+  const hasNoFill = getTextByPathList(lineStyleNode, ["a:noFill"]);
+  if (hasNoFill !== undefined) {
     return "hidden";
   }
 
-  if (lineNode === undefined) {
-    const lnRefNode = getTextByPathList(node, ["p:style", "a:lnRef"]);
-    if (lnRefNode !== undefined) {
-      const lnIdx = getTextByPathList(lnRefNode, ["attrs", "idx"]);
-      lineNode =
-        warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:lnStyleLst"][
+  if (lineStyleNode === undefined) {
+    const lineRefNode = getTextByPathList(shapeNode, ["p:style", "a:lnRef"]);
+    if (lineRefNode !== undefined) {
+      const lineIndex = getTextByPathList(lineRefNode, ["attrs", "idx"]);
+      lineStyleNode =
+        warpContext["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:lnStyleLst"][
           "a:ln"
-        ][Number(lnIdx) - 1];
+        ][Number(lineIndex) - 1];
     }
   }
-  if (lineNode === undefined) {
+  if (lineStyleNode === undefined) {
     // is table
-    cssText = "";
-    lineNode = node;
+    borderStyleText = "";
+    lineStyleNode = shapeNode;
   }
 
   let borderColor;
   let borderWidth: number | undefined;
-  let borderType: string | undefined;
+  let lineStyleType: string | undefined;
   let strokeDasharray = "0";
 
-  if (lineNode !== undefined) {
+  if (lineStyleNode !== undefined) {
     // Border width: 1pt = 12700, default = 0.75pt
-    borderWidth = parseInt(getTextByPathList(lineNode, ["attrs", "w"])) / 12700;
+    borderWidth = parseInt(getTextByPathList(lineStyleNode, ["attrs", "w"])) / 12700;
     if (isNaN(borderWidth) || borderWidth < 1) {
-      cssText += 4 / 3 + "px ";
+      borderStyleText += 4 / 3 + "px ";
     } else {
-      cssText += borderWidth + "px ";
+      borderStyleText += borderWidth + "px ";
     }
     // Border type
-    borderType = getTextByPathList(lineNode, ["a:prstDash", "attrs", "val"]);
-    if (borderType === undefined) {
-      borderType = getTextByPathList(lineNode, ["attrs", "cmpd"]);
+    lineStyleType = getTextByPathList(lineStyleNode, ["a:prstDash", "attrs", "val"]);
+    if (lineStyleType === undefined) {
+      lineStyleType = getTextByPathList(lineStyleNode, ["attrs", "cmpd"]);
     }
-    switch (borderType) {
+    switch (lineStyleType) {
       case "solid":
-        cssText += "solid";
+        borderStyleText += "solid";
         strokeDasharray = "0";
         break;
       case "dash":
-        cssText += "dashed";
+        borderStyleText += "dashed";
         strokeDasharray = "5";
         break;
       case "dashDot":
-        cssText += "dashed";
+        borderStyleText += "dashed";
         strokeDasharray = "5, 5, 1, 5";
         break;
       case "dot":
-        cssText += "dotted";
+        borderStyleText += "dotted";
         strokeDasharray = "1, 5";
         break;
       case "lgDash":
-        cssText += "dashed";
+        borderStyleText += "dashed";
         strokeDasharray = "10, 5";
         break;
       case "dbl":
-        cssText += "double";
+        borderStyleText += "double";
         strokeDasharray = "0";
         break;
       case "lgDashDotDot":
-        cssText += "dashed";
+        borderStyleText += "dashed";
         strokeDasharray = "10, 5, 1, 5, 1, 5";
         break;
       case "sysDash":
-        cssText += "dashed";
+        borderStyleText += "dashed";
         strokeDasharray = "5, 2";
         break;
       case "sysDashDot":
-        cssText += "dashed";
+        borderStyleText += "dashed";
         strokeDasharray = "5, 2, 1, 5";
         break;
       case "sysDashDotDot":
-        cssText += "dashed";
+        borderStyleText += "dashed";
         strokeDasharray = "5, 2, 1, 5, 1, 5";
         break;
       case "sysDot":
-        cssText += "dotted";
+        borderStyleText += "dotted";
         strokeDasharray = "2, 5";
         break;
       case undefined:
       default:
-        cssText += "solid";
+        borderStyleText += "solid";
         strokeDasharray = "0";
     }
     // Border color
-    const fillTyp = getFillType(lineNode);
+    const fillTyp = getFillType(lineStyleNode);
     if (fillTyp === "NO_FILL") {
       borderColor = isSvgMode ? "none" : "";
     } else if (fillTyp === "SOLID_FILL") {
-      borderColor = getSolidFill(lineNode["a:solidFill"], undefined, undefined, warpObj);
+      borderColor = getSolidFill(lineStyleNode["a:solidFill"], undefined, undefined, warpContext);
     } else if (fillTyp === "GRADIENT_FILL") {
-      borderColor = getGradientFill(lineNode["a:gradFill"], warpObj);
+      borderColor = getGradientFill(lineStyleNode["a:gradFill"], warpContext);
     } else if (fillTyp === "PATTERN_FILL") {
-      borderColor = getPatternFill(lineNode["a:pattFill"], warpObj);
+      borderColor = getPatternFill(lineStyleNode["a:pattFill"], warpContext);
     }
   }
 
   // 2. drawingML namespace
   if (borderColor === undefined) {
-    const lnRefNode = getTextByPathList(node, ["p:style", "a:lnRef"]);
-    if (lnRefNode !== undefined) {
-      borderColor = getSolidFill(lnRefNode, undefined, undefined, warpObj);
+    const lineRefNode = getTextByPathList(shapeNode, ["p:style", "a:lnRef"]);
+    if (lineRefNode !== undefined) {
+      borderColor = getSolidFill(lineRefNode, undefined, undefined, warpContext);
     }
   }
 
@@ -144,16 +151,16 @@ export function getBorder(node: any, pNode: any, isSvgMode: boolean, bType: stri
   } else {
     borderColor = "#" + borderColor;
   }
-  cssText += " " + borderColor + " ";
+  borderStyleText += " " + borderColor + " ";
 
   if (isSvgMode) {
     return {
       color: borderColor,
       width: borderWidth,
-      type: borderType,
+      type: lineStyleType,
       strokeDasharray: strokeDasharray,
     };
   } else {
-    return cssText + ";";
+    return borderStyleText + ";";
   }
 }
