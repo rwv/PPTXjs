@@ -1,7 +1,7 @@
 type ChartMessage = {
   chartID: string | number;
   chartType: string;
-  chartData: any[];
+  chartData: unknown[];
 };
 
 function isChartMessage(value: unknown): value is ChartMessage {
@@ -29,50 +29,61 @@ export function processSingleMsg(d: unknown): boolean {
 
   const { chartID, chartType, chartData } = d;
 
-  let data = [];
+  let data: unknown = [];
 
   let chart = null;
   switch (chartType) {
-    case "lineChart":
+    case "lineChart": {
       data = chartData;
       // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.lineChart().useInteractiveGuideline(true);
       chart.xAxis.tickFormat(function (value: number) {
-        return chartData[0].xlabels[value] || value;
+        const series = chartData[0] as { xlabels?: Array<string | number> } | undefined;
+        return series?.xlabels?.[value] ?? value;
       });
       break;
-    case "barChart":
+    }
+    case "barChart": {
       data = chartData;
       // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.multiBarChart();
       chart.xAxis.tickFormat(function (value: number) {
-        return chartData[0].xlabels[value] || value;
+        const series = chartData[0] as { xlabels?: Array<string | number> } | undefined;
+        return series?.xlabels?.[value] ?? value;
       });
       break;
+    }
     case "pieChart":
-    case "pie3DChart":
+    case "pie3DChart": {
       if (chartData.length > 0) {
-        data = chartData[0].values;
+        const series = chartData[0] as { values?: unknown } | undefined;
+        data = series?.values ?? [];
       }
       // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.pieChart();
       break;
-    case "areaChart":
+    }
+    case "areaChart": {
       data = chartData;
       // @ts-expect-error TS(2304): Cannot find name 'nv'.
       chart = nv.models.stackedAreaChart().clipEdge(true).useInteractiveGuideline(true);
       chart.xAxis.tickFormat(function (value: number) {
-        return chartData[0].xlabels[value] || value;
+        const series = chartData[0] as { xlabels?: Array<string | number> } | undefined;
+        return series?.xlabels?.[value] ?? value;
       });
       break;
-    case "scatterChart":
-      for (let i = 0; i < chartData.length; i++) {
-        const arr = [];
-        for (let j = 0; j < chartData[i].length; j++) {
-          arr.push({ x: j, y: chartData[i][j] });
+    }
+    case "scatterChart": {
+      const scatterData: Array<{ key: string; values: Array<{ x: number; y: number }> }> = [];
+      const seriesList = chartData as Array<number[]>;
+      for (let i = 0; i < seriesList.length; i++) {
+        const arr: Array<{ x: number; y: number }> = [];
+        for (let j = 0; j < seriesList[i].length; j++) {
+          arr.push({ x: j, y: seriesList[i][j] });
         }
-        data.push({ key: "data" + (i + 1), values: arr });
+        scatterData.push({ key: "data" + (i + 1), values: arr });
       }
+      data = scatterData;
 
       //data = chartData;
       // @ts-expect-error TS(2304): Cannot find name 'nv'.
@@ -87,6 +98,7 @@ export function processSingleMsg(d: unknown): boolean {
       // @ts-expect-error TS(2304): Cannot find name 'd3'.
       chart.yAxis.axisLabel("Y").tickFormat(d3.format(".02f"));
       break;
+    }
     default:
   }
 
