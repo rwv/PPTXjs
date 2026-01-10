@@ -33,7 +33,7 @@ export function createPath(d: string, ctx: StarShapeContext): string {
 /**
  * Parse single adjustment value from shape node
  */
-export function parseSingleAdj(node: any, defaultVal: number, slideFactor: number): number {
+export function parseSingleAdj(node: unknown, defaultVal: number, slideFactor: number): number {
   const shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
   if (shapAdjst !== undefined) {
     const name = shapAdjst["attrs"]["name"];
@@ -48,7 +48,7 @@ export function parseSingleAdj(node: any, defaultVal: number, slideFactor: numbe
  * Parse multiple adjustment values from shape node
  */
 export function parseMultiAdj(
-  node: any,
+  node: unknown,
   defaults: { adj: number; hf?: number; vf?: number },
   slideFactor: number
 ): { adj: number; hf: number; vf: number } {
