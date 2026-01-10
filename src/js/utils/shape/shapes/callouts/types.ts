@@ -2,7 +2,7 @@
  * Context for rendering callout shapes
  */
 export interface CalloutContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
