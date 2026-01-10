@@ -30,16 +30,16 @@ export interface ShapeEffectsResult {
  * Process shape effects and generate SVG defs
  */
 export function processShapeEffects(
-  node: any,
-  shpId: number | string,
-  svgCssName: string,
+  shapeNode: any,
+  shapeId: number | string,
+  svgClassName: string,
   border: any,
-  warpObj: any,
-  slideFactor: number,
+  warpContext: any,
+  emuToPx: number,
   styleTable: any
 ): ShapeEffectsResult {
   let defsContent = "";
-  const effectsClassName = svgCssName + "_effects";
+  const effectsClassName = svgClassName + "_effects";
 
   ////////////////////effects/////////////////////////////////////////////////////
   //p:spPr => a:effectLst =>
@@ -64,22 +64,24 @@ export function processShapeEffects(
   //"a:extLst"?
   //////////////////////////////outerShdw///////////////////////////////////////////
   //not support sizing the shadow
-  const outerShdwNode = getTextByPathList(node, ["p:spPr", "a:effectLst", "a:outerShdw"]);
-  if (outerShdwNode !== undefined) {
-    const chdwClrNode = getSolidFill(outerShdwNode, undefined, undefined, warpObj);
-    const outerShdwAttrs = outerShdwNode["attrs"];
+  const outerShadowNode = getTextByPathList(shapeNode, ["p:spPr", "a:effectLst", "a:outerShdw"]);
+  if (outerShadowNode !== undefined) {
+    const shadowColor = getSolidFill(outerShadowNode, undefined, undefined, warpContext);
+    const outerShadowAttrs = outerShadowNode["attrs"];
 
     //var algn = outerShdwAttrs["algn"];
-    const dir = outerShdwAttrs["dir"] ? parseInt(outerShdwAttrs["dir"]) / 60000 : 0;
-    const dist = parseInt(outerShdwAttrs["dist"]) * slideFactor; //(px) //* (3 / 4); //(pt)
+    const directionDegrees = outerShadowAttrs["dir"]
+      ? parseInt(outerShadowAttrs["dir"]) / 60000
+      : 0;
+    const shadowDistancePx = parseInt(outerShadowAttrs["dist"]) * emuToPx; //(px) //* (3 / 4); //(pt)
     //var rotWithShape = outerShdwAttrs["rotWithShape"];
-    const blurRad = outerShdwAttrs["blurRad"]
-      ? parseInt(outerShdwAttrs["blurRad"]) * slideFactor
+    const blurRadiusPx = outerShadowAttrs["blurRad"]
+      ? parseInt(outerShadowAttrs["blurRad"]) * emuToPx
       : ""; //+ "px"
     //var sx = (outerShdwAttrs["sx"]) ? (parseInt(outerShdwAttrs["sx"]) / 100000) : 1;
     //var sy = (outerShdwAttrs["sy"]) ? (parseInt(outerShdwAttrs["sy"]) / 100000) : 1;
-    const vx = dist * Math.sin((dir * Math.PI) / 180);
-    const hx = dist * Math.cos((dir * Math.PI) / 180);
+    const offsetY = shadowDistancePx * Math.sin((directionDegrees * Math.PI) / 180);
+    const offsetX = shadowDistancePx * Math.cos((directionDegrees * Math.PI) / 180);
     //SVG
     //var oShadowId = "outerhadow_" + shpId;
     //oShadowSvgUrlStr = "filter='url(#" + oShadowId+")'";
@@ -96,40 +98,48 @@ export function processShapeEffects(
     //result += shadowFilterStr;
 
     //css:
-    let svg_css_shadow =
-      "filter:drop-shadow(" + hx + "px " + vx + "px " + blurRad + "px #" + chdwClrNode + ");";
+    let svgShadowStyle =
+      "filter:drop-shadow(" +
+      offsetX +
+      "px " +
+      offsetY +
+      "px " +
+      blurRadiusPx +
+      "px #" +
+      shadowColor +
+      ");";
 
-    if (svg_css_shadow in styleTable) {
-      svg_css_shadow += "do-nothing: " + svgCssName + ";";
+    if (svgShadowStyle in styleTable) {
+      svgShadowStyle += "do-nothing: " + svgClassName + ";";
     }
 
-    styleTable[svg_css_shadow] = {
+    styleTable[svgShadowStyle] = {
       name: effectsClassName,
-      text: svg_css_shadow,
+      text: svgShadowStyle,
     };
   }
   ////////////////////////////////////////////////////////////////////////////////////////
 
   // Arrow/triangle markers for line ends
-  const headEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:headEnd", "attrs"]);
-  const tailEndNodeAttrs = getTextByPathList(node, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]);
+  const headEndAttributes = getTextByPathList(shapeNode, ["p:spPr", "a:ln", "a:headEnd", "attrs"]);
+  const tailEndAttributes = getTextByPathList(shapeNode, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]);
   // type: none, triangle, stealth, diamond, oval, arrow
 
   if (
-    (headEndNodeAttrs !== undefined &&
-      (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) ||
-    (tailEndNodeAttrs !== undefined &&
-      (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow"))
+    (headEndAttributes !== undefined &&
+      (headEndAttributes["type"] === "triangle" || headEndAttributes["type"] === "arrow")) ||
+    (tailEndAttributes !== undefined &&
+      (tailEndAttributes["type"] === "triangle" || tailEndAttributes["type"] === "arrow"))
   ) {
-    const triangleMarker =
+    const triangleMarkerSvg =
       "<marker id='markerTriangle_" +
-      shpId +
+      shapeId +
       "' viewBox='0 0 10 10' refX='1' refY='5' markerWidth='5' markerHeight='5' stroke='" +
       border.color +
       "' fill='" +
       border.color +
       "' orient='auto-start-reverse' markerUnits='strokeWidth'><path d='M 0 0 L 10 5 L 0 10 z' /></marker>";
-    defsContent += triangleMarker;
+    defsContent += triangleMarkerSvg;
   }
 
   return {
