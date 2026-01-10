@@ -20,26 +20,26 @@ type BulletWarpObj = {
 };
 
 export async function renderBulletPic(
-  buPic: BulletPicNode,
-  warpObj: BulletWarpObj,
-  marLStr: string,
-  marRStr: string,
-  bultSize: string,
-  isRTL: boolean
+  bulletPicNode: BulletPicNode,
+  warpContext: BulletWarpObj,
+  marginLeftStyle: string,
+  marginRightStyle: string,
+  bulletSize: string,
+  isRtl: boolean
 ): Promise<string> {
-  const buPicId = getTextByPathList<string>(buPic, ["a:blip", "attrs", "r:embed"]);
-  let buImg = "";
+  const bulletPicId = getTextByPathList<string>(bulletPicNode, ["a:blip", "attrs", "r:embed"]);
+  let bulletImageHtml = "";
 
-  if (buPicId !== undefined) {
-    const imgPath = warpObj["slideResObj"][buPicId]["target"];
-    const imgFile = await warpObj.archive.file(imgPath);
+  if (bulletPicId !== undefined) {
+    const imgPath = warpContext["slideResObj"][bulletPicId]["target"];
+    const imgFile = await warpContext.archive.file(imgPath);
     if (!imgFile) {
-      buImg = "&#8227;";
+      bulletImageHtml = "&#8227;";
     } else {
       const imgArrayBuffer = await imgFile.arrayBuffer();
       const imgExt = imgPath.split(".").pop() ?? "";
       const imgMimeType = getMimeType(imgExt);
-      buImg =
+      bulletImageHtml =
         "<img src='data:" +
         imgMimeType +
         ";base64," +
@@ -48,23 +48,23 @@ export async function renderBulletPic(
     }
   }
 
-  if (buPicId === undefined) {
-    buImg = "&#8227;";
+  if (bulletPicId === undefined) {
+    bulletImageHtml = "&#8227;";
   }
 
   let bullet =
     "<div style='height: 100%;" +
-    marLStr +
-    marRStr +
+    marginLeftStyle +
+    marginRightStyle +
     "width:" +
-    bultSize +
+    bulletSize +
     ";display: inline-block; ";
 
-  if (isRTL) {
+  if (isRtl) {
     bullet += "display: inline-block;white-space: nowrap ;direction:rtl;";
   }
 
-  bullet += "'>" + buImg + "  </div>";
+  bullet += "'>" + bulletImageHtml + "  </div>";
 
   return bullet;
 }
