@@ -2,7 +2,7 @@
  * Context for rendering misc symbol shapes
  */
 export interface MiscSymbolContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
