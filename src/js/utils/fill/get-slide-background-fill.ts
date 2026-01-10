@@ -1,8 +1,8 @@
 /**
  * Get slide background fill style
  *
- * @param warpObj - The warp object containing slide content and theme
- * @param index - Slide index
+ * @param warpContext - The warp object containing slide content and theme
+ * @param slideIndex - Slide index
  * @returns CSS background style string
  */
 import { getTextByPathList } from "../object";
@@ -12,293 +12,409 @@ import { getBgGradientFill } from "./get-bg-gradient-fill";
 import { getBgPicFill } from "./get-bg-pic-fill";
 
 export async function getSlideBackgroundFill(
-  warpObj: any,
-  index: number | string
+  warpContext: any,
+  slideIndex: number | string
 ): Promise<string | undefined> {
-  void index;
-  const slideContent = warpObj["slideContent"];
-  const slideLayoutContent = warpObj["slideLayoutContent"];
-  const slideMasterContent = warpObj["slideMasterContent"];
+  void slideIndex;
+  const slideContent = warpContext["slideContent"];
+  const slideLayoutContent = warpContext["slideLayoutContent"];
+  const slideMasterContent = warpContext["slideMasterContent"];
 
-  let bgPr = getTextByPathList(slideContent, ["p:sld", "p:cSld", "p:bg", "p:bgPr"]);
-  let bgRef = getTextByPathList(slideContent, ["p:sld", "p:cSld", "p:bg", "p:bgRef"]);
-  let bgcolor: string | undefined;
+  let backgroundProps = getTextByPathList(slideContent, ["p:sld", "p:cSld", "p:bg", "p:bgPr"]);
+  let backgroundRef = getTextByPathList(slideContent, ["p:sld", "p:cSld", "p:bg", "p:bgRef"]);
+  let backgroundCss: string | undefined;
 
-  if (bgPr !== undefined) {
-    const bgFillTyp = getFillType(bgPr);
+  if (backgroundProps !== undefined) {
+    const backgroundFillType = getFillType(backgroundProps);
 
-    if (bgFillTyp === "SOLID_FILL") {
-      const sldFill = bgPr["a:solidFill"];
-      let clrMapOvr;
-      let sldClrMapOvr = getTextByPathList(slideContent, [
+    if (backgroundFillType === "SOLID_FILL") {
+      const slideFill = backgroundProps["a:solidFill"];
+      let colorMapOverride;
+      let slideColorMapOverride = getTextByPathList(slideContent, [
         "p:sld",
         "p:clrMapOvr",
         "a:overrideClrMapping",
         "attrs",
       ]);
-      if (sldClrMapOvr !== undefined) {
-        clrMapOvr = sldClrMapOvr;
+      if (slideColorMapOverride !== undefined) {
+        colorMapOverride = slideColorMapOverride;
       } else {
-        sldClrMapOvr = getTextByPathList(slideLayoutContent, [
+        slideColorMapOverride = getTextByPathList(slideLayoutContent, [
           "p:sldLayout",
           "p:clrMapOvr",
           "a:overrideClrMapping",
           "attrs",
         ]);
-        if (sldClrMapOvr !== undefined) {
-          clrMapOvr = sldClrMapOvr;
+        if (slideColorMapOverride !== undefined) {
+          colorMapOverride = slideColorMapOverride;
         } else {
-          clrMapOvr = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:clrMap", "attrs"]);
+          colorMapOverride = getTextByPathList(slideMasterContent, [
+            "p:sldMaster",
+            "p:clrMap",
+            "attrs",
+          ]);
         }
       }
-      const sldBgClr = getSolidFill(sldFill, clrMapOvr, undefined, warpObj);
-      bgcolor = "background: #" + sldBgClr + ";";
-    } else if (bgFillTyp === "GRADIENT_FILL") {
-      bgcolor = getBgGradientFill(bgPr, undefined, slideMasterContent, warpObj);
-    } else if (bgFillTyp === "PIC_FILL") {
-      bgcolor = await getBgPicFill(bgPr, "slideBg", warpObj, undefined);
+      const slideBackgroundColor = getSolidFill(
+        slideFill,
+        colorMapOverride,
+        undefined,
+        warpContext
+      );
+      backgroundCss = "background: #" + slideBackgroundColor + ";";
+    } else if (backgroundFillType === "GRADIENT_FILL") {
+      backgroundCss = getBgGradientFill(
+        backgroundProps,
+        undefined,
+        slideMasterContent,
+        warpContext
+      );
+    } else if (backgroundFillType === "PIC_FILL") {
+      backgroundCss = await getBgPicFill(backgroundProps, "slideBg", warpContext, undefined);
     }
-  } else if (bgRef !== undefined) {
-    let clrMapOvr;
-    let sldClrMapOvr = getTextByPathList(slideContent, [
+  } else if (backgroundRef !== undefined) {
+    let colorMapOverride;
+    let slideColorMapOverride = getTextByPathList(slideContent, [
       "p:sld",
       "p:clrMapOvr",
       "a:overrideClrMapping",
       "attrs",
     ]);
-    if (sldClrMapOvr !== undefined) {
-      clrMapOvr = sldClrMapOvr;
+    if (slideColorMapOverride !== undefined) {
+      colorMapOverride = slideColorMapOverride;
     } else {
-      sldClrMapOvr = getTextByPathList(slideLayoutContent, [
+      slideColorMapOverride = getTextByPathList(slideLayoutContent, [
         "p:sldLayout",
         "p:clrMapOvr",
         "a:overrideClrMapping",
         "attrs",
       ]);
-      if (sldClrMapOvr !== undefined) {
-        clrMapOvr = sldClrMapOvr;
+      if (slideColorMapOverride !== undefined) {
+        colorMapOverride = slideColorMapOverride;
       } else {
-        clrMapOvr = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:clrMap", "attrs"]);
+        colorMapOverride = getTextByPathList(slideMasterContent, [
+          "p:sldMaster",
+          "p:clrMap",
+          "attrs",
+        ]);
       }
     }
-    const phClr = getSolidFill(bgRef, clrMapOvr, undefined, warpObj);
-    const idx = Number(bgRef["attrs"]["idx"]);
+    const placeholderColor = getSolidFill(backgroundRef, colorMapOverride, undefined, warpContext);
+    const themeIndex = Number(backgroundRef["attrs"]["idx"]);
 
-    if (idx === 0 || idx === 1000) {
+    if (themeIndex === 0 || themeIndex === 1000) {
       // no background
-    } else if (idx > 0 && idx < 1000) {
+    } else if (themeIndex > 0 && themeIndex < 1000) {
       // fillStyleLst in themeContent
-    } else if (idx > 1000) {
+    } else if (themeIndex > 1000) {
       // bgFillStyleLst in themeContent
-      const trueIdx = idx - 1000;
-      const bgFillLst =
-        warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
-      const sortblAry: any[] = [];
+      const themeFillIndex = themeIndex - 1000;
+      const backgroundFillList =
+        warpContext["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"][
+          "a:bgFillStyleLst"
+        ];
+      const sortableFillList: any[] = [];
 
-      Object.keys(bgFillLst).forEach(function (key) {
-        const bgFillLstTyp = bgFillLst[key];
+      Object.keys(backgroundFillList).forEach(function (key) {
+        const fillListEntry = backgroundFillList[key];
         if (key !== "attrs") {
-          if (bgFillLstTyp.constructor === Array) {
-            for (let i = 0; i < bgFillLstTyp.length; i++) {
+          if (fillListEntry.constructor === Array) {
+            for (let i = 0; i < fillListEntry.length; i++) {
               const obj: any = {};
-              obj[key] = bgFillLstTyp[i];
-              obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
-              obj["attrs"] = { order: bgFillLstTyp[i]["attrs"]["order"] };
-              sortblAry.push(obj);
+              obj[key] = fillListEntry[i];
+              obj["idex"] = fillListEntry[i]["attrs"]["order"];
+              obj["attrs"] = { order: fillListEntry[i]["attrs"]["order"] };
+              sortableFillList.push(obj);
             }
           } else {
             const obj: any = {};
-            obj[key] = bgFillLstTyp;
-            obj["idex"] = bgFillLstTyp["attrs"]["order"];
-            obj["attrs"] = { order: bgFillLstTyp["attrs"]["order"] };
-            sortblAry.push(obj);
+            obj[key] = fillListEntry;
+            obj["idex"] = fillListEntry["attrs"]["order"];
+            obj["attrs"] = { order: fillListEntry["attrs"]["order"] };
+            sortableFillList.push(obj);
           }
         }
       });
 
-      const sortByOrder = sortblAry.slice(0);
-      sortByOrder.sort(function (a: any, b: any) {
+      const sortedByOrder = sortableFillList.slice(0);
+      sortedByOrder.sort(function (a: any, b: any) {
         return a.idex - b.idex;
       });
 
-      const bgFillLstIdx = sortByOrder[trueIdx - 1];
-      const bgFillTyp = getFillType(bgFillLstIdx);
+      const backgroundFillEntry = sortedByOrder[themeFillIndex - 1];
+      const backgroundFillEntryType = getFillType(backgroundFillEntry);
 
-      if (bgFillTyp === "SOLID_FILL") {
-        const sldFill = bgFillLstIdx["a:solidFill"];
-        const sldBgClr = getSolidFill(sldFill, clrMapOvr, undefined, warpObj);
-        bgcolor = "background: #" + sldBgClr + ";";
-      } else if (bgFillTyp === "GRADIENT_FILL") {
-        bgcolor = getBgGradientFill(bgFillLstIdx, phClr, slideMasterContent, warpObj);
+      if (backgroundFillEntryType === "SOLID_FILL") {
+        const slideFill = backgroundFillEntry["a:solidFill"];
+        const slideBackgroundColor = getSolidFill(
+          slideFill,
+          colorMapOverride,
+          undefined,
+          warpContext
+        );
+        backgroundCss = "background: #" + slideBackgroundColor + ";";
+      } else if (backgroundFillEntryType === "GRADIENT_FILL") {
+        backgroundCss = getBgGradientFill(
+          backgroundFillEntry,
+          placeholderColor,
+          slideMasterContent,
+          warpContext
+        );
       } else {
-        console.log(bgFillTyp);
+        console.log(backgroundFillEntryType);
       }
     }
   } else {
     // Check slideLayout
-    bgPr = getTextByPathList(slideLayoutContent, ["p:sldLayout", "p:cSld", "p:bg", "p:bgPr"]);
-    bgRef = getTextByPathList(slideLayoutContent, ["p:sldLayout", "p:cSld", "p:bg", "p:bgRef"]);
+    backgroundProps = getTextByPathList(slideLayoutContent, [
+      "p:sldLayout",
+      "p:cSld",
+      "p:bg",
+      "p:bgPr",
+    ]);
+    backgroundRef = getTextByPathList(slideLayoutContent, [
+      "p:sldLayout",
+      "p:cSld",
+      "p:bg",
+      "p:bgRef",
+    ]);
 
-    let clrMapOvr;
-    const sldClrMapOvr = getTextByPathList(slideLayoutContent, [
+    let colorMapOverride;
+    const slideColorMapOverride = getTextByPathList(slideLayoutContent, [
       "p:sldLayout",
       "p:clrMapOvr",
       "a:overrideClrMapping",
       "attrs",
     ]);
-    if (sldClrMapOvr !== undefined) {
-      clrMapOvr = sldClrMapOvr;
+    if (slideColorMapOverride !== undefined) {
+      colorMapOverride = slideColorMapOverride;
     } else {
-      clrMapOvr = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:clrMap", "attrs"]);
+      colorMapOverride = getTextByPathList(slideMasterContent, [
+        "p:sldMaster",
+        "p:clrMap",
+        "attrs",
+      ]);
     }
 
-    if (bgPr !== undefined) {
-      const bgFillTyp = getFillType(bgPr);
-      if (bgFillTyp === "SOLID_FILL") {
-        const sldFill = bgPr["a:solidFill"];
-        const sldBgClr = getSolidFill(sldFill, clrMapOvr, undefined, warpObj);
-        bgcolor = "background: #" + sldBgClr + ";";
-      } else if (bgFillTyp === "GRADIENT_FILL") {
-        bgcolor = getBgGradientFill(bgPr, undefined, slideMasterContent, warpObj);
-      } else if (bgFillTyp === "PIC_FILL") {
-        bgcolor = await getBgPicFill(bgPr, "slideLayoutBg", warpObj, undefined);
+    if (backgroundProps !== undefined) {
+      const backgroundFillType = getFillType(backgroundProps);
+      if (backgroundFillType === "SOLID_FILL") {
+        const slideFill = backgroundProps["a:solidFill"];
+        const slideBackgroundColor = getSolidFill(
+          slideFill,
+          colorMapOverride,
+          undefined,
+          warpContext
+        );
+        backgroundCss = "background: #" + slideBackgroundColor + ";";
+      } else if (backgroundFillType === "GRADIENT_FILL") {
+        backgroundCss = getBgGradientFill(
+          backgroundProps,
+          undefined,
+          slideMasterContent,
+          warpContext
+        );
+      } else if (backgroundFillType === "PIC_FILL") {
+        backgroundCss = await getBgPicFill(
+          backgroundProps,
+          "slideLayoutBg",
+          warpContext,
+          undefined
+        );
       }
-    } else if (bgRef !== undefined) {
-      console.log("slideLayoutContent: bgRef", bgRef);
-      const phClr = getSolidFill(bgRef, clrMapOvr, undefined, warpObj);
-      const idx = Number(bgRef["attrs"]["idx"]);
+    } else if (backgroundRef !== undefined) {
+      console.log("slideLayoutContent: bgRef", backgroundRef);
+      const placeholderColor = getSolidFill(
+        backgroundRef,
+        colorMapOverride,
+        undefined,
+        warpContext
+      );
+      const themeIndex = Number(backgroundRef["attrs"]["idx"]);
 
-      if (idx === 0 || idx === 1000) {
+      if (themeIndex === 0 || themeIndex === 1000) {
         // no background
-      } else if (idx > 0 && idx < 1000) {
+      } else if (themeIndex > 0 && themeIndex < 1000) {
         // fillStyleLst in themeContent
-      } else if (idx > 1000) {
+      } else if (themeIndex > 1000) {
         // bgFillStyleLst in themeContent
-        const trueIdx = idx - 1000;
-        const bgFillLst =
-          warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"]["a:bgFillStyleLst"];
-        const sortblAry: any[] = [];
+        const themeFillIndex = themeIndex - 1000;
+        const backgroundFillList =
+          warpContext["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"][
+            "a:bgFillStyleLst"
+          ];
+        const sortableFillList: any[] = [];
 
-        Object.keys(bgFillLst).forEach(function (key) {
-          const bgFillLstTyp = bgFillLst[key];
+        Object.keys(backgroundFillList).forEach(function (key) {
+          const fillListEntry = backgroundFillList[key];
           if (key !== "attrs") {
-            if (bgFillLstTyp.constructor === Array) {
-              for (let i = 0; i < bgFillLstTyp.length; i++) {
+            if (fillListEntry.constructor === Array) {
+              for (let i = 0; i < fillListEntry.length; i++) {
                 const obj: any = {};
-                obj[key] = bgFillLstTyp[i];
-                obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
-                obj["attrs"] = { order: bgFillLstTyp[i]["attrs"]["order"] };
-                sortblAry.push(obj);
+                obj[key] = fillListEntry[i];
+                obj["idex"] = fillListEntry[i]["attrs"]["order"];
+                obj["attrs"] = { order: fillListEntry[i]["attrs"]["order"] };
+                sortableFillList.push(obj);
               }
             } else {
               const obj: any = {};
-              obj[key] = bgFillLstTyp;
-              obj["idex"] = bgFillLstTyp["attrs"]["order"];
-              obj["attrs"] = { order: bgFillLstTyp["attrs"]["order"] };
-              sortblAry.push(obj);
+              obj[key] = fillListEntry;
+              obj["idex"] = fillListEntry["attrs"]["order"];
+              obj["attrs"] = { order: fillListEntry["attrs"]["order"] };
+              sortableFillList.push(obj);
             }
           }
         });
 
-        const sortByOrder = sortblAry.slice(0);
-        sortByOrder.sort(function (a: any, b: any) {
+        const sortedByOrder = sortableFillList.slice(0);
+        sortedByOrder.sort(function (a: any, b: any) {
           return a.idex - b.idex;
         });
 
-        const bgFillLstIdx = sortByOrder[trueIdx - 1];
-        const bgFillTyp = getFillType(bgFillLstIdx);
+        const backgroundFillEntry = sortedByOrder[themeFillIndex - 1];
+        const backgroundFillEntryType = getFillType(backgroundFillEntry);
 
-        if (bgFillTyp === "SOLID_FILL") {
-          const sldFill = bgFillLstIdx["a:solidFill"];
-          const sldBgClr = getSolidFill(sldFill, clrMapOvr, phClr, warpObj);
-          bgcolor = "background: #" + sldBgClr + ";";
-        } else if (bgFillTyp === "GRADIENT_FILL") {
-          bgcolor = getBgGradientFill(bgFillLstIdx, phClr, slideMasterContent, warpObj);
-        } else if (bgFillTyp === "PIC_FILL") {
-          bgcolor = await getBgPicFill(bgFillLstIdx, "themeBg", warpObj, phClr);
+        if (backgroundFillEntryType === "SOLID_FILL") {
+          const slideFill = backgroundFillEntry["a:solidFill"];
+          const slideBackgroundColor = getSolidFill(
+            slideFill,
+            colorMapOverride,
+            placeholderColor,
+            warpContext
+          );
+          backgroundCss = "background: #" + slideBackgroundColor + ";";
+        } else if (backgroundFillEntryType === "GRADIENT_FILL") {
+          backgroundCss = getBgGradientFill(
+            backgroundFillEntry,
+            placeholderColor,
+            slideMasterContent,
+            warpContext
+          );
+        } else if (backgroundFillEntryType === "PIC_FILL") {
+          backgroundCss = await getBgPicFill(
+            backgroundFillEntry,
+            "themeBg",
+            warpContext,
+            placeholderColor
+          );
         } else {
-          console.log(bgFillTyp);
+          console.log(backgroundFillEntryType);
         }
       }
     } else {
       // Check slideMaster
-      bgPr = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:cSld", "p:bg", "p:bgPr"]);
-      bgRef = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:cSld", "p:bg", "p:bgRef"]);
+      backgroundProps = getTextByPathList(slideMasterContent, [
+        "p:sldMaster",
+        "p:cSld",
+        "p:bg",
+        "p:bgPr",
+      ]);
+      backgroundRef = getTextByPathList(slideMasterContent, [
+        "p:sldMaster",
+        "p:cSld",
+        "p:bg",
+        "p:bgRef",
+      ]);
 
       const clrMap = getTextByPathList(slideMasterContent, ["p:sldMaster", "p:clrMap", "attrs"]);
 
-      if (bgPr !== undefined) {
-        const bgFillTyp = getFillType(bgPr);
-        if (bgFillTyp === "SOLID_FILL") {
-          const sldFill = bgPr["a:solidFill"];
-          const sldBgClr = getSolidFill(sldFill, clrMap, undefined, warpObj);
-          bgcolor = "background: #" + sldBgClr + ";";
-        } else if (bgFillTyp === "GRADIENT_FILL") {
-          bgcolor = getBgGradientFill(bgPr, undefined, slideMasterContent, warpObj);
-        } else if (bgFillTyp === "PIC_FILL") {
-          bgcolor = await getBgPicFill(bgPr, "slideMasterBg", warpObj, undefined);
+      if (backgroundProps !== undefined) {
+        const backgroundFillType = getFillType(backgroundProps);
+        if (backgroundFillType === "SOLID_FILL") {
+          const slideFill = backgroundProps["a:solidFill"];
+          const slideBackgroundColor = getSolidFill(slideFill, clrMap, undefined, warpContext);
+          backgroundCss = "background: #" + slideBackgroundColor + ";";
+        } else if (backgroundFillType === "GRADIENT_FILL") {
+          backgroundCss = getBgGradientFill(
+            backgroundProps,
+            undefined,
+            slideMasterContent,
+            warpContext
+          );
+        } else if (backgroundFillType === "PIC_FILL") {
+          backgroundCss = await getBgPicFill(
+            backgroundProps,
+            "slideMasterBg",
+            warpContext,
+            undefined
+          );
         }
-      } else if (bgRef !== undefined) {
-        const phClr = getSolidFill(bgRef, clrMap, undefined, warpObj);
-        const idx = Number(bgRef["attrs"]["idx"]);
+      } else if (backgroundRef !== undefined) {
+        const placeholderColor = getSolidFill(backgroundRef, clrMap, undefined, warpContext);
+        const themeIndex = Number(backgroundRef["attrs"]["idx"]);
 
-        if (idx === 0 || idx === 1000) {
+        if (themeIndex === 0 || themeIndex === 1000) {
           // no background
-        } else if (idx > 0 && idx < 1000) {
+        } else if (themeIndex > 0 && themeIndex < 1000) {
           // fillStyleLst in themeContent
-        } else if (idx > 1000) {
+        } else if (themeIndex > 1000) {
           // bgFillStyleLst in themeContent
-          const trueIdx = idx - 1000;
-          const bgFillLst =
-            warpObj["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"][
+          const themeFillIndex = themeIndex - 1000;
+          const backgroundFillList =
+            warpContext["themeContent"]["a:theme"]["a:themeElements"]["a:fmtScheme"][
               "a:bgFillStyleLst"
             ];
-          const sortblAry: any[] = [];
+          const sortableFillList: any[] = [];
 
-          Object.keys(bgFillLst).forEach(function (key) {
-            const bgFillLstTyp = bgFillLst[key];
+          Object.keys(backgroundFillList).forEach(function (key) {
+            const fillListEntry = backgroundFillList[key];
             if (key !== "attrs") {
-              if (bgFillLstTyp.constructor === Array) {
-                for (let i = 0; i < bgFillLstTyp.length; i++) {
+              if (fillListEntry.constructor === Array) {
+                for (let i = 0; i < fillListEntry.length; i++) {
                   const obj: any = {};
-                  obj[key] = bgFillLstTyp[i];
-                  obj["idex"] = bgFillLstTyp[i]["attrs"]["order"];
-                  obj["attrs"] = { order: bgFillLstTyp[i]["attrs"]["order"] };
-                  sortblAry.push(obj);
+                  obj[key] = fillListEntry[i];
+                  obj["idex"] = fillListEntry[i]["attrs"]["order"];
+                  obj["attrs"] = { order: fillListEntry[i]["attrs"]["order"] };
+                  sortableFillList.push(obj);
                 }
               } else {
                 const obj: any = {};
-                obj[key] = bgFillLstTyp;
-                obj["idex"] = bgFillLstTyp["attrs"]["order"];
-                obj["attrs"] = { order: bgFillLstTyp["attrs"]["order"] };
-                sortblAry.push(obj);
+                obj[key] = fillListEntry;
+                obj["idex"] = fillListEntry["attrs"]["order"];
+                obj["attrs"] = { order: fillListEntry["attrs"]["order"] };
+                sortableFillList.push(obj);
               }
             }
           });
 
-          const sortByOrder = sortblAry.slice(0);
-          sortByOrder.sort(function (a: any, b: any) {
+          const sortedByOrder = sortableFillList.slice(0);
+          sortedByOrder.sort(function (a: any, b: any) {
             return a.idex - b.idex;
           });
 
-          const bgFillLstIdx = sortByOrder[trueIdx - 1];
-          const bgFillTyp = getFillType(bgFillLstIdx);
+          const backgroundFillEntry = sortedByOrder[themeFillIndex - 1];
+          const backgroundFillEntryType = getFillType(backgroundFillEntry);
 
-          if (bgFillTyp === "SOLID_FILL") {
-            const sldFill = bgFillLstIdx["a:solidFill"];
-            const sldBgClr = getSolidFill(sldFill, clrMap, phClr, warpObj);
-            bgcolor = "background: #" + sldBgClr + ";";
-          } else if (bgFillTyp === "GRADIENT_FILL") {
-            bgcolor = getBgGradientFill(bgFillLstIdx, phClr, slideMasterContent, warpObj);
-          } else if (bgFillTyp === "PIC_FILL") {
-            bgcolor = await getBgPicFill(bgFillLstIdx, "themeBg", warpObj, phClr);
+          if (backgroundFillEntryType === "SOLID_FILL") {
+            const slideFill = backgroundFillEntry["a:solidFill"];
+            const slideBackgroundColor = getSolidFill(
+              slideFill,
+              clrMap,
+              placeholderColor,
+              warpContext
+            );
+            backgroundCss = "background: #" + slideBackgroundColor + ";";
+          } else if (backgroundFillEntryType === "GRADIENT_FILL") {
+            backgroundCss = getBgGradientFill(
+              backgroundFillEntry,
+              placeholderColor,
+              slideMasterContent,
+              warpContext
+            );
+          } else if (backgroundFillEntryType === "PIC_FILL") {
+            backgroundCss = await getBgPicFill(
+              backgroundFillEntry,
+              "themeBg",
+              warpContext,
+              placeholderColor
+            );
           } else {
-            console.log(bgFillTyp);
+            console.log(backgroundFillEntryType);
           }
         }
       }
     }
   }
 
-  return bgcolor;
+  return backgroundCss;
 }
