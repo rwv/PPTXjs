@@ -13,96 +13,96 @@ import { getTextByPathList } from "../object";
 import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
 
 export function getPregraphMargn(
-  pNode: Record<string, unknown>,
+  paragraphNode: Record<string, unknown>,
   idx: number | string | undefined,
   type: string | undefined,
-  isBullate: boolean,
+  isBulleted: boolean,
   warpObj: Record<string, unknown>,
   slideFactor: number
 ): [string, number] {
-  if (!isBullate) {
+  if (!isBulleted) {
     return ["", 0];
   }
 
-  let marLStr = "",
-    maginVal = 0;
-  const pPrNode = pNode["a:pPr"];
-  const layoutMasterNode = getLayoutAndMasterNode(pNode, idx, type, warpObj);
-  const pPrNodeLaout = layoutMasterNode.nodeLaout;
-  const pPrNodeMaster = layoutMasterNode.nodeMaster;
+  let marginLeftStyle = "",
+    marginValue = 0;
+  const paragraphPropsNode = paragraphNode["a:pPr"];
+  const layoutMasterNode = getLayoutAndMasterNode(paragraphNode, idx, type, warpObj);
+  const paragraphPropsNodeLayout = layoutMasterNode.nodeLaout;
+  const paragraphPropsNodeMaster = layoutMasterNode.nodeMaster;
 
   // rtl
-  let getRtlVal = getTextByPathList(pPrNode, ["attrs", "rtl"]);
-  if (getRtlVal === undefined) {
-    getRtlVal = getTextByPathList(pPrNodeLaout, ["attrs", "rtl"]);
-    if (getRtlVal === undefined && type !== "shape") {
-      getRtlVal = getTextByPathList(pPrNodeMaster, ["attrs", "rtl"]);
+  let rtlValue = getTextByPathList(paragraphPropsNode, ["attrs", "rtl"]);
+  if (rtlValue === undefined) {
+    rtlValue = getTextByPathList(paragraphPropsNodeLayout, ["attrs", "rtl"]);
+    if (rtlValue === undefined && type !== "shape") {
+      rtlValue = getTextByPathList(paragraphPropsNodeMaster, ["attrs", "rtl"]);
     }
   }
   let isRTL = false;
-  if (getRtlVal !== undefined && getRtlVal === "1") {
+  if (rtlValue !== undefined && rtlValue === "1") {
     isRTL = true;
   }
 
   // align
-  let alignNode = getTextByPathList(pPrNode, ["attrs", "algn"]);
+  let alignNode = getTextByPathList(paragraphPropsNode, ["attrs", "algn"]);
   if (alignNode === undefined) {
-    alignNode = getTextByPathList(pPrNodeLaout, ["attrs", "algn"]);
+    alignNode = getTextByPathList(paragraphPropsNodeLayout, ["attrs", "algn"]);
     if (alignNode === undefined) {
-      alignNode = getTextByPathList(pPrNodeMaster, ["attrs", "algn"]);
+      alignNode = getTextByPathList(paragraphPropsNodeMaster, ["attrs", "algn"]);
     }
   }
 
   // indent
-  let indentNode = getTextByPathList(pPrNode, ["attrs", "indent"]);
-  if (indentNode === undefined) {
-    indentNode = getTextByPathList(pPrNodeLaout, ["attrs", "indent"]);
-    if (indentNode === undefined) {
-      indentNode = getTextByPathList(pPrNodeMaster, ["attrs", "indent"]);
+  let indentValueNode = getTextByPathList(paragraphPropsNode, ["attrs", "indent"]);
+  if (indentValueNode === undefined) {
+    indentValueNode = getTextByPathList(paragraphPropsNodeLayout, ["attrs", "indent"]);
+    if (indentValueNode === undefined) {
+      indentValueNode = getTextByPathList(paragraphPropsNodeMaster, ["attrs", "indent"]);
     }
   }
   let indent = 0;
-  if (indentNode !== undefined) {
-    indent = parseInt(indentNode) * slideFactor;
+  if (indentValueNode !== undefined) {
+    indent = parseInt(indentValueNode) * slideFactor;
   }
 
   // marL
-  let marLNode = getTextByPathList(pPrNode, ["attrs", "marL"]);
-  if (marLNode === undefined) {
-    marLNode = getTextByPathList(pPrNodeLaout, ["attrs", "marL"]);
-    if (marLNode === undefined) {
-      marLNode = getTextByPathList(pPrNodeMaster, ["attrs", "marL"]);
+  let marginLeftNode = getTextByPathList(paragraphPropsNode, ["attrs", "marL"]);
+  if (marginLeftNode === undefined) {
+    marginLeftNode = getTextByPathList(paragraphPropsNodeLayout, ["attrs", "marL"]);
+    if (marginLeftNode === undefined) {
+      marginLeftNode = getTextByPathList(paragraphPropsNodeMaster, ["attrs", "marL"]);
     }
   }
   let marginLeft = 0;
-  if (marLNode !== undefined) {
-    marginLeft = parseInt(marLNode) * slideFactor;
+  if (marginLeftNode !== undefined) {
+    marginLeft = parseInt(marginLeftNode) * slideFactor;
   }
 
-  if (indentNode !== undefined || marLNode !== undefined) {
+  if (indentValueNode !== undefined || marginLeftNode !== undefined) {
     if (isRTL) {
-      marLStr = "padding-right: ";
+      marginLeftStyle = "padding-right: ";
     } else {
-      marLStr = "padding-left: ";
+      marginLeftStyle = "padding-left: ";
     }
-    if (isBullate) {
-      maginVal = Math.abs(0 - indent);
-      marLStr += maginVal + "px;";
+    if (isBulleted) {
+      marginValue = Math.abs(0 - indent);
+      marginLeftStyle += marginValue + "px;";
     } else {
-      maginVal = Math.abs(marginLeft + indent);
-      marLStr += maginVal + "px;";
+      marginValue = Math.abs(marginLeft + indent);
+      marginLeftStyle += marginValue + "px;";
     }
   }
 
   // marR
-  let marRNode = getTextByPathList(pPrNode, ["attrs", "marR"]);
-  if (marRNode === undefined && marLNode === undefined) {
-    marRNode = getTextByPathList(pPrNodeLaout, ["attrs", "marR"]);
-    if (marRNode === undefined) {
-      marRNode = getTextByPathList(pPrNodeMaster, ["attrs", "marR"]);
+  let marginRightNode = getTextByPathList(paragraphPropsNode, ["attrs", "marR"]);
+  if (marginRightNode === undefined && marginLeftNode === undefined) {
+    marginRightNode = getTextByPathList(paragraphPropsNodeLayout, ["attrs", "marR"]);
+    if (marginRightNode === undefined) {
+      marginRightNode = getTextByPathList(paragraphPropsNodeMaster, ["attrs", "marR"]);
     }
   }
-  void marRNode;
+  void marginRightNode;
 
-  return [marLStr, maginVal];
+  return [marginLeftStyle, marginValue];
 }
