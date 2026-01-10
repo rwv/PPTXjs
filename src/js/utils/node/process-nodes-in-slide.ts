@@ -18,129 +18,136 @@ import { processGroupSpNode } from "./process-group-sp-node";
  *
  * This function is called recursively for nested structures like groups.
  *
- * @param nodeKey - The XML element name that identifies the node type
- * @param nodeValue - The node data/content
- * @param nodes - Parent nodes for context
- * @param warpObj - Warp object containing slide resources
- * @param source - Source context
- * @param sType - Shape type context
+ * @param nodeType - The XML element name that identifies the node type
+ * @param nodeData - The node data/content
+ * @param parentNodes - Parent nodes for context
+ * @param warpContext - Warp object containing slide resources
+ * @param sourceType - Source context
+ * @param shapeType - Shape type context
  * @param tableStyles - Table styles from presentation
- * @param isFirstBr - Object {value: boolean} for line break state
+ * @param isFirstLineBreak - Object {value: boolean} for line break state
  * @param styleTable - CSS style table
- * @param rtlLangsArray - RTL language codes
- * @param slideFactor - EMU to pixel conversion factor
- * @param fontSizeFactor - Font size scaling factor
- * @param chartID - Chart ID counter (modified in place)
- * @param MsgQueue - Message queue for chart processing
- * @param settings - Plugin settings
+ * @param rtlLanguages - RTL language codes
+ * @param emuToPx - EMU to pixel conversion factor
+ * @param fontSizeScale - Font size scaling factor
+ * @param chartIdCounter - Chart ID counter (modified in place)
+ * @param messageQueue - Message queue for chart processing
+ * @param renderSettings - Plugin settings
  * @returns HTML string for the node
  */
 export async function processNodesInSlide(
-  nodeKey: string,
-  nodeValue: unknown,
-  nodes: unknown,
-  warpObj: unknown,
-  source: string,
-  sType: string,
+  nodeType: string,
+  nodeData: unknown,
+  parentNodes: unknown,
+  warpContext: unknown,
+  sourceType: string,
+  shapeType: string,
   tableStyles: unknown,
-  isFirstBr: { value: boolean },
+  isFirstLineBreak: { value: boolean },
   styleTable: unknown,
-  rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number,
-  chartID: { value: number },
-  MsgQueue: unknown,
-  settings: { mediaProcess: boolean } & Record<string, unknown>
+  rtlLanguages: string[],
+  emuToPx: number,
+  fontSizeScale: number,
+  chartIdCounter: { value: number },
+  messageQueue: unknown,
+  renderSettings: { mediaProcess: boolean } & Record<string, unknown>
 ): Promise<string> {
   let result = "";
 
-  switch (nodeKey) {
+  switch (nodeType) {
     case "p:sp": // Shape, Text
       result = await processSpNode(
-        nodeValue,
-        nodes,
-        warpObj,
-        source,
-        sType,
-        slideFactor,
+        nodeData,
+        parentNodes,
+        warpContext,
+        sourceType,
+        shapeType,
+        emuToPx,
         styleTable,
-        fontSizeFactor,
-        rtlLangsArray,
-        isFirstBr
+        fontSizeScale,
+        rtlLanguages,
+        isFirstLineBreak
       );
       break;
     case "p:cxnSp": // Shape, Text (with connection)
       result = await processCxnSpNode(
-        nodeValue,
-        nodes,
-        warpObj,
-        source,
-        sType,
-        slideFactor,
+        nodeData,
+        parentNodes,
+        warpContext,
+        sourceType,
+        shapeType,
+        emuToPx,
         styleTable,
-        fontSizeFactor,
-        rtlLangsArray,
-        isFirstBr
+        fontSizeScale,
+        rtlLanguages,
+        isFirstLineBreak
       );
       break;
     case "p:pic": // Picture
-      result = await processPicNode(nodeValue, warpObj, source, sType, slideFactor, settings);
+      result = await processPicNode(
+        nodeData,
+        warpContext,
+        sourceType,
+        shapeType,
+        emuToPx,
+        renderSettings
+      );
       break;
     case "p:graphicFrame": // Chart, Diagram, Table
       result = await processGraphicFrameNode(
-        nodeValue,
-        warpObj,
-        source,
-        sType,
+        nodeData,
+        warpContext,
+        sourceType,
+        shapeType,
         tableStyles,
-        isFirstBr,
+        isFirstLineBreak,
         styleTable,
-        rtlLangsArray,
-        slideFactor,
-        fontSizeFactor,
-        chartID,
-        MsgQueue,
-        settings
+        rtlLanguages,
+        emuToPx,
+        fontSizeScale,
+        chartIdCounter,
+        messageQueue,
+        renderSettings
       );
       break;
     case "p:grpSp":
       result = await processGroupSpNode(
-        nodeValue,
-        warpObj,
-        source,
-        slideFactor,
+        nodeData,
+        warpContext,
+        sourceType,
+        emuToPx,
         tableStyles,
-        isFirstBr,
+        isFirstLineBreak,
         styleTable,
-        rtlLangsArray,
-        fontSizeFactor,
-        chartID,
-        MsgQueue,
-        settings
+        rtlLanguages,
+        fontSizeScale,
+        chartIdCounter,
+        messageQueue,
+        renderSettings
       );
       break;
     case "mc:AlternateContent": {
       //Equations and formulas as Image
-      //console.log("mc:AlternateContent nodeValue:" , nodeValue , "nodes:",nodes, "sType:",sType)
-      const mcFallbackNode = getTextByPathList(nodeValue, ["mc:Fallback"]);
+      //console.log("mc:AlternateContent nodeValue:" , nodeData , "nodes:",parentNodes, "shapeType:",shapeType)
+      const mcFallbackNode = getTextByPathList(nodeData, ["mc:Fallback"]);
       result = await processGroupSpNode(
         mcFallbackNode,
-        warpObj,
-        source,
-        slideFactor,
+        warpContext,
+        sourceType,
+        emuToPx,
         tableStyles,
-        isFirstBr,
+        isFirstLineBreak,
         styleTable,
-        rtlLangsArray,
-        fontSizeFactor,
-        chartID,
-        MsgQueue,
-        settings
+        rtlLanguages,
+        fontSizeScale,
+        chartIdCounter,
+        messageQueue,
+        renderSettings
       );
       break;
     }
     default:
-    //console.log("nodeKey: ", nodeKey)
+    //console.log("nodeKey: ", nodeType)
   }
 
   return result;
