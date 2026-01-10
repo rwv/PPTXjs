@@ -1,12 +1,12 @@
 /**
  * Get paragraph margin/padding styles for bulleted text
  *
- * @param pNode - Paragraph node
- * @param idx - Index
- * @param type - Element type
- * @param isBullate - Whether the paragraph has bullets
- * @param warpObj - The warp object containing layout tables
- * @param slideFactor - Conversion factor from EMU to pixels
+ * @param paragraphNode - Paragraph node
+ * @param paragraphIndex - Index
+ * @param elementType - Element type
+ * @param isBulleted - Whether the paragraph has bullets
+ * @param warpContext - The warp context containing layout tables
+ * @param emuToPx - Conversion factor from EMU to pixels
  * @returns Array containing [margin CSS string, margin value in pixels]
  */
 import { getTextByPathList } from "../object";
@@ -14,11 +14,11 @@ import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
 
 export function getPregraphMargn(
   paragraphNode: Record<string, unknown>,
-  idx: number | string | undefined,
-  type: string | undefined,
+  paragraphIndex: number | string | undefined,
+  elementType: string | undefined,
   isBulleted: boolean,
-  warpObj: Record<string, unknown>,
-  slideFactor: number
+  warpContext: Record<string, unknown>,
+  emuToPx: number
 ): [string, number] {
   if (!isBulleted) {
     return ["", 0];
@@ -27,7 +27,12 @@ export function getPregraphMargn(
   let marginLeftStyle = "",
     marginValue = 0;
   const paragraphPropsNode = paragraphNode["a:pPr"];
-  const layoutMasterNode = getLayoutAndMasterNode(paragraphNode, idx, type, warpObj);
+  const layoutMasterNode = getLayoutAndMasterNode(
+    paragraphNode,
+    paragraphIndex,
+    elementType,
+    warpContext
+  );
   const paragraphPropsNodeLayout = layoutMasterNode.nodeLaout;
   const paragraphPropsNodeMaster = layoutMasterNode.nodeMaster;
 
@@ -35,7 +40,7 @@ export function getPregraphMargn(
   let rtlValue = getTextByPathList(paragraphPropsNode, ["attrs", "rtl"]);
   if (rtlValue === undefined) {
     rtlValue = getTextByPathList(paragraphPropsNodeLayout, ["attrs", "rtl"]);
-    if (rtlValue === undefined && type !== "shape") {
+    if (rtlValue === undefined && elementType !== "shape") {
       rtlValue = getTextByPathList(paragraphPropsNodeMaster, ["attrs", "rtl"]);
     }
   }
@@ -63,7 +68,7 @@ export function getPregraphMargn(
   }
   let indent = 0;
   if (indentValueNode !== undefined) {
-    indent = parseInt(indentValueNode) * slideFactor;
+    indent = parseInt(indentValueNode) * emuToPx;
   }
 
   // marL
@@ -76,7 +81,7 @@ export function getPregraphMargn(
   }
   let marginLeft = 0;
   if (marginLeftNode !== undefined) {
-    marginLeft = parseInt(marginLeftNode) * slideFactor;
+    marginLeft = parseInt(marginLeftNode) * emuToPx;
   }
 
   if (indentValueNode !== undefined || marginLeftNode !== undefined) {
