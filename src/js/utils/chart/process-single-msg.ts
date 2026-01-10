@@ -28,7 +28,9 @@ export function processSingleMsg(d: unknown): boolean {
   }
 
   const { chartID, chartType, chartData } = d;
-  const { nv, d3 } = window as { nv: any; d3: any };
+  type D3Module = typeof import("d3");
+  type NvModule = typeof import("nvd3");
+  const { nv, d3 } = window as { nv: NvModule; d3: D3Module };
 
   let data: unknown = [];
 
