@@ -24,9 +24,9 @@ export function getVerticalAlign(
   textBodyContainerNode: Record<string, unknown>,
   layoutShapeNode: Record<string, unknown> | undefined,
   masterShapeNode: Record<string, unknown> | undefined,
-  _shapeType: string | undefined
+  shapeType: string | undefined
 ): string {
-  void _shapeType;
+  void shapeType;
   // Find anchor with fallback hierarchy: node -> layout -> master -> default
   let anchorValue = getTextByPathList(textBodyContainerNode, [
     "p:txBody",
