@@ -57,8 +57,7 @@ export default [
         Node: 'readonly',
         NodeListOf: 'readonly',
         getComputedStyle: 'readonly',
-        // JSZip global
-        JSZip: 'readonly',
+        TextDecoder: 'readonly',
         // D3/NVD3 globals
         d3: 'readonly',
         nv: 'readonly',

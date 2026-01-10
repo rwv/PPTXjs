@@ -9,7 +9,7 @@ PPTXjs converts PowerPoint (PPTX) files to HTML using pure JavaScript and native
 **Current Goal**: Continue modernizing legacy JavaScript into ESM TypeScript modules while keeping checks passing (`pnpm lint && pnpm type-check && pnpm test`).
 
 **Key Technologies:**
-- JSZip v2.x for PPTX file parsing (NOT v3.x - important constraint)
+- @zip.js/zip.js for PPTX file parsing (async API; adapter preloads entries for sync reads)
 - D3.js + NVD3 for chart rendering
 - TypeScript with `strict: false` (gradual migration from JavaScript)
 
@@ -39,7 +39,7 @@ pnpm test:ui
 
 ### Entry Points
 
-1. **pptxjs-entry** (`src/pptxjs-entry.ts`) - ESM entry that loads JSZip v2, D3 v3, and NVD3, then exports `pptxToHtml`.
+1. **pptxjs-entry** (`src/pptxjs-entry.ts`) - ESM entry that loads D3 v3 and NVD3, then exports `pptxToHtml`.
 2. **pptxjs core** (`src/js/pptxjs.ts`) - Main PPTX parser and renderer (exported and attached to `window`).
 3. **divs2slides** (`src/js/divs2slides.ts`) - Slideshow presentation mode with navigation and transitions.
 
@@ -51,7 +51,7 @@ pnpm test:ui
 
 The main processing happens in `src/js/pptxjs.ts` (~13,000 lines):
 
-1. **ZIP Extraction**: Uses JSZip v2.x to unzip PPTX file
+1. **ZIP Extraction**: Uses zip.js via the archive adapter to read PPTX entries
 2. **XML Parsing**: Custom tXml parser (`src/js/utils/vendors/txml.js`) converts XML to JS objects
 3. **Theme Resolution**: Extracts color schemes, fonts from `theme/theme*.xml`
 4. **Layout Hierarchy**: Resolves properties through slide → layout → master → theme fallback chain
@@ -171,7 +171,7 @@ For each function extraction:
 
 ## Important Constraints
 
-- **JSZip v2.x only** - v3.x has breaking API changes
+- **zip.js async backend** - archive creation is async; adapter preloads entries for sync reads
 - **Native DOM APIs** - slide mode and renderer use standard browser APIs
 - **Inline styles** - all CSS is inline, no external stylesheets for slide content
 - **No strict mode** - TypeScript strict checks disabled due to legacy code

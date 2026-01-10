@@ -1,7 +1,7 @@
 /**
  * Abstract interface for PPTX archive file access
  * Isolates zip library implementation details to allow future migration
- * from JSZip v2.x to v3.x or other libraries
+ * between archive backends (zip.js, JSZip, or other libraries)
  */
 export interface PptxArchive {
   /**

@@ -16,16 +16,6 @@ export function ensurePptxDependencies(): Promise<void> {
     depsPromise = (async () => {
       const globals = globalThis as Record<string, unknown>;
 
-      if (!globals.JSZip) {
-        const jszipSourceModule = await import("jszip/dist/jszip.min.js?raw");
-        const jszipSource = resolveDefault(jszipSourceModule);
-        const jszipFactory = new Function(String(jszipSource));
-        jszipFactory.call(globalThis);
-        if (!globals.JSZip) {
-          throw new Error("JSZip failed to load into global scope.");
-        }
-      }
-
       if (!globals.d3) {
         const d3SourceModule = await import("d3/d3.js?raw");
         const d3Source = resolveDefault(d3SourceModule);

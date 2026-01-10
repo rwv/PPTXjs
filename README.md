@@ -62,7 +62,7 @@ PPTXjs
 
 ###  usage:
 ----
- use ESM import (bundler required - JSZip v2, D3 v3, and NVD3 are CJS/UMD):
+ use ESM import (bundler required for D3 v3 and NVD3 CJS/UMD):
  ```
 import { ensurePptxDependencies, pptxToHtml } from "./src/pptxjs-entry.ts";
 
@@ -86,7 +86,6 @@ await pptxToHtml("#your_div_id_result", {
   slideMode: false,
   keyBoardShortCut: false,
   mediaProcess: true, /** true,false: if true then process video and audio files */
-  jsZipV2: false, /*false or 'path/to/jsZip.V2.js' */
   themeProcess: true, /*true (default) , false, "colorsAndImageOnly"*/
   incSlide:{height: 2,width:2 }, /*increase height or/and width by 2 px*/
   slideType: "divs2slidesjs", /*'divs2slidesjs' (default) , 'revealjs'(https://revealjs.com) */

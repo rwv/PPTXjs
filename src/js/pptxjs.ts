@@ -43,7 +43,6 @@ type PptxToHtmlOptions = {
   showPlayPauseBtn?: boolean;
   showFullscreenBtn?: boolean;
   mediaProcess?: boolean;
-  jsZipV2?: string | false;
   themeProcess?: boolean | "colorsAndImageOnly";
   incSlide?: { width: number; height: number };
   slideModeConfig?: SlideModeConfig;
@@ -61,7 +60,6 @@ type PptxToHtmlSettings = {
   showPlayPauseBtn?: boolean;
   showFullscreenBtn?: boolean;
   mediaProcess: boolean;
-  jsZipV2: string | false;
   themeProcess: boolean | "colorsAndImageOnly";
   incSlide: { width: number; height: number };
   slideModeConfig: SlideModeConfig;
@@ -117,12 +115,6 @@ function appendResult(target: HTMLElement, data: unknown): void {
   }
 }
 
-function loadScript(src: string): void {
-  const script = document.createElement("script");
-  script.src = src;
-  document.body.appendChild(script);
-}
-
 function createLoadingMessage(): HTMLElement {
   const loading = document.createElement("div");
   loading.className = "slides-loadnig-msg";
@@ -169,7 +161,6 @@ export async function pptxToHtml(
     revealjsPath: "" /*path to js file of revealjs - TODO*/,
     keyBoardShortCut: false /** true,false ,condition: slideMode: true XXXXX - need to remove - this is doublcated*/,
     mediaProcess: true /** true,false: if true then process video and audio files */,
-    jsZipV2: false,
     themeProcess: true /*true (default) , false, "colorsAndImageOnly"*/,
     incSlide: {
       width: 0,
@@ -211,14 +202,6 @@ export async function pptxToHtml(
   };
 
   result.prepend(createLoadingMessage());
-  if (settings.jsZipV2 !== false) {
-    loadScript(settings.jsZipV2);
-    if (localStorage.getItem("isPPTXjsReLoaded") !== "yes") {
-      localStorage.setItem("isPPTXjsReLoaded", "yes");
-      location.reload();
-    }
-  }
-
   if (settings.keyBoardShortCut) {
     document.addEventListener("keydown", async function (event: KeyboardEvent) {
       event.preventDefault();
@@ -290,7 +273,7 @@ export async function pptxToHtml(
       return;
     }
     // Create archive instance using new interface
-    const archive = createPptxArchive(file);
+    const archive = await createPptxArchive(file);
     const rslt_ary = processPPTX(
       archive,
       slideFactor,

@@ -32,7 +32,7 @@ export default defineConfig({
   optimizeDeps: {
     include: [
       'd3',
-      'jszip',
+      '@zip.js/zip.js',
       'nvd3',
       'node:module',
       'tinycolor2',
