@@ -2,7 +2,7 @@
  * Context for rendering math shapes
  */
 export interface MathShapeContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
