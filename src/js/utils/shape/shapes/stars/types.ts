@@ -2,7 +2,7 @@
  * Context for rendering star shapes
  */
 export interface StarShapeContext {
-  node: any;
+  node: unknown;
   w: number;
   h: number;
   shpId: string;
