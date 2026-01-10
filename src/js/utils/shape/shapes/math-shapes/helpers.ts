@@ -8,33 +8,43 @@ export interface MathShapeAdjustments {
   adj3?: number;
 }
 
-export function getMathShapeAdjustments(node: any): MathShapeAdjustments {
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  let sAdj1;
-  let adj1;
-  let sAdj2;
-  let adj2;
-  let sAdj3;
-  let adj3;
+export function getMathShapeAdjustments(node: unknown): MathShapeAdjustments {
+  const shapAdjst_ary = getTextByPathList<unknown>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  let adj1: number | undefined;
+  let adj2: number | undefined;
+  let adj3: number | undefined;
 
   if (shapAdjst_ary !== undefined) {
-    if (shapAdjst_ary.constructor === Array) {
+    if (Array.isArray(shapAdjst_ary)) {
       for (let i = 0; i < shapAdjst_ary.length; i++) {
-        const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
+        const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
         if (sAdj_name === "adj1") {
-          sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
-          adj1 = parseInt(sAdj1.substr(4));
+          const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+          if (sAdj1 !== undefined) {
+            adj1 = parseInt(sAdj1.substr(4));
+          }
         } else if (sAdj_name === "adj2") {
-          sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
-          adj2 = parseInt(sAdj2.substr(4));
+          const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+          if (sAdj2 !== undefined) {
+            adj2 = parseInt(sAdj2.substr(4));
+          }
         } else if (sAdj_name === "adj3") {
-          sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
-          adj3 = parseInt(sAdj3.substr(4));
+          const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+          if (sAdj3 !== undefined) {
+            adj3 = parseInt(sAdj3.substr(4));
+          }
         }
       }
     } else {
-      sAdj1 = getTextByPathList(shapAdjst_ary, ["attrs", "fmla"]);
-      adj1 = parseInt(sAdj1.substr(4));
+      const sAdj1 = getTextByPathList<string>(shapAdjst_ary, ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
+        adj1 = parseInt(sAdj1.substr(4));
+      }
     }
   }
 
