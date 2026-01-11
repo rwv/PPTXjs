@@ -4,7 +4,7 @@ import { getTextByPathList } from "../object";
 /**
  * Extract chart data from XML series node
  *
- * @param serNode - The chart series node from XML containing data points
+ * @param seriesNodeData - The chart series node from XML containing data points
  * @returns Array of data series. For scatter charts, returns [[xValues], [yValues]].
  *          For other charts, returns array of series objects with key, values, and xlabels.
  *
@@ -18,52 +18,58 @@ import { getTextByPathList } from "../object";
  * const chartData = extractChartData(serNode);
  * // [{ key: "Series1", values: [{x: "0", y: 10}], xlabels: {"0": "Jan"} }]
  */
-export function extractChartData(seriesNode: any) {
-  const dataSeries = [];
+export function extractChartData(seriesNodeData: any) {
+  const chartSeries = [];
 
-  if (seriesNode === undefined) {
-    return dataSeries;
+  if (seriesNodeData === undefined) {
+    return chartSeries;
   }
 
-  if (seriesNode["c:xVal"] !== undefined) {
-    let valueSeries: number[] = [];
-    eachElement(seriesNode["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"], function (pointNode: any) {
-      valueSeries.push(parseFloat(pointNode["c:v"]));
-      return "";
-    });
-    dataSeries.push(valueSeries);
-    valueSeries = [];
-    eachElement(seriesNode["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"], function (pointNode: any) {
-      valueSeries.push(parseFloat(pointNode["c:v"]));
-      return "";
-    });
-    dataSeries.push(valueSeries);
+  if (seriesNodeData["c:xVal"] !== undefined) {
+    let axisValues: number[] = [];
+    eachElement(
+      seriesNodeData["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"],
+      function (pointEntry: any) {
+        axisValues.push(parseFloat(pointEntry["c:v"]));
+        return "";
+      }
+    );
+    chartSeries.push(axisValues);
+    axisValues = [];
+    eachElement(
+      seriesNodeData["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"],
+      function (pointEntry: any) {
+        axisValues.push(parseFloat(pointEntry["c:v"]));
+        return "";
+      }
+    );
+    chartSeries.push(axisValues);
   } else {
-    eachElement(seriesNode, function (seriesNodeItem: any, index: number) {
+    eachElement(seriesNodeData, function (seriesEntry: any, seriesIndex: number) {
       const seriesValues: Array<{ x: string | number; y: number }> = [];
       const seriesLabel =
-        getTextByPathList(seriesNodeItem, ["c:tx", "c:strRef", "c:strCache", "c:pt", "c:v"]) ||
-        index;
+        getTextByPathList(seriesEntry, ["c:tx", "c:strRef", "c:strCache", "c:pt", "c:v"]) ||
+        seriesIndex;
 
       // Category (string or number)
       const categoryLabels: Record<string, string> = {};
       if (
-        getTextByPathList(seriesNodeItem, ["c:cat", "c:strRef", "c:strCache", "c:pt"]) !== undefined
+        getTextByPathList(seriesEntry, ["c:cat", "c:strRef", "c:strCache", "c:pt"]) !== undefined
       ) {
         eachElement(
-          seriesNodeItem["c:cat"]["c:strRef"]["c:strCache"]["c:pt"],
-          function (pointNode: any) {
-            categoryLabels[pointNode["attrs"]["idx"]] = pointNode["c:v"];
+          seriesEntry["c:cat"]["c:strRef"]["c:strCache"]["c:pt"],
+          function (pointEntry: any) {
+            categoryLabels[pointEntry["attrs"]["idx"]] = pointEntry["c:v"];
             return "";
           }
         );
       } else if (
-        getTextByPathList(seriesNodeItem, ["c:cat", "c:numRef", "c:numCache", "c:pt"]) !== undefined
+        getTextByPathList(seriesEntry, ["c:cat", "c:numRef", "c:numCache", "c:pt"]) !== undefined
       ) {
         eachElement(
-          seriesNodeItem["c:cat"]["c:numRef"]["c:numCache"]["c:pt"],
-          function (pointNode: any) {
-            categoryLabels[pointNode["attrs"]["idx"]] = pointNode["c:v"];
+          seriesEntry["c:cat"]["c:numRef"]["c:numCache"]["c:pt"],
+          function (pointEntry: any) {
+            categoryLabels[pointEntry["attrs"]["idx"]] = pointEntry["c:v"];
             return "";
           }
         );
@@ -71,24 +77,24 @@ export function extractChartData(seriesNode: any) {
 
       // Value
       if (
-        getTextByPathList(seriesNodeItem, ["c:val", "c:numRef", "c:numCache", "c:pt"]) !== undefined
+        getTextByPathList(seriesEntry, ["c:val", "c:numRef", "c:numCache", "c:pt"]) !== undefined
       ) {
         eachElement(
-          seriesNodeItem["c:val"]["c:numRef"]["c:numCache"]["c:pt"],
-          function (pointNode: any) {
+          seriesEntry["c:val"]["c:numRef"]["c:numCache"]["c:pt"],
+          function (pointEntry: any) {
             seriesValues.push({
-              x: pointNode["attrs"]["idx"],
-              y: parseFloat(pointNode["c:v"]),
+              x: pointEntry["attrs"]["idx"],
+              y: parseFloat(pointEntry["c:v"]),
             });
             return "";
           }
         );
       }
 
-      dataSeries.push({ key: seriesLabel, values: seriesValues, xlabels: categoryLabels });
+      chartSeries.push({ key: seriesLabel, values: seriesValues, xlabels: categoryLabels });
       return "";
     });
   }
 
-  return dataSeries;
+  return chartSeries;
 }
