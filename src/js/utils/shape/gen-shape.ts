@@ -17,15 +17,15 @@
  * @param idx - Shape index
  * @param type - Shape type (textBox, title, body, pic, etc.)
  * @param order - z-index ordering
- * @param warpObj - Object containing all slide resources (theme, relationships, etc.)
+ * @param warpContext - Object containing all slide resources (theme, relationships, etc.)
  * @param isUserDrawnBg - Whether this is a user-drawn background shape
  * @param sType - Shape type context
  * @param source - Source context (slide, layout, master)
- * @param slideFactor - EMU to pixel conversion factor
+ * @param emuToPx - EMU to pixel conversion factor
  * @param styleTable - Global CSS style table
- * @param fontSizeFactor - Font size scaling factor
- * @param rtlLangsArray - Array of RTL language codes
- * @param isFirstBr - Mutable object tracking first line break state
+ * @param fontSizeScale - Font size scaling factor
+ * @param rtlLanguages - Array of RTL language codes
+ * @param firstLineBreak - Mutable object tracking first line break state
  * @returns HTML string with SVG shape
  */
 
@@ -80,15 +80,15 @@ export async function genShape(
   idx: number | string | undefined,
   type: string | undefined,
   order: number | string | undefined,
-  warpObj: any,
+  warpContext: any,
   isUserDrawnBg: boolean | undefined,
   sType: string | undefined,
   source: string,
-  slideFactor: number,
+  emuToPx: number,
   styleTable: any,
-  fontSizeFactor: number,
-  rtlLangsArray: string[],
-  isFirstBr: { value: boolean }
+  fontSizeScale: number,
+  rtlLanguages: string[],
+  firstLineBreak: { value: boolean }
 ): Promise<string> {
   // Initialize shape rendering context
   const context = await initShapeContext(
@@ -103,8 +103,8 @@ export async function genShape(
     order,
     sType,
     source,
-    warpObj,
-    slideFactor,
+    warpContext,
+    emuToPx,
     styleTable
   );
 
@@ -144,8 +144,8 @@ export async function genShape(
     shpId,
     svgCssName,
     border,
-    warpObj,
-    slideFactor,
+    warpContext,
+    emuToPx,
     styleTable
   );
   result += effectsResult.defsContent;
@@ -165,7 +165,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isFlowchartShape(shapType)) {
       // Handle independent flowchart shapes via dedicated module
@@ -178,7 +178,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isActionButtonShape(shapType)) {
       // Handle action button shapes via dedicated module
@@ -202,7 +202,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isCurvedArrowShape(shapType)) {
       // Handle curved arrow shapes via dedicated module
@@ -215,7 +215,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isCalloutShape(shapType)) {
       // Handle callout shapes via dedicated module
@@ -228,7 +228,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isRibbonShape(shapType)) {
       // Handle ribbon shapes via dedicated module
@@ -241,7 +241,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isMathShape(shapType)) {
       // Handle math shapes via dedicated module
@@ -254,7 +254,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isBracketShape(shapType)) {
       // Handle bracket shapes via dedicated module
@@ -267,7 +267,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isArcShape(shapType)) {
       // Handle arc shapes via dedicated module
@@ -280,7 +280,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isPolygonShape(shapType)) {
       // Handle polygon shapes via dedicated module
@@ -293,7 +293,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isScrollShape(shapType)) {
       // Handle scroll shapes via dedicated module
@@ -306,7 +306,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isMiscSymbolShape(shapType)) {
       // Handle misc symbol shapes via dedicated module
@@ -319,7 +319,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
         setTxtRotate: (angle: number) => {
           txtRotate = angle;
         },
@@ -335,7 +335,7 @@ export async function genShape(
         grndFillFlg,
         imgFillFlg,
         border,
-        slideFactor,
+        slideFactor: emuToPx,
       });
     } else if (isConnectorShape(shapType)) {
       // Handle connector shapes via dedicated module
@@ -373,7 +373,7 @@ export async function genShape(
       "<div class='block " +
       getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) + //block content
       " " +
-      getContentDir(node, type, warpObj) +
+      getContentDir(node, type, warpContext) +
       "' _id='" +
       id +
       "' _idx='" +
@@ -383,15 +383,8 @@ export async function genShape(
       "' _name='" +
       name +
       "' style='" +
-      getPosition(
-        slideXfrmNode,
-        pNode,
-        slideLayoutXfrmNode,
-        slideMasterXfrmNode,
-        sType,
-        slideFactor
-      ) +
-      getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, slideFactor) +
+      getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, emuToPx) +
+      getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, emuToPx) +
       " z-index: " +
       order +
       ";" +
@@ -412,13 +405,13 @@ export async function genShape(
         slideMasterSpNode,
         type,
         idx,
-        warpObj,
+        warpContext,
         undefined,
-        isFirstBr,
+        firstLineBreak,
         styleTable,
-        rtlLangsArray,
-        slideFactor,
-        fontSizeFactor
+        rtlLanguages,
+        emuToPx,
+        fontSizeScale
       ); //type='shape'
     }
     result += "</div>";
@@ -446,20 +439,20 @@ export async function genShape(
       order,
       sType,
       txtRotate,
-      warpObj,
+      warpContext,
       isUserDrawnBg,
-      isFirstBr,
+      firstLineBreak,
       styleTable,
-      rtlLangsArray,
-      slideFactor,
-      fontSizeFactor
+      rtlLanguages,
+      emuToPx,
+      fontSizeScale
     );
   } else {
     result +=
       "<div class='block " +
       getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) + //block content
       " " +
-      getContentDir(node, type, warpObj) +
+      getContentDir(node, type, warpContext) +
       "' _id='" +
       id +
       "' _idx='" +
@@ -469,17 +462,10 @@ export async function genShape(
       "' _name='" +
       name +
       "' style='" +
-      getPosition(
-        slideXfrmNode,
-        pNode,
-        slideLayoutXfrmNode,
-        slideMasterXfrmNode,
-        sType,
-        slideFactor
-      ) +
-      getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, slideFactor) +
-      getBorder(node, pNode, false, "shape", warpObj) +
-      (await getShapeFill(node, pNode, false, warpObj, source)) +
+      getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, emuToPx) +
+      getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, emuToPx) +
+      getBorder(node, pNode, false, "shape", warpContext) +
+      (await getShapeFill(node, pNode, false, warpContext, source)) +
       " z-index: " +
       order +
       ";" +
@@ -497,13 +483,13 @@ export async function genShape(
         slideMasterSpNode,
         type,
         idx,
-        warpObj,
+        warpContext,
         undefined,
-        isFirstBr,
+        firstLineBreak,
         styleTable,
-        rtlLangsArray,
-        slideFactor,
-        fontSizeFactor
+        rtlLanguages,
+        emuToPx,
+        fontSizeScale
       );
     }
     result += "</div>";
