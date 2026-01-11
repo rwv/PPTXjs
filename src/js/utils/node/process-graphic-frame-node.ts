@@ -48,14 +48,14 @@ export async function processGraphicFrameNode(
   renderSettings: { mediaProcess: boolean } & Record<string, unknown>
 ): Promise<string> {
   let result = "";
-  const chartIdRef = chartIdCounter ?? { value: 0 };
+  const chartIdState = chartIdCounter ?? { value: 0 };
   const graphicTypeUri = getTextByPathList(graphicFrameNode, [
     "a:graphic",
     "a:graphicData",
     "attrs",
     "uri",
   ]);
-  const msgQueue: unknown[] = Array.isArray(messageQueue) ? messageQueue : [];
+  const chartMessageQueue: unknown[] = Array.isArray(messageQueue) ? messageQueue : [];
 
   switch (graphicTypeUri) {
     case "http://schemas.openxmlformats.org/drawingml/2006/table":
@@ -71,11 +71,11 @@ export async function processGraphicFrameNode(
       );
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/chart":
-      [result, chartIdRef.value] = await genChart(
+      [result, chartIdState.value] = await genChart(
         graphicFrameNode,
         warpContext,
-        chartIdRef.value,
-        msgQueue,
+        chartIdState.value,
+        chartMessageQueue,
         emuToPx
       );
       break;
@@ -94,7 +94,7 @@ export async function processGraphicFrameNode(
       break;
     case "http://schemas.openxmlformats.org/presentationml/2006/ole": {
       //result = genDiagram(graphicFrameNode, warpContext, sourceType, shapeType);
-      let oleObjNode = getTextByPathList(graphicFrameNode, [
+      let oleObjectNode = getTextByPathList(graphicFrameNode, [
         "a:graphic",
         "a:graphicData",
         "mc:AlternateContent",
@@ -102,17 +102,17 @@ export async function processGraphicFrameNode(
         "p:oleObj",
       ]);
 
-      if (oleObjNode === undefined) {
-        oleObjNode = getTextByPathList(graphicFrameNode, [
+      if (oleObjectNode === undefined) {
+        oleObjectNode = getTextByPathList(graphicFrameNode, [
           "a:graphic",
           "a:graphicData",
           "p:oleObj",
         ]);
       }
-      //console.log("node:", node, "oleObjNode:", oleObjNode)
-      if (oleObjNode !== undefined) {
+      //console.log("node:", node, "oleObjectNode:", oleObjectNode)
+      if (oleObjectNode !== undefined) {
         result = await processGroupSpNode(
-          oleObjNode,
+          oleObjectNode,
           warpContext,
           sourceType,
           emuToPx,
