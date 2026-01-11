@@ -14,14 +14,14 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @param layoutIndex - Layout index for lookup
  * @param shapeType - Shape type (title, body, textBox, shape, etc.)
  * @param warpContext - Container object with layout tables and master styles
- * @returns Object with nodeLaout and nodeMaster properties
+ * @returns Object with nodeLayout and nodeMaster properties
  */
 export function getLayoutAndMasterNode(
   paragraphNode: Record<string, unknown>,
   layoutIndex: number | string | undefined,
   shapeType: string | undefined,
   warpContext: Record<string, unknown>
-): { nodeLaout: unknown; nodeMaster: unknown } {
+): { nodeLayout: unknown; nodeMaster: unknown; nodeLaout?: unknown } {
   let layoutParagraphPropsNode: unknown;
   let masterParagraphPropsNode: unknown;
   const paragraphPropsNode = paragraphNode["a:pPr"] as Record<string, unknown> | undefined;
@@ -99,7 +99,9 @@ export function getLayoutAndMasterNode(
     }
   }
   return {
-    nodeLaout: layoutParagraphPropsNode,
+    nodeLayout: layoutParagraphPropsNode,
     nodeMaster: masterParagraphPropsNode,
+    // Backward compatibility until all call sites are updated.
+    nodeLaout: layoutParagraphPropsNode,
   };
 }
