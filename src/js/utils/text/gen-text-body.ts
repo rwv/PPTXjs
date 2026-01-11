@@ -43,13 +43,13 @@ function measureHtmlWidth(html: string): number {
  * @param slideMasterSpNode - Shape node from slide master for fallback
  * @param type - Shape type (body, obj, shape, etc.)
  * @param idx - Placeholder index for layout lookup
- * @param warpObj - Warp object containing slide resources and styles
- * @param tbl_col_width - Table column width (for table cells, undefined otherwise)
- * @param isFirstBr - Object {value: boolean} for line break state (modified in place)
+ * @param warpContext - Warp object containing slide resources and styles
+ * @param tableColumnWidth - Table column width (for table cells, undefined otherwise)
+ * @param firstLineBreak - Object {value: boolean} for line break state (modified in place)
  * @param styleTable - CSS style table for class generation (modified in place)
- * @param rtlLangsArray - Array of RTL language codes
- * @param slideFactor - EMU to pixel conversion factor
- * @param fontSizeFactor - Font size scaling factor
+ * @param rtlLanguages - Array of RTL language codes
+ * @param emuToPx - EMU to pixel conversion factor
+ * @param fontSizeScale - Font size scaling factor
  * @returns HTML string for the text body
  */
 export async function genTextBody(
@@ -59,16 +59,16 @@ export async function genTextBody(
   slideMasterSpNode: any,
   type: string | undefined,
   idx: number | string | undefined,
-  warpObj: any,
-  tbl_col_width: number | string | undefined,
-  isFirstBr: { value: boolean },
+  warpContext: any,
+  tableColumnWidth: number | string | undefined,
+  firstLineBreak: { value: boolean },
   styleTable: any,
-  rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  rtlLanguages: string[],
+  emuToPx: number,
+  fontSizeScale: number
 ): Promise<string> {
   let text = "";
-  const _slideMasterTextStyles = warpObj["slideMasterTextStyles"];
+  const _slideMasterTextStyles = warpContext["slideMasterTextStyles"];
   void _slideMasterTextStyles;
 
   if (textBodyNode === undefined) {
@@ -100,7 +100,7 @@ export async function genTextBody(
       rNode = rNode.concat(fldNode);
     }
     if (rNode !== undefined && brNode !== undefined) {
-      isFirstBr.value = true;
+      firstLineBreak.value = true;
       brNode = brNode.constructor === Array ? brNode : [brNode];
       brNode.forEach(function (item: any) {
         item.type = "br";
@@ -117,7 +117,14 @@ export async function genTextBody(
     }
     //rtlStr = "";//"dir='"+isRTL+"'";
     let styleText = "";
-    const marginsVer = getVerticalMargins(pNode, textBodyNode, type, idx, warpObj, fontSizeFactor);
+    const marginsVer = getVerticalMargins(
+      pNode,
+      textBodyNode,
+      type,
+      idx,
+      warpContext,
+      fontSizeScale
+    );
     if (marginsVer !== "") {
       styleText = marginsVer;
     }
@@ -143,19 +150,17 @@ export async function genTextBody(
     let prg_height_node; // = getTextByPathList(spNode, ["p:spPr", "a:xfrm", "a:ext", "attrs", "cy"]);
     const sld_prg_width =
       prg_width_node !== undefined
-        ? "width:" + parseInt(prg_width_node) * slideFactor + "px;"
+        ? "width:" + parseInt(prg_width_node) * emuToPx + "px;"
         : "width:inherit;";
     const sld_prg_height =
-      prg_height_node !== undefined
-        ? "height:" + parseInt(prg_height_node) * slideFactor + "px;"
-        : "";
-    const prg_dir = getPregraphDir(pNode, textBodyNode, idx, type, warpObj);
+      prg_height_node !== undefined ? "height:" + parseInt(prg_height_node) * emuToPx + "px;" : "";
+    const prg_dir = getPregraphDir(pNode, textBodyNode, idx, type, warpContext);
     text +=
       "<div style='display: flex;" +
       sld_prg_width +
       sld_prg_height +
       "' class='slide-prgrph " +
-      getHorizontalAlign(pNode, textBodyNode, idx, type, prg_dir, warpObj) +
+      getHorizontalAlign(pNode, textBodyNode, idx, type, prg_dir, warpContext) +
       " " +
       prg_dir +
       " " +
@@ -169,9 +174,9 @@ export async function genTextBody(
       pFontStyle,
       idx,
       type,
-      warpObj,
-      slideFactor,
-      fontSizeFactor
+      warpContext,
+      emuToPx,
+      fontSizeScale
     );
     const isBullate =
       buText_ary[0] !== undefined && buText_ary[0] !== null && buText_ary[0] !== "" ? true : false;
@@ -181,12 +186,12 @@ export async function genTextBody(
         : 0;
     text += buText_ary[0] !== undefined ? buText_ary[0] : "";
     //get text margin
-    const margin_ary = getPregraphMargn(pNode, idx, type, isBullate, warpObj, slideFactor);
+    const margin_ary = getPregraphMargn(pNode, idx, type, isBullate, warpContext, emuToPx);
     const margin = margin_ary[0];
     const mrgin_val = margin_ary[1];
-    if (prg_width_node === undefined && tbl_col_width !== undefined && prg_width_node !== 0) {
+    if (prg_width_node === undefined && tableColumnWidth !== undefined && prg_width_node !== 0) {
       //sorce : table text
-      prg_width_node = tbl_col_width;
+      prg_width_node = tableColumnWidth;
     }
 
     let prgrph_text = "";
@@ -204,13 +209,13 @@ export async function genTextBody(
         idx,
         type,
         1,
-        warpObj,
+        warpContext,
         isBullate,
         styleTable,
-        isFirstBr,
-        rtlLangsArray,
-        slideFactor,
-        fontSizeFactor
+        firstLineBreak,
+        rtlLanguages,
+        emuToPx,
+        fontSizeScale
       );
       if (isBullate) {
         total_text_len += measureHtmlWidth(prgr_text);
@@ -229,13 +234,13 @@ export async function genTextBody(
           idx,
           type,
           rNode.length,
-          warpObj,
+          warpContext,
           isBullate,
           styleTable,
-          isFirstBr,
-          rtlLangsArray,
-          slideFactor,
-          fontSizeFactor
+          firstLineBreak,
+          rtlLanguages,
+          emuToPx,
+          fontSizeScale
         );
         if (isBullate) {
           total_text_len += measureHtmlWidth(prgr_text);
@@ -244,7 +249,7 @@ export async function genTextBody(
       }
     }
 
-    prg_width_node = parseInt(String(prg_width_node), 10) * slideFactor - bu_width - mrgin_val;
+    prg_width_node = parseInt(String(prg_width_node), 10) * emuToPx - bu_width - mrgin_val;
     if (isBullate) {
       //get prg_width_node if there is a bulltes
       //console.log("total_text_len: ", total_text_len, "prg_width_node:", prg_width_node)
