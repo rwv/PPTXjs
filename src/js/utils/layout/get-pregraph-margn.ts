@@ -33,7 +33,7 @@ export function getPregraphMargn(
     elementType,
     warpContext
   );
-  const paragraphPropsNodeLayout = layoutMasterNode.nodeLaout;
+  const paragraphPropsNodeLayout = layoutMasterNode.nodeLayout;
   const paragraphPropsNodeMaster = layoutMasterNode.nodeMaster;
 
   // rtl
