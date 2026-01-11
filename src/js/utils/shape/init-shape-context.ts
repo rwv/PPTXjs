@@ -69,8 +69,8 @@ export async function initShapeContext(
   order: number | string | undefined,
   sType: string | undefined,
   source: string,
-  warpObj: any,
-  slideFactor: number,
+  warpContext: any,
+  emuToPx: number,
   styleTable: any
 ): Promise<ShapeContext | null> {
   //var dltX = 0;
@@ -121,12 +121,12 @@ export async function initShapeContext(
   //////////////////////////////////////////////////
   if (shapType !== undefined || custShapType !== undefined /*&& slideXfrmNode !== undefined*/) {
     const off = getTextByPathList(slideXfrmNode, ["a:off", "attrs"]);
-    const x = parseInt(off["x"]) * slideFactor;
-    const y = parseInt(off["y"]) * slideFactor;
+    const x = parseInt(off["x"]) * emuToPx;
+    const y = parseInt(off["y"]) * emuToPx;
 
     const ext = getTextByPathList(slideXfrmNode, ["a:ext", "attrs"]);
-    const w = parseInt(ext["cx"]) * slideFactor;
-    const h = parseInt(ext["cy"]) * slideFactor;
+    const w = parseInt(ext["cx"]) * emuToPx;
+    const h = parseInt(ext["cy"]) * emuToPx;
 
     const svgCssName =
       "_svg_css_" + (Object.keys(styleTable).length + 1) + "_" + Math.floor(Math.random() * 1001);
@@ -148,8 +148,8 @@ export async function initShapeContext(
       name +
       "'" +
       "' style='" +
-      getPosition(slideXfrmNode, pNode, undefined, undefined, sType, slideFactor) +
-      getSize(slideXfrmNode, undefined, undefined, slideFactor) +
+      getPosition(slideXfrmNode, pNode, undefined, undefined, sType, emuToPx) +
+      getSize(slideXfrmNode, undefined, undefined, emuToPx) +
       " z-index: " +
       order +
       ";" +
@@ -163,7 +163,7 @@ export async function initShapeContext(
     let defsContent = "";
 
     // Fill Color
-    let fillColor = await getShapeFill(node, pNode, true, warpObj, source);
+    let fillColor = await getShapeFill(node, pNode, true, warpContext, source);
     //console.log("genShape: fillColor: ", fillColor)
     let grndFillFlg = false;
     let imgFillFlg = false;
@@ -186,7 +186,7 @@ export async function initShapeContext(
       defsContent += svgGrdnt;
     } else if (clrFillType === "PIC_FILL") {
       imgFillFlg = true;
-      const svgBgImg = getSvgImagePattern(node, fillColor, shpId, warpObj);
+      const svgBgImg = getSvgImagePattern(node, fillColor, shpId, warpContext);
       //fill="url(#imgPtrn)"
       //console.log(svgBgImg)
       defsContent += svgBgImg;
@@ -218,7 +218,7 @@ export async function initShapeContext(
       }
     }
     // Border Color
-    const border = getBorder(node, pNode, true, "shape", warpObj);
+    const border = getBorder(node, pNode, true, "shape", warpContext);
 
     return {
       slideXfrmNode,
