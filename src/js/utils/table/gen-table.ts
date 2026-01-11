@@ -25,24 +25,24 @@ import { getTableRowStyle, getTableStyleById } from "./helpers";
  * - bandCol: Apply alternating column bands (band1V/band2V)
  *
  * @param node - Graphic frame node containing table (p:graphicFrame)
- * @param warpObj - Warp object containing slide resources and styles
+ * @param warpContext - Warp object containing slide resources and styles
  * @param tableStyles - Table styles from presentation (a:tblStyleLst)
- * @param isFirstBr - Object {value: boolean} for line break state tracking
+ * @param firstLineBreak - Object {value: boolean} for line break state tracking
  * @param styleTable - CSS style table for class generation (modified in place)
- * @param rtlLangsArray - Array of RTL language codes
- * @param slideFactor - EMU to pixel conversion factor
- * @param fontSizeFactor - Font size scaling factor
+ * @param rtlLanguages - Array of RTL language codes
+ * @param emuToPx - EMU to pixel conversion factor
+ * @param fontSizeScale - Font size scaling factor
  * @returns HTML string for the table
  */
 export async function genTable(
   node: any,
-  warpObj: any,
+  warpContext: any,
   tableStyles: any,
-  isFirstBr: { value: boolean },
+  firstLineBreak: { value: boolean },
   styleTable: any,
-  rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  rtlLanguages: string[],
+  emuToPx: number,
+  fontSizeScale: number
 ): Promise<string> {
   const order = node["attrs"]["order"];
   const tableNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl"]);
@@ -80,19 +80,19 @@ export async function genTable(
   const tbleStyleId = getTblPr["a:tableStyleId"];
   const thisTblStyle = getTableStyleById(tbleStyleId, tableStyles, tblStylAttrObj);
   if (thisTblStyle !== undefined) {
-    warpObj["thisTbiStyle"] = thisTblStyle;
+    warpContext["thisTbiStyle"] = thisTblStyle;
   }
   const tblStyl = getTextByPathList(thisTblStyle, ["a:wholeTbl", "a:tcStyle"]);
   const tblBorderStyl = getTextByPathList(tblStyl, ["a:tcBdr"]);
   let tbl_borders = "";
   if (tblBorderStyl !== undefined) {
-    tbl_borders = getTableBorders(tblBorderStyl, warpObj);
+    tbl_borders = getTableBorders(tblBorderStyl, warpContext);
   }
   let tbl_bgcolor = "";
   let tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:tblBg", "a:fillRef"]);
-  //console.log( "thisTblStyle:", thisTblStyle, "warpObj:", warpObj)
+  //console.log( "thisTblStyle:", thisTblStyle, "warpContext:", warpContext)
   if (tbl_bgFillschemeClr !== undefined) {
-    tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpObj);
+    tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpContext);
   }
   if (tbl_bgFillschemeClr === undefined) {
     tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, [
@@ -101,7 +101,7 @@ export async function genTable(
       "a:fill",
       "a:solidFill",
     ]);
-    tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpObj);
+    tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpContext);
   }
   if (tbl_bgcolor !== "") {
     tbl_bgcolor = "background-color: #" + tbl_bgcolor + ";";
@@ -111,8 +111,8 @@ export async function genTable(
     "<table " +
     tblDir +
     " style='border-collapse: collapse;" +
-    getPosition(xfrmNode, node, undefined, undefined, undefined, slideFactor) +
-    getSize(xfrmNode, undefined, undefined, slideFactor) +
+    getPosition(xfrmNode, node, undefined, undefined, undefined, emuToPx) +
+    getSize(xfrmNode, undefined, undefined, emuToPx) +
     " z-index: " +
     order +
     ";" +
@@ -133,11 +133,11 @@ export async function genTable(
     let rowHeight = 0;
     let rowsStyl = "";
     if (rowHeightParam !== undefined) {
-      rowHeight = parseInt(rowHeightParam) * slideFactor;
+      rowHeight = parseInt(rowHeightParam) * emuToPx;
       rowsStyl += "height:" + rowHeight + "px;";
     }
     // Get row styling based on position and table style attributes
-    const rowStyle = getTableRowStyle(i, trNodes.length, tblStylAttrObj, thisTblStyle, warpObj);
+    const rowStyle = getTableRowStyle(i, trNodes.length, tblStylAttrObj, thisTblStyle, warpContext);
     const fillColor = rowStyle.fillColor;
     const row_borders = rowStyle.row_borders;
     const fontClrPr = rowStyle.fontClrPr;
@@ -226,12 +226,12 @@ export async function genTable(
               j,
               thisTblStyle,
               a_sorce,
-              warpObj,
-              isFirstBr,
+              warpContext,
+              firstLineBreak,
               styleTable,
-              rtlLangsArray,
-              slideFactor,
-              fontSizeFactor
+              rtlLanguages,
+              emuToPx,
+              fontSizeScale
             );
             const text = cellParmAry[0];
             const colStyl = cellParmAry[1];
@@ -327,12 +327,12 @@ export async function genTable(
           undefined,
           thisTblStyle,
           a_sorce,
-          warpObj,
-          isFirstBr,
+          warpContext,
+          firstLineBreak,
           styleTable,
-          rtlLangsArray,
-          slideFactor,
-          fontSizeFactor
+          rtlLanguages,
+          emuToPx,
+          fontSizeScale
         );
         const text = cellParmAry[0];
         const colStyl = cellParmAry[1];
