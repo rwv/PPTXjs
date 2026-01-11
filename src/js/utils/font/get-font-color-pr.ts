@@ -124,7 +124,7 @@ export function getFontColorPr(
       shapeType,
       warpContext
     );
-    const layoutParagraphPropsNode = layoutMasterNodes.nodeLaout;
+    const layoutParagraphPropsNode = layoutMasterNodes.nodeLayout;
     const masterParagraphPropsNode = layoutMasterNodes.nodeMaster;
 
     if (layoutParagraphPropsNode !== undefined) {
