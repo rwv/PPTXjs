@@ -19,32 +19,32 @@ export async function getSlideSizeAndSetDefaultTextStyle(
   if (!app) {
     throw new Error("Missing docProps/app.xml in PPTX.");
   }
-  const app_verssion_str = app["Properties"]["AppVersion"];
-  const app_verssion = parseInt(app_verssion_str);
-  console.log("create by Office PowerPoint app verssion: ", app_verssion_str);
+  const appVersionString = app["Properties"]["AppVersion"];
+  const appVersion = parseInt(appVersionString);
+  console.log("create by Office PowerPoint app verssion: ", appVersionString);
 
   //get slide dimensions
   const content = await readXmlFile(archive, "ppt/presentation.xml");
   if (!content) {
     throw new Error("Missing ppt/presentation.xml in PPTX.");
   }
-  const sldSzAttrs = content["p:presentation"]["p:sldSz"]["attrs"];
-  const sldSzWidth = parseInt(sldSzAttrs["cx"]);
-  const sldSzHeight = parseInt(sldSzAttrs["cy"]);
-  const sldSzType = sldSzAttrs["type"];
-  console.log("Presentation size type: ", sldSzType);
+  const slideSizeAttributes = content["p:presentation"]["p:sldSz"]["attrs"];
+  const slideSizeWidth = parseInt(slideSizeAttributes["cx"]);
+  const slideSizeHeight = parseInt(slideSizeAttributes["cy"]);
+  const slideSizeType = slideSizeAttributes["type"];
+  console.log("Presentation size type: ", slideSizeType);
 
   //1 inches  = 96px = 2.54cm
   // 1 EMU = 1 / 914400 inch
   // Pixel = EMUs * Resolution / 914400;  (Resolution = 96)
   //var standardHeight = 6858000;
-  //console.log("slideFactor: ", slideFactor, "standardHeight:", standardHeight, (standardHeight - sldSzHeight) / standardHeight)
+  //console.log("slideFactor: ", slideFactor, "standardHeight:", standardHeight, (standardHeight - slideSizeHeight) / standardHeight)
 
-  //slideFactor = (96 * (1 + ((standardHeight - sldSzHeight) / standardHeight))) / 914400 ;
+  //slideFactor = (96 * (1 + ((standardHeight - slideSizeHeight) / standardHeight))) / 914400 ;
 
-  //slideFactor = slideFactor + sldSzHeight*((standardHeight - sldSzHeight) / standardHeight) ;
+  //slideFactor = slideFactor + slideSizeHeight*((standardHeight - slideSizeHeight) / standardHeight) ;
 
-  //var ration = sldSzWidth / sldSzHeight;
+  //var ration = slideSizeWidth / slideSizeHeight;
 
   //Scale
   // var viewProps = readXmlFile(zip, "ppt/viewProps.xml");
@@ -70,13 +70,13 @@ export async function getSlideSizeAndSetDefaultTextStyle(
 
   const defaultTextStyle = content["p:presentation"]["p:defaultTextStyle"];
 
-  const slideWidth = (sldSzWidth * slideFactor + settings.incSlide.width) | 0; // * scaleX;//parseInt(sldSzAttrs["cx"]) * 96 / 914400;
-  const slideHeight = (sldSzHeight * slideFactor + settings.incSlide.height) | 0; // * scaleY;//parseInt(sldSzAttrs["cy"]) * 96 / 914400;
+  const slideWidth = (slideSizeWidth * slideFactor + settings.incSlide.width) | 0; // * scaleX;//parseInt(slideSizeAttributes["cx"]) * 96 / 914400;
+  const slideHeight = (slideSizeHeight * slideFactor + settings.incSlide.height) | 0; // * scaleY;//parseInt(slideSizeAttributes["cy"]) * 96 / 914400;
 
   return {
     width: slideWidth,
     height: slideHeight,
-    appVersion: app_verssion,
-    defaultTextStyle: defaultTextStyle,
+    appVersion,
+    defaultTextStyle,
   };
 }
