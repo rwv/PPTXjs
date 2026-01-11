@@ -13,27 +13,27 @@ export async function getContentTypes(archive: PptxArchive): Promise<{
   slides: string[];
   slideLayouts: string[];
 }> {
-  const ContentTypesJson = await readXmlFile(archive, "[Content_Types].xml");
-  if (!ContentTypesJson) {
+  const contentTypesData = await readXmlFile(archive, "[Content_Types].xml");
+  if (!contentTypesData) {
     return { slides: [], slideLayouts: [] };
   }
 
-  const subObj = ContentTypesJson["Types"]["Override"];
-  const slidesLocArray = [];
-  const slideLayoutsLocArray = [];
-  for (let i = 0; i < subObj.length; i++) {
-    switch (subObj[i]["attrs"]["ContentType"]) {
+  const overrideEntries = contentTypesData["Types"]["Override"];
+  const slidePaths: string[] = [];
+  const slideLayoutPaths: string[] = [];
+  for (const overrideEntry of overrideEntries) {
+    switch (overrideEntry["attrs"]["ContentType"]) {
       case "application/vnd.openxmlformats-officedocument.presentationml.slide+xml":
-        slidesLocArray.push(subObj[i]["attrs"]["PartName"].substr(1));
+        slidePaths.push(overrideEntry["attrs"]["PartName"].substr(1));
         break;
       case "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml":
-        slideLayoutsLocArray.push(subObj[i]["attrs"]["PartName"].substr(1));
+        slideLayoutPaths.push(overrideEntry["attrs"]["PartName"].substr(1));
         break;
       default:
     }
   }
   return {
-    slides: slidesLocArray,
-    slideLayouts: slideLayoutsLocArray,
+    slides: slidePaths,
+    slideLayouts: slideLayoutPaths,
   };
 }
