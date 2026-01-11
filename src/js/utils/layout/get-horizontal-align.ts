@@ -33,7 +33,7 @@ export function getHorizontalAlign(
   let alignment = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "algn"]);
   if (alignment === undefined) {
     //var layoutMasterNode = getLayoutAndMasterNode(node, layoutIndex, shapeType, warpContext);
-    // var pPrNodeLaout = layoutMasterNode.nodeLaout;
+    // var paragraphPropsNodeLayout = layoutMasterNode.nodeLayout;
     // var pPrNodeMaster = layoutMasterNode.nodeMaster;
     let listLevel = 1;
     const levelAttr = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "lvl"]);
