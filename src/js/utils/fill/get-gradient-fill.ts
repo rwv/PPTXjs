@@ -9,7 +9,7 @@ import { angleToDegrees } from "../layout/angle-to-degrees";
  * Handles multiple color stops (a:gs) and linear gradient direction (a:lin).
  *
  * @param gradientFillNode - Gradient fill node from PPTX (a:gradFill)
- * @param warpObj - Container object with theme and color information
+ * @param warpContext - Container object with theme and color information
  * @returns Object with color array and rotation angle for CSS gradient
  */
 type SolidFillNode = Parameters<typeof getSolidFill>[0];
@@ -20,7 +20,7 @@ type GradientFillNode = {
   [key: string]: unknown;
 };
 
-export function getGradientFill(gradientFillNode: GradientFillNode, warpObj: SolidFillWarpObj) {
+export function getGradientFill(gradientFillNode: GradientFillNode, warpContext: SolidFillWarpObj) {
   const gradientStops =
     getTextByPathList<Array<Record<string, unknown>>>(gradientFillNode, ["a:gsLst", "a:gs"]) || [];
   const colorStops: Array<string | undefined> = [];
@@ -29,7 +29,7 @@ export function getGradientFill(gradientFillNode: GradientFillNode, warpObj: Sol
       gradientStops[i] as SolidFillNode,
       undefined,
       undefined,
-      warpObj
+      warpContext
     );
     colorStops[i] = solidFillColor;
   }
