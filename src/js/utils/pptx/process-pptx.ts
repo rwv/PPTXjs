@@ -17,14 +17,14 @@
  * - "progress-update": Progress percentage
  *
  * @param archive - PPTX archive instance
- * @param slideFactor - EMU to pixel conversion factor
+ * @param emuToPx - EMU to pixel conversion factor
  * @param settings - Plugin settings
  * @param styleTable - Global CSS style table (modified in place)
- * @param rtlLangsArray - Array of RTL language codes
- * @param fontSizeFactor - Font size scaling factor
- * @param chartID - Chart ID counter (modified in place)
- * @param MsgQueue - Message queue for chart processing
- * @param isFirstBr - Mutable object tracking first line break state
+ * @param rtlLanguages - Array of RTL language codes
+ * @param fontSizeScale - Font size scaling factor
+ * @param chartIdCounter - Chart ID counter (modified in place)
+ * @param messageQueue - Message queue for chart processing
+ * @param isFirstLineBreak - Mutable object tracking first line break state
  * @returns Array of objects containing slides and metadata
  */
 
@@ -36,107 +36,107 @@ import { genGlobalCSS } from "../css";
 
 export async function processPPTX(
   archive: PptxArchive,
-  slideFactor: number,
+  emuToPx: number,
   settings: any,
   styleTable: any,
-  rtlLangsArray: string[],
-  fontSizeFactor: number,
-  chartID: { value: number },
-  MsgQueue: any,
-  isFirstBr: { value: boolean }
+  rtlLanguages: string[],
+  fontSizeScale: number,
+  chartIdCounter: { value: number },
+  messageQueue: any,
+  isFirstLineBreak: { value: boolean }
 ): Promise<any[]> {
-  const post_ary = [];
-  const dateBefore = new Date();
+  const resultItems = [];
+  const startTime = new Date();
 
   const thumbFile = await archive.file("docProps/thumbnail.jpeg");
   if (thumbFile) {
     const pptxThumbImg = base64ArrayBuffer(await thumbFile.arrayBuffer());
-    post_ary.push({
+    resultItems.push({
       type: "pptx-thumb",
       data: pptxThumbImg,
       slide_num: -1,
     });
   }
 
-  const filesInfo = await getContentTypes(archive);
-  const slideSize = await getSlideSizeAndSetDefaultTextStyle(archive, slideFactor, settings);
-  const app_verssion = slideSize.appVersion;
+  const contentTypes = await getContentTypes(archive);
+  const slideSize = await getSlideSizeAndSetDefaultTextStyle(archive, emuToPx, settings);
+  const appVersion = slideSize.appVersion;
   const defaultTextStyle = slideSize.defaultTextStyle;
   const slideWidth = slideSize.width;
-  const processFullTheme = settings.themeProcess;
+  const shouldProcessTheme = settings.themeProcess;
   const tableStyles = await readXmlFile(archive, "ppt/tableStyles.xml");
   //console.log("slideSize: ", slideSize)
-  post_ary.push({
+  resultItems.push({
     type: "slideSize",
     data: slideSize,
     slide_num: 0,
   });
 
-  const numOfSlides = filesInfo["slides"].length;
-  for (let i = 0; i < numOfSlides; i++) {
-    const filename = filesInfo["slides"][i];
-    let filename_no_path = "";
-    let filename_no_path_ary = [];
-    if (filename.indexOf("/") !== -1) {
-      filename_no_path_ary = filename.split("/");
-      filename_no_path = filename_no_path_ary.pop();
+  const slideCount = contentTypes["slides"].length;
+  for (let slideIndex = 0; slideIndex < slideCount; slideIndex += 1) {
+    const slidePath = contentTypes["slides"][slideIndex];
+    let slideFilename = "";
+    let slideFilenameParts: string[] = [];
+    if (slidePath.indexOf("/") !== -1) {
+      slideFilenameParts = slidePath.split("/");
+      slideFilename = slideFilenameParts.pop() ?? "";
     } else {
-      filename_no_path = filename;
+      slideFilename = slidePath;
     }
-    let filename_no_path_no_ext = "";
-    if (filename_no_path.indexOf(".") !== -1) {
-      const filename_no_path_no_ext_ary = filename_no_path.split(".");
-      filename_no_path_no_ext_ary.pop();
-      filename_no_path_no_ext = filename_no_path_no_ext_ary.join(".");
+    let slideBasename = "";
+    if (slideFilename.indexOf(".") !== -1) {
+      const slideBasenameParts = slideFilename.split(".");
+      slideBasenameParts.pop();
+      slideBasename = slideBasenameParts.join(".");
     }
-    let slide_number = 1;
-    if (filename_no_path_no_ext !== "" && filename_no_path.indexOf("slide") !== -1) {
-      slide_number = Number(filename_no_path_no_ext.substr(5));
+    let slideNumber = 1;
+    if (slideBasename !== "" && slideFilename.indexOf("slide") !== -1) {
+      slideNumber = Number(slideBasename.substr(5));
     }
     const slideHtml = await processSingleSlide(
       archive,
-      filename,
-      i,
+      slidePath,
+      slideIndex,
       slideSize,
       defaultTextStyle,
-      app_verssion,
-      processFullTheme,
+      appVersion,
+      shouldProcessTheme,
       tableStyles,
-      isFirstBr,
+      isFirstLineBreak,
       styleTable,
-      rtlLangsArray,
-      slideFactor,
-      fontSizeFactor,
-      chartID,
-      MsgQueue,
+      rtlLanguages,
+      emuToPx,
+      fontSizeScale,
+      chartIdCounter,
+      messageQueue,
       settings
     );
-    post_ary.push({
+    resultItems.push({
       type: "slide",
       data: slideHtml,
-      slide_num: slide_number,
-      file_name: filename_no_path_no_ext,
+      slide_num: slideNumber,
+      file_name: slideBasename,
     });
-    post_ary.push({
+    resultItems.push({
       type: "progress-update",
-      slide_num: numOfSlides + i + 1,
-      data: ((i + 1) * 100) / numOfSlides,
+      slide_num: slideCount + slideIndex + 1,
+      data: ((slideIndex + 1) * 100) / slideCount,
     });
   }
 
-  post_ary.sort(function (a, b) {
+  resultItems.sort(function (a, b) {
     return a.slide_num - b.slide_num;
   });
 
-  post_ary.push({
+  resultItems.push({
     type: "globalCSS",
     data: genGlobalCSS(styleTable, settings, slideWidth),
   });
 
-  const dateAfter = new Date();
-  post_ary.push({
+  const endTime = new Date();
+  resultItems.push({
     type: "ExecutionTime",
-    data: dateAfter.getTime() - dateBefore.getTime(),
+    data: endTime.getTime() - startTime.getTime(),
   });
-  return post_ary;
+  return resultItems;
 }
