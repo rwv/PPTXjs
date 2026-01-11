@@ -121,7 +121,7 @@ export async function genBuChar(
     shapeType,
     warpContext
   );
-  const layoutParagraphPropsNode = layoutMasterNode.nodeLaout;
+  const layoutParagraphPropsNode = layoutMasterNode.nodeLayout;
   const masterParagraphPropsNode = layoutMasterNode.nodeMaster;
 
   let bulletChar = getTextByPathList(paragraphPropsNode, ["a:buChar", "attrs", "char"]);
