@@ -14,7 +14,7 @@ interface ColorMap {
 /**
  * Warp object containing PPTX presentation content for lookups
  */
-interface WarpObject {
+interface WarpContext {
   slideContent?: any;
   slideLayoutContent?: any;
   slideMasterContent?: any;
@@ -34,14 +34,14 @@ interface WarpObject {
  * @param schemeColorKey - Scheme color reference (e.g., "a:tx1", "a:bg2", "a:accent1")
  * @param clrMap - Color mapping object from theme
  * @param phClr - Placeholder color to use for "phClr" references
- * @param warpObj - Warp object containing slide, layout, master, and theme content
+ * @param warpContext - Warp object containing slide, layout, master, and theme content
  * @returns Hex color string
  */
 export function getSchemeColorFromTheme(
   schemeColorKey: string,
   clrMap: ColorMap | undefined,
   phClr: string | undefined,
-  warpObj: WarpObject
+  warpContext: WarpContext
 ): string {
   //<p:clrMap ...> in slide master
   // e.g. tx2="dk2" bg2="lt2" tx1="dk1" bg1="lt1" slideLayoutColorOverride
@@ -50,7 +50,7 @@ export function getSchemeColorFromTheme(
   if (clrMap !== undefined) {
     slideLayoutColorOverride = clrMap; //getTextByPathList(clrMap, ["p:sldMaster", "p:clrMap", "attrs"])
   } else {
-    let slideColorMapOverride = getTextByPathList(warpObj["slideContent"], [
+    let slideColorMapOverride = getTextByPathList(warpContext["slideContent"], [
       "p:sld",
       "p:clrMapOvr",
       "a:overrideClrMapping",
@@ -59,7 +59,7 @@ export function getSchemeColorFromTheme(
     if (slideColorMapOverride !== undefined) {
       slideLayoutColorOverride = slideColorMapOverride;
     } else {
-      slideColorMapOverride = getTextByPathList(warpObj["slideLayoutContent"], [
+      slideColorMapOverride = getTextByPathList(warpContext["slideLayoutContent"], [
         "p:sldLayout",
         "p:clrMapOvr",
         "a:overrideClrMapping",
@@ -68,7 +68,7 @@ export function getSchemeColorFromTheme(
       if (slideColorMapOverride !== undefined) {
         slideLayoutColorOverride = slideColorMapOverride;
       } else {
-        slideLayoutColorOverride = getTextByPathList(warpObj["slideMasterContent"], [
+        slideLayoutColorOverride = getTextByPathList(warpContext["slideMasterContent"], [
           "p:sldMaster",
           "p:clrMap",
           "attrs",
@@ -108,7 +108,7 @@ export function getSchemeColorFromTheme(
       }
     }
     //console.log("getSchemeColorFromTheme:  schemeColorKey: ", schemeColorKey);
-    const refNode = getTextByPathList(warpObj["themeContent"], [
+    const refNode = getTextByPathList(warpContext["themeContent"], [
       "a:theme",
       "a:themeElements",
       "a:clrScheme",
