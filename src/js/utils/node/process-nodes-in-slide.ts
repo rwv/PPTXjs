@@ -4,6 +4,7 @@ import { processCxnSpNode } from "../shape/process-cxn-sp-node";
 import { processPicNode } from "../media/process-pic-node";
 import { processGraphicFrameNode } from "./process-graphic-frame-node";
 import { processGroupSpNode } from "./process-group-sp-node";
+import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 /**
  * Main dispatcher for processing slide nodes
@@ -37,9 +38,9 @@ import { processGroupSpNode } from "./process-group-sp-node";
  */
 export async function processNodesInSlide(
   nodeType: string,
-  nodeData: unknown,
-  parentNodes: unknown,
-  warpContext: unknown,
+  nodeData: XmlNode | XmlNode[] | undefined,
+  parentNodes: XmlNode | XmlNode[] | undefined,
+  warpContext: WarpContext | Record<string, unknown>,
   sourceType: string,
   shapeType: string,
   tableStyles: unknown,
