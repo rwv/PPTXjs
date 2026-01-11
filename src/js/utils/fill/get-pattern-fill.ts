@@ -11,7 +11,7 @@ import { getLinerGrandient } from "./get-liner-grandient";
  * See OOXML spec or getLinerGrandient for full list of pattern presets.
  *
  * @param patternFillNode - Pattern fill node from PPTX (a:pattFill)
- * @param warpObj - Container object with theme and color information
+ * @param warpContext - Container object with theme and color information
  * @returns Array with CSS gradient string, size, and position
  */
 type SolidFillNode = Parameters<typeof getSolidFill>[0];
@@ -23,12 +23,14 @@ type PatternFillNode = {
   [key: string]: unknown;
 };
 
-export function getPatternFill(patternFillNode: PatternFillNode, warpObj: SolidFillWarpObj) {
+export function getPatternFill(patternFillNode: PatternFillNode, warpContext: SolidFillWarpObj) {
   const patternPreset = patternFillNode["attrs"]?.prst ?? "";
   const backgroundColorNode = patternFillNode["a:bgClr"] as SolidFillNode;
   const foregroundColorNode = patternFillNode["a:fgClr"] as SolidFillNode;
-  const foregroundColor = getSolidFill(foregroundColorNode, undefined, undefined, warpObj) || "";
-  const backgroundColor = getSolidFill(backgroundColorNode, undefined, undefined, warpObj) || "";
+  const foregroundColor =
+    getSolidFill(foregroundColorNode, undefined, undefined, warpContext) || "";
+  const backgroundColor =
+    getSolidFill(backgroundColorNode, undefined, undefined, warpContext) || "";
   const linearGradient = getLinerGrandient(patternPreset, backgroundColor, foregroundColor);
   return linearGradient;
 }
