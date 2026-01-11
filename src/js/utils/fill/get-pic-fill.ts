@@ -9,7 +9,7 @@ import type { PptxArchive } from "../../archive/pptx-archive";
  *
  * Resolves image resource ID (r:embed) to actual image path, reads the image
  * from the ZIP archive, and converts it to a base64 data URL for use in CSS.
- * Caches loaded images in warpObj to avoid duplicate processing.
+ * Caches loaded images in warpContext to avoid duplicate processing.
  *
  * @param sourceType - Source type (slide, slideBg, slideLayoutBg, slideMasterBg, themeBg, diagramBg)
  * @param blipFillNode - Blip fill node containing image reference (a:blipFill)
