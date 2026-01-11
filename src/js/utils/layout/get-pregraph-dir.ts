@@ -34,7 +34,7 @@ export function getPregraphDir(
       elementType,
       warpContext
     );
-    const layoutParagraphPropsNode = layoutMasterNodes.nodeLaout;
+    const layoutParagraphPropsNode = layoutMasterNodes.nodeLayout;
     const masterParagraphPropsNode = layoutMasterNodes.nodeMaster;
     rtlValue = getTextByPathList(layoutParagraphPropsNode, ["attrs", "rtl"]);
     if (rtlValue === undefined && elementType !== "shape") {
