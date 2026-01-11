@@ -114,7 +114,7 @@ export function genSpanElement(
     shapeType,
     warpContext
   );
-  const paragraphPropsLayoutNode = layoutMasterNode.nodeLaout;
+  const paragraphPropsLayoutNode = layoutMasterNode.nodeLayout;
   const paragraphPropsMasterNode = layoutMasterNode.nodeMaster;
 
   //Language
