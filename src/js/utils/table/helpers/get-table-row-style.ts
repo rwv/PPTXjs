@@ -9,9 +9,9 @@
  *
  * @param rowIndex - Current row index (0-based)
  * @param totalRows - Total number of rows
- * @param tblStylAttrObj - Table style attribute flags
- * @param thisTblStyle - Table style definition
- * @param warpObj - Warp object containing slide resources
+ * @param tableStyleFlags - Table style attribute flags
+ * @param tableStyle - Table style definition
+ * @param warpContext - Warp object containing slide resources
  * @returns Row style properties (fillColor, borders, fontColor, fontWeight)
  */
 
@@ -38,99 +38,100 @@ type TableStyleAttrFlags = {
 export function getTableRowStyle(
   rowIndex: number,
   totalRows: number,
-  tblStylAttrObj: TableStyleAttrFlags,
-  thisTblStyle: Record<string, unknown> | undefined,
-  warpObj: Record<string, unknown>
+  tableStyleFlags: TableStyleAttrFlags,
+  tableStyle: Record<string, unknown> | undefined,
+  warpContext: Record<string, unknown>
 ): TableRowStyle {
   let fillColor = "";
-  let row_borders: string | undefined = "";
-  let fontClrPr = "";
+  let rowBorders: string | undefined = "";
+  let fontColor = "";
   let fontWeight = "";
-  let band_1H_fillColor: string | undefined;
-  let band_2H_fillColor: string | undefined;
+  let band1FillColor: string | undefined;
+  let band2FillColor: string | undefined;
 
   // Helper function to apply style from a path
   const applyStyleFromPath = (basePath: string[]) => {
     // Get background fill color
-    const bgFillschemeClr = getTextByPathList(thisTblStyle, [
+    const backgroundFillNode = getTextByPathList(tableStyle, [
       ...basePath,
       "a:tcStyle",
       "a:fill",
       "a:solidFill",
     ]);
-    if (bgFillschemeClr !== undefined) {
-      const local_fillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpObj);
-      if (local_fillColor !== undefined) {
-        fillColor = local_fillColor;
+    if (backgroundFillNode !== undefined) {
+      const resolvedFillColor = getSolidFill(backgroundFillNode, undefined, undefined, warpContext);
+      if (resolvedFillColor !== undefined) {
+        fillColor = resolvedFillColor;
       }
     }
 
     // Get border styling
-    const borderStyl = getTextByPathList(thisTblStyle, [...basePath, "a:tcStyle", "a:tcBdr"]);
-    if (borderStyl !== undefined) {
-      const local_row_borders = getTableBorders(borderStyl, warpObj);
-      if (local_row_borders !== "") {
-        row_borders = local_row_borders;
+    const borderStyleNode = getTextByPathList(tableStyle, [...basePath, "a:tcStyle", "a:tcBdr"]);
+    if (borderStyleNode !== undefined) {
+      const resolvedRowBorders = getTableBorders(borderStyleNode, warpContext);
+      if (resolvedRowBorders !== "") {
+        rowBorders = resolvedRowBorders;
       }
     }
 
     // Get font color
-    const rowTxtStyl = getTextByPathList(thisTblStyle, [...basePath, "a:tcTxStyle"]);
-    if (rowTxtStyl !== undefined) {
-      const local_fontClrPr = getSolidFill(rowTxtStyl, undefined, undefined, warpObj);
-      if (local_fontClrPr !== undefined) {
-        fontClrPr = local_fontClrPr;
+    const rowTextStyleNode = getTextByPathList(tableStyle, [...basePath, "a:tcTxStyle"]);
+    if (rowTextStyleNode !== undefined) {
+      const resolvedFontColor = getSolidFill(rowTextStyleNode, undefined, undefined, warpContext);
+      if (resolvedFontColor !== undefined) {
+        fontColor = resolvedFontColor;
       }
 
       // Get font weight
-      const local_fontWeight = getTextByPathList(rowTxtStyl, ["attrs", "b"]) === "on" ? "bold" : "";
-      if (local_fontWeight !== "") {
-        fontWeight = local_fontWeight;
+      const resolvedFontWeight =
+        getTextByPathList(rowTextStyleNode, ["attrs", "b"]) === "on" ? "bold" : "";
+      if (resolvedFontWeight !== "") {
+        fontWeight = resolvedFontWeight;
       }
     }
   };
 
   // Apply wholeTbl default styling
-  if (thisTblStyle !== undefined && thisTblStyle["a:wholeTbl"] !== undefined) {
+  if (tableStyle !== undefined && tableStyle["a:wholeTbl"] !== undefined) {
     applyStyleFromPath(["a:wholeTbl"]);
   }
 
   // Apply firstRow styling
-  if (rowIndex === 0 && tblStylAttrObj.isFrstRowAttr === 1 && thisTblStyle !== undefined) {
+  if (rowIndex === 0 && tableStyleFlags.isFrstRowAttr === 1 && tableStyle !== undefined) {
     applyStyleFromPath(["a:firstRow"]);
   }
   // Apply banded row styling (skip first row if firstRow styling is applied)
-  else if (rowIndex > 0 && tblStylAttrObj.isBandRowAttr === 1 && thisTblStyle !== undefined) {
+  else if (rowIndex > 0 && tableStyleFlags.isBandRowAttr === 1 && tableStyle !== undefined) {
     fillColor = "";
-    row_borders = undefined;
+    rowBorders = undefined;
 
     // Even rows - band2H
-    if (rowIndex % 2 === 0 && thisTblStyle["a:band2H"] !== undefined) {
+    if (rowIndex % 2 === 0 && tableStyle["a:band2H"] !== undefined) {
       applyStyleFromPath(["a:band2H"]);
-      band_2H_fillColor = fillColor;
+      band2FillColor = fillColor;
     }
     // Odd rows - band1H
-    else if (rowIndex % 2 !== 0 && thisTblStyle["a:band1H"] !== undefined) {
+    else if (rowIndex % 2 !== 0 && tableStyle["a:band1H"] !== undefined) {
       applyStyleFromPath(["a:band1H"]);
-      band_1H_fillColor = fillColor;
+      band1FillColor = fillColor;
     }
   }
 
   // Apply lastRow styling (overrides previous styling)
   if (
     rowIndex === totalRows - 1 &&
-    tblStylAttrObj.isLstRowAttr === 1 &&
-    thisTblStyle !== undefined
+    tableStyleFlags.isLstRowAttr === 1 &&
+    tableStyle !== undefined
   ) {
     applyStyleFromPath(["a:lastRow"]);
   }
 
   return {
     fillColor,
-    row_borders,
-    fontClrPr,
+    row_borders: rowBorders,
+    fontClrPr: fontColor,
     fontWeight,
-    band_1H_fillColor,
-    band_2H_fillColor,
+    band_1H_fillColor: band1FillColor,
+    band_2H_fillColor: band2FillColor,
   };
 }
