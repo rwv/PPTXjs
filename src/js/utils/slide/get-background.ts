@@ -62,14 +62,14 @@ export async function getBackground(
   // console.log("slideLayoutContent : ", slideLayoutContent)
   // console.log("slideMasterContent : ", slideMasterContent)
   //console.log("warpContext : ", warpContext)
-  const showMasterSp = getTextByPathList(slideLayoutContent, [
+  const showMasterShapes = getTextByPathList(slideLayoutContent, [
     "p:sldLayout",
     "attrs",
     "showMasterSp",
   ]);
-  //console.log("slideLayoutContent : ", slideLayoutContent, ", showMasterSp: ", showMasterSp)
+  //console.log("slideLayoutContent : ", slideLayoutContent, ", showMasterSp: ", showMasterShapes)
   const backgroundCss = await getSlideBackgroundFill(warpContext, slideIndex);
-  let htmlOutput =
+  let backgroundHtml =
     "<div class='slide-background-" +
     slideIndex +
     "' style='width:" +
@@ -80,10 +80,14 @@ export async function getBackground(
     backgroundCss +
     "'>";
   if (layoutShapeTree !== undefined) {
-    for (const nodeKey in layoutShapeTree) {
-      if (layoutShapeTree[nodeKey].constructor === Array) {
-        for (let i = 0; i < layoutShapeTree[nodeKey].length; i++) {
-          const placeholderType = getTextByPathList(layoutShapeTree[nodeKey][i], [
+    for (const shapeNodeKey in layoutShapeTree) {
+      if (layoutShapeTree[shapeNodeKey].constructor === Array) {
+        for (
+          let shapeIndex = 0;
+          shapeIndex < layoutShapeTree[shapeNodeKey].length;
+          shapeIndex += 1
+        ) {
+          const placeholderType = getTextByPathList(layoutShapeTree[shapeNodeKey][shapeIndex], [
             "p:nvSpPr",
             "p:nvPr",
             "p:ph",
@@ -94,9 +98,9 @@ export async function getBackground(
           //     _nodePhTypeAry.push(phType);
           // }
           if (placeholderType !== "pic") {
-            htmlOutput += await processNodesInSlide(
-              nodeKey,
-              layoutShapeTree[nodeKey][i],
+            backgroundHtml += await processNodesInSlide(
+              shapeNodeKey,
+              layoutShapeTree[shapeNodeKey][shapeIndex],
               layoutShapeTree,
               warpContext,
               "slideLayoutBg",
@@ -114,7 +118,7 @@ export async function getBackground(
           }
         }
       } else {
-        const placeholderType = getTextByPathList(layoutShapeTree[nodeKey], [
+        const placeholderType = getTextByPathList(layoutShapeTree[shapeNodeKey], [
           "p:nvSpPr",
           "p:nvPr",
           "p:ph",
@@ -125,9 +129,9 @@ export async function getBackground(
         //     _nodePhTypeAry.push(phType);
         // }
         if (placeholderType !== "pic") {
-          htmlOutput += await processNodesInSlide(
-            nodeKey,
-            layoutShapeTree[nodeKey],
+          backgroundHtml += await processNodesInSlide(
+            shapeNodeKey,
+            layoutShapeTree[shapeNodeKey],
             layoutShapeTree,
             warpContext,
             "slideLayoutBg",
@@ -146,11 +150,18 @@ export async function getBackground(
       }
     }
   }
-  if (masterShapeTree !== undefined && (showMasterSp === "1" || showMasterSp === undefined)) {
-    for (const nodeKey in masterShapeTree) {
-      if (masterShapeTree[nodeKey].constructor === Array) {
-        for (let i = 0; i < masterShapeTree[nodeKey].length; i++) {
-          void getTextByPathList(masterShapeTree[nodeKey][i], [
+  if (
+    masterShapeTree !== undefined &&
+    (showMasterShapes === "1" || showMasterShapes === undefined)
+  ) {
+    for (const shapeNodeKey in masterShapeTree) {
+      if (masterShapeTree[shapeNodeKey].constructor === Array) {
+        for (
+          let shapeIndex = 0;
+          shapeIndex < masterShapeTree[shapeNodeKey].length;
+          shapeIndex += 1
+        ) {
+          void getTextByPathList(masterShapeTree[shapeNodeKey][shapeIndex], [
             "p:nvSpPr",
             "p:nvPr",
             "p:ph",
@@ -158,9 +169,9 @@ export async function getBackground(
             "type",
           ]);
           //if (_nodePhTypeAry.indexOf(_phType) > -1) {
-          htmlOutput += await processNodesInSlide(
-            nodeKey,
-            masterShapeTree[nodeKey][i],
+          backgroundHtml += await processNodesInSlide(
+            shapeNodeKey,
+            masterShapeTree[shapeNodeKey][shapeIndex],
             masterShapeTree,
             warpContext,
             "slideMasterBg",
@@ -178,7 +189,7 @@ export async function getBackground(
           //}
         }
       } else {
-        void getTextByPathList(masterShapeTree[nodeKey], [
+        void getTextByPathList(masterShapeTree[shapeNodeKey], [
           "p:nvSpPr",
           "p:nvPr",
           "p:ph",
@@ -186,9 +197,9 @@ export async function getBackground(
           "type",
         ]);
         //if (_nodePhTypeAry.indexOf(_phType) > -1) {
-        htmlOutput += await processNodesInSlide(
-          nodeKey,
-          masterShapeTree[nodeKey],
+        backgroundHtml += await processNodesInSlide(
+          shapeNodeKey,
+          masterShapeTree[shapeNodeKey],
           masterShapeTree,
           warpContext,
           "slideMasterBg",
@@ -207,5 +218,5 @@ export async function getBackground(
       }
     }
   }
-  return htmlOutput;
+  return backgroundHtml;
 }
