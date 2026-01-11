@@ -19,25 +19,25 @@ function isChartMessage(value: unknown): value is ChartMessage {
 /**
  * Process a single chart rendering message using D3 and NVD3
  *
- * @param d - Chart configuration data containing chartID, chartType, and chartData
+ * @param message - Chart configuration data containing chartID, chartType, and chartData
  * @returns True if chart was successfully rendered, false otherwise
  */
-export function processSingleMsg(d: unknown): boolean {
-  if (!isChartMessage(d)) {
+export function processSingleMsg(message: unknown): boolean {
+  if (!isChartMessage(message)) {
     return false;
   }
 
-  const { chartID, chartType, chartData } = d;
+  const { chartID: chartId, chartType, chartData } = message;
   type D3Module = typeof import("d3");
   type NvModule = typeof import("nvd3");
   const { nv, d3 } = window as { nv: NvModule; d3: D3Module };
 
-  let data: unknown = [];
+  let chartDataset: unknown = [];
 
   let chart = null;
   switch (chartType) {
     case "lineChart": {
-      data = chartData;
+      chartDataset = chartData;
       chart = nv.models.lineChart().useInteractiveGuideline(true);
       chart.xAxis.tickFormat(function (value: number) {
         const series = chartData[0] as { xlabels?: Array<string | number> } | undefined;
@@ -46,7 +46,7 @@ export function processSingleMsg(d: unknown): boolean {
       break;
     }
     case "barChart": {
-      data = chartData;
+      chartDataset = chartData;
       chart = nv.models.multiBarChart();
       chart.xAxis.tickFormat(function (value: number) {
         const series = chartData[0] as { xlabels?: Array<string | number> } | undefined;
@@ -58,13 +58,13 @@ export function processSingleMsg(d: unknown): boolean {
     case "pie3DChart": {
       if (chartData.length > 0) {
         const series = chartData[0] as { values?: unknown } | undefined;
-        data = series?.values ?? [];
+        chartDataset = series?.values ?? [];
       }
       chart = nv.models.pieChart();
       break;
     }
     case "areaChart": {
-      data = chartData;
+      chartDataset = chartData;
       chart = nv.models.stackedAreaChart().clipEdge(true).useInteractiveGuideline(true);
       chart.xAxis.tickFormat(function (value: number) {
         const series = chartData[0] as { xlabels?: Array<string | number> } | undefined;
@@ -73,18 +73,18 @@ export function processSingleMsg(d: unknown): boolean {
       break;
     }
     case "scatterChart": {
-      const scatterData: Array<{ key: string; values: Array<{ x: number; y: number }> }> = [];
-      const seriesList = chartData as Array<number[]>;
-      for (let i = 0; i < seriesList.length; i++) {
-        const arr: Array<{ x: number; y: number }> = [];
-        for (let j = 0; j < seriesList[i].length; j++) {
-          arr.push({ x: j, y: seriesList[i][j] });
+      const scatterSeries: Array<{ key: string; values: Array<{ x: number; y: number }> }> = [];
+      const seriesData = chartData as Array<number[]>;
+      for (let seriesIndex = 0; seriesIndex < seriesData.length; seriesIndex += 1) {
+        const points: Array<{ x: number; y: number }> = [];
+        for (let pointIndex = 0; pointIndex < seriesData[seriesIndex].length; pointIndex += 1) {
+          points.push({ x: pointIndex, y: seriesData[seriesIndex][pointIndex] });
         }
-        scatterData.push({ key: "data" + (i + 1), values: arr });
+        scatterSeries.push({ key: "data" + (seriesIndex + 1), values: points });
       }
-      data = scatterData;
+      chartDataset = scatterSeries;
 
-      //data = chartData;
+      //chartDataset = chartData;
       chart = nv.models
         .scatterChart()
         .showDistX(true)
@@ -98,9 +98,9 @@ export function processSingleMsg(d: unknown): boolean {
   }
 
   if (chart !== null) {
-    d3.select("#" + chartID)
+    d3.select("#" + chartId)
       .append("svg")
-      .datum(data)
+      .datum(chartDataset)
       .transition()
       .duration(500)
       .call(chart);
