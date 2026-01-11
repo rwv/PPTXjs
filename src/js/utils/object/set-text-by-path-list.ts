@@ -32,20 +32,20 @@ export function setTextByPathList(
 
   Reflect.defineProperty(target, "set", {
     value: function (this: NodeRecord, parts: Array<string | number>, value: unknown) {
-      let obj: NodeRecord = this;
-      const len = parts.length;
-      for (let i = 0; i < len; i++) {
-        const p = parts[i];
-        if (obj[p] == null) {
-          if (i === len - 1) {
-            obj[p] = value;
+      let currentNode: NodeRecord = this;
+      const pathLength = parts.length;
+      for (let index = 0; index < pathLength; index += 1) {
+        const pathKey = parts[index];
+        if (currentNode[pathKey] == null) {
+          if (index === pathLength - 1) {
+            currentNode[pathKey] = value;
           } else {
-            obj[p] = {};
+            currentNode[pathKey] = {};
           }
         }
-        obj = obj[p] as NodeRecord;
+        currentNode = currentNode[pathKey] as NodeRecord;
       }
-      return obj;
+      return currentNode;
     },
   });
 
