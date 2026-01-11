@@ -19,56 +19,56 @@ import { genTextBody } from "../text";
  *
  * @param tcNodes - Table cell node (a:tc)
  * @param getColsGrid - Column grid definition (a:gridCol array)
- * @param row_idx - Row index
- * @param col_idx - Column index
- * @param thisTblStyle - Table style object
+ * @param rowIndex - Row index
+ * @param colIndex - Column index
+ * @param tableStyle - Table style object
  * @param cellSource - Cell style source (e.g., "a:firstCol", "a:band2V")
- * @param warpObj - Warp object containing slide resources and styles
- * @param isFirstBr - Object {value: boolean} for line break state tracking
+ * @param warpContext - Warp object containing slide resources and styles
+ * @param firstLineBreak - Object {value: boolean} for line break state tracking
  * @param styleTable - CSS style table for class generation (modified in place)
- * @param rtlLangsArray - Array of RTL language codes
- * @param slideFactor - EMU to pixel conversion factor
- * @param fontSizeFactor - Font size scaling factor
+ * @param rtlLanguages - Array of RTL language codes
+ * @param emuToPx - EMU to pixel conversion factor
+ * @param fontSizeScale - Font size scaling factor
  * @returns Array [text, colStyl, cssName, rowSpan, colSpan]
  */
 export async function getTableCellParams(
   tcNodes: any,
   getColsGrid: any,
-  row_idx: number,
-  col_idx: number,
-  thisTblStyle: any,
+  rowIndex: number,
+  colIndex: number,
+  tableStyle: any,
   cellSource: string | undefined,
-  warpObj: any,
-  isFirstBr: { value: boolean },
+  warpContext: any,
+  firstLineBreak: { value: boolean },
   styleTable: any,
-  rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  rtlLanguages: string[],
+  emuToPx: number,
+  fontSizeScale: number
 ): Promise<[string, string, string, any, any]> {
-  //thisTblStyle["a:band1V"] => thisTblStyle[cellSource]
+  //tableStyle["a:band1V"] => tableStyle[cellSource]
   //text, cell-width, cell-borders,
-  //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpObj);//tableStyles
+  //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpContext);//tableStyles
   const rowSpan = getTextByPathList(tcNodes, ["attrs", "rowSpan"]);
   const colSpan = getTextByPathList(tcNodes, ["attrs", "gridSpan"]);
   let colStyl = "word-wrap: break-word;";
   let colWidth;
-  let celFillColor = "";
-  let colFontClrPr = "";
+  let cellFillColor = "";
+  let colFontColor = "";
   let colFontWeight = "";
-  let lin_bottm = "",
-    lin_top = "",
-    lin_left = "",
-    lin_right = "";
+  let bottomLine = "",
+    topLine = "",
+    leftLine = "",
+    rightLine = "";
 
   const colSpanInt = parseInt(colSpan);
-  let total_col_width = 0;
+  let totalColumnWidth = 0;
   if (!isNaN(colSpanInt) && colSpanInt > 1) {
     for (let k = 0; k < colSpanInt; k++) {
-      total_col_width += parseInt(getTextByPathList(getColsGrid[col_idx + k], ["attrs", "w"]));
+      totalColumnWidth += parseInt(getTextByPathList(getColsGrid[colIndex + k], ["attrs", "w"]));
     }
   } else {
-    total_col_width = getTextByPathList(
-      col_idx === undefined ? getColsGrid : getColsGrid[col_idx],
+    totalColumnWidth = getTextByPathList(
+      colIndex === undefined ? getColsGrid : getColsGrid[colIndex],
       ["attrs", "w"]
     );
   }
@@ -80,32 +80,32 @@ export async function getTableCellParams(
     undefined,
     undefined,
     undefined,
-    warpObj,
-    total_col_width,
-    isFirstBr,
+    warpContext,
+    totalColumnWidth,
+    firstLineBreak,
     styleTable,
-    rtlLangsArray,
-    slideFactor,
-    fontSizeFactor
+    rtlLanguages,
+    emuToPx,
+    fontSizeScale
   ); //tableStyles
 
-  if (total_col_width !== 0 /*&& row_idx == 0*/) {
-    colWidth = parseInt(String(total_col_width), 10) * slideFactor;
+  if (totalColumnWidth !== 0 /*&& rowIndex == 0*/) {
+    colWidth = parseInt(String(totalColumnWidth), 10) * emuToPx;
     colStyl += "width:" + colWidth + "px;";
   }
 
   //cell bords
-  lin_bottm = getTextByPathList(tcNodes, ["a:tcPr", "a:lnB"]);
-  if (lin_bottm === undefined && cellSource !== undefined) {
+  bottomLine = getTextByPathList(tcNodes, ["a:tcPr", "a:lnB"]);
+  if (bottomLine === undefined && cellSource !== undefined) {
     if (cellSource !== undefined)
-      lin_bottm = getTextByPathList(thisTblStyle[cellSource], [
+      bottomLine = getTextByPathList(tableStyle[cellSource], [
         "a:tcStyle",
         "a:tcBdr",
         "a:bottom",
         "a:ln",
       ]);
-    if (lin_bottm === undefined) {
-      lin_bottm = getTextByPathList(thisTblStyle, [
+    if (bottomLine === undefined) {
+      bottomLine = getTextByPathList(tableStyle, [
         "a:wholeTbl",
         "a:tcStyle",
         "a:tcBdr",
@@ -114,17 +114,17 @@ export async function getTableCellParams(
       ]);
     }
   }
-  lin_top = getTextByPathList(tcNodes, ["a:tcPr", "a:lnT"]);
-  if (lin_top === undefined) {
+  topLine = getTextByPathList(tcNodes, ["a:tcPr", "a:lnT"]);
+  if (topLine === undefined) {
     if (cellSource !== undefined)
-      lin_top = getTextByPathList(thisTblStyle[cellSource], [
+      topLine = getTextByPathList(tableStyle[cellSource], [
         "a:tcStyle",
         "a:tcBdr",
         "a:top",
         "a:ln",
       ]);
-    if (lin_top === undefined) {
-      lin_top = getTextByPathList(thisTblStyle, [
+    if (topLine === undefined) {
+      topLine = getTextByPathList(tableStyle, [
         "a:wholeTbl",
         "a:tcStyle",
         "a:tcBdr",
@@ -133,17 +133,17 @@ export async function getTableCellParams(
       ]);
     }
   }
-  lin_left = getTextByPathList(tcNodes, ["a:tcPr", "a:lnL"]);
-  if (lin_left === undefined) {
+  leftLine = getTextByPathList(tcNodes, ["a:tcPr", "a:lnL"]);
+  if (leftLine === undefined) {
     if (cellSource !== undefined)
-      lin_left = getTextByPathList(thisTblStyle[cellSource], [
+      leftLine = getTextByPathList(tableStyle[cellSource], [
         "a:tcStyle",
         "a:tcBdr",
         "a:left",
         "a:ln",
       ]);
-    if (lin_left === undefined) {
-      lin_left = getTextByPathList(thisTblStyle, [
+    if (leftLine === undefined) {
+      leftLine = getTextByPathList(tableStyle, [
         "a:wholeTbl",
         "a:tcStyle",
         "a:tcBdr",
@@ -152,17 +152,17 @@ export async function getTableCellParams(
       ]);
     }
   }
-  lin_right = getTextByPathList(tcNodes, ["a:tcPr", "a:lnR"]);
-  if (lin_right === undefined) {
+  rightLine = getTextByPathList(tcNodes, ["a:tcPr", "a:lnR"]);
+  if (rightLine === undefined) {
     if (cellSource !== undefined)
-      lin_right = getTextByPathList(thisTblStyle[cellSource], [
+      rightLine = getTextByPathList(tableStyle[cellSource], [
         "a:tcStyle",
         "a:tcBdr",
         "a:right",
         "a:ln",
       ]);
-    if (lin_right === undefined) {
-      lin_right = getTextByPathList(thisTblStyle, [
+    if (rightLine === undefined) {
+      rightLine = getTextByPathList(tableStyle, [
         "a:wholeTbl",
         "a:tcStyle",
         "a:tcBdr",
@@ -174,28 +174,28 @@ export async function getTableCellParams(
   void getTextByPathList(tcNodes, ["a:tcPr", "a:lnBlToTr"]);
   void getTextByPathList(tcNodes, ["a:tcPr", "a:InTlToBr"]);
 
-  if (lin_bottm !== undefined && lin_bottm !== "") {
-    const bottom_line_border = getBorder(lin_bottm, undefined, false, "", warpObj);
-    if (bottom_line_border !== "") {
-      colStyl += "border-bottom:" + bottom_line_border + ";";
+  if (bottomLine !== undefined && bottomLine !== "") {
+    const bottomLineBorder = getBorder(bottomLine, undefined, false, "", warpContext);
+    if (bottomLineBorder !== "") {
+      colStyl += "border-bottom:" + bottomLineBorder + ";";
     }
   }
-  if (lin_top !== undefined && lin_top !== "") {
-    const top_line_border = getBorder(lin_top, undefined, false, "", warpObj);
-    if (top_line_border !== "") {
-      colStyl += "border-top: " + top_line_border + ";";
+  if (topLine !== undefined && topLine !== "") {
+    const topLineBorder = getBorder(topLine, undefined, false, "", warpContext);
+    if (topLineBorder !== "") {
+      colStyl += "border-top: " + topLineBorder + ";";
     }
   }
-  if (lin_left !== undefined && lin_left !== "") {
-    const left_line_border = getBorder(lin_left, undefined, false, "", warpObj);
-    if (left_line_border !== "") {
-      colStyl += "border-left: " + left_line_border + ";";
+  if (leftLine !== undefined && leftLine !== "") {
+    const leftLineBorder = getBorder(leftLine, undefined, false, "", warpContext);
+    if (leftLineBorder !== "") {
+      colStyl += "border-left: " + leftLineBorder + ";";
     }
   }
-  if (lin_right !== undefined && lin_right !== "") {
-    const right_line_border = getBorder(lin_right, undefined, false, "", warpObj);
-    if (right_line_border !== "") {
-      colStyl += "border-right:" + right_line_border + ";";
+  if (rightLine !== undefined && rightLine !== "") {
+    const rightLineBorder = getBorder(rightLine, undefined, false, "", warpContext);
+    if (rightLineBorder !== "") {
+      colStyl += "border-right:" + rightLineBorder + ";";
     }
   }
 
@@ -205,43 +205,43 @@ export async function getTableCellParams(
     const cellObj = {
       "p:spPr": getCelFill,
     };
-    celFillColor = await getShapeFill(cellObj, undefined, false, warpObj, "slide");
+    cellFillColor = await getShapeFill(cellObj, undefined, false, warpContext, "slide");
   }
 
   //cell fill color theme
-  if (celFillColor === "" || celFillColor === "background-color: inherit;") {
+  if (cellFillColor === "" || cellFillColor === "background-color: inherit;") {
     let bgFillschemeClr;
     if (cellSource !== undefined)
-      bgFillschemeClr = getTextByPathList(thisTblStyle, [
+      bgFillschemeClr = getTextByPathList(tableStyle, [
         cellSource,
         "a:tcStyle",
         "a:fill",
         "a:solidFill",
       ]);
     if (bgFillschemeClr !== undefined) {
-      const local_fillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpObj);
-      if (local_fillColor !== undefined) {
-        celFillColor = " background-color: #" + local_fillColor + ";";
+      const resolvedFillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpContext);
+      if (resolvedFillColor !== undefined) {
+        cellFillColor = " background-color: #" + resolvedFillColor + ";";
       }
     }
   }
   let cssName = "";
-  if (celFillColor !== undefined && celFillColor !== "") {
-    if (celFillColor in styleTable) {
-      cssName = styleTable[celFillColor]["name"];
+  if (cellFillColor !== undefined && cellFillColor !== "") {
+    if (cellFillColor in styleTable) {
+      cssName = styleTable[cellFillColor]["name"];
     } else {
       cssName = "_tbl_cell_css_" + (Object.keys(styleTable).length + 1);
-      styleTable[celFillColor] = {
+      styleTable[cellFillColor] = {
         name: cssName,
-        text: celFillColor,
+        text: cellFillColor,
       };
     }
   }
 
   //border
-  // var borderStyl = getTextByPathList(thisTblStyle, [cellSource, "a:tcStyle", "a:tcBdr"]);
+  // var borderStyl = getTextByPathList(tableStyle, [cellSource, "a:tcStyle", "a:tcBdr"]);
   // if (borderStyl !== undefined) {
-  //     var local_col_borders = getTableBorders(borderStyl, warpObj);
+  //     var local_col_borders = getTableBorders(borderStyl, warpContext);
   //     if (local_col_borders != "") {
   //         col_borders = local_col_borders;
   //     }
@@ -251,24 +251,25 @@ export async function getTableCellParams(
   // }
 
   //Text style
-  let rowTxtStyl;
+  let rowTextStyle;
   if (cellSource !== undefined) {
-    rowTxtStyl = getTextByPathList(thisTblStyle, [cellSource, "a:tcTxStyle"]);
+    rowTextStyle = getTextByPathList(tableStyle, [cellSource, "a:tcTxStyle"]);
   }
-  // if (rowTxtStyl === undefined) {
-  //     rowTxtStyl = getTextByPathList(thisTblStyle, ["a:wholeTbl", "a:tcTxStyle"]);
+  // if (rowTextStyle === undefined) {
+  //     rowTextStyle = getTextByPathList(tableStyle, ["a:wholeTbl", "a:tcTxStyle"]);
   // }
-  if (rowTxtStyl !== undefined) {
-    const local_fontClrPr = getSolidFill(rowTxtStyl, undefined, undefined, warpObj);
-    if (local_fontClrPr !== undefined) {
-      colFontClrPr = local_fontClrPr;
+  if (rowTextStyle !== undefined) {
+    const resolvedFontColor = getSolidFill(rowTextStyle, undefined, undefined, warpContext);
+    if (resolvedFontColor !== undefined) {
+      colFontColor = resolvedFontColor;
     }
-    const local_fontWeight = getTextByPathList(rowTxtStyl, ["attrs", "b"]) === "on" ? "bold" : "";
-    if (local_fontWeight !== "") {
-      colFontWeight = local_fontWeight;
+    const resolvedFontWeight =
+      getTextByPathList(rowTextStyle, ["attrs", "b"]) === "on" ? "bold" : "";
+    if (resolvedFontWeight !== "") {
+      colFontWeight = resolvedFontWeight;
     }
   }
-  colStyl += colFontClrPr !== "" ? "color: #" + colFontClrPr + ";" : "";
+  colStyl += colFontColor !== "" ? "color: #" + colFontColor + ";" : "";
   colStyl += colFontWeight !== "" ? " font-weight:" + colFontWeight + ";" : "";
 
   return [text, colStyl, cssName, rowSpan, colSpan];
