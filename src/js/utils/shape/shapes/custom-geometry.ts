@@ -39,13 +39,13 @@ export async function renderCustomGeometry(
   order: any,
   sType: any,
   txtRotate: number | undefined,
-  warpObj: any,
+  warpContext: any,
   isUserDrawnBg: any,
-  isFirstBr: { value: boolean },
+  firstLineBreak: { value: boolean },
   styleTable: any,
-  rtlLangsArray: string[],
-  slideFactor: number,
-  fontSizeFactor: number
+  rtlLanguages: string[],
+  emuToPx: number,
+  fontSizeScale: number
 ): Promise<string> {
   let result = "";
 
@@ -54,8 +54,8 @@ export async function renderCustomGeometry(
   const pathLstNode = getTextByPathList(custShapType, ["a:pathLst"]);
   const pathNodes = getTextByPathList(pathLstNode, ["a:path"]);
   //var pathNode = getTextByPathList(pathLstNode, ["a:path", "attrs"]);
-  const maxX = parseInt(pathNodes["attrs"]["w"]); // * slideFactor;
-  const maxY = parseInt(pathNodes["attrs"]["h"]); // * slideFactor;
+  const maxX = parseInt(pathNodes["attrs"]["w"]); // * emuToPx;
+  const maxY = parseInt(pathNodes["attrs"]["h"]); // * emuToPx;
   const cX = (1 / maxX) * w;
   const cY = (1 / maxY) * h;
   //console.log("w = "+w+"\nh = "+h+"\nmaxX = "+maxX +"\nmaxY = " + maxY);
@@ -85,8 +85,8 @@ export async function renderCustomGeometry(
         Object.keys(moveToPtNode).forEach(function (key2) {
           const ptObj: any = {};
           const moveToNoPt = moveToPtNode[key2];
-          const spX = moveToNoPt["x"]; //parseInt(moveToNoPt["attrs", "x"]) * slideFactor;
-          const spY = moveToNoPt["y"]; //parseInt(moveToNoPt["attrs", "y"]) * slideFactor;
+          const spX = moveToNoPt["x"]; //parseInt(moveToNoPt["attrs", "x"]) * emuToPx;
+          const spY = moveToNoPt["y"]; //parseInt(moveToNoPt["attrs", "y"]) * emuToPx;
           const ptOrdr = moveToNoPt["order"];
           ptObj.type = "movto";
           ptObj.order = ptOrdr;
@@ -211,8 +211,8 @@ export async function renderCustomGeometry(
     while (k < multiSapeAry.length) {
       if (multiSapeAry[k].type === "movto") {
         //start point
-        const spX = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
-        const spY = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
+        const spX = parseInt(multiSapeAry[k].x) * cX; //emuToPx;
+        const spY = parseInt(multiSapeAry[k].y) * cY; //emuToPx;
         // if (d == "") {
         //     d = "M" + spX + "," + spY;
         // } else {
@@ -235,24 +235,24 @@ export async function renderCustomGeometry(
 
         d += " M" + spX + "," + spY;
       } else if (multiSapeAry[k].type === "lnto") {
-        const Lx = parseInt(multiSapeAry[k].x) * cX; //slideFactor;
-        const Ly = parseInt(multiSapeAry[k].y) * cY; //slideFactor;
+        const Lx = parseInt(multiSapeAry[k].x) * cX; //emuToPx;
+        const Ly = parseInt(multiSapeAry[k].y) * cY; //emuToPx;
         d += " L" + Lx + "," + Ly;
       } else if (multiSapeAry[k].type === "cubicBezTo") {
-        const Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX; //slideFactor;
-        const Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY; //slideFactor;
-        const Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX; //slideFactor;
-        const Cy2 = parseInt(multiSapeAry[k].cubBzPt[1].y) * cY; //slideFactor;
-        const Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX; //slideFactor;
-        const Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY; //slideFactor;
+        const Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX; //emuToPx;
+        const Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY; //emuToPx;
+        const Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX; //emuToPx;
+        const Cy2 = parseInt(multiSapeAry[k].cubBzPt[1].y) * cY; //emuToPx;
+        const Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX; //emuToPx;
+        const Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY; //emuToPx;
         d += " C" + Cx1 + "," + Cy1 + " " + Cx2 + "," + Cy2 + " " + Cx3 + "," + Cy3;
       } else if (multiSapeAry[k].type === "arcTo") {
-        const hR: any = parseInt(multiSapeAry[k].hR) * cX; //slideFactor;
-        const wR: any = parseInt(multiSapeAry[k].wR) * cY; //slideFactor;
+        const hR: any = parseInt(multiSapeAry[k].hR) * cX; //emuToPx;
+        const wR: any = parseInt(multiSapeAry[k].wR) * cY; //emuToPx;
         const stAng: any = parseInt(multiSapeAry[k].stAng) / 60000;
         const swAng: any = parseInt(multiSapeAry[k].swAng) / 60000;
-        //var shftX = parseInt(multiSapeAry[k].shftX) * slideFactor;
-        //var shftY = parseInt(multiSapeAry[k].shftY) * slideFactor;
+        //var shftX = parseInt(multiSapeAry[k].shftX) * emuToPx;
+        //var shftY = parseInt(multiSapeAry[k].shftY) * emuToPx;
         const endAng = stAng + swAng;
 
         d += shapeArc(wR, hR, wR, hR, stAng, endAng, false);
@@ -296,7 +296,7 @@ export async function renderCustomGeometry(
     "<div class='block " +
     getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) + //block content
     " " +
-    getContentDir(node, type, warpObj) +
+    getContentDir(node, type, warpContext) +
     "' _id='" +
     id +
     "' _idx='" +
@@ -306,15 +306,8 @@ export async function renderCustomGeometry(
     "' _name='" +
     name +
     "' style='" +
-    getPosition(
-      slideXfrmNode,
-      pNode,
-      slideLayoutXfrmNode,
-      slideMasterXfrmNode,
-      sType,
-      slideFactor
-    ) +
-    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, slideFactor) +
+    getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, emuToPx) +
+    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, emuToPx) +
     " z-index: " +
     order +
     ";" +
@@ -335,13 +328,13 @@ export async function renderCustomGeometry(
       slideMasterSpNode,
       type,
       idx,
-      warpObj,
+      warpContext,
       undefined,
-      isFirstBr,
+      firstLineBreak,
       styleTable,
-      rtlLangsArray,
-      slideFactor,
-      fontSizeFactor
+      rtlLanguages,
+      emuToPx,
+      fontSizeScale
     ); //type=shape
   }
   result += "</div>";
