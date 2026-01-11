@@ -13,8 +13,8 @@ export function indexNodes(content: Record<string, XmlNode>): {
   idxTable: Record<string, unknown>;
   typeTable: Record<string, unknown>;
 } {
-  const keys = Object.keys(content);
-  const spTreeNode = (content[keys[0]]["p:cSld"] as XmlNode)["p:spTree"] as Record<
+  const contentKeys = Object.keys(content);
+  const shapeTreeNode = (content[contentKeys[0]]["p:cSld"] as XmlNode)["p:spTree"] as Record<
     string,
     XmlNode | XmlNode[]
   >;
@@ -23,47 +23,75 @@ export function indexNodes(content: Record<string, XmlNode>): {
   const idxTable: Record<string, unknown> = {};
   const typeTable: Record<string, unknown> = {};
 
-  for (const key in spTreeNode) {
-    if (key === "p:nvGrpSpPr" || key === "p:grpSpPr") {
+  for (const nodeKey in shapeTreeNode) {
+    if (nodeKey === "p:nvGrpSpPr" || nodeKey === "p:grpSpPr") {
       continue;
     }
 
-    const targetNode = spTreeNode[key];
+    const shapeNode = shapeTreeNode[nodeKey];
 
-    if (Array.isArray(targetNode)) {
-      for (let i = 0; i < targetNode.length; i++) {
-        const nvSpPrNode = (targetNode[i] as XmlNode)["p:nvSpPr"] as XmlNode;
-        const id = getTextByPathList<string>(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
-        const idx = getTextByPathList<string>(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
-        const type = getTextByPathList<string>(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
+    if (Array.isArray(shapeNode)) {
+      for (let nodeIndex = 0; nodeIndex < shapeNode.length; nodeIndex += 1) {
+        const nonVisualPropertiesNode = (shapeNode[nodeIndex] as XmlNode)["p:nvSpPr"] as XmlNode;
+        const shapeId = getTextByPathList<string>(nonVisualPropertiesNode, [
+          "p:cNvPr",
+          "attrs",
+          "id",
+        ]);
+        const placeholderIndex = getTextByPathList<string>(nonVisualPropertiesNode, [
+          "p:nvPr",
+          "p:ph",
+          "attrs",
+          "idx",
+        ]);
+        const placeholderType = getTextByPathList<string>(nonVisualPropertiesNode, [
+          "p:nvPr",
+          "p:ph",
+          "attrs",
+          "type",
+        ]);
 
-        if (id !== undefined) {
-          idTable[id] = targetNode[i];
+        if (shapeId !== undefined) {
+          idTable[shapeId] = shapeNode[nodeIndex];
         }
-        if (idx !== undefined) {
-          idxTable[idx] = targetNode[i];
+        if (placeholderIndex !== undefined) {
+          idxTable[placeholderIndex] = shapeNode[nodeIndex];
         }
-        if (type !== undefined) {
-          typeTable[type] = targetNode[i];
+        if (placeholderType !== undefined) {
+          typeTable[placeholderType] = shapeNode[nodeIndex];
         }
       }
     } else {
-      const nvSpPrNode = (targetNode as XmlNode)["p:nvSpPr"] as XmlNode;
-      const id = getTextByPathList<string>(nvSpPrNode, ["p:cNvPr", "attrs", "id"]);
-      const idx = getTextByPathList<string>(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "idx"]);
-      const type = getTextByPathList<string>(nvSpPrNode, ["p:nvPr", "p:ph", "attrs", "type"]);
+      const nonVisualPropertiesNode = (shapeNode as XmlNode)["p:nvSpPr"] as XmlNode;
+      const shapeId = getTextByPathList<string>(nonVisualPropertiesNode, [
+        "p:cNvPr",
+        "attrs",
+        "id",
+      ]);
+      const placeholderIndex = getTextByPathList<string>(nonVisualPropertiesNode, [
+        "p:nvPr",
+        "p:ph",
+        "attrs",
+        "idx",
+      ]);
+      const placeholderType = getTextByPathList<string>(nonVisualPropertiesNode, [
+        "p:nvPr",
+        "p:ph",
+        "attrs",
+        "type",
+      ]);
 
-      if (id !== undefined) {
-        idTable[id] = targetNode;
+      if (shapeId !== undefined) {
+        idTable[shapeId] = shapeNode;
       }
-      if (idx !== undefined) {
-        idxTable[idx] = targetNode;
+      if (placeholderIndex !== undefined) {
+        idxTable[placeholderIndex] = shapeNode;
       }
-      if (type !== undefined) {
-        typeTable[type] = targetNode;
+      if (placeholderType !== undefined) {
+        typeTable[placeholderType] = shapeNode;
       }
     }
   }
 
-  return { idTable: idTable, idxTable: idxTable, typeTable: typeTable };
+  return { idTable, idxTable, typeTable };
 }
