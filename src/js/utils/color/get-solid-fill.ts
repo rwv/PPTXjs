@@ -63,7 +63,7 @@ interface ColorMap {
 /**
  * Warp object containing PPTX presentation content for lookups
  */
-interface WarpObject {
+interface WarpContext {
   slideContent?: any;
   slideLayoutContent?: any;
   slideMasterContent?: any;
@@ -85,14 +85,14 @@ interface WarpObject {
  * @param fillNode - The color node from PPTX XML
  * @param colorMap - Color mapping object from theme
  * @param placeholderColor - Placeholder color
- * @param warpObj - Warp object containing slide content for theme lookups
+ * @param warpContext - Warp object containing slide content for theme lookups
  * @returns Hex color string (with or without alpha), or undefined if node is undefined
  */
 export function getSolidFill(
   fillNode: FillNode | undefined,
   colorMap: ColorMap | undefined,
   placeholderColor: string | undefined,
-  warpObj: WarpObject
+  warpContext: WarpContext
 ): string | undefined {
   if (fillNode === undefined) {
     return undefined;
@@ -109,7 +109,12 @@ export function getSolidFill(
     //a:schemeClr
     colorNode = fillNode["a:schemeClr"];
     const schemeColorKey = getTextByPathList(colorNode, ["attrs", "val"]);
-    hexColor = getSchemeColorFromTheme("a:" + schemeColorKey, colorMap, placeholderColor, warpObj);
+    hexColor = getSchemeColorFromTheme(
+      "a:" + schemeColorKey,
+      colorMap,
+      placeholderColor,
+      warpContext
+    );
     //console.log("schemeClr: ", schemeColorKey, "color: ", hexColor)
   } else if (fillNode["a:scrgbClr"] !== undefined) {
     colorNode = fillNode["a:scrgbClr"];
