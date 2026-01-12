@@ -3,17 +3,18 @@ import { getTextByPathList } from "../../../object";
 import type { ArcShapeContext } from "./types";
 import { createPath } from "./helpers";
 
-export function renderNoSmoking(ctx: ArcShapeContext): string {
+type ArcRenderOptions = {
+  ctx: ArcShapeContext;
+  shapeType: string;
+};
+
+export function renderNoSmoking({ ctx }: ArcRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 18750 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;

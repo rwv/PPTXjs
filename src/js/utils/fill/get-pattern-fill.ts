@@ -14,8 +14,9 @@ import { getLinerGrandient } from "./get-liner-grandient";
  * @param warpContext - Container object with theme and color information
  * @returns Array with CSS gradient string, size, and position
  */
-type SolidFillNode = Parameters<typeof getSolidFill>[0];
-type SolidFillWarpObj = Parameters<typeof getSolidFill>[3];
+type SolidFillOptions = Parameters<typeof getSolidFill>[0];
+type SolidFillNode = SolidFillOptions["fillNode"];
+type SolidFillWarpObj = SolidFillOptions["warpContext"];
 type PatternFillNode = {
   "a:bgClr"?: unknown;
   "a:fgClr"?: unknown;
@@ -23,14 +24,33 @@ type PatternFillNode = {
   [key: string]: unknown;
 };
 
-export function getPatternFill(patternFillNode: PatternFillNode, warpContext: SolidFillWarpObj) {
+type GetPatternFillOptions = {
+  patternFillNode: PatternFillNode;
+  warpContext: SolidFillWarpObj;
+};
+
+export function getPatternFill({ patternFillNode, warpContext }: GetPatternFillOptions) {
   const patternPreset = patternFillNode["attrs"]?.prst ?? "";
   const backgroundColorNode = patternFillNode["a:bgClr"] as SolidFillNode;
   const foregroundColorNode = patternFillNode["a:fgClr"] as SolidFillNode;
   const foregroundColor =
-    getSolidFill(foregroundColorNode, undefined, undefined, warpContext) || "";
+    getSolidFill({
+      fillNode: foregroundColorNode,
+      colorMap: undefined,
+      placeholderColor: undefined,
+      warpContext,
+    }) || "";
   const backgroundColor =
-    getSolidFill(backgroundColorNode, undefined, undefined, warpContext) || "";
-  const linearGradient = getLinerGrandient(patternPreset, backgroundColor, foregroundColor);
+    getSolidFill({
+      fillNode: backgroundColorNode,
+      colorMap: undefined,
+      placeholderColor: undefined,
+      warpContext,
+    }) || "";
+  const linearGradient = getLinerGrandient({
+    patternPreset,
+    backgroundColor,
+    foregroundColor,
+  });
   return linearGradient;
 }

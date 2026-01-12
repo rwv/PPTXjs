@@ -12,8 +12,10 @@ import { getBgGradientFill } from "./get-bg-gradient-fill";
 import { getBgPicFill } from "./get-bg-pic-fill";
 import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
-type ColorMap = Parameters<typeof getSolidFill>[1];
-type PicFillWarpObj = Parameters<typeof getBgPicFill>[2];
+type SolidFillOptions = Parameters<typeof getSolidFill>[0];
+type ColorMap = SolidFillOptions["colorMap"];
+type BgPicFillOptions = Parameters<typeof getBgPicFill>[0];
+type PicFillWarpObj = BgPicFillOptions["warpContext"];
 
 function isXmlNode(value: XmlValue): value is XmlNode {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -24,29 +26,24 @@ function getColorMapOverride(
   slideLayoutContent: XmlNode | undefined,
   slideMasterContent: XmlNode | undefined
 ): ColorMap | undefined {
-  const slideColorMapOverride = getTextByPathList(slideContent as XmlNode, [
-    "p:sld",
-    "p:clrMapOvr",
-    "a:overrideClrMapping",
-    "attrs",
-  ]);
+  const slideColorMapOverride = getTextByPathList({
+    node: slideContent as XmlNode,
+    path: ["p:sld", "p:clrMapOvr", "a:overrideClrMapping", "attrs"],
+  });
   if (slideColorMapOverride && isXmlNode(slideColorMapOverride)) {
     return slideColorMapOverride as ColorMap;
   }
-  const layoutColorMapOverride = getTextByPathList(slideLayoutContent as XmlNode, [
-    "p:sldLayout",
-    "p:clrMapOvr",
-    "a:overrideClrMapping",
-    "attrs",
-  ]);
+  const layoutColorMapOverride = getTextByPathList({
+    node: slideLayoutContent as XmlNode,
+    path: ["p:sldLayout", "p:clrMapOvr", "a:overrideClrMapping", "attrs"],
+  });
   if (layoutColorMapOverride && isXmlNode(layoutColorMapOverride)) {
     return layoutColorMapOverride as ColorMap;
   }
-  const masterColorMapOverride = getTextByPathList(slideMasterContent as XmlNode, [
-    "p:sldMaster",
-    "p:clrMap",
-    "attrs",
-  ]);
+  const masterColorMapOverride = getTextByPathList({
+    node: slideMasterContent as XmlNode,
+    path: ["p:sldMaster", "p:clrMap", "attrs"],
+  });
   return masterColorMapOverride && isXmlNode(masterColorMapOverride)
     ? (masterColorMapOverride as ColorMap)
     : undefined;
@@ -84,35 +81,35 @@ function buildSortableFillList(backgroundFillList: XmlNode): SortableFillEntry[]
   return sortableFillList;
 }
 
-export async function getSlideBackgroundFill(
-  warpContext: WarpContext,
-  slideIndex: number | string
-): Promise<string | undefined> {
-  void slideIndex;
+type GetSlideBackgroundFillOptions = {
+  warpContext: WarpContext;
+};
+
+export async function getSlideBackgroundFill({
+  warpContext,
+}: GetSlideBackgroundFillOptions): Promise<string | undefined> {
   const slideContent = warpContext.slideContent;
   const slideLayoutContent = warpContext.slideLayoutContent;
   const slideMasterContent = warpContext.slideMasterContent;
 
-  const backgroundPropsValue = getTextByPathList(slideContent as XmlNode, [
-    "p:sld",
-    "p:cSld",
-    "p:bg",
-    "p:bgPr",
-  ]);
+  const backgroundPropsValue = getTextByPathList({
+    node: slideContent as XmlNode,
+    path: ["p:sld", "p:cSld", "p:bg", "p:bgPr"],
+  });
   let backgroundProps =
     backgroundPropsValue && isXmlNode(backgroundPropsValue) ? backgroundPropsValue : undefined;
-  const backgroundRefValue = getTextByPathList(slideContent as XmlNode, [
-    "p:sld",
-    "p:cSld",
-    "p:bg",
-    "p:bgRef",
-  ]);
+  const backgroundRefValue = getTextByPathList({
+    node: slideContent as XmlNode,
+    path: ["p:sld", "p:cSld", "p:bg", "p:bgRef"],
+  });
   let backgroundRef =
     backgroundRefValue && isXmlNode(backgroundRefValue) ? backgroundRefValue : undefined;
   let backgroundCss: string | undefined;
 
   if (backgroundProps !== undefined) {
-    const backgroundFillType = getFillType(backgroundProps as Record<string, unknown>);
+    const backgroundFillType = getFillType({
+      shapePropsNode: backgroundProps as Record<string, unknown>,
+    });
 
     if (backgroundFillType === "SOLID_FILL") {
       const slideFillValue = backgroundProps["a:solidFill"];
@@ -123,28 +120,28 @@ export async function getSlideBackgroundFill(
         slideMasterContent
       );
       if (slideFill) {
-        const slideBackgroundColor = getSolidFill(
-          slideFill,
-          colorMapOverride,
-          undefined,
-          warpContext
-        );
+        const slideBackgroundColor = getSolidFill({
+          fillNode: slideFill,
+          colorMap: colorMapOverride,
+          placeholderColor: undefined,
+          warpContext,
+        });
         backgroundCss = "background: #" + slideBackgroundColor + ";";
       }
     } else if (backgroundFillType === "GRADIENT_FILL") {
-      backgroundCss = getBgGradientFill(
+      backgroundCss = getBgGradientFill({
         backgroundProps,
-        undefined,
-        (slideMasterContent ?? {}) as XmlNode,
-        warpContext
-      );
+        placeholderColor: undefined,
+        slideMasterContent: (slideMasterContent ?? {}) as XmlNode,
+        warpContext,
+      });
     } else if (backgroundFillType === "PIC_FILL") {
-      backgroundCss = await getBgPicFill(
+      backgroundCss = await getBgPicFill({
         backgroundProps,
-        "slideBg",
-        warpContext as PicFillWarpObj,
-        undefined
-      );
+        sourceType: "slideBg",
+        warpContext: warpContext as PicFillWarpObj,
+        placeholderColor: undefined,
+      });
     }
   } else if (backgroundRef !== undefined) {
     const colorMapOverride = getColorMapOverride(
@@ -152,7 +149,12 @@ export async function getSlideBackgroundFill(
       slideLayoutContent,
       slideMasterContent
     );
-    const placeholderColor = getSolidFill(backgroundRef, colorMapOverride, undefined, warpContext);
+    const placeholderColor = getSolidFill({
+      fillNode: backgroundRef,
+      colorMap: colorMapOverride,
+      placeholderColor: undefined,
+      warpContext,
+    });
     const themeIndex = Number(backgroundRef.attrs?.idx ?? 0);
 
     if (themeIndex === 0 || themeIndex === 1000) {
@@ -162,12 +164,10 @@ export async function getSlideBackgroundFill(
     } else if (themeIndex > 1000) {
       // bgFillStyleLst in themeContent
       const themeFillIndex = themeIndex - 1000;
-      const backgroundFillListValue = getTextByPathList(warpContext.themeContent as XmlNode, [
-        "a:theme",
-        "a:themeElements",
-        "a:fmtScheme",
-        "a:bgFillStyleLst",
-      ]);
+      const backgroundFillListValue = getTextByPathList({
+        node: warpContext.themeContent as XmlNode,
+        path: ["a:theme", "a:themeElements", "a:fmtScheme", "a:bgFillStyleLst"],
+      });
       if (!backgroundFillListValue || !isXmlNode(backgroundFillListValue)) {
         return backgroundCss;
       }
@@ -179,49 +179,47 @@ export async function getSlideBackgroundFill(
       if (!backgroundFillEntry) {
         return backgroundCss;
       }
-      const backgroundFillEntryType = getFillType(backgroundFillEntry as Record<string, unknown>);
+      const backgroundFillEntryType = getFillType({
+        shapePropsNode: backgroundFillEntry as Record<string, unknown>,
+      });
 
       if (backgroundFillEntryType === "SOLID_FILL") {
         const slideFillValue = backgroundFillEntry["a:solidFill"];
         const slideFill = slideFillValue && isXmlNode(slideFillValue) ? slideFillValue : undefined;
         if (slideFill) {
-          const slideBackgroundColor = getSolidFill(
-            slideFill,
-            colorMapOverride,
-            undefined,
-            warpContext
-          );
+          const slideBackgroundColor = getSolidFill({
+            fillNode: slideFill,
+            colorMap: colorMapOverride,
+            placeholderColor: undefined,
+            warpContext,
+          });
           backgroundCss = "background: #" + slideBackgroundColor + ";";
         }
       } else if (backgroundFillEntryType === "GRADIENT_FILL") {
-        backgroundCss = getBgGradientFill(
-          backgroundFillEntry,
+        backgroundCss = getBgGradientFill({
+          backgroundProps: backgroundFillEntry,
           placeholderColor,
-          (slideMasterContent ?? {}) as XmlNode,
-          warpContext
-        );
+          slideMasterContent: (slideMasterContent ?? {}) as XmlNode,
+          warpContext,
+        });
       } else {
         console.log(backgroundFillEntryType);
       }
     }
   } else {
     // Check slideLayout
-    const layoutBackgroundPropsValue = getTextByPathList(slideLayoutContent as XmlNode, [
-      "p:sldLayout",
-      "p:cSld",
-      "p:bg",
-      "p:bgPr",
-    ]);
+    const layoutBackgroundPropsValue = getTextByPathList({
+      node: slideLayoutContent as XmlNode,
+      path: ["p:sldLayout", "p:cSld", "p:bg", "p:bgPr"],
+    });
     backgroundProps =
       layoutBackgroundPropsValue && isXmlNode(layoutBackgroundPropsValue)
         ? layoutBackgroundPropsValue
         : undefined;
-    const layoutBackgroundRefValue = getTextByPathList(slideLayoutContent as XmlNode, [
-      "p:sldLayout",
-      "p:cSld",
-      "p:bg",
-      "p:bgRef",
-    ]);
+    const layoutBackgroundRefValue = getTextByPathList({
+      node: slideLayoutContent as XmlNode,
+      path: ["p:sldLayout", "p:cSld", "p:bg", "p:bgRef"],
+    });
     backgroundRef =
       layoutBackgroundRefValue && isXmlNode(layoutBackgroundRefValue)
         ? layoutBackgroundRefValue
@@ -230,42 +228,44 @@ export async function getSlideBackgroundFill(
     const colorMapOverride = getColorMapOverride(undefined, slideLayoutContent, slideMasterContent);
 
     if (backgroundProps !== undefined) {
-      const backgroundFillType = getFillType(backgroundProps as Record<string, unknown>);
+      const backgroundFillType = getFillType({
+        shapePropsNode: backgroundProps as Record<string, unknown>,
+      });
       if (backgroundFillType === "SOLID_FILL") {
         const slideFillValue = backgroundProps["a:solidFill"];
         const slideFill = slideFillValue && isXmlNode(slideFillValue) ? slideFillValue : undefined;
         if (slideFill) {
-          const slideBackgroundColor = getSolidFill(
-            slideFill,
-            colorMapOverride,
-            undefined,
-            warpContext
-          );
+          const slideBackgroundColor = getSolidFill({
+            fillNode: slideFill,
+            colorMap: colorMapOverride,
+            placeholderColor: undefined,
+            warpContext,
+          });
           backgroundCss = "background: #" + slideBackgroundColor + ";";
         }
       } else if (backgroundFillType === "GRADIENT_FILL") {
-        backgroundCss = getBgGradientFill(
+        backgroundCss = getBgGradientFill({
           backgroundProps,
-          undefined,
-          (slideMasterContent ?? {}) as XmlNode,
-          warpContext
-        );
+          placeholderColor: undefined,
+          slideMasterContent: (slideMasterContent ?? {}) as XmlNode,
+          warpContext,
+        });
       } else if (backgroundFillType === "PIC_FILL") {
-        backgroundCss = await getBgPicFill(
+        backgroundCss = await getBgPicFill({
           backgroundProps,
-          "slideLayoutBg",
-          warpContext as PicFillWarpObj,
-          undefined
-        );
+          sourceType: "slideLayoutBg",
+          warpContext: warpContext as PicFillWarpObj,
+          placeholderColor: undefined,
+        });
       }
     } else if (backgroundRef !== undefined) {
       console.log("slideLayoutContent: bgRef", backgroundRef);
-      const placeholderColor = getSolidFill(
-        backgroundRef,
-        colorMapOverride,
-        undefined,
-        warpContext
-      );
+      const placeholderColor = getSolidFill({
+        fillNode: backgroundRef,
+        colorMap: colorMapOverride,
+        placeholderColor: undefined,
+        warpContext,
+      });
       const themeIndex = Number(backgroundRef.attrs?.idx ?? 0);
 
       if (themeIndex === 0 || themeIndex === 1000) {
@@ -275,12 +275,10 @@ export async function getSlideBackgroundFill(
       } else if (themeIndex > 1000) {
         // bgFillStyleLst in themeContent
         const themeFillIndex = themeIndex - 1000;
-        const backgroundFillListValue = getTextByPathList(warpContext.themeContent as XmlNode, [
-          "a:theme",
-          "a:themeElements",
-          "a:fmtScheme",
-          "a:bgFillStyleLst",
-        ]);
+        const backgroundFillListValue = getTextByPathList({
+          node: warpContext.themeContent as XmlNode,
+          path: ["a:theme", "a:themeElements", "a:fmtScheme", "a:bgFillStyleLst"],
+        });
         if (!backgroundFillListValue || !isXmlNode(backgroundFillListValue)) {
           return backgroundCss;
         }
@@ -294,96 +292,105 @@ export async function getSlideBackgroundFill(
         if (!backgroundFillEntry) {
           return backgroundCss;
         }
-        const backgroundFillEntryType = getFillType(backgroundFillEntry as Record<string, unknown>);
+        const backgroundFillEntryType = getFillType({
+          shapePropsNode: backgroundFillEntry as Record<string, unknown>,
+        });
 
         if (backgroundFillEntryType === "SOLID_FILL") {
           const slideFillValue = backgroundFillEntry["a:solidFill"];
           const slideFill =
             slideFillValue && isXmlNode(slideFillValue) ? slideFillValue : undefined;
           if (slideFill) {
-            const slideBackgroundColor = getSolidFill(
-              slideFill,
-              colorMapOverride,
+            const slideBackgroundColor = getSolidFill({
+              fillNode: slideFill,
+              colorMap: colorMapOverride,
               placeholderColor,
-              warpContext
-            );
+              warpContext,
+            });
             backgroundCss = "background: #" + slideBackgroundColor + ";";
           }
         } else if (backgroundFillEntryType === "GRADIENT_FILL") {
-          backgroundCss = getBgGradientFill(
-            backgroundFillEntry,
+          backgroundCss = getBgGradientFill({
+            backgroundProps: backgroundFillEntry,
             placeholderColor,
-            (slideMasterContent ?? {}) as XmlNode,
-            warpContext
-          );
+            slideMasterContent: (slideMasterContent ?? {}) as XmlNode,
+            warpContext,
+          });
         } else if (backgroundFillEntryType === "PIC_FILL") {
-          backgroundCss = await getBgPicFill(
-            backgroundFillEntry,
-            "themeBg",
-            warpContext as PicFillWarpObj,
-            placeholderColor
-          );
+          backgroundCss = await getBgPicFill({
+            backgroundProps: backgroundFillEntry,
+            sourceType: "themeBg",
+            warpContext: warpContext as PicFillWarpObj,
+            placeholderColor,
+          });
         } else {
           console.log(backgroundFillEntryType);
         }
       }
     } else {
       // Check slideMaster
-      const masterBackgroundPropsValue = getTextByPathList(slideMasterContent as XmlNode, [
-        "p:sldMaster",
-        "p:cSld",
-        "p:bg",
-        "p:bgPr",
-      ]);
+      const masterBackgroundPropsValue = getTextByPathList({
+        node: slideMasterContent as XmlNode,
+        path: ["p:sldMaster", "p:cSld", "p:bg", "p:bgPr"],
+      });
       backgroundProps =
         masterBackgroundPropsValue && isXmlNode(masterBackgroundPropsValue)
           ? masterBackgroundPropsValue
           : undefined;
-      const masterBackgroundRefValue = getTextByPathList(slideMasterContent as XmlNode, [
-        "p:sldMaster",
-        "p:cSld",
-        "p:bg",
-        "p:bgRef",
-      ]);
+      const masterBackgroundRefValue = getTextByPathList({
+        node: slideMasterContent as XmlNode,
+        path: ["p:sldMaster", "p:cSld", "p:bg", "p:bgRef"],
+      });
       backgroundRef =
         masterBackgroundRefValue && isXmlNode(masterBackgroundRefValue)
           ? masterBackgroundRefValue
           : undefined;
 
-      const clrMapValue = getTextByPathList(slideMasterContent as XmlNode, [
-        "p:sldMaster",
-        "p:clrMap",
-        "attrs",
-      ]);
+      const clrMapValue = getTextByPathList({
+        node: slideMasterContent as XmlNode,
+        path: ["p:sldMaster", "p:clrMap", "attrs"],
+      });
       const clrMap = clrMapValue && isXmlNode(clrMapValue) ? (clrMapValue as ColorMap) : undefined;
 
       if (backgroundProps !== undefined) {
-        const backgroundFillType = getFillType(backgroundProps as Record<string, unknown>);
+        const backgroundFillType = getFillType({
+          shapePropsNode: backgroundProps as Record<string, unknown>,
+        });
         if (backgroundFillType === "SOLID_FILL") {
           const slideFillValue = backgroundProps["a:solidFill"];
           const slideFill =
             slideFillValue && isXmlNode(slideFillValue) ? slideFillValue : undefined;
           if (slideFill) {
-            const slideBackgroundColor = getSolidFill(slideFill, clrMap, undefined, warpContext);
+            const slideBackgroundColor = getSolidFill({
+              fillNode: slideFill,
+              colorMap: clrMap,
+              placeholderColor: undefined,
+              warpContext,
+            });
             backgroundCss = "background: #" + slideBackgroundColor + ";";
           }
         } else if (backgroundFillType === "GRADIENT_FILL") {
-          backgroundCss = getBgGradientFill(
+          backgroundCss = getBgGradientFill({
             backgroundProps,
-            undefined,
-            (slideMasterContent ?? {}) as XmlNode,
-            warpContext
-          );
+            placeholderColor: undefined,
+            slideMasterContent: (slideMasterContent ?? {}) as XmlNode,
+            warpContext,
+          });
         } else if (backgroundFillType === "PIC_FILL") {
-          backgroundCss = await getBgPicFill(
+          backgroundCss = await getBgPicFill({
             backgroundProps,
-            "slideMasterBg",
-            warpContext as PicFillWarpObj,
-            undefined
-          );
+            sourceType: "slideMasterBg",
+            warpContext: warpContext as PicFillWarpObj,
+            placeholderColor: undefined,
+          });
         }
       } else if (backgroundRef !== undefined) {
-        const placeholderColor = getSolidFill(backgroundRef, clrMap, undefined, warpContext);
+        const placeholderColor = getSolidFill({
+          fillNode: backgroundRef,
+          colorMap: clrMap,
+          placeholderColor: undefined,
+          warpContext,
+        });
         const themeIndex = Number(backgroundRef.attrs?.idx ?? 0);
 
         if (themeIndex === 0 || themeIndex === 1000) {
@@ -393,12 +400,10 @@ export async function getSlideBackgroundFill(
         } else if (themeIndex > 1000) {
           // bgFillStyleLst in themeContent
           const themeFillIndex = themeIndex - 1000;
-          const backgroundFillListValue = getTextByPathList(warpContext.themeContent as XmlNode, [
-            "a:theme",
-            "a:themeElements",
-            "a:fmtScheme",
-            "a:bgFillStyleLst",
-          ]);
+          const backgroundFillListValue = getTextByPathList({
+            node: warpContext.themeContent as XmlNode,
+            path: ["a:theme", "a:themeElements", "a:fmtScheme", "a:bgFillStyleLst"],
+          });
           if (!backgroundFillListValue || !isXmlNode(backgroundFillListValue)) {
             return backgroundCss;
           }
@@ -412,37 +417,37 @@ export async function getSlideBackgroundFill(
           if (!backgroundFillEntry) {
             return backgroundCss;
           }
-          const backgroundFillEntryType = getFillType(
-            backgroundFillEntry as Record<string, unknown>
-          );
+          const backgroundFillEntryType = getFillType({
+            shapePropsNode: backgroundFillEntry as Record<string, unknown>,
+          });
 
           if (backgroundFillEntryType === "SOLID_FILL") {
             const slideFillValue = backgroundFillEntry["a:solidFill"];
             const slideFill =
               slideFillValue && isXmlNode(slideFillValue) ? slideFillValue : undefined;
             if (slideFill) {
-              const slideBackgroundColor = getSolidFill(
-                slideFill,
-                clrMap,
+              const slideBackgroundColor = getSolidFill({
+                fillNode: slideFill,
+                colorMap: clrMap,
                 placeholderColor,
-                warpContext
-              );
+                warpContext,
+              });
               backgroundCss = "background: #" + slideBackgroundColor + ";";
             }
           } else if (backgroundFillEntryType === "GRADIENT_FILL") {
-            backgroundCss = getBgGradientFill(
-              backgroundFillEntry,
+            backgroundCss = getBgGradientFill({
+              backgroundProps: backgroundFillEntry,
               placeholderColor,
-              (slideMasterContent ?? {}) as XmlNode,
-              warpContext
-            );
+              slideMasterContent: (slideMasterContent ?? {}) as XmlNode,
+              warpContext,
+            });
           } else if (backgroundFillEntryType === "PIC_FILL") {
-            backgroundCss = await getBgPicFill(
-              backgroundFillEntry,
-              "themeBg",
-              warpContext as PicFillWarpObj,
-              placeholderColor
-            );
+            backgroundCss = await getBgPicFill({
+              backgroundProps: backgroundFillEntry,
+              sourceType: "themeBg",
+              warpContext: warpContext as PicFillWarpObj,
+              placeholderColor,
+            });
           } else {
             console.log(backgroundFillEntryType);
           }

@@ -38,15 +38,25 @@ export interface ShapeEffectsResult {
 /**
  * Process shape effects and generate SVG defs
  */
-export function processShapeEffects(
-  shapeNode: XmlNode,
-  shapeId: number | string,
-  svgClassName: string,
-  border: any,
-  warpContext: WarpContext,
-  emuToPx: number,
-  styleTable: Record<string, { name: string; text: string }>
-): ShapeEffectsResult {
+type ProcessShapeEffectsOptions = {
+  shapeNode: XmlNode;
+  shapeId: number | string;
+  svgClassName: string;
+  border: { color: string; width: string; strokeDasharray: string };
+  warpContext: WarpContext;
+  emuToPx: number;
+  styleTable: Record<string, { name: string; text: string }>;
+};
+
+export function processShapeEffects({
+  shapeNode,
+  shapeId,
+  svgClassName,
+  border,
+  warpContext,
+  emuToPx,
+  styleTable,
+}: ProcessShapeEffectsOptions): ShapeEffectsResult {
   let defsContent = "";
   const effectsClassName = svgClassName + "_effects";
 
@@ -74,10 +84,15 @@ export function processShapeEffects(
   //////////////////////////////outerShdw///////////////////////////////////////////
   //not support sizing the shadow
   const outerShadowNode = asXmlNode(
-    getTextByPathList(shapeNode, ["p:spPr", "a:effectLst", "a:outerShdw"])
+    getTextByPathList({ node: shapeNode, path: ["p:spPr", "a:effectLst", "a:outerShdw"] })
   );
   if (outerShadowNode !== undefined) {
-    const shadowColor = getSolidFill(outerShadowNode, undefined, undefined, warpContext);
+    const shadowColor = getSolidFill({
+      fillNode: outerShadowNode,
+      colorMap: undefined,
+      placeholderColor: undefined,
+      warpContext,
+    });
     const outerShadowAttrs = outerShadowNode.attrs ?? {};
 
     //var algn = outerShdwAttrs["algn"];
@@ -131,8 +146,14 @@ export function processShapeEffects(
   ////////////////////////////////////////////////////////////////////////////////////////
 
   // Arrow/triangle markers for line ends
-  const headEndAttributes = getTextByPathList(shapeNode, ["p:spPr", "a:ln", "a:headEnd", "attrs"]);
-  const tailEndAttributes = getTextByPathList(shapeNode, ["p:spPr", "a:ln", "a:tailEnd", "attrs"]);
+  const headEndAttributes = getTextByPathList({
+    node: shapeNode,
+    path: ["p:spPr", "a:ln", "a:headEnd", "attrs"],
+  });
+  const tailEndAttributes = getTextByPathList({
+    node: shapeNode,
+    path: ["p:spPr", "a:ln", "a:tailEnd", "attrs"],
+  });
   // type: none, triangle, stealth, diamond, oval, arrow
 
   if (

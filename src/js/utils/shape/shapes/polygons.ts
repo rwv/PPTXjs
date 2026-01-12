@@ -96,14 +96,10 @@ function renderRtTriangle(ctx: PolygonShapeContext): string {
 function renderTriangle(ctx: PolygonShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let shapAdjst_val = 0.5;
   if (shapAdjst !== undefined) {
     shapAdjst_val = parseInt(shapAdjst.substr(4)) * slideFactor;
@@ -134,14 +130,10 @@ function renderDiamond(ctx: PolygonShapeContext, shapType: string): string {
 function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adjst_val = 0.2;
   const max_adj_const = 0.7407;
   if (shapAdjst !== undefined) {
@@ -166,14 +158,10 @@ function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
 function renderParallelogram(ctx: PolygonShapeContext): string {
   const { node, w, h } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adjst_val = 0.25;
   let max_adj_const;
   if (w > h) {
@@ -202,14 +190,10 @@ function renderPentagon(ctx: PolygonShapeContext): string {
 function renderHexagon(ctx: PolygonShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 25000 * slideFactor;
   const vf = 115470 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
@@ -274,14 +258,10 @@ function renderHeptagon(ctx: PolygonShapeContext): string {
 function renderOctagon(ctx: PolygonShapeContext): string {
   const { node, w, h } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj1 = 0.25;
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) / 100000;
@@ -310,46 +290,65 @@ function renderDodecagon(ctx: PolygonShapeContext): string {
 // Shape Registry
 // =============================================================================
 
+type PolygonRendererOptions = {
+  ctx: PolygonShapeContext;
+  shapeType: string;
+};
+
+const withCtx = (renderer: (ctx: PolygonShapeContext) => string) => {
+  return ({ ctx }: PolygonRendererOptions) => renderer(ctx);
+};
+
+const withCtxAndShape = (renderer: (ctx: PolygonShapeContext, shapeType: string) => string) => {
+  return ({ ctx, shapeType }: PolygonRendererOptions) => renderer(ctx, shapeType);
+};
+
 /**
  * Registry mapping shape types to their render functions
  */
-const POLYGON_SHAPE_RENDERERS: Record<
-  string,
-  (ctx: PolygonShapeContext, shapType: string) => string
-> = {
-  rtTriangle: (ctx) => renderRtTriangle(ctx),
-  triangle: renderTriangle,
-  flowChartExtract: renderTriangle,
-  flowChartMerge: renderTriangle,
-  diamond: renderDiamond,
-  flowChartDecision: renderDiamond,
-  flowChartSort: renderDiamond,
-  trapezoid: renderTrapezoid,
-  flowChartManualOperation: renderTrapezoid,
-  flowChartManualInput: renderTrapezoid,
-  parallelogram: (ctx) => renderParallelogram(ctx),
-  flowChartInputOutput: (ctx) => renderParallelogram(ctx),
-  pentagon: (ctx) => renderPentagon(ctx),
-  hexagon: (ctx) => renderHexagon(ctx),
-  flowChartPreparation: (ctx) => renderHexagon(ctx),
-  heptagon: (ctx) => renderHeptagon(ctx),
-  octagon: (ctx) => renderOctagon(ctx),
-  decagon: (ctx) => renderDecagon(ctx),
-  dodecagon: (ctx) => renderDodecagon(ctx),
+const POLYGON_SHAPE_RENDERERS: Record<string, (options: PolygonRendererOptions) => string> = {
+  rtTriangle: withCtx(renderRtTriangle),
+  triangle: withCtxAndShape(renderTriangle),
+  flowChartExtract: withCtxAndShape(renderTriangle),
+  flowChartMerge: withCtxAndShape(renderTriangle),
+  diamond: withCtxAndShape(renderDiamond),
+  flowChartDecision: withCtxAndShape(renderDiamond),
+  flowChartSort: withCtxAndShape(renderDiamond),
+  trapezoid: withCtxAndShape(renderTrapezoid),
+  flowChartManualOperation: withCtxAndShape(renderTrapezoid),
+  flowChartManualInput: withCtxAndShape(renderTrapezoid),
+  parallelogram: withCtx(renderParallelogram),
+  flowChartInputOutput: withCtx(renderParallelogram),
+  pentagon: withCtx(renderPentagon),
+  hexagon: withCtx(renderHexagon),
+  flowChartPreparation: withCtx(renderHexagon),
+  heptagon: withCtx(renderHeptagon),
+  octagon: withCtx(renderOctagon),
+  decagon: withCtx(renderDecagon),
+  dodecagon: withCtx(renderDodecagon),
 };
 
 /**
  * Check if a shape type is a polygon shape handled by this module
  */
-export function isPolygonShape(shapType: string): boolean {
-  return shapType in POLYGON_SHAPE_RENDERERS;
+type IsPolygonShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isPolygonShape({ shapeType }: IsPolygonShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in POLYGON_SHAPE_RENDERERS;
 }
 
 /**
  * Render a polygon shape
  * @returns SVG string for the shape, or empty string if not a polygon shape
  */
-export function renderPolygonShape(shapType: string, ctx: PolygonShapeContext): string {
-  const renderer = POLYGON_SHAPE_RENDERERS[shapType];
-  return renderer ? renderer(ctx, shapType) : "";
+type RenderPolygonShapeOptions = {
+  shapeType: string;
+  ctx: PolygonShapeContext;
+};
+
+export function renderPolygonShape({ shapeType, ctx }: RenderPolygonShapeOptions): string {
+  const renderer = POLYGON_SHAPE_RENDERERS[shapeType];
+  return renderer ? renderer({ ctx, shapeType }) : "";
 }

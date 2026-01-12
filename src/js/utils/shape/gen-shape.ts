@@ -70,30 +70,51 @@ import {
 } from "./shapes";
 import { isBasicShape, renderBasicShape } from "./shapes/basic-shapes";
 
-export async function genShape(
-  node: any,
-  pNode: any,
-  slideLayoutSpNode: any,
-  slideMasterSpNode: any,
-  id: number | string | undefined,
-  name: string | undefined,
-  idx: number | string | undefined,
-  type: string | undefined,
-  order: number | string | undefined,
-  warpContext: any,
-  isUserDrawnBg: boolean | undefined,
-  sType: string | undefined,
-  source: string,
-  emuToPx: number,
-  styleTable: any,
-  fontSizeScale: number,
-  rtlLanguages: string[],
-  firstLineBreak: { value: boolean }
-): Promise<string> {
+type GenShapeOptions = {
+  shapeNode: any;
+  parentNode: any;
+  layoutShapeNode: any;
+  masterShapeNode: any;
+  shapeId: number | string | undefined;
+  shapeName: string | undefined;
+  placeholderIndex: number | string | undefined;
+  placeholderType: string | undefined;
+  zIndexOrder: number | string | undefined;
+  warpContext: any;
+  isUserDrawnBackground: boolean | undefined;
+  shapeType: string | undefined;
+  sourceType: string;
+  emuToPx: number;
+  styleTable: any;
+  fontSizeScale: number;
+  rtlLanguages: string[];
+  firstLineBreak: { value: boolean };
+};
+
+export async function genShape({
+  shapeNode: node,
+  parentNode: pNode,
+  layoutShapeNode: slideLayoutSpNode,
+  masterShapeNode: slideMasterSpNode,
+  shapeId: id,
+  shapeName: name,
+  placeholderIndex: idx,
+  placeholderType: type,
+  zIndexOrder: order,
+  warpContext,
+  isUserDrawnBackground: isUserDrawnBg,
+  shapeType: sType,
+  sourceType: source,
+  emuToPx,
+  styleTable,
+  fontSizeScale,
+  rtlLanguages,
+  firstLineBreak,
+}: GenShapeOptions): Promise<string> {
   // Initialize shape rendering context
-  const context = await initShapeContext(
+  const context = await initShapeContext({
     node,
-    pNode,
+    parentNode: pNode,
     slideLayoutSpNode,
     slideMasterSpNode,
     id,
@@ -101,12 +122,12 @@ export async function genShape(
     type,
     name,
     order,
-    sType,
+    shapeType: sType,
     source,
     warpContext,
     emuToPx,
-    styleTable
-  );
+    styleTable,
+  });
 
   if (!context) {
     // No valid shape type found, return empty result
@@ -139,15 +160,15 @@ export async function genShape(
   result += context.defsContent;
 
   // Process shape effects (shadows, markers)
-  const effectsResult = processShapeEffects(
-    node,
-    shpId,
-    svgCssName,
+  const effectsResult = processShapeEffects({
+    shapeNode: node,
+    shapeId: shpId,
+    svgClassName: svgCssName,
     border,
     warpContext,
     emuToPx,
-    styleTable
-  );
+    styleTable,
+  });
   result += effectsResult.defsContent;
 
   result += "</defs>";
@@ -155,208 +176,256 @@ export async function genShape(
     //console.log("shapType: ", shapType)
 
     // Handle star shapes via dedicated module
-    if (isStarShape(shapType)) {
-      result += renderStarShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isFlowchartShape(shapType)) {
-      // Handle independent flowchart shapes via dedicated module
-      result += renderFlowchartShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isActionButtonShape(shapType)) {
-      // Handle action button shapes via dedicated module
-      result += renderActionButtonShape(shapType, {
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-      });
-    } else if (isArrowShape(shapType)) {
-      // Handle arrow shapes via dedicated module
-      result += renderArrowShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isCurvedArrowShape(shapType)) {
-      // Handle curved arrow shapes via dedicated module
-      result += renderCurvedArrowShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isCalloutShape(shapType)) {
-      // Handle callout shapes via dedicated module
-      result += renderCalloutShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isRibbonShape(shapType)) {
-      // Handle ribbon shapes via dedicated module
-      result += renderRibbonShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isMathShape(shapType)) {
-      // Handle math shapes via dedicated module
-      result += renderMathShapeType(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isBracketShape(shapType)) {
-      // Handle bracket shapes via dedicated module
-      result += renderBracketShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isArcShape(shapType)) {
-      // Handle arc shapes via dedicated module
-      result += renderArcShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isPolygonShape(shapType)) {
-      // Handle polygon shapes via dedicated module
-      result += renderPolygonShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isScrollShape(shapType)) {
-      // Handle scroll shapes via dedicated module
-      result += renderScrollShapeType(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-      });
-    } else if (isMiscSymbolShape(shapType)) {
-      // Handle misc symbol shapes via dedicated module
-      result += renderMiscSymbolShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
-        setTxtRotate: (angle: number) => {
-          txtRotate = angle;
+    if (isStarShape({ shapeType: shapType })) {
+      result += renderStarShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
         },
       });
-    } else if (isPlateCylinderShape(shapType)) {
+    } else if (isFlowchartShape({ shapeType: shapType })) {
+      // Handle independent flowchart shapes via dedicated module
+      result += renderFlowchartShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isActionButtonShape({ shapeType: shapType })) {
+      // Handle action button shapes via dedicated module
+      result += renderActionButtonShape({
+        shapeType: shapType,
+        ctx: {
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+        },
+      });
+    } else if (isArrowShape({ shapeType: shapType })) {
+      // Handle arrow shapes via dedicated module
+      result += renderArrowShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isCurvedArrowShape({ shapeType: shapType })) {
+      // Handle curved arrow shapes via dedicated module
+      result += renderCurvedArrowShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isCalloutShape({ shapeType: shapType })) {
+      // Handle callout shapes via dedicated module
+      result += renderCalloutShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isRibbonShape({ shapeType: shapType })) {
+      // Handle ribbon shapes via dedicated module
+      result += renderRibbonShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isMathShape({ shapeType: shapType })) {
+      // Handle math shapes via dedicated module
+      result += renderMathShapeType({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isBracketShape({ shapeType: shapType })) {
+      // Handle bracket shapes via dedicated module
+      result += renderBracketShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isArcShape({ shapeType: shapType })) {
+      // Handle arc shapes via dedicated module
+      result += renderArcShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isPolygonShape({ shapeType: shapType })) {
+      // Handle polygon shapes via dedicated module
+      result += renderPolygonShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isScrollShape({ shapeType: shapType })) {
+      // Handle scroll shapes via dedicated module
+      result += renderScrollShapeType({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
+      });
+    } else if (isMiscSymbolShape({ shapeType: shapType })) {
+      // Handle misc symbol shapes via dedicated module
+      result += renderMiscSymbolShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+          setTxtRotate: (angle: number) => {
+            txtRotate = angle;
+          },
+        },
+      });
+    } else if (isPlateCylinderShape({ shapeType: shapType })) {
       // Handle plate and cylinder shapes via dedicated module
-      result += renderPlateCylinderShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
-        slideFactor: emuToPx,
+      result += renderPlateCylinderShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+          slideFactor: emuToPx,
+        },
       });
-    } else if (isConnectorShape(shapType)) {
+    } else if (isConnectorShape({ shapeType: shapType })) {
       // Handle connector shapes via dedicated module
-      result += renderConnectorShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        border,
+      result += renderConnectorShape({
+        shapeType: shapType,
+        ctx: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          border,
+        },
       });
-    } else if (isBasicShape(shapType)) {
+    } else if (isBasicShape({ shapeType: shapType })) {
       // Handle basic shapes via dedicated module
-      result += renderBasicShape(shapType, {
-        node,
-        w,
-        h,
-        shpId: shpIdStr,
-        fillColor,
-        grndFillFlg,
-        imgFillFlg,
-        border,
+      result += renderBasicShape({
+        shapeType: shapType,
+        params: {
+          node,
+          w,
+          h,
+          shpId: shpIdStr,
+          fillColor,
+          grndFillFlg,
+          imgFillFlg,
+          border,
+        },
       });
     } else {
       // Unsupported or undefined shape type
@@ -371,9 +440,13 @@ export async function genShape(
 
     result +=
       "<div class='block " +
-      getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) + //block content
+      getVerticalAlign({
+        textBodyContainerNode: node,
+        layoutShapeNode: slideLayoutSpNode,
+        masterShapeNode: slideMasterSpNode,
+      }) + //block content
       " " +
-      getContentDir(node, type, warpContext) +
+      getContentDir({ textBodyNode: node, shapeType: type, warpContext }) +
       "' _id='" +
       id +
       "' _idx='" +
@@ -383,8 +456,20 @@ export async function genShape(
       "' _name='" +
       name +
       "' style='" +
-      getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, emuToPx) +
-      getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, emuToPx) +
+      getPosition({
+        slideSpNode: slideXfrmNode,
+        parentNode: pNode,
+        slideLayoutSpNode: slideLayoutXfrmNode,
+        slideMasterSpNode: slideMasterXfrmNode,
+        shapeType: sType,
+        emuToPx,
+      }) +
+      getSize({
+        slideSpNode: slideXfrmNode,
+        slideLayoutSpNode: slideLayoutXfrmNode,
+        slideMasterSpNode: slideMasterXfrmNode,
+        emuToPx,
+      }) +
       " z-index: " +
       order +
       ";" +
@@ -398,46 +483,44 @@ export async function genShape(
       if (type !== "diagram" && type !== "textBox") {
         type = "shape";
       }
-      result += await genTextBody(
-        node["p:txBody"],
-        node,
-        slideLayoutSpNode,
-        slideMasterSpNode,
-        type,
-        idx,
+      result += await genTextBody({
+        textBodyNode: node["p:txBody"],
+        spNode: node,
+        shapeType: type,
+        placeholderIndex: idx,
         warpContext,
-        undefined,
+        tableColumnWidth: undefined,
         firstLineBreak,
         styleTable,
         rtlLanguages,
         emuToPx,
-        fontSizeScale
-      ); //type='shape'
+        fontSizeScale,
+      }); //type='shape'
     }
     result += "</div>";
   } else if (custShapType !== undefined) {
-    result += await renderCustomGeometry(
+    result += await renderCustomGeometry({
       custShapType,
-      node,
-      slideLayoutSpNode,
-      slideMasterSpNode,
+      shapeNode: node,
+      layoutShapeNode: slideLayoutSpNode,
+      masterShapeNode: slideMasterSpNode,
       slideXfrmNode,
       slideLayoutXfrmNode,
-      pNode,
+      parentNode: pNode,
       slideMasterXfrmNode,
-      w,
-      h,
-      shpIdStr,
+      width: w,
+      height: h,
+      shapeId: shpIdStr,
       imgFillFlg,
       grndFillFlg,
       fillColor,
       border,
       id,
       idx,
-      type,
-      name,
+      placeholderType: type,
+      shapeName: name,
       order,
-      sType,
+      shapeType: sType,
       txtRotate,
       warpContext,
       isUserDrawnBg,
@@ -445,14 +528,18 @@ export async function genShape(
       styleTable,
       rtlLanguages,
       emuToPx,
-      fontSizeScale
-    );
+      fontSizeScale,
+    });
   } else {
     result +=
       "<div class='block " +
-      getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) + //block content
+      getVerticalAlign({
+        textBodyContainerNode: node,
+        layoutShapeNode: slideLayoutSpNode,
+        masterShapeNode: slideMasterSpNode,
+      }) + //block content
       " " +
-      getContentDir(node, type, warpContext) +
+      getContentDir({ textBodyNode: node, shapeType: type, warpContext }) +
       "' _id='" +
       id +
       "' _idx='" +
@@ -462,10 +549,33 @@ export async function genShape(
       "' _name='" +
       name +
       "' style='" +
-      getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, emuToPx) +
-      getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, emuToPx) +
-      getBorder(node, pNode, false, "shape", warpContext) +
-      (await getShapeFill(node, pNode, false, warpContext, source)) +
+      getPosition({
+        slideSpNode: slideXfrmNode,
+        parentNode: pNode,
+        slideLayoutSpNode: slideLayoutXfrmNode,
+        slideMasterSpNode: slideMasterXfrmNode,
+        shapeType: sType,
+        emuToPx,
+      }) +
+      getSize({
+        slideSpNode: slideXfrmNode,
+        slideLayoutSpNode: slideLayoutXfrmNode,
+        slideMasterSpNode: slideMasterXfrmNode,
+        emuToPx,
+      }) +
+      getBorder({
+        shapeNode: node,
+        isSvgMode: false,
+        borderType: "shape",
+        warpContext,
+      }) +
+      (await getShapeFill({
+        shapeNode: node,
+        parentNode: pNode,
+        isSvgMode: false,
+        warpContext,
+        sourceType: source,
+      })) +
       " z-index: " +
       order +
       ";" +
@@ -476,21 +586,19 @@ export async function genShape(
 
     // TextBody
     if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
-      result += await genTextBody(
-        node["p:txBody"],
-        node,
-        slideLayoutSpNode,
-        slideMasterSpNode,
-        type,
-        idx,
+      result += await genTextBody({
+        textBodyNode: node["p:txBody"],
+        spNode: node,
+        shapeType: type,
+        placeholderIndex: idx,
         warpContext,
-        undefined,
+        tableColumnWidth: undefined,
         firstLineBreak,
         styleTable,
         rtlLanguages,
         emuToPx,
-        fontSizeScale
-      );
+        fontSizeScale,
+      });
     }
     result += "</div>";
   }

@@ -1,6 +1,11 @@
 import type { BasicShapeParams } from "./types";
 
-export function renderEllipseLike(shapType: string, params: BasicShapeParams): string {
+type RenderEllipseLikeOptions = {
+  shapeType: string;
+  params: BasicShapeParams;
+};
+
+export function renderEllipseLike({ shapeType, params }: RenderEllipseLikeOptions): string {
   const { w, h, shpId, fillColor, grndFillFlg, imgFillFlg, border } = params;
   let result = "";
   result +=
@@ -25,7 +30,7 @@ export function renderEllipseLike(shapType: string, params: BasicShapeParams): s
     "' stroke-dasharray='" +
     border.strokeDasharray +
     "' />";
-  if (shapType === "flowChartOr") {
+  if (shapeType === "flowChartOr") {
     result +=
       " <polyline points='" +
       w / 2 +
@@ -58,7 +63,7 @@ export function renderEllipseLike(shapType: string, params: BasicShapeParams): s
       "' stroke-dasharray='" +
       border.strokeDasharray +
       "' />";
-  } else if (shapType === "flowChartSummingJunction") {
+  } else if (shapeType === "flowChartSummingJunction") {
     const hc = w / 2;
     const vc = h / 2;
     const wd2 = w / 2;

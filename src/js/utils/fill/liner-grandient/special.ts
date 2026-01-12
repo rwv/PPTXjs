@@ -1,58 +1,69 @@
-export function getSpecialPattern(
-  prst: string,
-  bgColor: string,
-  fgColor: string
-): string[] | undefined {
-  switch (prst) {
+type GetSpecialPatternOptions = {
+  patternPreset: string;
+  backgroundColor: string;
+  foregroundColor: string;
+};
+
+export function getSpecialPattern({
+  patternPreset,
+  backgroundColor,
+  foregroundColor,
+}: GetSpecialPatternOptions): string[] | undefined {
+  switch (patternPreset) {
     case "plaid":
       return [
         "linear-gradient(0deg, transparent, transparent 25%, #" +
-          fgColor +
+          foregroundColor +
           "33 25%, #" +
-          fgColor +
+          foregroundColor +
           "33 50%)," +
           "linear-gradient(90deg, transparent, transparent 25%, #" +
-          fgColor +
+          foregroundColor +
           "66 25%, #" +
-          fgColor +
+          foregroundColor +
           "66 50%) " +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 4px",
       ];
     case "sphere":
       return [
-        "radial-gradient(#" + fgColor + " 50%, transparent 50%)," + "#" + bgColor + ";",
+        "radial-gradient(#" +
+          foregroundColor +
+          " 50%, transparent 50%)," +
+          "#" +
+          backgroundColor +
+          ";",
         "4px 4px",
       ];
     case "weave":
     case "shingle":
       return [
         "linear-gradient(45deg, #" +
-          bgColor +
+          backgroundColor +
           " 1.31px , #" +
-          fgColor +
+          foregroundColor +
           " 1.4px, #" +
-          fgColor +
+          foregroundColor +
           " 1.5px, transparent 1.5px, transparent 4.2px, #" +
-          fgColor +
+          foregroundColor +
           " 4.2px, #" +
-          fgColor +
+          foregroundColor +
           " 4.3px, transparent 4.31px), " +
           "linear-gradient(-45deg,  #" +
-          bgColor +
+          backgroundColor +
           " 1.31px , #" +
-          fgColor +
+          foregroundColor +
           " 1.4px, #" +
-          fgColor +
+          foregroundColor +
           " 1.5px, transparent 1.5px, transparent 4.2px, #" +
-          fgColor +
+          foregroundColor +
           " 4.2px, #" +
-          fgColor +
+          foregroundColor +
           " 4.3px, transparent 4.31px) 0 4px, " +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 8px",
       ];

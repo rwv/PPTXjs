@@ -74,14 +74,10 @@ function getStrokeAttrs(ctx: PlateCylinderContext): string {
 function renderHomePlate(ctx: PlateCylinderContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 50000 * slideFactor;
   const cnstVal1 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
@@ -126,14 +122,10 @@ function renderHomePlate(ctx: PlateCylinderContext): string {
 function renderChevron(ctx: PlateCylinderContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 50000 * slideFactor;
   const cnstVal1 = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
@@ -186,14 +178,10 @@ function renderChevron(ctx: PlateCylinderContext): string {
 function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 25000 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 200000 * slideFactor;
@@ -235,32 +223,55 @@ function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
 // Shape Registry
 // =============================================================================
 
+type PlateCylinderRendererOptions = {
+  ctx: PlateCylinderContext;
+  shapeType: string;
+};
+
+const withCtx = (renderer: (ctx: PlateCylinderContext) => string) => {
+  return ({ ctx }: PlateCylinderRendererOptions) => renderer(ctx);
+};
+
+const withCtxAndShape = (renderer: (ctx: PlateCylinderContext, shapeType: string) => string) => {
+  return ({ ctx, shapeType }: PlateCylinderRendererOptions) => renderer(ctx, shapeType);
+};
+
 /**
  * Registry mapping shape types to their render functions
  */
-const PLATE_CYLINDER_RENDERERS: Record<
-  string,
-  (ctx: PlateCylinderContext, shapType: string) => string
-> = {
-  homePlate: (ctx) => renderHomePlate(ctx),
-  chevron: (ctx) => renderChevron(ctx),
-  can: renderCylinder,
-  flowChartMagneticDisk: renderCylinder,
-  flowChartMagneticDrum: renderCylinder,
-};
+const PLATE_CYLINDER_RENDERERS: Record<string, (options: PlateCylinderRendererOptions) => string> =
+  {
+    homePlate: withCtx(renderHomePlate),
+    chevron: withCtx(renderChevron),
+    can: withCtxAndShape(renderCylinder),
+    flowChartMagneticDisk: withCtxAndShape(renderCylinder),
+    flowChartMagneticDrum: withCtxAndShape(renderCylinder),
+  };
 
 /**
  * Check if a shape type is a plate or cylinder shape handled by this module
  */
-export function isPlateCylinderShape(shapType: string): boolean {
-  return shapType in PLATE_CYLINDER_RENDERERS;
+type IsPlateCylinderShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isPlateCylinderShape({ shapeType }: IsPlateCylinderShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in PLATE_CYLINDER_RENDERERS;
 }
 
 /**
  * Render a plate or cylinder shape
  * @returns SVG string for the shape, or empty string if not a plate/cylinder shape
  */
-export function renderPlateCylinderShape(shapType: string, ctx: PlateCylinderContext): string {
-  const renderer = PLATE_CYLINDER_RENDERERS[shapType];
-  return renderer ? renderer(ctx, shapType) : "";
+type RenderPlateCylinderShapeOptions = {
+  shapeType: string;
+  ctx: PlateCylinderContext;
+};
+
+export function renderPlateCylinderShape({
+  shapeType,
+  ctx,
+}: RenderPlateCylinderShapeOptions): string {
+  const renderer = PLATE_CYLINDER_RENDERERS[shapeType];
+  return renderer ? renderer({ ctx, shapeType }) : "";
 }

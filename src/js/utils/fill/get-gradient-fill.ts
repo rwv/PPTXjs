@@ -13,8 +13,9 @@ import type { XmlNode, XmlValue } from "../../types/pptx-xml";
  * @param warpContext - Container object with theme and color information
  * @returns Object with color array and rotation angle for CSS gradient
  */
-type SolidFillNode = Parameters<typeof getSolidFill>[0];
-type SolidFillWarpObj = Parameters<typeof getSolidFill>[3];
+type SolidFillOptions = Parameters<typeof getSolidFill>[0];
+type SolidFillNode = SolidFillOptions["fillNode"];
+type SolidFillWarpObj = SolidFillOptions["warpContext"];
 function isXmlNode(value: XmlValue): value is XmlNode {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -23,30 +24,44 @@ function isXmlNodeArray(value: XmlValue): value is XmlNode[] {
   return Array.isArray(value);
 }
 
-export function getGradientFill(gradientFillNode: XmlNode, warpContext: SolidFillWarpObj) {
-  const gradientStopsValue = getTextByPathList(gradientFillNode, ["a:gsLst", "a:gs"]);
+type GetGradientFillOptions = {
+  gradientFillNode: XmlNode;
+  warpContext: SolidFillWarpObj;
+};
+
+export function getGradientFill({ gradientFillNode, warpContext }: GetGradientFillOptions) {
+  const gradientStopsValue = getTextByPathList({
+    node: gradientFillNode,
+    path: ["a:gsLst", "a:gs"],
+  });
   const gradientStops =
     gradientStopsValue && isXmlNodeArray(gradientStopsValue) ? gradientStopsValue : [];
   const colorStops: Array<string | undefined> = [];
   for (let i = 0; i < gradientStops.length; i++) {
-    const solidFillColor = getSolidFill(
-      gradientStops[i] as SolidFillNode,
-      undefined,
-      undefined,
-      warpContext
-    );
+    const solidFillColor = getSolidFill({
+      fillNode: gradientStops[i] as SolidFillNode,
+      colorMap: undefined,
+      placeholderColor: undefined,
+      warpContext,
+    });
     colorStops[i] = solidFillColor;
   }
-  const linearGradientNodeValue = getTextByPathList(gradientFillNode, ["a:lin"]);
+  const linearGradientNodeValue = getTextByPathList({
+    node: gradientFillNode,
+    path: ["a:lin"],
+  });
   const linearGradientNode =
     linearGradientNodeValue && isXmlNode(linearGradientNodeValue)
       ? linearGradientNodeValue
       : undefined;
   let rotationDegrees = 0;
   if (linearGradientNode !== undefined) {
-    const angle = getTextByPathList<string | number>(linearGradientNode, ["attrs", "ang"]);
+    const angle = getTextByPathList<string | number>({
+      node: linearGradientNode,
+      path: ["attrs", "ang"],
+    });
     if (angle !== undefined) {
-      rotationDegrees = angleToDegrees(angle) + 90;
+      rotationDegrees = angleToDegrees({ angle }) + 90;
     }
   }
   return {

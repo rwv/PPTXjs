@@ -21,14 +21,23 @@ function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
   return value !== undefined && isXmlNode(value) ? value : undefined;
 }
 
-export function getPregraphMargn(
-  paragraphNode: XmlNode,
-  paragraphIndex: number | string | undefined,
-  elementType: string | undefined,
-  isBulleted: boolean,
-  warpContext: WarpContext,
-  emuToPx: number
-): [string, number] {
+type GetPregraphMargnOptions = {
+  paragraphNode: XmlNode;
+  paragraphIndex: number | string | undefined;
+  elementType: string | undefined;
+  isBulleted: boolean;
+  warpContext: WarpContext;
+  emuToPx: number;
+};
+
+export function getPregraphMargn({
+  paragraphNode,
+  paragraphIndex,
+  elementType,
+  isBulleted,
+  warpContext,
+  emuToPx,
+}: GetPregraphMargnOptions): [string, number] {
   if (!isBulleted) {
     return ["", 0];
   }
@@ -36,28 +45,34 @@ export function getPregraphMargn(
   let marginLeftStyle = "",
     marginValue = 0;
   const paragraphPropsNode = asXmlNode(paragraphNode["a:pPr"]);
-  const layoutMasterNode = getLayoutAndMasterNode(
+  const layoutMasterNode = getLayoutAndMasterNode({
     paragraphNode,
-    paragraphIndex,
-    elementType,
-    warpContext
-  );
+    layoutIndex: paragraphIndex,
+    shapeType: elementType,
+    warpContext,
+  });
   const paragraphPropsNodeLayout = layoutMasterNode.nodeLayout;
   const paragraphPropsNodeMaster = layoutMasterNode.nodeMaster;
 
   // rtl
   const paragraphRtlValue = paragraphPropsNode
-    ? getTextByPathList<string | number>(paragraphPropsNode, ["attrs", "rtl"])
+    ? getTextByPathList<string | number>({ node: paragraphPropsNode, path: ["attrs", "rtl"] })
     : undefined;
   let rtlValue = paragraphRtlValue !== undefined ? String(paragraphRtlValue) : undefined;
   if (rtlValue === undefined) {
     const layoutRtlValue = paragraphPropsNodeLayout
-      ? getTextByPathList<string | number>(paragraphPropsNodeLayout, ["attrs", "rtl"])
+      ? getTextByPathList<string | number>({
+          node: paragraphPropsNodeLayout,
+          path: ["attrs", "rtl"],
+        })
       : undefined;
     rtlValue = layoutRtlValue !== undefined ? String(layoutRtlValue) : undefined;
     if (rtlValue === undefined && elementType !== "shape") {
       const masterRtlValue = paragraphPropsNodeMaster
-        ? getTextByPathList<string | number>(paragraphPropsNodeMaster, ["attrs", "rtl"])
+        ? getTextByPathList<string | number>({
+            node: paragraphPropsNodeMaster,
+            path: ["attrs", "rtl"],
+          })
         : undefined;
       rtlValue = masterRtlValue !== undefined ? String(masterRtlValue) : undefined;
     }
@@ -67,36 +82,23 @@ export function getPregraphMargn(
     isRTL = true;
   }
 
-  // align
-  const paragraphAlignValue = paragraphPropsNode
-    ? getTextByPathList<string | number>(paragraphPropsNode, ["attrs", "algn"])
-    : undefined;
-  let alignNode = paragraphAlignValue !== undefined ? String(paragraphAlignValue) : undefined;
-  if (alignNode === undefined) {
-    const layoutAlignValue = paragraphPropsNodeLayout
-      ? getTextByPathList<string | number>(paragraphPropsNodeLayout, ["attrs", "algn"])
-      : undefined;
-    alignNode = layoutAlignValue !== undefined ? String(layoutAlignValue) : undefined;
-    if (alignNode === undefined) {
-      const masterAlignValue = paragraphPropsNodeMaster
-        ? getTextByPathList<string | number>(paragraphPropsNodeMaster, ["attrs", "algn"])
-        : undefined;
-      alignNode = masterAlignValue !== undefined ? String(masterAlignValue) : undefined;
-    }
-  }
-  void alignNode;
-
   // indent
   let indentValueNode = paragraphPropsNode
-    ? getTextByPathList<string | number>(paragraphPropsNode, ["attrs", "indent"])
+    ? getTextByPathList<string | number>({ node: paragraphPropsNode, path: ["attrs", "indent"] })
     : undefined;
   if (indentValueNode === undefined) {
     indentValueNode = paragraphPropsNodeLayout
-      ? getTextByPathList<string | number>(paragraphPropsNodeLayout, ["attrs", "indent"])
+      ? getTextByPathList<string | number>({
+          node: paragraphPropsNodeLayout,
+          path: ["attrs", "indent"],
+        })
       : undefined;
     if (indentValueNode === undefined) {
       indentValueNode = paragraphPropsNodeMaster
-        ? getTextByPathList<string | number>(paragraphPropsNodeMaster, ["attrs", "indent"])
+        ? getTextByPathList<string | number>({
+            node: paragraphPropsNodeMaster,
+            path: ["attrs", "indent"],
+          })
         : undefined;
     }
   }
@@ -107,15 +109,21 @@ export function getPregraphMargn(
 
   // marL
   let marginLeftNode = paragraphPropsNode
-    ? getTextByPathList<string | number>(paragraphPropsNode, ["attrs", "marL"])
+    ? getTextByPathList<string | number>({ node: paragraphPropsNode, path: ["attrs", "marL"] })
     : undefined;
   if (marginLeftNode === undefined) {
     marginLeftNode = paragraphPropsNodeLayout
-      ? getTextByPathList<string | number>(paragraphPropsNodeLayout, ["attrs", "marL"])
+      ? getTextByPathList<string | number>({
+          node: paragraphPropsNodeLayout,
+          path: ["attrs", "marL"],
+        })
       : undefined;
     if (marginLeftNode === undefined) {
       marginLeftNode = paragraphPropsNodeMaster
-        ? getTextByPathList<string | number>(paragraphPropsNodeMaster, ["attrs", "marL"])
+        ? getTextByPathList<string | number>({
+            node: paragraphPropsNodeMaster,
+            path: ["attrs", "marL"],
+          })
         : undefined;
     }
   }
@@ -138,22 +146,6 @@ export function getPregraphMargn(
       marginLeftStyle += marginValue + "px;";
     }
   }
-
-  // marR
-  let marginRightNode = paragraphPropsNode
-    ? getTextByPathList<string | number>(paragraphPropsNode, ["attrs", "marR"])
-    : undefined;
-  if (marginRightNode === undefined && marginLeftNode === undefined) {
-    marginRightNode = paragraphPropsNodeLayout
-      ? getTextByPathList<string | number>(paragraphPropsNodeLayout, ["attrs", "marR"])
-      : undefined;
-    if (marginRightNode === undefined) {
-      marginRightNode = paragraphPropsNodeMaster
-        ? getTextByPathList<string | number>(paragraphPropsNodeMaster, ["attrs", "marR"])
-        : undefined;
-    }
-  }
-  void marginRightNode;
 
   return [marginLeftStyle, marginValue];
 }

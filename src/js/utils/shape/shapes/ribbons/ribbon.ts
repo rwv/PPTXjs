@@ -4,34 +4,40 @@ import type { XmlNode } from "../../../../types/pptx-xml";
 import type { RibbonContext } from "./types";
 import { createPath } from "./helpers";
 
-const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+type RibbonRenderOptions = {
+  ctx: RibbonContext;
+  shapeType: string;
+};
+
+const getShapeAdjustments = ({ node }: { node: XmlNode }): XmlNode[] => {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 };
 
 /**
  * Render ribbon or ribbon2 shape
  */
-export function renderRibbon(ctx: RibbonContext, shapType: string): string {
+export function renderRibbon({ ctx, shapeType }: RibbonRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let adj1 = 16667 * slideFactor;
   let adj2 = 50000 * slideFactor;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -64,7 +70,7 @@ export function renderRibbon(ctx: RibbonContext, shapType: string): string {
   const x4 = x5 - wd32;
   const x7 = x6 + wd32;
   const hR = (h * a1) / cnstVal6;
-  if (shapType === "ribbon2") {
+  if (shapeType === "ribbon2") {
     const dy1 = (h * a1) / cnstVal5;
     const y1 = b - dy1;
     const dy2 = (h * a1) / cnstVal4;
@@ -174,7 +180,7 @@ export function renderRibbon(ctx: RibbonContext, shapType: string): string {
       x9 +
       "," +
       y7;
-  } else if (shapType === "ribbon") {
+  } else if (shapeType === "ribbon") {
     const y1 = (h * a1) / cnstVal5;
     const y2 = (h * a1) / cnstVal4;
     const y4 = b - y2;

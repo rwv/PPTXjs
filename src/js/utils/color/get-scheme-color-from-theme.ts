@@ -12,6 +12,13 @@ interface ColorMap {
   [key: string]: string | undefined;
 }
 
+type GetSchemeColorFromThemeOptions = {
+  schemeColorKey: string;
+  clrMap: ColorMap | undefined;
+  phClr: string | undefined;
+  warpContext: WarpContext;
+};
+
 /**
  * Warp object containing PPTX presentation content for lookups
  */
@@ -34,39 +41,37 @@ function isXmlNode(value: XmlValue): value is XmlNode {
  * @param warpContext - Warp object containing slide, layout, master, and theme content
  * @returns Hex color string
  */
-export function getSchemeColorFromTheme(
-  schemeColorKey: string,
-  clrMap: ColorMap | undefined,
-  phClr: string | undefined,
-  warpContext: WarpContext
-): string {
+export function getSchemeColorFromTheme({
+  schemeColorKey,
+  clrMap,
+  phClr,
+  warpContext,
+}: GetSchemeColorFromThemeOptions): string {
   //<p:clrMap ...> in slide master
   // e.g. tx2="dk2" bg2="lt2" tx1="dk1" bg1="lt1" slideLayoutColorOverride
   //console.log("getSchemeColorFromTheme: schemeColorKey: ", schemeColorKey, ",clrMap: ", clrMap)
   let slideLayoutColorOverride: ColorMap | undefined;
   if (clrMap !== undefined) {
-    slideLayoutColorOverride = clrMap; //getTextByPathList(clrMap, ["p:sldMaster", "p:clrMap", "attrs"])
+    slideLayoutColorOverride = clrMap; //getTextByPathList({ node: clrMap, path: ["p:sldMaster", "p:clrMap", "attrs"] })
   } else {
-    const slideColorMapOverride = getTextByPathList(warpContext["slideContent"] as XmlNode, [
-      "p:sld",
-      "p:clrMapOvr",
-      "a:overrideClrMapping",
-      "attrs",
-    ]);
+    const slideColorMapOverride = getTextByPathList({
+      node: warpContext["slideContent"] as XmlNode,
+      path: ["p:sld", "p:clrMapOvr", "a:overrideClrMapping", "attrs"],
+    });
     if (slideColorMapOverride !== undefined && isXmlNode(slideColorMapOverride)) {
       slideLayoutColorOverride = slideColorMapOverride as ColorMap;
     } else {
-      const slideLayoutColorOverrideNode = getTextByPathList(
-        warpContext["slideLayoutContent"] as XmlNode,
-        ["p:sldLayout", "p:clrMapOvr", "a:overrideClrMapping", "attrs"]
-      );
+      const slideLayoutColorOverrideNode = getTextByPathList({
+        node: warpContext["slideLayoutContent"] as XmlNode,
+        path: ["p:sldLayout", "p:clrMapOvr", "a:overrideClrMapping", "attrs"],
+      });
       if (slideLayoutColorOverrideNode !== undefined && isXmlNode(slideLayoutColorOverrideNode)) {
         slideLayoutColorOverride = slideLayoutColorOverrideNode as ColorMap;
       } else {
-        const slideMasterColorOverride = getTextByPathList(
-          warpContext["slideMasterContent"] as XmlNode,
-          ["p:sldMaster", "p:clrMap", "attrs"]
-        );
+        const slideMasterColorOverride = getTextByPathList({
+          node: warpContext["slideMasterContent"] as XmlNode,
+          path: ["p:sldMaster", "p:clrMap", "attrs"],
+        });
         if (slideMasterColorOverride !== undefined && isXmlNode(slideMasterColorOverride)) {
           slideLayoutColorOverride = slideMasterColorOverride as ColorMap;
         }
@@ -105,18 +110,16 @@ export function getSchemeColorFromTheme(
       }
     }
     //console.log("getSchemeColorFromTheme:  schemeColorKey: ", schemeColorKey);
-    const refNode = getTextByPathList(warpContext["themeContent"] as XmlNode, [
-      "a:theme",
-      "a:themeElements",
-      "a:clrScheme",
-      schemeColorKey,
-    ]);
+    const refNode = getTextByPathList({
+      node: warpContext["themeContent"] as XmlNode,
+      path: ["a:theme", "a:themeElements", "a:clrScheme", schemeColorKey],
+    });
     if (refNode !== undefined && isXmlNode(refNode)) {
-      color = getTextByPathList(refNode, ["a:srgbClr", "attrs", "val"]);
+      color = getTextByPathList({ node: refNode, path: ["a:srgbClr", "attrs", "val"] });
     }
     //console.log("themeContent: color", color);
     if (color === undefined && refNode !== undefined && isXmlNode(refNode)) {
-      color = getTextByPathList(refNode, ["a:sysClr", "attrs", "lastClr"]);
+      color = getTextByPathList({ node: refNode, path: ["a:sysClr", "attrs", "lastClr"] });
     }
   }
   //console.log(color)

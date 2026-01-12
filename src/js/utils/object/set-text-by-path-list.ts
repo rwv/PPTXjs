@@ -12,11 +12,13 @@
  * setTextByPathList(obj, ['a', 'b', 'c'], 'value');
  * // obj is now { a: { b: { c: 'value' } } }
  */
-export function setTextByPathList(
-  node: Record<string | number, unknown> | undefined,
-  path: Array<string | number>,
-  value: unknown
-): void {
+type SetTextByPathListOptions = {
+  node: Record<string | number, unknown> | undefined;
+  path: readonly (string | number)[];
+  value: unknown;
+};
+
+export function setTextByPathList({ node, path, value }: SetTextByPathListOptions): void {
   if (path.constructor !== Array) {
     throw Error("Error of path type! path is not array.");
   }
@@ -27,11 +29,11 @@ export function setTextByPathList(
 
   type NodeRecord = Record<string | number, unknown>;
   const target = node as NodeRecord & {
-    set?: (parts: Array<string | number>, value: unknown) => unknown;
+    set?: (parts: readonly (string | number)[], value: unknown) => unknown;
   };
 
   Reflect.defineProperty(target, "set", {
-    value: function (this: NodeRecord, parts: Array<string | number>, value: unknown) {
+    value: function (this: NodeRecord, parts: readonly (string | number)[], value: unknown) {
       let currentNode: NodeRecord = this;
       const pathLength = parts.length;
       for (let index = 0; index < pathLength; index += 1) {

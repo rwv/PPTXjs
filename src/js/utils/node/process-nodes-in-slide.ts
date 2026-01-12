@@ -43,7 +43,7 @@ function asXmlNodeValue(value: XmlValue | undefined): XmlNode | undefined {
  * @param sourceType - Source context
  * @param shapeType - Shape type context
  * @param tableStyles - Table styles from presentation
- * @param isFirstLineBreak - Object {value: boolean} for line break state
+ * @param firstLineBreak - Object {value: boolean} for line break state
  * @param styleTable - CSS style table
  * @param rtlLanguages - RTL language codes
  * @param emuToPx - EMU to pixel conversion factor
@@ -53,23 +53,41 @@ function asXmlNodeValue(value: XmlValue | undefined): XmlNode | undefined {
  * @param renderSettings - Plugin settings
  * @returns HTML string for the node
  */
-export async function processNodesInSlide(
-  nodeType: string,
-  nodeData: XmlNode | XmlNode[] | undefined,
-  parentNodes: XmlNode | XmlNode[] | undefined,
-  warpContext: WarpContext | Record<string, unknown>,
-  sourceType: string,
-  shapeType: string,
-  tableStyles: unknown,
-  isFirstLineBreak: { value: boolean },
-  styleTable: unknown,
-  rtlLanguages: string[],
-  emuToPx: number,
-  fontSizeScale: number,
-  chartIdCounter: { value: number },
-  messageQueue: unknown,
-  renderSettings: { mediaProcess: boolean } & Record<string, unknown>
-): Promise<string> {
+type ProcessNodesInSlideOptions = {
+  nodeType: string;
+  nodeData: XmlNode | XmlNode[] | undefined;
+  parentNodes: XmlNode | XmlNode[] | undefined;
+  warpContext: WarpContext | Record<string, unknown>;
+  sourceType: string;
+  shapeType: string;
+  tableStyles: unknown;
+  firstLineBreak: { value: boolean };
+  styleTable: unknown;
+  rtlLanguages: string[];
+  emuToPx: number;
+  fontSizeScale: number;
+  chartIdCounter: { value: number };
+  messageQueue: unknown;
+  renderSettings: { mediaProcess: boolean } & Record<string, unknown>;
+};
+
+export async function processNodesInSlide({
+  nodeType,
+  nodeData,
+  parentNodes,
+  warpContext,
+  sourceType,
+  shapeType,
+  tableStyles,
+  firstLineBreak,
+  styleTable,
+  rtlLanguages,
+  emuToPx,
+  fontSizeScale,
+  chartIdCounter,
+  messageQueue,
+  renderSettings,
+}: ProcessNodesInSlideOptions): Promise<string> {
   let result = "";
   const nodeRecord = firstXmlNode(nodeData);
 
@@ -78,109 +96,108 @@ export async function processNodesInSlide(
       if (!nodeRecord) {
         break;
       }
-      result = await processSpNode(
-        nodeRecord,
-        parentNodes as XmlNode | XmlNode[] | undefined,
-        warpContext as WarpContext,
+      result = await processSpNode({
+        spNode: nodeRecord,
+        parentNodes: parentNodes as XmlNode | XmlNode[] | undefined,
+        warpContext: warpContext as WarpContext,
         sourceType,
         shapeType,
         emuToPx,
         styleTable,
         fontSizeScale,
         rtlLanguages,
-        isFirstLineBreak
-      );
+        firstLineBreak,
+      });
       break;
     case "p:cxnSp": // Shape, Text (with connection)
       if (!nodeRecord) {
         break;
       }
-      result = await processCxnSpNode(
-        nodeRecord,
-        parentNodes as XmlNode | XmlNode[] | undefined,
-        warpContext as WarpContext,
+      result = await processCxnSpNode({
+        spNode: nodeRecord,
+        parentNodes: parentNodes as XmlNode | XmlNode[] | undefined,
+        warpContext: warpContext as WarpContext,
         sourceType,
         shapeType,
         emuToPx,
         styleTable,
         fontSizeScale,
         rtlLanguages,
-        isFirstLineBreak
-      );
+        firstLineBreak,
+      });
       break;
     case "p:pic": // Picture
       if (!nodeRecord) {
         break;
       }
-      result = await processPicNode(
-        nodeRecord,
-        warpContext as WarpContext,
+      result = await processPicNode({
+        picNode: nodeRecord,
+        warpContext: warpContext as WarpContext,
         sourceType,
-        shapeType,
         emuToPx,
-        renderSettings
-      );
+        renderSettings,
+      });
       break;
     case "p:graphicFrame": // Chart, Diagram, Table
       if (!nodeRecord) {
         break;
       }
-      result = await processGraphicFrameNode(
-        nodeRecord,
-        warpContext as WarpContext,
+      result = await processGraphicFrameNode({
+        graphicFrameNode: nodeRecord,
+        warpContext: warpContext as WarpContext,
         sourceType,
         shapeType,
         tableStyles,
-        isFirstLineBreak,
+        firstLineBreak,
         styleTable,
         rtlLanguages,
         emuToPx,
         fontSizeScale,
         chartIdCounter,
         messageQueue,
-        renderSettings
-      );
+        renderSettings,
+      });
       break;
     case "p:grpSp":
       if (!nodeRecord) {
         break;
       }
-      result = await processGroupSpNode(
-        nodeRecord,
-        warpContext as WarpContext,
+      result = await processGroupSpNode({
+        groupNode: nodeRecord,
+        warpContext: warpContext as WarpContext,
         sourceType,
         emuToPx,
         tableStyles,
-        isFirstLineBreak,
+        firstLineBreak,
         styleTable,
         rtlLanguages,
         fontSizeScale,
         chartIdCounter,
         messageQueue,
-        renderSettings
-      );
+        renderSettings,
+      });
       break;
     case "mc:AlternateContent": {
       //Equations and formulas as Image
       //console.log("mc:AlternateContent nodeValue:" , nodeData , "nodes:",parentNodes, "shapeType:",shapeType)
       if (nodeRecord) {
-        const mcFallbackNodeValue = getTextByPathList(nodeRecord, ["mc:Fallback"]);
+        const mcFallbackNodeValue = getTextByPathList({ node: nodeRecord, path: ["mc:Fallback"] });
         const mcFallbackNode = asXmlNodeValue(mcFallbackNodeValue);
         if (mcFallbackNode) {
-          result = await processGroupSpNode(
-            mcFallbackNode,
+          result = await processGroupSpNode({
+            groupNode: mcFallbackNode,
             warpContext,
             sourceType,
             emuToPx,
             tableStyles,
-            isFirstLineBreak,
+            firstLineBreak,
             styleTable,
             rtlLanguages,
             fontSizeScale,
             chartIdCounter,
             messageQueue,
-            renderSettings
-          );
+            renderSettings,
+          });
         }
       }
       break;

@@ -42,6 +42,11 @@ import {
 
 export type { ArrowShapeContext } from "./arrows/types";
 
+type ArrowRendererOptions = {
+  ctx: ArrowShapeContext;
+  shapeType: string;
+};
+
 /**
  * List of arrow shape types handled by this module
  */
@@ -78,11 +83,12 @@ export const ARROW_SHAPE_TYPES = [
 // Shape Registry
 // =============================================================================
 
-const ARROW_RENDERERS: Record<string, (ctx: ArrowShapeContext, shapType?: string) => string> = {
+const ARROW_RENDERERS: Record<string, (options: ArrowRendererOptions) => string> = {
   rightArrow: renderRightArrow,
   leftArrow: renderLeftArrow,
-  downArrow: (ctx) => renderDownArrow(ctx, "downArrow"),
-  flowChartOffpageConnector: (ctx) => renderDownArrow(ctx, "flowChartOffpageConnector"),
+  downArrow: ({ ctx }) => renderDownArrow({ ctx, shapeType: "downArrow" }),
+  flowChartOffpageConnector: ({ ctx }) =>
+    renderDownArrow({ ctx, shapeType: "flowChartOffpageConnector" }),
   upArrow: renderUpArrow,
   leftRightArrow: renderLeftRightArrow,
   upDownArrow: renderUpDownArrow,
@@ -103,11 +109,20 @@ const ARROW_RENDERERS: Record<string, (ctx: ArrowShapeContext, shapType?: string
   upDownArrowCallout: renderUpDownArrowCallout,
 };
 
-export function isArrowShape(shapType: string): boolean {
-  return shapType in ARROW_RENDERERS;
+type IsArrowShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isArrowShape({ shapeType }: IsArrowShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in ARROW_RENDERERS;
 }
 
-export function renderArrowShape(shapType: string, ctx: ArrowShapeContext): string {
-  const renderer = ARROW_RENDERERS[shapType];
-  return renderer ? renderer(ctx, shapType) : "";
+type RenderArrowShapeOptions = {
+  shapeType: string;
+  ctx: ArrowShapeContext;
+};
+
+export function renderArrowShape({ shapeType, ctx }: RenderArrowShapeOptions): string {
+  const renderer = ARROW_RENDERERS[shapeType];
+  return renderer ? renderer({ ctx, shapeType }) : "";
 }

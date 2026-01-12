@@ -15,14 +15,17 @@ export function renderSwooshArrow(ctx: CurvedArrowContext): string {
   let sAdj2,
     adj2 = 16667 * refr;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj2") {
-      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * refr;
       }

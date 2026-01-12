@@ -28,54 +28,61 @@ type PicWarpObj = {
   [key: string]: unknown;
 };
 
-export async function getPicFill(
-  sourceType: string,
-  blipFillNode: XmlNode,
-  warpContext: PicWarpObj
-): Promise<string | undefined> {
+type GetPicFillOptions = {
+  sourceType: string;
+  blipFillNode: XmlNode;
+  warpContext: PicWarpObj;
+};
+
+export async function getPicFill({
+  sourceType,
+  blipFillNode,
+  warpContext,
+}: GetPicFillOptions): Promise<string | undefined> {
   let imageDataUrl: string | undefined;
-  const relationshipId = getTextByPathList<string>(blipFillNode, ["a:blip", "attrs", "r:embed"]);
+  const relationshipId = getTextByPathList<string>({
+    node: blipFillNode,
+    path: ["a:blip", "attrs", "r:embed"],
+  });
   if (relationshipId === undefined) {
     return undefined;
   }
   let imagePath;
   if (sourceType === "slideBg" || sourceType === "slide") {
-    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
-      "slideResObj",
-      relationshipId,
-      "target",
-    ]);
+    imagePath = getTextByPathList<string>({
+      node: warpContext as XmlNode,
+      path: ["slideResObj", relationshipId, "target"],
+    });
   } else if (sourceType === "slideLayoutBg") {
-    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
-      "layoutResObj",
-      relationshipId,
-      "target",
-    ]);
+    imagePath = getTextByPathList<string>({
+      node: warpContext as XmlNode,
+      path: ["layoutResObj", relationshipId, "target"],
+    });
   } else if (sourceType === "slideMasterBg") {
-    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
-      "masterResObj",
-      relationshipId,
-      "target",
-    ]);
+    imagePath = getTextByPathList<string>({
+      node: warpContext as XmlNode,
+      path: ["masterResObj", relationshipId, "target"],
+    });
   } else if (sourceType === "themeBg") {
-    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
-      "themeResObj",
-      relationshipId,
-      "target",
-    ]);
+    imagePath = getTextByPathList<string>({
+      node: warpContext as XmlNode,
+      path: ["themeResObj", relationshipId, "target"],
+    });
   } else if (sourceType === "diagramBg") {
-    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
-      "diagramResObj",
-      relationshipId,
-      "target",
-    ]);
+    imagePath = getTextByPathList<string>({
+      node: warpContext as XmlNode,
+      path: ["diagramResObj", relationshipId, "target"],
+    });
   }
   if (imagePath === undefined) {
     return undefined;
   }
-  imageDataUrl = getTextByPathList<string>(warpContext as XmlNode, ["loaded-images", imagePath]);
+  imageDataUrl = getTextByPathList<string>({
+    node: warpContext as XmlNode,
+    path: ["loaded-images", imagePath],
+  });
   if (imageDataUrl === undefined) {
-    imagePath = escapeHtml(imagePath);
+    imagePath = escapeHtml({ text: imagePath });
 
     const imageExtension = imagePath.split(".").pop() ?? "";
     if (imageExtension === "xml") {
@@ -86,9 +93,14 @@ export async function getPicFill(
       throw new Error(`File not found in archive: ${imagePath}`);
     }
     const imageArrayBuffer = await imageFile.arrayBuffer();
-    const imageMimeType = getMimeType(imageExtension);
-    imageDataUrl = "data:" + imageMimeType + ";base64," + base64ArrayBuffer(imageArrayBuffer);
-    setTextByPathList(warpContext, ["loaded-images", imagePath], imageDataUrl);
+    const imageMimeType = getMimeType({ fileExtension: imageExtension });
+    imageDataUrl =
+      "data:" + imageMimeType + ";base64," + base64ArrayBuffer({ arrayBuffer: imageArrayBuffer });
+    setTextByPathList({
+      node: warpContext,
+      path: ["loaded-images", imagePath],
+      value: imageDataUrl,
+    });
   }
   return imageDataUrl;
 }

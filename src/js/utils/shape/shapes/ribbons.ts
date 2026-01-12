@@ -35,7 +35,10 @@ export const RIBBON_SHAPE_TYPES = [
 /**
  * Registry mapping shape types to their render functions
  */
-const RIBBON_RENDERERS: Record<string, (ctx: RibbonContext, shapType: string) => string> = {
+const RIBBON_RENDERERS: Record<
+  string,
+  (options: { ctx: RibbonContext; shapeType: string }) => string
+> = {
   leftRightRibbon: (ctx) => renderLeftRightRibbon(ctx),
   ribbon: renderRibbon,
   ribbon2: renderRibbon,
@@ -48,15 +51,24 @@ const RIBBON_RENDERERS: Record<string, (ctx: RibbonContext, shapType: string) =>
 /**
  * Check if a shape type is a ribbon shape handled by this module
  */
-export function isRibbonShape(shapType: string): boolean {
-  return shapType in RIBBON_RENDERERS;
+type IsRibbonShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isRibbonShape({ shapeType }: IsRibbonShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in RIBBON_RENDERERS;
 }
 
 /**
  * Render a ribbon shape
  * @returns SVG string for the shape, or empty string if not a ribbon shape
  */
-export function renderRibbonShape(shapType: string, ctx: RibbonContext): string {
-  const renderer = RIBBON_RENDERERS[shapType];
-  return renderer ? renderer(ctx, shapType) : "";
+type RenderRibbonShapeOptions = {
+  shapeType: string;
+  ctx: RibbonContext;
+};
+
+export function renderRibbonShape({ shapeType, ctx }: RenderRibbonShapeOptions): string {
+  const renderer = RIBBON_RENDERERS[shapeType];
+  return renderer ? renderer({ ctx, shapeType }) : "";
 }

@@ -4,7 +4,11 @@
  * @param arrayBuffer - ArrayBuffer to convert
  * @returns Base64 encoded string
  */
-export function base64ArrayBuffer(arrayBuffer: ArrayBuffer): string {
+type Base64ArrayBufferOptions = {
+  arrayBuffer: ArrayBuffer;
+};
+
+export function base64ArrayBuffer({ arrayBuffer }: Base64ArrayBufferOptions): string {
   let base64 = "";
   const base64Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   const byteArray = new Uint8Array(arrayBuffer);

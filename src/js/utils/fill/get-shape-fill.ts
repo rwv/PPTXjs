@@ -21,21 +21,31 @@ function isXmlNode(value: XmlValue): value is XmlNode {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export async function getShapeFill(
-  shapeNode: XmlNode,
-  parentNode: XmlNode | undefined,
-  isSvgMode: boolean,
-  warpContext: WarpContext,
-  sourceType: string
-): Promise<unknown> {
+type GetShapeFillOptions = {
+  shapeNode: XmlNode;
+  parentNode: XmlNode | undefined;
+  isSvgMode: boolean;
+  warpContext: WarpContext;
+  sourceType: string;
+};
+
+export async function getShapeFill({
+  shapeNode,
+  parentNode,
+  isSvgMode,
+  warpContext,
+  sourceType,
+}: GetShapeFillOptions): Promise<unknown> {
   // 1. presentationML
   // p:spPr/ [a:noFill, solidFill, gradFill, blipFill, pattFill, grpFill]
   // From slide
   // Fill Type:
-  const shapePropsValue = getTextByPathList(shapeNode, ["p:spPr"]);
+  const shapePropsValue = getTextByPathList({ node: shapeNode, path: ["p:spPr"] });
   const shapePropsNode =
     shapePropsValue && isXmlNode(shapePropsValue) ? shapePropsValue : undefined;
-  const fillType = shapePropsNode ? getFillType(shapePropsNode as Record<string, unknown>) : "";
+  const fillType = shapePropsNode
+    ? getFillType({ shapePropsNode: shapePropsNode as Record<string, unknown> })
+    : "";
   let fillValue: unknown;
 
   if (fillType === "NO_FILL") {
@@ -43,36 +53,53 @@ export async function getShapeFill(
   } else if (fillType === "SOLID_FILL") {
     const shapeFillNode = shapePropsNode?.["a:solidFill"];
     if (shapeFillNode && isXmlNode(shapeFillNode)) {
-      fillValue = getSolidFill(shapeFillNode, undefined, undefined, warpContext);
+      fillValue = getSolidFill({
+        fillNode: shapeFillNode,
+        colorMap: undefined,
+        placeholderColor: undefined,
+        warpContext,
+      });
     }
   } else if (fillType === "GRADIENT_FILL") {
     const shapeFillNode = shapePropsNode?.["a:gradFill"];
     if (shapeFillNode && isXmlNode(shapeFillNode)) {
-      fillValue = getGradientFill(shapeFillNode, warpContext);
+      fillValue = getGradientFill({ gradientFillNode: shapeFillNode, warpContext });
     }
   } else if (fillType === "PATTERN_FILL") {
     const shapeFillNode = shapePropsNode?.["a:pattFill"];
     if (shapeFillNode && isXmlNode(shapeFillNode)) {
-      fillValue = getPatternFill(shapeFillNode as Record<string, unknown>, warpContext);
+      fillValue = getPatternFill({
+        patternFillNode: shapeFillNode as Record<string, unknown>,
+        warpContext,
+      });
     }
   } else if (fillType === "PIC_FILL") {
     const shapeFillNode = shapePropsNode?.["a:blipFill"];
     if (shapeFillNode && isXmlNode(shapeFillNode)) {
-      fillValue = await getPicFill(
+      type PicFillOptions = Parameters<typeof getPicFill>[0];
+      fillValue = await getPicFill({
         sourceType,
-        shapeFillNode,
-        warpContext as Parameters<typeof getPicFill>[2]
-      );
+        blipFillNode: shapeFillNode,
+        warpContext: warpContext as PicFillOptions["warpContext"],
+      });
     }
   }
 
   // 2. drawingML namespace
   if (fillValue === undefined) {
-    const fillRefNodeValue = getTextByPathList(shapeNode, ["p:style", "a:fillRef"]);
+    const fillRefNodeValue = getTextByPathList({
+      node: shapeNode,
+      path: ["p:style", "a:fillRef"],
+    });
     const fillRefNode =
       fillRefNodeValue && isXmlNode(fillRefNodeValue) ? fillRefNodeValue : undefined;
     const fillRefIndex = parseInt(
-      String(getTextByPathList(shapeNode, ["p:style", "a:fillRef", "attrs", "idx"]) ?? ""),
+      String(
+        getTextByPathList({
+          node: shapeNode,
+          path: ["p:style", "a:fillRef", "attrs", "idx"],
+        }) ?? ""
+      ),
       10
     );
     if (fillRefIndex === 0 || fillRefIndex === 1000) {
@@ -84,13 +111,18 @@ export async function getShapeFill(
       // <a:bgFillStyleLst>
     }
     if (fillRefNode !== undefined) {
-      fillValue = getSolidFill(fillRefNode, undefined, undefined, warpContext);
+      fillValue = getSolidFill({
+        fillNode: fillRefNode,
+        colorMap: undefined,
+        placeholderColor: undefined,
+        warpContext,
+      });
     }
   }
 
   // 3. is group fill
   if (fillValue === undefined) {
-    const groupFillValue = getTextByPathList(shapeNode, ["p:spPr", "a:grpFill"]);
+    const groupFillValue = getTextByPathList({ node: shapeNode, path: ["p:spPr", "a:grpFill"] });
     const groupFillNode = groupFillValue && isXmlNode(groupFillValue) ? groupFillValue : undefined;
     if (groupFillNode !== undefined && parentNode) {
       // get parent fill style
@@ -101,7 +133,13 @@ export async function getShapeFill(
           : undefined;
       if (groupShapePropsNode) {
         const groupShapeNode: XmlNode = { "p:spPr": groupShapePropsNode };
-        return await getShapeFill(groupShapeNode, shapeNode, isSvgMode, warpContext, sourceType);
+        return await getShapeFill({
+          shapeNode: groupShapeNode,
+          parentNode: shapeNode,
+          isSvgMode,
+          warpContext,
+          sourceType,
+        });
       }
     } else if (fillType === "NO_FILL") {
       return isSvgMode ? "none" : "";

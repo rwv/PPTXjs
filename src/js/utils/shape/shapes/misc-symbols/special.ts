@@ -115,14 +115,10 @@ export function renderLightningBolt(ctx: MiscSymbolContext): string {
 
 export function renderCube(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   const refr = slideFactor;
   let adj = 25000 * refr;
   if (shapAdjst !== undefined) {
@@ -178,14 +174,10 @@ export function renderCube(ctx: MiscSymbolContext): string {
 
 export function renderBevel(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   const refr = slideFactor;
   let adj = 12500 * refr;
   if (shapAdjst !== undefined) {
@@ -254,14 +246,10 @@ export function renderBevel(ctx: MiscSymbolContext): string {
 
 export function renderFoldedCorner(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   const refr = slideFactor;
   let adj = 16667 * refr;
   if (shapAdjst !== undefined) {

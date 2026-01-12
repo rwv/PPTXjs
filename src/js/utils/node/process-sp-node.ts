@@ -18,7 +18,7 @@ import type { WarpContext, XmlNode } from "../../types/pptx-xml";
  * @param parentNode - Parent node for context
  * @param warpContext - Warp object containing slide resources, layout/master tables
  * @param sourceType - Source context (e.g., "slideLayoutBg", "slideMasterBg", "diagramBg")
- * @param shapeContext - Shape type context
+ * @param shapeType - Shape type context
  * @param emuToPx - EMU to pixel conversion factor
  * @param styleTable - Global CSS style table
  * @param fontSizeScale - Font size scaling factor
@@ -26,18 +26,31 @@ import type { WarpContext, XmlNode } from "../../types/pptx-xml";
  * @param isFirstLineBreak - Mutable object tracking first line break state
  * @returns HTML string for the shape
  */
-export async function processSpNode(
-  shapeNode: XmlNode,
-  parentNode: XmlNode | XmlNode[] | undefined,
-  warpContext: WarpContext | Record<string, unknown>,
-  sourceType: string,
-  shapeContext: string,
-  emuToPx: number,
-  styleTable: unknown,
-  fontSizeScale: number,
-  rtlLanguages: string[],
-  isFirstLineBreak: { value: boolean }
-): Promise<string> {
+type ProcessSpNodeOptions = {
+  spNode: XmlNode;
+  parentNodes: XmlNode | XmlNode[] | undefined;
+  warpContext: WarpContext | Record<string, unknown>;
+  sourceType: string;
+  shapeType: string;
+  emuToPx: number;
+  styleTable: unknown;
+  fontSizeScale: number;
+  rtlLanguages: string[];
+  firstLineBreak: { value: boolean };
+};
+
+export async function processSpNode({
+  spNode,
+  parentNodes,
+  warpContext,
+  sourceType,
+  shapeType,
+  emuToPx,
+  styleTable,
+  fontSizeScale,
+  rtlLanguages,
+  firstLineBreak,
+}: ProcessSpNodeOptions): Promise<string> {
   /*
    *  958    <xsd:complexType name="CT_GvmlShape">
    *  959   <xsd:sequence>
@@ -50,43 +63,34 @@ export async function processSpNode(
    *  966 </xsd:complexType>
    */
 
-  const shapeNodeRecord = shapeNode as XmlNode;
+  const shapeNodeRecord = spNode;
   const context = warpContext as WarpContext;
-  const shapeId = getTextByPathList<string | number>(shapeNodeRecord, [
-    "p:nvSpPr",
-    "p:cNvPr",
-    "attrs",
-    "id",
-  ]);
-  const shapeName = getTextByPathList<string>(shapeNodeRecord, [
-    "p:nvSpPr",
-    "p:cNvPr",
-    "attrs",
-    "name",
-  ]);
-  const placeholderIndex = getTextByPathList<string | number>(shapeNodeRecord, [
-    "p:nvSpPr",
-    "p:nvPr",
-    "p:ph",
-    "attrs",
-    "idx",
-  ]);
-  let placeholderType = getTextByPathList<string>(shapeNodeRecord, [
-    "p:nvSpPr",
-    "p:nvPr",
-    "p:ph",
-    "attrs",
-    "type",
-  ]);
-  const zIndexOrder = getTextByPathList<string | number>(shapeNodeRecord, ["attrs", "order"]);
+  const shapeId = getTextByPathList<string | number>({
+    node: shapeNodeRecord,
+    path: ["p:nvSpPr", "p:cNvPr", "attrs", "id"],
+  });
+  const shapeName = getTextByPathList<string>({
+    node: shapeNodeRecord,
+    path: ["p:nvSpPr", "p:cNvPr", "attrs", "name"],
+  });
+  const placeholderIndex = getTextByPathList<string | number>({
+    node: shapeNodeRecord,
+    path: ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "idx"],
+  });
+  let placeholderType = getTextByPathList<string>({
+    node: shapeNodeRecord,
+    path: ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"],
+  });
+  const zIndexOrder = getTextByPathList<string | number>({
+    node: shapeNodeRecord,
+    path: ["attrs", "order"],
+  });
   let isUserDrawnBackground;
   if (sourceType === "slideLayoutBg" || sourceType === "slideMasterBg") {
-    const userDrawn = getTextByPathList<string>(shapeNodeRecord, [
-      "p:nvSpPr",
-      "p:nvPr",
-      "attrs",
-      "userDrawn",
-    ]);
+    const userDrawn = getTextByPathList<string>({
+      node: shapeNodeRecord,
+      path: ["p:nvSpPr", "p:nvPr", "attrs", "userDrawn"],
+    });
     if (userDrawn === "1") {
       isUserDrawnBackground = true;
     } else {
@@ -113,26 +117,21 @@ export async function processSpNode(
   }
 
   if (placeholderType === undefined) {
-    const txBoxVal = getTextByPathList<string>(shapeNodeRecord, [
-      "p:nvSpPr",
-      "p:cNvSpPr",
-      "attrs",
-      "txBox",
-    ]);
+    const txBoxVal = getTextByPathList<string>({
+      node: shapeNodeRecord,
+      path: ["p:nvSpPr", "p:cNvSpPr", "attrs", "txBox"],
+    });
     if (txBoxVal === "1") {
       placeholderType = "textBox";
     }
   }
   if (placeholderType === undefined) {
-    placeholderType = getTextByPathList<string>(layoutShapeNode, [
-      "p:nvSpPr",
-      "p:nvPr",
-      "p:ph",
-      "attrs",
-      "type",
-    ]);
+    placeholderType = getTextByPathList<string>({
+      node: layoutShapeNode,
+      path: ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"],
+    });
     if (placeholderType === undefined) {
-      //placeholderType = getTextByPathList(masterShapeNode, ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"]);
+      //placeholderType = getTextByPathList({ node: masterShapeNode, path: ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"] });
       if (sourceType === "diagramBg") {
         placeholderType = "diagram";
       } else {
@@ -141,9 +140,9 @@ export async function processSpNode(
     }
   }
   //console.log("processSpNode type:", placeholderType, "idx:", placeholderIndex);
-  return await genShape(
-    shapeNode,
-    parentNode,
+  return await genShape({
+    shapeNode: shapeNodeRecord,
+    parentNode: parentNodes,
     layoutShapeNode,
     masterShapeNode,
     shapeId,
@@ -153,12 +152,12 @@ export async function processSpNode(
     zIndexOrder,
     warpContext,
     isUserDrawnBackground,
-    shapeContext,
+    shapeType,
     sourceType,
     emuToPx,
     styleTable,
     fontSizeScale,
     rtlLanguages,
-    isFirstLineBreak
-  );
+    firstLineBreak,
+  });
 }

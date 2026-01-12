@@ -1,5 +1,11 @@
 import tinycolor from "tinycolor2";
 
+type ApplyLumModOptions = {
+  colorValue: string;
+  multiplier: number | string;
+  isAlpha: boolean;
+};
+
 /**
  * Applies a luminance multiplier to a color
  *
@@ -8,11 +14,7 @@ import tinycolor from "tinycolor2";
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)
  */
-export function applyLumMod(
-  colorValue: string,
-  multiplier: number | string,
-  isAlpha: boolean
-): string {
+export function applyLumMod({ colorValue, multiplier, isAlpha }: ApplyLumModOptions): string {
   const multiplierValue = typeof multiplier === "number" ? multiplier : parseFloat(multiplier);
   const color = tinycolor(colorValue).toHsl();
 

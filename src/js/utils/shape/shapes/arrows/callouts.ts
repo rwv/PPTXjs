@@ -3,22 +3,25 @@ import type { XmlNode } from "../../../../types/pptx-xml";
 import type { ArrowShapeContext } from "./types";
 import { createPath } from "./helpers";
 
-const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+type ArrowRenderOptions = {
+  ctx: ArrowShapeContext;
+  shapeType: string;
+};
+
+const getShapeAdjustments = ({ node }: { node: XmlNode }): XmlNode[] => {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 };
 
 /**
  * Render rightArrowCallout shape
  */
-export function renderRightArrowCallout(ctx: ArrowShapeContext): string {
+export function renderRightArrowCallout({ ctx }: ArrowRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let adj1 = 25000 * slideFactor;
   let adj2 = 25000 * slideFactor;
   let adj3 = 25000 * slideFactor;
@@ -28,24 +31,27 @@ export function renderRightArrowCallout(ctx: ArrowShapeContext): string {
   const cnstVal3 = 200000 * slideFactor;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj3") {
-      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj4") {
-      const sAdj4 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj4 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj4 !== undefined) {
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -78,9 +84,9 @@ export function renderRightArrowCallout(ctx: ArrowShapeContext): string {
   return createPath(d, ctx);
 }
 
-export function renderDownArrowCallout(ctx: ArrowShapeContext): string {
+export function renderDownArrowCallout({ ctx }: ArrowRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let adj1 = 25000 * slideFactor;
   let adj2 = 25000 * slideFactor;
   let adj3 = 25000 * slideFactor;
@@ -90,24 +96,27 @@ export function renderDownArrowCallout(ctx: ArrowShapeContext): string {
   const cnstVal3 = 200000 * slideFactor;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj3") {
-      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj4") {
-      const sAdj4 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj4 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj4 !== undefined) {
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -140,9 +149,9 @@ export function renderDownArrowCallout(ctx: ArrowShapeContext): string {
   return createPath(d, ctx);
 }
 
-export function renderLeftArrowCallout(ctx: ArrowShapeContext): string {
+export function renderLeftArrowCallout({ ctx }: ArrowRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let adj1 = 25000 * slideFactor;
   let adj2 = 25000 * slideFactor;
   let adj3 = 25000 * slideFactor;
@@ -152,24 +161,27 @@ export function renderLeftArrowCallout(ctx: ArrowShapeContext): string {
   const cnstVal3 = 200000 * slideFactor;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj3") {
-      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj4") {
-      const sAdj4 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj4 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj4 !== undefined) {
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -201,9 +213,9 @@ export function renderLeftArrowCallout(ctx: ArrowShapeContext): string {
   return createPath(d, ctx);
 }
 
-export function renderUpArrowCallout(ctx: ArrowShapeContext): string {
+export function renderUpArrowCallout({ ctx }: ArrowRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let adj1 = 25000 * slideFactor;
   let adj2 = 25000 * slideFactor;
   let adj3 = 25000 * slideFactor;
@@ -213,24 +225,27 @@ export function renderUpArrowCallout(ctx: ArrowShapeContext): string {
   const cnstVal3 = 200000 * slideFactor;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj3") {
-      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj4") {
-      const sAdj4 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj4 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj4 !== undefined) {
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -262,9 +277,9 @@ export function renderUpArrowCallout(ctx: ArrowShapeContext): string {
   return createPath(d, ctx);
 }
 
-export function renderLeftRightArrowCallout(ctx: ArrowShapeContext): string {
+export function renderLeftRightArrowCallout({ ctx }: ArrowRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let adj1 = 25000 * slideFactor;
   let adj2 = 25000 * slideFactor;
   let adj3 = 25000 * slideFactor;
@@ -274,24 +289,27 @@ export function renderLeftRightArrowCallout(ctx: ArrowShapeContext): string {
   const cnstVal3 = 200000 * slideFactor;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj3") {
-      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj4") {
-      const sAdj4 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj4 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj4 !== undefined) {
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -326,9 +344,9 @@ export function renderLeftRightArrowCallout(ctx: ArrowShapeContext): string {
   return createPath(d, ctx);
 }
 
-export function renderQuadArrowCallout(ctx: ArrowShapeContext): string {
+export function renderQuadArrowCallout({ ctx }: ArrowRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let adj1 = 18515 * slideFactor;
   let adj2 = 18515 * slideFactor;
   let adj3 = 18515 * slideFactor;
@@ -338,24 +356,27 @@ export function renderQuadArrowCallout(ctx: ArrowShapeContext): string {
   const cnstVal3 = 200000 * slideFactor;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj3") {
-      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj4") {
-      const sAdj4 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj4 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj4 !== undefined) {
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }
@@ -396,9 +417,9 @@ export function renderQuadArrowCallout(ctx: ArrowShapeContext): string {
   return createPath(d, ctx);
 }
 
-export function renderUpDownArrowCallout(ctx: ArrowShapeContext): string {
+export function renderUpDownArrowCallout({ ctx }: ArrowRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let adj1 = 25000 * slideFactor;
   let adj2 = 25000 * slideFactor;
   let adj3 = 25000 * slideFactor;
@@ -408,24 +429,27 @@ export function renderUpDownArrowCallout(ctx: ArrowShapeContext): string {
   const cnstVal3 = 200000 * slideFactor;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj3") {
-      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj4") {
-      const sAdj4 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj4 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj4 !== undefined) {
         adj4 = parseInt(sAdj4.substr(4)) * slideFactor;
       }

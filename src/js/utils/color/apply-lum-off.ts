@@ -1,5 +1,11 @@
 import tinycolor from "tinycolor2";
 
+type ApplyLumOffOptions = {
+  colorValue: string;
+  offset: number | string;
+  isAlpha: boolean;
+};
+
 /**
  * Applies a luminance offset to a color
  *
@@ -8,7 +14,7 @@ import tinycolor from "tinycolor2";
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)
  */
-export function applyLumOff(colorValue: string, offset: number | string, isAlpha: boolean): string {
+export function applyLumOff({ colorValue, offset, isAlpha }: ApplyLumOffOptions): string {
   const offsetValue = typeof offset === "number" ? offset : parseFloat(offset);
   const color = tinycolor(colorValue).toHsl();
 

@@ -31,7 +31,7 @@ function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
  * @param sourceType - Source context
  * @param shapeType - Shape type context
  * @param tableStyles - Table styles from presentation
- * @param isFirstLineBreak - Object {value: boolean} for line break state
+ * @param firstLineBreak - Object {value: boolean} for line break state
  * @param styleTable - CSS style table
  * @param rtlLanguages - RTL language codes
  * @param emuToPx - EMU to pixel conversion factor
@@ -41,29 +41,43 @@ function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
  * @param renderSettings - Plugin settings
  * @returns HTML string for the graphic frame content
  */
-export async function processGraphicFrameNode(
-  graphicFrameNode: XmlNode,
-  warpContext: WarpContext,
-  sourceType: string,
-  shapeType: string,
-  tableStyles: unknown,
-  isFirstLineBreak: { value: boolean },
-  styleTable: unknown,
-  rtlLanguages: string[],
-  emuToPx: number,
-  fontSizeScale: number,
-  chartIdCounter: { value: number },
-  messageQueue: unknown,
-  renderSettings: { mediaProcess: boolean } & Record<string, unknown>
-): Promise<string> {
+type ProcessGraphicFrameNodeOptions = {
+  graphicFrameNode: XmlNode;
+  warpContext: WarpContext;
+  sourceType: string;
+  shapeType: string;
+  tableStyles: unknown;
+  firstLineBreak: { value: boolean };
+  styleTable: unknown;
+  rtlLanguages: string[];
+  emuToPx: number;
+  fontSizeScale: number;
+  chartIdCounter: { value: number };
+  messageQueue: unknown;
+  renderSettings: { mediaProcess: boolean } & Record<string, unknown>;
+};
+
+export async function processGraphicFrameNode({
+  graphicFrameNode,
+  warpContext,
+  sourceType,
+  shapeType,
+  tableStyles,
+  firstLineBreak,
+  styleTable,
+  rtlLanguages,
+  emuToPx,
+  fontSizeScale,
+  chartIdCounter,
+  messageQueue,
+  renderSettings,
+}: ProcessGraphicFrameNodeOptions): Promise<string> {
   let result = "";
   const chartIdState = chartIdCounter ?? { value: 0 };
-  const graphicTypeUriValue = getTextByPathList<string | number>(graphicFrameNode, [
-    "a:graphic",
-    "a:graphicData",
-    "attrs",
-    "uri",
-  ]);
+  const graphicTypeUriValue = getTextByPathList<string | number>({
+    node: graphicFrameNode,
+    path: ["a:graphic", "a:graphicData", "attrs", "uri"],
+  });
   const graphicTypeUri =
     graphicTypeUriValue !== undefined ? String(graphicTypeUriValue) : undefined;
   const chartMessageQueue: Array<Record<string, unknown>> = Array.isArray(messageQueue)
@@ -72,72 +86,71 @@ export async function processGraphicFrameNode(
 
   switch (graphicTypeUri) {
     case "http://schemas.openxmlformats.org/drawingml/2006/table":
-      result = await genTable(
-        graphicFrameNode,
+      result = await genTable({
+        node: graphicFrameNode,
         warpContext,
         tableStyles,
-        isFirstLineBreak,
+        firstLineBreak,
         styleTable,
         rtlLanguages,
         emuToPx,
-        fontSizeScale
-      );
+        fontSizeScale,
+      });
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/chart":
-      [result, chartIdState.value] = await genChart(
-        graphicFrameNode,
+      [result, chartIdState.value] = await genChart({
+        chartNode: graphicFrameNode,
         warpContext,
-        chartIdState.value,
-        chartMessageQueue,
-        emuToPx
-      );
+        chartId: chartIdState.value,
+        messageQueue: chartMessageQueue,
+        emuToPx,
+      });
       break;
     case "http://schemas.openxmlformats.org/drawingml/2006/diagram":
-      result = await genDiagram(
-        graphicFrameNode,
+      result = await genDiagram({
+        diagramNode: graphicFrameNode,
         warpContext,
-        sourceType,
         shapeType,
         emuToPx,
         styleTable,
-        fontSizeScale,
+        fontSizeFactor: fontSizeScale,
         rtlLanguages,
-        isFirstLineBreak
-      );
+        firstLineBreak,
+      });
       break;
     case "http://schemas.openxmlformats.org/presentationml/2006/ole": {
       //result = genDiagram(graphicFrameNode, warpContext, sourceType, shapeType);
       let oleObjectNode = asXmlNode(
-        getTextByPathList(graphicFrameNode, [
-          "a:graphic",
-          "a:graphicData",
-          "mc:AlternateContent",
-          "mc:Fallback",
-          "p:oleObj",
-        ])
+        getTextByPathList({
+          node: graphicFrameNode,
+          path: ["a:graphic", "a:graphicData", "mc:AlternateContent", "mc:Fallback", "p:oleObj"],
+        })
       );
 
       if (oleObjectNode === undefined) {
         oleObjectNode = asXmlNode(
-          getTextByPathList(graphicFrameNode, ["a:graphic", "a:graphicData", "p:oleObj"])
+          getTextByPathList({
+            node: graphicFrameNode,
+            path: ["a:graphic", "a:graphicData", "p:oleObj"],
+          })
         );
       }
       //console.log("node:", node, "oleObjectNode:", oleObjectNode)
       if (oleObjectNode !== undefined) {
-        result = await processGroupSpNode(
-          oleObjectNode,
+        result = await processGroupSpNode({
+          groupNode: oleObjectNode,
           warpContext,
           sourceType,
           emuToPx,
           tableStyles,
-          isFirstLineBreak,
+          firstLineBreak,
           styleTable,
           rtlLanguages,
           fontSizeScale,
           chartIdCounter,
           messageQueue,
-          renderSettings
-        );
+          renderSettings,
+        });
       }
       break;
     }

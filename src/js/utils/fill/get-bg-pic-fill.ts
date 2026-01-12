@@ -3,12 +3,21 @@ import { getSolidFill } from "../color/get-solid-fill";
 import { getPicFill } from "./get-pic-fill";
 import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
-type PicFillWarpObj = Parameters<typeof getPicFill>[2];
-type SolidFillNode = Parameters<typeof getSolidFill>[0];
+type PicFillOptions = Parameters<typeof getPicFill>[0];
+type PicFillWarpObj = PicFillOptions["warpContext"];
+type SolidFillOptions = Parameters<typeof getSolidFill>[0];
+type SolidFillNode = SolidFillOptions["fillNode"];
 
 function isXmlNode(value: XmlValue): value is XmlNode {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
+
+type GetBgPicFillOptions = {
+  backgroundProps: XmlNode;
+  sourceType: string;
+  warpContext: PicFillWarpObj;
+  placeholderColor: string | undefined;
+};
 
 /**
  * Extracts background picture fill with advanced styling options
@@ -29,24 +38,27 @@ function isXmlNode(value: XmlValue): value is XmlNode {
  * @param placeholderColor - Placeholder color for theme color resolution
  * @returns CSS background style string with z-index
  */
-export async function getBgPicFill(
-  backgroundProps: XmlNode,
-  sourceType: string,
-  warpContext: PicFillWarpObj,
-  placeholderColor: string | undefined
-): Promise<string> {
+export async function getBgPicFill({
+  backgroundProps,
+  sourceType,
+  warpContext,
+  placeholderColor,
+}: GetBgPicFillOptions): Promise<string> {
   const blipFillNodeValue = backgroundProps["a:blipFill"];
   const blipFillNode = isXmlNode(blipFillNodeValue) ? blipFillNodeValue : undefined;
   if (blipFillNode === undefined) {
     return "";
   }
-  const pictureFillDataUrl = await getPicFill(sourceType, blipFillNode, warpContext);
+  const pictureFillDataUrl = await getPicFill({ sourceType, blipFillNode, warpContext });
   const zIndexOrder = backgroundProps.attrs?.order;
-  const blipNodeValue = getTextByPathList(backgroundProps, ["a:blipFill", "a:blip"]);
+  const blipNodeValue = getTextByPathList({
+    node: backgroundProps,
+    path: ["a:blipFill", "a:blip"],
+  });
   const blipNode = blipNodeValue && isXmlNode(blipNodeValue) ? blipNodeValue : undefined;
 
   const duotoneNodeValue =
-    blipNode !== undefined ? getTextByPathList(blipNode, ["a:duotone"]) : undefined;
+    blipNode !== undefined ? getTextByPathList({ node: blipNode, path: ["a:duotone"] }) : undefined;
   const duotoneNode =
     duotoneNodeValue && isXmlNode(duotoneNodeValue) ? duotoneNodeValue : undefined;
   if (duotoneNode !== undefined) {
@@ -56,19 +68,21 @@ export async function getBgPicFill(
         const colorNode: XmlNode = {};
         colorNode[colorType] = duotoneNode[colorType];
         duotonePalette.push(
-          getSolidFill(
-            colorNode as SolidFillNode,
-            undefined,
+          getSolidFill({
+            fillNode: colorNode as SolidFillNode,
+            colorMap: undefined,
             placeholderColor,
-            warpContext as WarpContext
-          )
+            warpContext: warpContext as WarpContext,
+          })
         );
       }
     });
   }
 
   const alphaModFixValue =
-    blipNode !== undefined ? getTextByPathList(blipNode, ["a:alphaModFix", "attrs"]) : undefined;
+    blipNode !== undefined
+      ? getTextByPathList({ node: blipNode, path: ["a:alphaModFix", "attrs"] })
+      : undefined;
   const alphaModFixNode =
     alphaModFixValue && isXmlNode(alphaModFixValue) ? alphaModFixValue : undefined;
   let imageOpacityStyle = "";
@@ -81,18 +95,27 @@ export async function getBgPicFill(
     imageOpacityStyle = "opacity:" + opacityAmount + ";";
   }
 
-  const tileAttrsValue = getTextByPathList(backgroundProps, ["a:blipFill", "a:tile", "attrs"]);
+  const tileAttrsValue = getTextByPathList({
+    node: backgroundProps,
+    path: ["a:blipFill", "a:tile", "attrs"],
+  });
   const tileAttrs = tileAttrsValue && isXmlNode(tileAttrsValue) ? tileAttrsValue : undefined;
   let backgroundCss = "";
   if (tileAttrs !== undefined && tileAttrs["sx"] !== undefined) {
     backgroundCss += "background-repeat: round;";
   }
 
-  const stretchNodeValue = getTextByPathList(backgroundProps, ["a:blipFill", "a:stretch"]);
+  const stretchNodeValue = getTextByPathList({
+    node: backgroundProps,
+    path: ["a:blipFill", "a:stretch"],
+  });
   const stretchNode =
     stretchNodeValue && isXmlNode(stretchNodeValue) ? stretchNodeValue : undefined;
   if (stretchNode !== undefined) {
-    const fillRectAttrsValue = getTextByPathList(stretchNode, ["a:fillRect", "attrs"]);
+    const fillRectAttrsValue = getTextByPathList({
+      node: stretchNode,
+      path: ["a:fillRect", "attrs"],
+    });
     const fillRectAttrs =
       fillRectAttrsValue && isXmlNode(fillRectAttrsValue) ? fillRectAttrsValue : undefined;
     backgroundCss += "background-repeat: no-repeat;";

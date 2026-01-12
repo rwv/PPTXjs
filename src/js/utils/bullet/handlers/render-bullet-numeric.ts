@@ -8,15 +8,25 @@
  * - Bullet type tracking (arabicPeriod, alphaLcPeriod, romanLcPeriod, etc.)
  */
 
-export function renderBulletNumeric(
-  bulletColor: string[],
-  bulletSize: string,
-  marginLeftStyle: string,
-  marginRightStyle: string,
-  isRtl: boolean,
-  bulletType: string,
-  bulletLevel: number
-): string {
+type RenderBulletNumericOptions = {
+  bulletColor: string[];
+  bulletSize: string;
+  marginLeftStyle: string;
+  marginRightStyle: string;
+  isRtl: boolean;
+  bulletNumberType: string;
+  level: number;
+};
+
+export function renderBulletNumeric({
+  bulletColor,
+  bulletSize,
+  marginLeftStyle,
+  marginRightStyle,
+  isRtl,
+  bulletNumberType,
+  level,
+}: RenderBulletNumericOptions): string {
   let bullet =
     "<div style='height: 100%;" +
     marginLeftStyle +
@@ -36,9 +46,9 @@ export function renderBulletNumeric(
 
   bullet +=
     "' data-bulltname = '" +
-    bulletType +
+    bulletNumberType +
     "' data-bulltlvl = '" +
-    bulletLevel +
+    level +
     "' class='numeric-bullet-style'></div>";
 
   return bullet;

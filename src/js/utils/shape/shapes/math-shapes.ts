@@ -47,15 +47,24 @@ const MATH_SHAPE_RENDERERS: Record<string, (ctx: MathShapeContext) => string> = 
 /**
  * Check if a shape type is a math shape handled by this module
  */
-export function isMathShape(shapType: string): boolean {
-  return shapType in MATH_SHAPE_RENDERERS;
+type IsMathShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isMathShape({ shapeType }: IsMathShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in MATH_SHAPE_RENDERERS;
 }
 
 /**
  * Render a math shape
  * @returns SVG string for the shape, or empty string if not a math shape
  */
-export function renderMathShapeType(shapType: string, ctx: MathShapeContext): string {
-  const renderer = MATH_SHAPE_RENDERERS[shapType];
+type RenderMathShapeTypeOptions = {
+  shapeType: string;
+  ctx: MathShapeContext;
+};
+
+export function renderMathShapeType({ shapeType, ctx }: RenderMathShapeTypeOptions): string {
+  const renderer = MATH_SHAPE_RENDERERS[shapeType];
   return renderer ? renderer(ctx) : "";
 }

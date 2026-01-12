@@ -1,168 +1,174 @@
-export function getLinePattern(
-  prst: string,
-  bgColor: string,
-  fgColor: string
-): string[] | undefined {
-  switch (prst) {
+type GetLinePatternOptions = {
+  patternPreset: string;
+  backgroundColor: string;
+  foregroundColor: string;
+};
+
+export function getLinePattern({
+  patternPreset,
+  backgroundColor,
+  foregroundColor,
+}: GetLinePatternOptions): string[] | undefined {
+  switch (patternPreset) {
     case "wdUpDiag":
       return [
         "repeating-linear-gradient(-45deg, transparent 1px , transparent 4px, #" +
-          fgColor +
+          foregroundColor +
           " 7px)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
       ];
     case "dkUpDiag":
       return [
         "repeating-linear-gradient(-45deg, transparent 1px , #" +
-          bgColor +
+          backgroundColor +
           " 5px)" +
           "#" +
-          fgColor +
+          foregroundColor +
           ";",
       ];
     case "ltUpDiag":
       return [
         "repeating-linear-gradient(-45deg, transparent 1px , transparent 2px, #" +
-          fgColor +
+          foregroundColor +
           " 4px)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
       ];
     case "wdDnDiag":
       return [
         "repeating-linear-gradient(45deg, transparent 1px , transparent 4px, #" +
-          fgColor +
+          foregroundColor +
           " 7px)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
       ];
     case "dkDnDiag":
       return [
         "repeating-linear-gradient(45deg, transparent 1px , #" +
-          bgColor +
+          backgroundColor +
           " 5px)" +
           "#" +
-          fgColor +
+          foregroundColor +
           ";",
       ];
     case "ltDnDiag":
       return [
         "repeating-linear-gradient(45deg, transparent 1px , transparent 2px, #" +
-          fgColor +
+          foregroundColor +
           " 4px)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
       ];
     case "dkHorz":
       return [
         "repeating-linear-gradient(0deg, transparent 1px , transparent 2px, #" +
-          bgColor +
+          backgroundColor +
           " 7px)" +
           "#" +
-          fgColor +
+          foregroundColor +
           ";",
       ];
     case "ltHorz":
       return [
         "repeating-linear-gradient(0deg, transparent 1px , transparent 5px, #" +
-          fgColor +
+          foregroundColor +
           " 7px)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
       ];
     case "narHorz":
       return [
         "repeating-linear-gradient(0deg, transparent 1px , transparent 2px, #" +
-          fgColor +
+          foregroundColor +
           " 4px)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
       ];
     case "dkVert":
       return [
         "repeating-linear-gradient(90deg, transparent 1px , transparent 2px, #" +
-          bgColor +
+          backgroundColor +
           " 7px)" +
           "#" +
-          fgColor +
+          foregroundColor +
           ";",
       ];
     case "ltVert":
       return [
         "repeating-linear-gradient(90deg, transparent 1px , transparent 5px, #" +
-          fgColor +
+          foregroundColor +
           " 7px)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
       ];
     case "narVert":
       return [
         "repeating-linear-gradient(90deg, transparent 1px , transparent 2px, #" +
-          fgColor +
+          foregroundColor +
           " 4px)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
       ];
     case "dashUpDiag":
       return [
         "repeating-linear-gradient(152deg, #" +
-          fgColor +
+          foregroundColor +
           ", #" +
-          fgColor +
+          foregroundColor +
           " 5% , transparent 0, transparent 70%)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 4px",
       ];
     case "dashDnDiag":
       return [
         "repeating-linear-gradient(45deg, #" +
-          fgColor +
+          foregroundColor +
           ", #" +
-          fgColor +
+          foregroundColor +
           " 5% , transparent 0, transparent 70%)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 4px",
       ];
     case "dashVert":
       return [
         "linear-gradient(0deg,  #" +
-          bgColor +
+          backgroundColor +
           " 30%, transparent 30%)," +
           "linear-gradient(90deg,transparent, transparent 40%, #" +
-          fgColor +
+          foregroundColor +
           " 40%, #" +
-          fgColor +
+          foregroundColor +
           " 60% , transparent 60%)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 4px",
       ];
     case "dashHorz":
       return [
         "linear-gradient(90deg,  #" +
-          bgColor +
+          backgroundColor +
           " 30%, transparent 30%)," +
           "linear-gradient(0deg,transparent, transparent 40%, #" +
-          fgColor +
+          foregroundColor +
           " 40%, #" +
-          fgColor +
+          foregroundColor +
           " 60% , transparent 60%)" +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 4px",
       ];

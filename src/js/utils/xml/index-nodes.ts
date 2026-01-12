@@ -1,13 +1,17 @@
 import { getTextByPathList } from "../object";
 import type { XmlNode } from "../../types/pptx-xml";
 
+type IndexNodesOptions = {
+  content: Record<string, XmlNode>;
+};
+
 /**
  * Build ID, index, and type lookup tables for slide nodes
  *
  * @param content - Slide XML content object
  * @returns Object with idTable, idxTable, and typeTable lookup maps
  */
-export function indexNodes(content: Record<string, XmlNode>): {
+export function indexNodes({ content }: IndexNodesOptions): {
   idTable: Record<string, XmlNode>;
   idxTable: Record<string, XmlNode>;
   typeTable: Record<string, XmlNode>;
@@ -32,23 +36,18 @@ export function indexNodes(content: Record<string, XmlNode>): {
     if (Array.isArray(shapeNode)) {
       for (let nodeIndex = 0; nodeIndex < shapeNode.length; nodeIndex += 1) {
         const nonVisualPropertiesNode = (shapeNode[nodeIndex] as XmlNode)["p:nvSpPr"] as XmlNode;
-        const shapeId = getTextByPathList<string>(nonVisualPropertiesNode, [
-          "p:cNvPr",
-          "attrs",
-          "id",
-        ]);
-        const placeholderIndex = getTextByPathList<string>(nonVisualPropertiesNode, [
-          "p:nvPr",
-          "p:ph",
-          "attrs",
-          "idx",
-        ]);
-        const placeholderType = getTextByPathList<string>(nonVisualPropertiesNode, [
-          "p:nvPr",
-          "p:ph",
-          "attrs",
-          "type",
-        ]);
+        const shapeId = getTextByPathList<string>({
+          node: nonVisualPropertiesNode,
+          path: ["p:cNvPr", "attrs", "id"],
+        });
+        const placeholderIndex = getTextByPathList<string>({
+          node: nonVisualPropertiesNode,
+          path: ["p:nvPr", "p:ph", "attrs", "idx"],
+        });
+        const placeholderType = getTextByPathList<string>({
+          node: nonVisualPropertiesNode,
+          path: ["p:nvPr", "p:ph", "attrs", "type"],
+        });
 
         if (shapeId !== undefined) {
           idTable[shapeId] = shapeNode[nodeIndex];
@@ -62,23 +61,18 @@ export function indexNodes(content: Record<string, XmlNode>): {
       }
     } else {
       const nonVisualPropertiesNode = (shapeNode as XmlNode)["p:nvSpPr"] as XmlNode;
-      const shapeId = getTextByPathList<string>(nonVisualPropertiesNode, [
-        "p:cNvPr",
-        "attrs",
-        "id",
-      ]);
-      const placeholderIndex = getTextByPathList<string>(nonVisualPropertiesNode, [
-        "p:nvPr",
-        "p:ph",
-        "attrs",
-        "idx",
-      ]);
-      const placeholderType = getTextByPathList<string>(nonVisualPropertiesNode, [
-        "p:nvPr",
-        "p:ph",
-        "attrs",
-        "type",
-      ]);
+      const shapeId = getTextByPathList<string>({
+        node: nonVisualPropertiesNode,
+        path: ["p:cNvPr", "attrs", "id"],
+      });
+      const placeholderIndex = getTextByPathList<string>({
+        node: nonVisualPropertiesNode,
+        path: ["p:nvPr", "p:ph", "attrs", "idx"],
+      });
+      const placeholderType = getTextByPathList<string>({
+        node: nonVisualPropertiesNode,
+        path: ["p:nvPr", "p:ph", "attrs", "type"],
+      });
 
       if (shapeId !== undefined) {
         idTable[shapeId] = shapeNode;

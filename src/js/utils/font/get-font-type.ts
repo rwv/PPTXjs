@@ -9,6 +9,13 @@ function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
   return value !== undefined && isXmlNode(value) ? value : undefined;
 }
 
+type GetFontTypeOptions = {
+  textRunNode: XmlNode;
+  shapeType: string | undefined;
+  warpContext: WarpContext;
+  paragraphFontStyle: XmlNode | undefined;
+};
+
 /**
  * Determines the font typeface (font family) for a PPTX text node
  *
@@ -22,34 +29,35 @@ function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
  * @param paragraphFontStyle - Paragraph font style (may specify font index)
  * @returns Font family name or "inherit"
  */
-export function getFontType(
-  textRunNode: XmlNode,
-  shapeType: string | undefined,
-  warpContext: WarpContext,
-  paragraphFontStyle: XmlNode | undefined
-): string {
-  const typefaceValueRaw = getTextByPathList<string | number>(textRunNode, [
-    "a:rPr",
-    "a:latin",
-    "attrs",
-    "typeface",
-  ]);
+export function getFontType({
+  textRunNode,
+  shapeType,
+  warpContext,
+  paragraphFontStyle,
+}: GetFontTypeOptions): string {
+  const typefaceValueRaw = getTextByPathList<string | number>({
+    node: textRunNode,
+    path: ["a:rPr", "a:latin", "attrs", "typeface"],
+  });
   let typefaceValue = typefaceValueRaw !== undefined ? String(typefaceValueRaw) : undefined;
 
   if (typefaceValue === undefined) {
     let fontIndexKey = "";
     let fontGroupKey = "";
     if (paragraphFontStyle !== undefined) {
-      const fontIndexValue = getTextByPathList<string | number>(paragraphFontStyle, [
-        "attrs",
-        "idx",
-      ]);
+      const fontIndexValue = getTextByPathList<string | number>({
+        node: paragraphFontStyle,
+        path: ["attrs", "idx"],
+      });
       if (fontIndexValue !== undefined) {
         fontIndexKey = String(fontIndexValue);
       }
     }
     const fontSchemeNodeValue = warpContext.themeContent
-      ? getTextByPathList(warpContext.themeContent, ["a:theme", "a:themeElements", "a:fontScheme"])
+      ? getTextByPathList({
+          node: warpContext.themeContent,
+          path: ["a:theme", "a:themeElements", "a:fontScheme"],
+        })
       : undefined;
     const fontSchemeNode = asXmlNode(fontSchemeNodeValue);
     if (fontIndexKey === "") {
@@ -62,12 +70,10 @@ export function getFontType(
     fontGroupKey = "a:" + fontIndexKey + "Font";
     const fontTypefaceValue =
       fontSchemeNode !== undefined
-        ? getTextByPathList<string | number>(fontSchemeNode, [
-            fontGroupKey,
-            "a:latin",
-            "attrs",
-            "typeface",
-          ])
+        ? getTextByPathList<string | number>({
+            node: fontSchemeNode,
+            path: [fontGroupKey, "a:latin", "attrs", "typeface"],
+          })
         : undefined;
     typefaceValue = fontTypefaceValue !== undefined ? String(fontTypefaceValue) : undefined;
   }

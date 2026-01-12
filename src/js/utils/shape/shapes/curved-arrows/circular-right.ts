@@ -21,29 +21,32 @@ export function renderCircularArrow(ctx: CurvedArrowContext): string {
   let sAdj5,
     adj5 = 12500 * slideFactor;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = ((parseInt(sAdj2.substr(4)) / 60000) * Math.PI) / 180;
       }
     } else if (sAdj_name === "adj3") {
-      sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = ((parseInt(sAdj3.substr(4)) / 60000) * Math.PI) / 180;
       }
     } else if (sAdj_name === "adj4") {
-      sAdj4 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj4 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj4 !== undefined) {
         adj4 = ((parseInt(sAdj4.substr(4)) / 60000) * Math.PI) / 180;
       }
     } else if (sAdj_name === "adj5") {
-      sAdj5 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj5 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj5 !== undefined) {
         adj5 = parseInt(sAdj5.substr(4)) * slideFactor;
       }

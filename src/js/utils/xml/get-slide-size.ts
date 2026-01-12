@@ -1,6 +1,12 @@
 import { readXmlFile } from "./read-xml-file";
 import type { PptxArchive } from "../../archive/pptx-archive";
 
+type GetSlideSizeOptions = {
+  archive: PptxArchive;
+  slideFactor: number;
+  settings: { incSlide: { width: number; height: number } };
+};
+
 /**
  * Get slide size from presentation.xml and read default text style
  *
@@ -9,13 +15,18 @@ import type { PptxArchive } from "../../archive/pptx-archive";
  * @param settings - Settings object containing incSlide dimensions
  * @returns Object containing width, height, appVersion, and defaultTextStyle
  */
-export async function getSlideSizeAndSetDefaultTextStyle(
-  archive: PptxArchive,
-  slideFactor: number,
-  settings: { incSlide: { width: number; height: number } }
-): Promise<{ width: number; height: number; appVersion: number; defaultTextStyle: unknown }> {
+export async function getSlideSizeAndSetDefaultTextStyle({
+  archive,
+  slideFactor,
+  settings,
+}: GetSlideSizeOptions): Promise<{
+  width: number;
+  height: number;
+  appVersion: number;
+  defaultTextStyle: unknown;
+}> {
   //get app version
-  const app = await readXmlFile(archive, "docProps/app.xml");
+  const app = await readXmlFile({ archive, filename: "docProps/app.xml" });
   if (!app) {
     throw new Error("Missing docProps/app.xml in PPTX.");
   }
@@ -24,7 +35,7 @@ export async function getSlideSizeAndSetDefaultTextStyle(
   console.log("create by Office PowerPoint app verssion: ", appVersionString);
 
   //get slide dimensions
-  const content = await readXmlFile(archive, "ppt/presentation.xml");
+  const content = await readXmlFile({ archive, filename: "ppt/presentation.xml" });
   if (!content) {
     throw new Error("Missing ppt/presentation.xml in PPTX.");
   }
@@ -48,7 +59,7 @@ export async function getSlideSizeAndSetDefaultTextStyle(
 
   //Scale
   // var viewProps = readXmlFile(zip, "ppt/viewProps.xml");
-  // var scaleLoc = getTextByPathList(viewProps, ["p:viewPr", "p:slideViewPr", "p:cSldViewPr", "p:cViewPr","p:scale"]);
+  // var scaleLoc = getTextByPathList({ node: viewProps, path: ["p:viewPr", "p:slideViewPr", "p:cSldViewPr", "p:cViewPr","p:scale"] });
   // var scaleXnodes, scaleX = 1, scaleYnode, scaleY = 1;
   // if (scaleLoc !== undefined){
   //     scaleXnodes = scaleLoc["a:sx"]["attrs"];

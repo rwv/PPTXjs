@@ -15,13 +15,14 @@ import { getGradientFill } from "../fill/get-gradient-fill";
 import { getPatternFill } from "../fill/get-pattern-fill";
 import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
-export function getBorder(
-  shapeNode: XmlNode,
-  parentNode: XmlNode | undefined,
-  isSvgMode: boolean,
-  targetType: "shape" | "text",
-  warpContext: WarpContext
-):
+type GetBorderOptions = {
+  shapeNode: XmlNode;
+  isSvgMode: boolean;
+  borderType: "shape" | "text";
+  warpContext: WarpContext;
+};
+
+export function getBorder({ shapeNode, isSvgMode, borderType, warpContext }: GetBorderOptions):
   | string
   | {
       color: string;
@@ -29,41 +30,52 @@ export function getBorder(
       type: string | undefined;
       strokeDasharray: string;
     } {
-  void parentNode;
   let borderStyleText = "";
   let lineStyleNode: XmlNode | undefined;
-  type SolidFillNode = Parameters<typeof getSolidFill>[0];
-  type GradientFillNode = Parameters<typeof getGradientFill>[0];
-  type PatternFillNode = Parameters<typeof getPatternFill>[0];
+  type SolidFillOptions = Parameters<typeof getSolidFill>[0];
+  type SolidFillNode = SolidFillOptions["fillNode"];
+  type GradientFillOptions = Parameters<typeof getGradientFill>[0];
+  type GradientFillNode = GradientFillOptions["gradientFillNode"];
+  type PatternFillOptions = Parameters<typeof getPatternFill>[0];
+  type PatternFillNode = PatternFillOptions["patternFillNode"];
 
-  if (targetType === "shape") {
+  if (borderType === "shape") {
     borderStyleText = "border: ";
-    lineStyleNode = getTextByPathList<XmlNode>(shapeNode, ["p:spPr", "a:ln"]);
+    lineStyleNode = getTextByPathList<XmlNode>({
+      node: shapeNode,
+      path: ["p:spPr", "a:ln"],
+    });
   } else {
     borderStyleText = "";
-    lineStyleNode = getTextByPathList<XmlNode>(shapeNode, ["a:rPr", "a:ln"]);
+    lineStyleNode = getTextByPathList<XmlNode>({
+      node: shapeNode,
+      path: ["a:rPr", "a:ln"],
+    });
   }
 
   const hasNoFill = lineStyleNode
-    ? getTextByPathList<XmlNode>(lineStyleNode, ["a:noFill"])
+    ? getTextByPathList<XmlNode>({ node: lineStyleNode, path: ["a:noFill"] })
     : undefined;
   if (hasNoFill !== undefined) {
     return "hidden";
   }
 
   if (lineStyleNode === undefined) {
-    const lineRefNode = getTextByPathList<XmlNode>(shapeNode, ["p:style", "a:lnRef"]);
+    const lineRefNode = getTextByPathList<XmlNode>({
+      node: shapeNode,
+      path: ["p:style", "a:lnRef"],
+    });
     if (lineRefNode !== undefined) {
-      const lineIndexValue = getTextByPathList<string | number>(lineRefNode, ["attrs", "idx"]);
+      const lineIndexValue = getTextByPathList<string | number>({
+        node: lineRefNode,
+        path: ["attrs", "idx"],
+      });
       const lineIndex = lineIndexValue !== undefined ? Number(lineIndexValue) : NaN;
       const lineStyleList = warpContext.themeContent
-        ? getTextByPathList<XmlNode[]>(warpContext.themeContent, [
-            "a:theme",
-            "a:themeElements",
-            "a:fmtScheme",
-            "a:lnStyleLst",
-            "a:ln",
-          ])
+        ? getTextByPathList<XmlNode[]>({
+            node: warpContext.themeContent,
+            path: ["a:theme", "a:themeElements", "a:fmtScheme", "a:lnStyleLst", "a:ln"],
+          })
         : undefined;
       if (lineStyleList && !Number.isNaN(lineIndex)) {
         lineStyleNode = lineStyleList[lineIndex - 1];
@@ -83,7 +95,10 @@ export function getBorder(
 
   if (lineStyleNode !== undefined) {
     // Border width: 1pt = 12700, default = 0.75pt
-    const borderWidthValue = getTextByPathList<string | number>(lineStyleNode, ["attrs", "w"]);
+    const borderWidthValue = getTextByPathList<string | number>({
+      node: lineStyleNode,
+      path: ["attrs", "w"],
+    });
     borderWidth = borderWidthValue !== undefined ? Number(borderWidthValue) / 12700 : NaN;
     if (isNaN(borderWidth) || borderWidth < 1) {
       borderStyleText += 4 / 3 + "px ";
@@ -91,17 +106,16 @@ export function getBorder(
       borderStyleText += borderWidth + "px ";
     }
     // Border type
-    const lineStyleTypeValue = getTextByPathList<string | number>(lineStyleNode, [
-      "a:prstDash",
-      "attrs",
-      "val",
-    ]);
+    const lineStyleTypeValue = getTextByPathList<string | number>({
+      node: lineStyleNode,
+      path: ["a:prstDash", "attrs", "val"],
+    });
     lineStyleType = lineStyleTypeValue !== undefined ? String(lineStyleTypeValue) : undefined;
     if (lineStyleType === undefined) {
-      const lineStyleTypeAttr = getTextByPathList<string | number>(lineStyleNode, [
-        "attrs",
-        "cmpd",
-      ]);
+      const lineStyleTypeAttr = getTextByPathList<string | number>({
+        node: lineStyleNode,
+        path: ["attrs", "cmpd"],
+      });
       lineStyleType = lineStyleTypeAttr !== undefined ? String(lineStyleTypeAttr) : undefined;
     }
     switch (lineStyleType) {
@@ -155,28 +169,42 @@ export function getBorder(
         strokeDasharray = "0";
     }
     // Border color
-    const fillTyp = getFillType(lineStyleNode);
+    const fillTyp = getFillType({ shapePropsNode: lineStyleNode });
     if (fillTyp === "NO_FILL") {
       borderColor = isSvgMode ? "none" : "";
     } else if (fillTyp === "SOLID_FILL") {
-      borderColor = getSolidFill(
-        lineStyleNode["a:solidFill"] as SolidFillNode,
-        undefined,
-        undefined,
-        warpContext
-      );
+      borderColor = getSolidFill({
+        fillNode: lineStyleNode["a:solidFill"] as SolidFillNode,
+        colorMap: undefined,
+        placeholderColor: undefined,
+        warpContext,
+      });
     } else if (fillTyp === "GRADIENT_FILL") {
-      borderColor = getGradientFill(lineStyleNode["a:gradFill"] as GradientFillNode, warpContext);
+      borderColor = getGradientFill({
+        gradientFillNode: lineStyleNode["a:gradFill"] as GradientFillNode,
+        warpContext,
+      });
     } else if (fillTyp === "PATTERN_FILL") {
-      borderColor = getPatternFill(lineStyleNode["a:pattFill"] as PatternFillNode, warpContext);
+      borderColor = getPatternFill({
+        patternFillNode: lineStyleNode["a:pattFill"] as PatternFillNode,
+        warpContext,
+      });
     }
   }
 
   // 2. drawingML namespace
   if (borderColor === undefined) {
-    const lineRefNode = getTextByPathList<XmlNode>(shapeNode, ["p:style", "a:lnRef"]);
+    const lineRefNode = getTextByPathList<XmlNode>({
+      node: shapeNode,
+      path: ["p:style", "a:lnRef"],
+    });
     if (lineRefNode !== undefined) {
-      borderColor = getSolidFill(lineRefNode as SolidFillNode, undefined, undefined, warpContext);
+      borderColor = getSolidFill({
+        fillNode: lineRefNode as SolidFillNode,
+        colorMap: undefined,
+        placeholderColor: undefined,
+        warpContext,
+      });
     }
   }
 

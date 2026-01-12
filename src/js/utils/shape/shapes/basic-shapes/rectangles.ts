@@ -1,6 +1,11 @@
 import type { BasicShapeParams } from "./types";
 
-export function renderRectLike(shapType: string, params: BasicShapeParams): string {
+type RenderRectLikeOptions = {
+  shapeType: string;
+  params: BasicShapeParams;
+};
+
+export function renderRectLike({ shapeType, params }: RenderRectLikeOptions): string {
   const { w, h, shpId, fillColor, grndFillFlg, imgFillFlg, border } = params;
   let result = "";
   result +=
@@ -22,7 +27,7 @@ export function renderRectLike(shapType: string, params: BasicShapeParams): stri
     border.strokeDasharray +
     "' />";
 
-  if (shapType === "flowChartPredefinedProcess") {
+  if (shapeType === "flowChartPredefinedProcess") {
     result +=
       "<rect x='" +
       w * (1 / 8) +
@@ -37,7 +42,7 @@ export function renderRectLike(shapType: string, params: BasicShapeParams): stri
       "' stroke-dasharray='" +
       border.strokeDasharray +
       "' />";
-  } else if (shapType === "flowChartInternalStorage") {
+  } else if (shapeType === "flowChartInternalStorage") {
     result +=
       " <polyline points='" +
       w * (1 / 8) +

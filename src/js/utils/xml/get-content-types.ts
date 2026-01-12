@@ -1,6 +1,10 @@
 import { readXmlFile } from "./read-xml-file";
 import type { PptxArchive } from "../../archive/pptx-archive";
 
+type GetContentTypesOptions = {
+  archive: PptxArchive;
+};
+
 /**
  * Get content types from PPTX [Content_Types].xml
  *
@@ -9,11 +13,11 @@ import type { PptxArchive } from "../../archive/pptx-archive";
  * @param archive - PPTX archive instance
  * @returns Object containing arrays of slide and slideLayout file paths
  */
-export async function getContentTypes(archive: PptxArchive): Promise<{
+export async function getContentTypes({ archive }: GetContentTypesOptions): Promise<{
   slides: string[];
   slideLayouts: string[];
 }> {
-  const contentTypesData = await readXmlFile(archive, "[Content_Types].xml");
+  const contentTypesData = await readXmlFile({ archive, filename: "[Content_Types].xml" });
   if (!contentTypesData) {
     return { slides: [], slideLayouts: [] };
   }

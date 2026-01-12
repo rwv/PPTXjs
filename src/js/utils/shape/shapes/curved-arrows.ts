@@ -52,15 +52,24 @@ const CURVED_ARROW_RENDERERS: Record<string, (ctx: CurvedArrowContext) => string
 /**
  * Check if a shape type is a curved arrow shape handled by this module
  */
-export function isCurvedArrowShape(shapType: string): boolean {
-  return shapType in CURVED_ARROW_RENDERERS;
+type IsCurvedArrowShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isCurvedArrowShape({ shapeType }: IsCurvedArrowShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in CURVED_ARROW_RENDERERS;
 }
 
 /**
  * Render a curved arrow shape
  * @returns SVG string for the shape, or empty string if not a curved arrow shape
  */
-export function renderCurvedArrowShape(shapType: string, ctx: CurvedArrowContext): string {
-  const renderer = CURVED_ARROW_RENDERERS[shapType];
+type RenderCurvedArrowShapeOptions = {
+  shapeType: string;
+  ctx: CurvedArrowContext;
+};
+
+export function renderCurvedArrowShape({ shapeType, ctx }: RenderCurvedArrowShapeOptions): string {
+  const renderer = CURVED_ARROW_RENDERERS[shapeType];
   return renderer ? renderer(ctx) : "";
 }

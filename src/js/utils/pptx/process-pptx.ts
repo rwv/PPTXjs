@@ -24,7 +24,7 @@
  * @param fontSizeScale - Font size scaling factor
  * @param chartIdCounter - Chart ID counter (modified in place)
  * @param messageQueue - Message queue for chart processing
- * @param isFirstLineBreak - Mutable object tracking first line break state
+ * @param firstLineBreak - Mutable object tracking first line break state
  * @returns Array of objects containing slides and metadata
  */
 
@@ -34,23 +34,35 @@ import { getContentTypes, getSlideSizeAndSetDefaultTextStyle, readXmlFile } from
 import { processSingleSlide } from "../slide";
 import { genGlobalCSS } from "../css";
 
-export async function processPPTX(
-  archive: PptxArchive,
-  emuToPx: number,
-  settings: any,
-  styleTable: any,
-  rtlLanguages: string[],
-  fontSizeScale: number,
-  chartIdCounter: { value: number },
-  messageQueue: any,
-  isFirstLineBreak: { value: boolean }
-): Promise<any[]> {
+type ProcessPptxOptions = {
+  archive: PptxArchive;
+  emuToPx: number;
+  settings: any;
+  styleTable: any;
+  rtlLanguages: string[];
+  fontSizeScale: number;
+  chartIdCounter: { value: number };
+  messageQueue: any;
+  firstLineBreak: { value: boolean };
+};
+
+export async function processPPTX({
+  archive,
+  emuToPx,
+  settings,
+  styleTable,
+  rtlLanguages,
+  fontSizeScale,
+  chartIdCounter,
+  messageQueue,
+  firstLineBreak,
+}: ProcessPptxOptions): Promise<any[]> {
   const resultItems = [];
   const startTime = new Date();
 
   const thumbFile = await archive.file("docProps/thumbnail.jpeg");
   if (thumbFile) {
-    const pptxThumbImg = base64ArrayBuffer(await thumbFile.arrayBuffer());
+    const pptxThumbImg = base64ArrayBuffer({ arrayBuffer: await thumbFile.arrayBuffer() });
     resultItems.push({
       type: "pptx-thumb",
       data: pptxThumbImg,
@@ -58,13 +70,15 @@ export async function processPPTX(
     });
   }
 
-  const contentTypes = await getContentTypes(archive);
-  const slideSize = await getSlideSizeAndSetDefaultTextStyle(archive, emuToPx, settings);
-  const appVersion = slideSize.appVersion;
+  const contentTypes = await getContentTypes({ archive });
+  const slideSize = await getSlideSizeAndSetDefaultTextStyle({
+    archive,
+    slideFactor: emuToPx,
+    settings,
+  });
   const defaultTextStyle = slideSize.defaultTextStyle;
   const slideWidth = slideSize.width;
-  const shouldProcessTheme = settings.themeProcess;
-  const tableStyles = await readXmlFile(archive, "ppt/tableStyles.xml");
+  const tableStyles = await readXmlFile({ archive, filename: "ppt/tableStyles.xml" });
   //console.log("slideSize: ", slideSize)
   resultItems.push({
     type: "slideSize",
@@ -93,24 +107,22 @@ export async function processPPTX(
     if (slideBasename !== "" && slideFilename.indexOf("slide") !== -1) {
       slideNumber = Number(slideBasename.substr(5));
     }
-    const slideHtml = await processSingleSlide(
+    const slideHtml = await processSingleSlide({
       archive,
-      slidePath,
+      slideFilePath: slidePath,
       slideIndex,
-      slideSize,
+      slideDimensions: slideSize,
       defaultTextStyle,
-      appVersion,
-      shouldProcessTheme,
       tableStyles,
-      isFirstLineBreak,
+      firstLineBreak,
       styleTable,
       rtlLanguages,
       emuToPx,
       fontSizeScale,
-      chartIdCounter,
+      chartId: chartIdCounter,
       messageQueue,
-      settings
-    );
+      settings,
+    });
     resultItems.push({
       type: "slide",
       data: slideHtml,

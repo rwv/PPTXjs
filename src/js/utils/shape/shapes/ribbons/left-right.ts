@@ -4,41 +4,47 @@ import type { XmlNode } from "../../../../types/pptx-xml";
 import type { RibbonContext } from "./types";
 import { createPath } from "./helpers";
 
-const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+type RibbonRenderOptions = {
+  ctx: RibbonContext;
+  shapeType: string;
+};
+
+const getShapeAdjustments = ({ node }: { node: XmlNode }): XmlNode[] => {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 };
 
 /**
  * Render leftRightRibbon shape
  */
-export function renderLeftRightRibbon(ctx: RibbonContext): string {
+export function renderLeftRightRibbon({ ctx }: RibbonRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   const refr = slideFactor;
   let adj1 = 50000 * refr;
   let adj2 = 50000 * refr;
   let adj3 = 16667 * refr;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj3") {
-      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * refr;
       }

@@ -14,8 +14,6 @@
  * @param slideIndex - Slide index number (0-based)
  * @param slideDimensions - Object containing slide width and height
  * @param defaultTextStyle - Default text styling from presentation
- * @param appVersion - PowerPoint app version (used for XML parsing)
- * @param processFullTheme - Theme processing setting (true/false/"colorsAndImageOnly")
  * @param tableStyles - Table styles from presentation
  * @param firstLineBreak - Mutable object tracking first line break state
  * @param styleTable - Global CSS style table
@@ -36,24 +34,39 @@ import { getSlideBackgroundFill } from "../fill";
 import { getBackground } from "./get-background";
 import { processNodesInSlide } from "../node";
 
-export async function processSingleSlide(
-  archive: PptxArchive,
-  slideFilePath: string,
-  slideIndex: number,
-  slideDimensions: { width: number; height: number; appVersion: number; defaultTextStyle: any },
-  defaultTextStyle: any,
-  appVersion: number,
-  processFullTheme: boolean,
-  tableStyles: any,
-  firstLineBreak: { value: boolean },
-  styleTable: any,
-  rtlLanguages: string[],
-  emuToPx: number,
-  fontSizeScale: number,
-  chartId: { value: number },
-  messageQueue: any,
-  settings: any
-): Promise<string> {
+type ProcessSingleSlideOptions = {
+  archive: PptxArchive;
+  slideFilePath: string;
+  slideIndex: number;
+  slideDimensions: { width: number; height: number; appVersion: number };
+  defaultTextStyle: any;
+  tableStyles: any;
+  firstLineBreak: { value: boolean };
+  styleTable: any;
+  rtlLanguages: string[];
+  emuToPx: number;
+  fontSizeScale: number;
+  chartId: { value: number };
+  messageQueue: any;
+  settings: any;
+};
+
+export async function processSingleSlide({
+  archive,
+  slideFilePath,
+  slideIndex,
+  slideDimensions,
+  defaultTextStyle,
+  tableStyles,
+  firstLineBreak,
+  styleTable,
+  rtlLanguages,
+  emuToPx,
+  fontSizeScale,
+  chartId,
+  messageQueue,
+  settings,
+}: ProcessSingleSlideOptions): Promise<string> {
   /*
             self.postMessage({
                 "type": "INFO",
@@ -65,7 +78,7 @@ export async function processSingleSlide(
   // @slideFilePath: ppt/slides/slide1.xml
   // @slideRelPath: ppt/slides/_rels/slide1.xml.rels
   const slideRelPath = slideFilePath.replace("slides/slide", "slides/_rels/slide") + ".rels";
-  const slideRelContent = await readXmlFile(archive, slideRelPath);
+  const slideRelContent = await readXmlFile({ archive, filename: slideRelPath });
   let relationshipEntries = slideRelContent["Relationships"]["Relationship"];
   //console.log("RelationshipArray: " , RelationshipArray)
   let layoutFilePath = "";
@@ -107,13 +120,12 @@ export async function processSingleSlide(
   }
   //console.log(slideResObj);
   // Open slideLayoutXX.xml
-  const slideLayoutXml = await readXmlFile(archive, layoutFilePath);
-  const slideLayoutIndex = indexNodes(slideLayoutXml);
-  const slideLayoutColorOverride = getTextByPathList(slideLayoutXml, [
-    "p:sldLayout",
-    "p:clrMapOvr",
-    "a:overrideClrMapping",
-  ]);
+  const slideLayoutXml = await readXmlFile({ archive, filename: layoutFilePath });
+  const slideLayoutIndex = indexNodes({ content: slideLayoutXml });
+  const slideLayoutColorOverride = getTextByPathList({
+    node: slideLayoutXml,
+    path: ["p:sldLayout", "p:clrMapOvr", "a:overrideClrMapping"],
+  });
 
   //console.log(slideLayoutClrOvride);
   if (slideLayoutColorOverride !== undefined) {
@@ -125,7 +137,7 @@ export async function processSingleSlide(
   // @slideLayoutRelPath: ppt/slideLayouts/_rels/slideLayout1.xml.rels
   const slideLayoutRelPath =
     layoutFilePath.replace("slideLayouts/slideLayout", "slideLayouts/_rels/slideLayout") + ".rels";
-  const slideLayoutRelContent = await readXmlFile(archive, slideLayoutRelPath);
+  const slideLayoutRelContent = await readXmlFile({ archive, filename: slideLayoutRelPath });
   relationshipEntries = slideLayoutRelContent["Relationships"]["Relationship"];
   let masterFilePath = "";
   const layoutResourceMap = {};
@@ -150,18 +162,18 @@ export async function processSingleSlide(
     masterFilePath = relationshipEntries["attrs"]["Target"].replace("../", "ppt/");
   }
   // Open slideMasterXX.xml
-  const slideMasterXml = await readXmlFile(archive, masterFilePath);
-  const slideMasterTextStyles = getTextByPathList<XmlNode>(slideMasterXml, [
-    "p:sldMaster",
-    "p:txStyles",
-  ]);
-  const slideMasterIndex = indexNodes(slideMasterXml);
+  const slideMasterXml = await readXmlFile({ archive, filename: masterFilePath });
+  const slideMasterTextStyles = getTextByPathList<XmlNode>({
+    node: slideMasterXml,
+    path: ["p:sldMaster", "p:txStyles"],
+  });
+  const slideMasterIndex = indexNodes({ content: slideMasterXml });
 
   /////////////////Amir/////////////
   //Open slideMasterXX.xml.rels
   const slideMasterRelPath =
     masterFilePath.replace("slideMasters/slideMaster", "slideMasters/_rels/slideMaster") + ".rels";
-  const slideMasterRelContent = await readXmlFile(archive, slideMasterRelPath);
+  const slideMasterRelContent = await readXmlFile({ archive, filename: slideMasterRelPath });
   relationshipEntries = slideMasterRelContent["Relationships"]["Relationship"];
   let themeFilePath = "";
   const masterResourceMap = {};
@@ -193,8 +205,8 @@ export async function processSingleSlide(
     const themeFileName = themeFilePath.split("/").pop();
     const themeRelPath = themeFilePath.replace(themeFileName, "_rels/" + themeFileName) + ".rels";
     //console.log("themeFilename: ", themeFilePath, ", themeName: ", themeFileName, ", themeRelPath: ", themeRelPath)
-    themeXml = await readXmlFile(archive, themeFilePath);
-    const themeRelContent = await readXmlFile(archive, themeRelPath);
+    themeXml = await readXmlFile({ archive, filename: themeFilePath });
+    const themeRelContent = await readXmlFile({ archive, filename: themeRelPath });
     if (themeRelContent !== null) {
       const themeRelationshipEntries = themeRelContent["Relationships"]["Relationship"];
       if (themeRelationshipEntries !== undefined) {
@@ -230,7 +242,7 @@ export async function processSingleSlide(
     const diagramRelPath =
       diagramFilePath.replace(diagramFileName, "_rels/" + diagramFileName) + ".rels";
     //console.log("diagramFilename: ", diagramFilePath, ", diagramRelPath: ", diagramRelPath)
-    diagramFileContent = await readXmlFile(archive, diagramFilePath);
+    diagramFileContent = await readXmlFile({ archive, filename: diagramFilePath });
     if (
       diagramFileContent !== null &&
       diagramFileContent !== undefined &&
@@ -241,7 +253,7 @@ export async function processSingleSlide(
       diagramFileContent = JSON.parse(diagramFileContentJson);
     }
 
-    const diagramRelContent = await readXmlFile(archive, diagramRelPath);
+    const diagramRelContent = await readXmlFile({ archive, filename: diagramRelPath });
     if (diagramRelContent !== null) {
       const diagramRelationshipEntries = diagramRelContent["Relationships"]["Relationship"];
       if (diagramRelationshipEntries.constructor === Array) {
@@ -269,7 +281,12 @@ export async function processSingleSlide(
   }
   //console.log("diagramResObj: " , diagramResourceMap)
   // =====< Step 3 >=====
-  const slideXml = await readXmlFile(archive, slideFilePath, true, slideDimensions.appVersion);
+  const slideXml = await readXmlFile({
+    archive,
+    filename: slideFilePath,
+    isSlideContent: true,
+    appVersion: slideDimensions.appVersion,
+  });
   const slideNodeTree = slideXml["p:sld"]["p:cSld"]["p:spTree"];
   const warpContext = {
     archive: archive,
@@ -290,7 +307,7 @@ export async function processSingleSlide(
   };
   let backgroundHtml = "";
   if (settings.themeProcess === true) {
-    backgroundHtml = await getBackground(
+    backgroundHtml = await getBackground({
       warpContext,
       slideDimensions,
       slideIndex,
@@ -300,15 +317,15 @@ export async function processSingleSlide(
       rtlLanguages,
       emuToPx,
       fontSizeScale,
-      chartId,
+      chartIdCounter: chartId,
       messageQueue,
-      settings
-    );
+      renderSettings: settings,
+    });
   }
 
   let backgroundCss = "";
   if (settings.themeProcess === "colorsAndImageOnly") {
-    const fillResult = await getSlideBackgroundFill(warpContext, slideIndex);
+    const fillResult = await getSlideBackgroundFill({ warpContext });
     backgroundCss = fillResult !== undefined ? fillResult : "";
   }
 
@@ -336,42 +353,42 @@ export async function processSingleSlide(
   for (const nodeType in slideNodeTree) {
     if (slideNodeTree[nodeType].constructor === Array) {
       for (let i = 0; i < slideNodeTree[nodeType].length; i++) {
-        slideHtml += await processNodesInSlide(
+        slideHtml += await processNodesInSlide({
           nodeType,
-          slideNodeTree[nodeType][i],
-          slideNodeTree,
+          nodeData: slideNodeTree[nodeType][i],
+          parentNodes: slideNodeTree,
           warpContext,
-          "slide",
-          undefined,
+          sourceType: "slide",
+          shapeType: undefined,
           tableStyles,
           firstLineBreak,
           styleTable,
           rtlLanguages,
           emuToPx,
           fontSizeScale,
-          chartId,
+          chartIdCounter: chartId,
           messageQueue,
-          settings
-        );
+          renderSettings: settings,
+        });
       }
     } else {
-      slideHtml += await processNodesInSlide(
+      slideHtml += await processNodesInSlide({
         nodeType,
-        slideNodeTree[nodeType],
-        slideNodeTree,
+        nodeData: slideNodeTree[nodeType],
+        parentNodes: slideNodeTree,
         warpContext,
-        "slide",
-        undefined,
+        sourceType: "slide",
+        shapeType: undefined,
         tableStyles,
         firstLineBreak,
         styleTable,
         rtlLanguages,
         emuToPx,
         fontSizeScale,
-        chartId,
+        chartIdCounter: chartId,
         messageQueue,
-        settings
-      );
+        renderSettings: settings,
+      });
     }
   }
   if (settings.slideMode && settings.slideType === "revealjs") {

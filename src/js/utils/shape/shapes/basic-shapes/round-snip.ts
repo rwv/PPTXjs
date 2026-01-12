@@ -3,15 +3,18 @@ import type { XmlNode } from "../../../../types/pptx-xml";
 import { shapeSnipRoundRect } from "../helpers/snip-round-rect";
 import type { BasicShapeParams } from "./types";
 
-export function renderRoundSnipRect(shapType: string, params: BasicShapeParams): string {
+type RenderRoundSnipRectOptions = {
+  shapeType: string;
+  params: BasicShapeParams;
+};
+
+export function renderRoundSnipRect({ shapeType, params }: RenderRoundSnipRectOptions): string {
   const { node, w, h, shpId, fillColor, grndFillFlg, imgFillFlg, border } = params;
   let result = "";
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
   let sAdj1;
   let sAdj1_val;
@@ -20,29 +23,32 @@ export function renderRoundSnipRect(shapType: string, params: BasicShapeParams):
   let shpTyp;
   let adjTyp;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         sAdj1_val = parseInt(sAdj1.substr(4)) / 50000;
       }
     } else if (sAdj_name === "adj2") {
-      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         sAdj2_val = parseInt(sAdj2.substr(4)) / 50000;
       }
     }
   }
   if (shapAdjst_ary.length === 1 && sAdj1_val === undefined) {
-    const sAdj = getTextByPathList<string>(shapAdjst_ary[0], ["attrs", "fmla"]);
+    const sAdj = getTextByPathList<string>({ node: shapAdjst_ary[0], path: ["attrs", "fmla"] });
     if (sAdj !== undefined) {
       sAdj1_val = parseInt(sAdj.substr(4)) / 50000;
       sAdj2_val = 0;
     }
   }
-  //console.log("shapType: ",shapType,",node: ",node )
+  //console.log("shapeType: ",shapeType,",node: ",node )
   let tranglRott = "";
-  switch (shapType) {
+  switch (shapeType) {
     case "roundRect":
     case "flowChartAlternateProcess":
       shpTyp = "round";
@@ -74,7 +80,7 @@ export function renderRoundSnipRect(shapType: string, params: BasicShapeParams):
       adjTyp = "cornr1";
       if (sAdj1_val === undefined) sAdj1_val = 0.33334;
       sAdj2_val = 0;
-      if (shapType === "flowChartPunchedCard") {
+      if (shapeType === "flowChartPunchedCard") {
         tranglRott = "transform='translate(" + w + ",0) scale(-1,1)'";
       }
       break;

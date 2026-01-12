@@ -36,13 +36,21 @@ type TableStyleAttrFlags = {
   [key: string]: unknown;
 };
 
-export function getTableRowStyle(
-  rowIndex: number,
-  totalRows: number,
-  tableStyleFlags: TableStyleAttrFlags,
-  tableStyle: XmlNode | undefined,
-  warpContext: WarpContext
-): TableRowStyle {
+type GetTableRowStyleOptions = {
+  rowIndex: number;
+  totalRows: number;
+  tableStyleFlags: TableStyleAttrFlags;
+  tableStyle: XmlNode | undefined;
+  warpContext: WarpContext;
+};
+
+export function getTableRowStyle({
+  rowIndex,
+  totalRows,
+  tableStyleFlags,
+  tableStyle,
+  warpContext,
+}: GetTableRowStyleOptions): TableRowStyle {
   let fillColor = "";
   let rowBorders: string | undefined = "";
   let fontColor = "";
@@ -53,46 +61,55 @@ export function getTableRowStyle(
   // Helper function to apply style from a path
   const applyStyleFromPath = (basePath: string[]) => {
     // Get background fill color
-    const backgroundFillNode = getTextByPathList<XmlNode>(tableStyle as XmlNode, [
-      ...basePath,
-      "a:tcStyle",
-      "a:fill",
-      "a:solidFill",
-    ]);
+    const backgroundFillNode = getTextByPathList<XmlNode>({
+      node: tableStyle as XmlNode,
+      path: [...basePath, "a:tcStyle", "a:fill", "a:solidFill"],
+    });
     if (backgroundFillNode !== undefined) {
-      const resolvedFillColor = getSolidFill(backgroundFillNode, undefined, undefined, warpContext);
+      const resolvedFillColor = getSolidFill({
+        fillNode: backgroundFillNode,
+        colorMap: undefined,
+        placeholderColor: undefined,
+        warpContext,
+      });
       if (resolvedFillColor !== undefined) {
         fillColor = resolvedFillColor;
       }
     }
 
     // Get border styling
-    const borderStyleNode = getTextByPathList<XmlNode>(tableStyle as XmlNode, [
-      ...basePath,
-      "a:tcStyle",
-      "a:tcBdr",
-    ]);
+    const borderStyleNode = getTextByPathList<XmlNode>({
+      node: tableStyle as XmlNode,
+      path: [...basePath, "a:tcStyle", "a:tcBdr"],
+    });
     if (borderStyleNode !== undefined) {
-      const resolvedRowBorders = getTableBorders(borderStyleNode, warpContext);
+      const resolvedRowBorders = getTableBorders({ tableBorderNode: borderStyleNode, warpContext });
       if (resolvedRowBorders !== "") {
         rowBorders = resolvedRowBorders;
       }
     }
 
     // Get font color
-    const rowTextStyleNode = getTextByPathList<XmlNode>(tableStyle as XmlNode, [
-      ...basePath,
-      "a:tcTxStyle",
-    ]);
+    const rowTextStyleNode = getTextByPathList<XmlNode>({
+      node: tableStyle as XmlNode,
+      path: [...basePath, "a:tcTxStyle"],
+    });
     if (rowTextStyleNode !== undefined) {
-      const resolvedFontColor = getSolidFill(rowTextStyleNode, undefined, undefined, warpContext);
+      const resolvedFontColor = getSolidFill({
+        fillNode: rowTextStyleNode,
+        colorMap: undefined,
+        placeholderColor: undefined,
+        warpContext,
+      });
       if (resolvedFontColor !== undefined) {
         fontColor = resolvedFontColor;
       }
 
       // Get font weight
       const resolvedFontWeight =
-        getTextByPathList<string>(rowTextStyleNode, ["attrs", "b"]) === "on" ? "bold" : "";
+        getTextByPathList<string>({ node: rowTextStyleNode, path: ["attrs", "b"] }) === "on"
+          ? "bold"
+          : "";
       if (resolvedFontWeight !== "") {
         fontWeight = resolvedFontWeight;
       }

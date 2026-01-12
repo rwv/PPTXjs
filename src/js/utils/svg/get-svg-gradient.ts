@@ -12,20 +12,32 @@ import { svgAngle } from "./svg-angle";
  * @param shapeId - Shape ID for unique gradient reference
  * @returns SVG linearGradient element string
  */
-export function getSvgGradient(
-  width: number,
-  height: number,
-  angleDegrees: number,
-  colorStops: string[],
-  shapeId: string
-): string {
-  const middleStops = getMiddleStops(colorStops.length - 2);
+type GetSvgGradientOptions = {
+  width: number;
+  height: number;
+  angleDegrees: number;
+  colorStops: string[];
+  shapeId: string;
+};
+
+export function getSvgGradient({
+  width,
+  height,
+  angleDegrees,
+  colorStops,
+  shapeId,
+}: GetSvgGradientOptions): string {
+  const middleStops = getMiddleStops({ middleStopCount: colorStops.length - 2 });
 
   const svgHeight = height;
   const svgWidth = width;
   let svgMarkup = "";
 
-  const angleCoords = svgAngle(angleDegrees, svgHeight, svgWidth);
+  const angleCoords = svgAngle({
+    angleDegrees,
+    svgHeightInput: svgHeight,
+    svgWidthInput: svgWidth,
+  });
   const x1 = angleCoords[0];
   const y1 = angleCoords[1];
   const x2 = angleCoords[2];

@@ -22,7 +22,7 @@ import type { WarpContext, XmlNode } from "../../types/pptx-xml";
  * @param sourceType - Source context
  * @param emuToPx - EMU to pixel conversion factor
  * @param tableStyles - Table styles from presentation
- * @param isFirstLineBreak - Object {value: boolean} for line break state
+ * @param firstLineBreak - Object {value: boolean} for line break state
  * @param styleTable - CSS style table
  * @param rtlLanguages - RTL language codes
  * @param fontSizeScale - Font size scaling factor
@@ -31,23 +31,41 @@ import type { WarpContext, XmlNode } from "../../types/pptx-xml";
  * @param renderSettings - Plugin settings
  * @returns HTML string for the group
  */
-export async function processGroupSpNode(
-  groupNode: XmlNode,
-  warpContext: WarpContext | Record<string, unknown>,
-  sourceType: string,
-  emuToPx: number,
-  tableStyles: unknown,
-  isFirstLineBreak: { value: boolean },
-  styleTable: unknown,
-  rtlLanguages: string[],
-  fontSizeScale: number,
-  chartIdCounter: { value: number },
-  messageQueue: unknown,
-  renderSettings: { mediaProcess: boolean } & Record<string, unknown>
-): Promise<string> {
+type ProcessGroupSpNodeOptions = {
+  groupNode: XmlNode;
+  warpContext: WarpContext | Record<string, unknown>;
+  sourceType: string;
+  emuToPx: number;
+  tableStyles: unknown;
+  firstLineBreak: { value: boolean };
+  styleTable: unknown;
+  rtlLanguages: string[];
+  fontSizeScale: number;
+  chartIdCounter: { value: number };
+  messageQueue: unknown;
+  renderSettings: { mediaProcess: boolean } & Record<string, unknown>;
+};
+
+export async function processGroupSpNode({
+  groupNode,
+  warpContext,
+  sourceType,
+  emuToPx,
+  tableStyles,
+  firstLineBreak,
+  styleTable,
+  rtlLanguages,
+  fontSizeScale,
+  chartIdCounter,
+  messageQueue,
+  renderSettings,
+}: ProcessGroupSpNodeOptions): Promise<string> {
   //console.log("processGroupSpNode: node: ", groupNode)
   const groupNodeRecord = groupNode as XmlNode;
-  const transformNode = getTextByPathList<XmlNode>(groupNodeRecord, ["p:grpSpPr", "a:xfrm"]);
+  const transformNode = getTextByPathList<XmlNode>({
+    node: groupNodeRecord,
+    path: ["p:grpSpPr", "a:xfrm"],
+  });
   let rotationCss = ""; //;" border: 3px solid black;";
   let topPx;
   let leftPx;
@@ -74,7 +92,7 @@ export async function processGroupSpNode(
     const childExtentWidth = parseInt(childExtentAttrs["cx"]) * emuToPx;
     const childExtentHeight = parseInt(childExtentAttrs["cy"]) * emuToPx;
     let rotation = parseInt((transformNode["attrs"] as Record<string, string>)["rot"]);
-    // angleToDegrees(getTextByPathList(slideXfrmNode, ["attrs", "rot"]));
+    // angleToDegrees(getTextByPathList({ node: slideXfrmNode, path: ["attrs", "rot"] }));
     // var rotX = 0;
     // var rotY = 0;
     topPx = offsetY - childOffsetY;
@@ -82,7 +100,7 @@ export async function processGroupSpNode(
     widthPx = extentWidth - childExtentWidth;
     heightPx = extentHeight - childExtentHeight;
     if (!isNaN(rotation)) {
-      rotation = angleToDegrees(rotation);
+      rotation = angleToDegrees({ angle: rotation });
       rotationCss += "transform: rotate(" + rotation + "deg) ; transform-origin: center;";
       // var cLin = Math.sqrt(Math.pow((chy), 2) + Math.pow((chx), 2));
       // var rdian = degreesToRadians(rotate);
@@ -129,42 +147,42 @@ export async function processGroupSpNode(
     const childNode = groupNodeRecord[nodeKey] as XmlNode | XmlNode[] | undefined;
     if (Array.isArray(childNode)) {
       for (let i = 0; i < childNode.length; i++) {
-        htmlOutput += await processNodesInSlide(
-          nodeKey,
-          childNode[i],
-          groupNodeRecord,
+        htmlOutput += await processNodesInSlide({
+          nodeType: nodeKey,
+          nodeData: childNode[i],
+          parentNodes: groupNodeRecord,
           warpContext,
           sourceType,
           shapeType,
           tableStyles,
-          isFirstLineBreak,
+          firstLineBreak,
           styleTable,
           rtlLanguages,
           emuToPx,
           fontSizeScale,
           chartIdCounter,
           messageQueue,
-          renderSettings
-        );
+          renderSettings,
+        });
       }
     } else {
-      htmlOutput += await processNodesInSlide(
-        nodeKey,
-        childNode,
-        groupNodeRecord,
+      htmlOutput += await processNodesInSlide({
+        nodeType: nodeKey,
+        nodeData: childNode,
+        parentNodes: groupNodeRecord,
         warpContext,
         sourceType,
         shapeType,
         tableStyles,
-        isFirstLineBreak,
+        firstLineBreak,
         styleTable,
         rtlLanguages,
         emuToPx,
         fontSizeScale,
         chartIdCounter,
         messageQueue,
-        renderSettings
-      );
+        renderSettings,
+      });
     }
   }
 

@@ -15,39 +15,51 @@ import { readXmlFile } from "../xml/read-xml-file";
 import { extractChartData } from "./extract-chart-data";
 import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
-export async function genChart(
-  chartNode: XmlNode,
-  warpContext: WarpContext,
-  chartId: number,
-  messageQueue: Array<Record<string, unknown>>,
-  emuToPx: number
-): Promise<[string, number]> {
+type GenChartOptions = {
+  chartNode: XmlNode;
+  warpContext: WarpContext;
+  chartId: number;
+  messageQueue: Array<Record<string, unknown>>;
+  emuToPx: number;
+};
+
+export async function genChart({
+  chartNode,
+  warpContext,
+  chartId,
+  messageQueue,
+  emuToPx,
+}: GenChartOptions): Promise<[string, number]> {
+  type PositionOptions = Parameters<typeof getPosition>[0];
+  type SizeOptions = Parameters<typeof getSize>[0];
   const zIndexOrder = chartNode.attrs?.order ?? 0;
-  const transformNode = getTextByPathList<XmlNode>(chartNode, ["p:xfrm"]);
+  const transformNode = getTextByPathList<XmlNode>({ node: chartNode, path: ["p:xfrm"] });
   const htmlOutput =
     "<div id='chart" +
     chartId +
     "' class='block content' style='" +
-    getPosition(
-      transformNode as Parameters<typeof getPosition>[0],
-      chartNode,
-      undefined,
-      undefined,
-      undefined,
-      emuToPx
-    ) +
-    getSize(transformNode as Parameters<typeof getSize>[0], undefined, undefined, emuToPx) +
+    getPosition({
+      slideSpNode: transformNode as PositionOptions["slideSpNode"],
+      parentNode: chartNode,
+      slideLayoutSpNode: undefined,
+      slideMasterSpNode: undefined,
+      shapeType: undefined,
+      emuToPx,
+    }) +
+    getSize({
+      slideSpNode: transformNode as SizeOptions["slideSpNode"],
+      slideLayoutSpNode: undefined,
+      slideMasterSpNode: undefined,
+      emuToPx,
+    }) +
     " z-index: " +
     zIndexOrder +
     ";'></div>";
 
-  const relationshipId = getTextByPathList<string>(chartNode, [
-    "a:graphic",
-    "a:graphicData",
-    "c:chart",
-    "attrs",
-    "r:id",
-  ]);
+  const relationshipId = getTextByPathList<string>({
+    node: chartNode,
+    path: ["a:graphic", "a:graphicData", "c:chart", "attrs", "r:id"],
+  });
   if (!relationshipId) {
     chartId++;
     return [htmlOutput, chartId];
@@ -57,16 +69,15 @@ export async function genChart(
     chartId++;
     return [htmlOutput, chartId];
   }
-  const chartXml = await readXmlFile(warpContext.archive, chartPath);
+  const chartXml = await readXmlFile({ archive: warpContext.archive, filename: chartPath });
   if (!chartXml) {
     chartId++;
     return [htmlOutput, chartId];
   }
-  const plotAreaNode = getTextByPathList<XmlNode>(chartXml as XmlNode, [
-    "c:chartSpace",
-    "c:chart",
-    "c:plotArea",
-  ]);
+  const plotAreaNode = getTextByPathList<XmlNode>({
+    node: chartXml as XmlNode,
+    path: ["c:chartSpace", "c:chart", "c:plotArea"],
+  });
   if (!plotAreaNode) {
     chartId++;
     return [htmlOutput, chartId];
@@ -82,7 +93,7 @@ export async function genChart(
           data: {
             chartID: "chart" + chartId,
             chartType: "lineChart",
-            chartData: extractChartData(plotAreaEntry["c:ser"]),
+            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
           },
         };
         break;
@@ -92,7 +103,7 @@ export async function genChart(
           data: {
             chartID: "chart" + chartId,
             chartType: "barChart",
-            chartData: extractChartData(plotAreaEntry["c:ser"]),
+            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
           },
         };
         break;
@@ -102,7 +113,7 @@ export async function genChart(
           data: {
             chartID: "chart" + chartId,
             chartType: "pieChart",
-            chartData: extractChartData(plotAreaEntry["c:ser"]),
+            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
           },
         };
         break;
@@ -112,7 +123,7 @@ export async function genChart(
           data: {
             chartID: "chart" + chartId,
             chartType: "pie3DChart",
-            chartData: extractChartData(plotAreaEntry["c:ser"]),
+            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
           },
         };
         break;
@@ -122,7 +133,7 @@ export async function genChart(
           data: {
             chartID: "chart" + chartId,
             chartType: "areaChart",
-            chartData: extractChartData(plotAreaEntry["c:ser"]),
+            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
           },
         };
         break;
@@ -132,7 +143,7 @@ export async function genChart(
           data: {
             chartID: "chart" + chartId,
             chartType: "scatterChart",
-            chartData: extractChartData(plotAreaEntry["c:ser"]),
+            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
           },
         };
         break;

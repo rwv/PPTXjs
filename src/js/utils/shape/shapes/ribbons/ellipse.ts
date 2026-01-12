@@ -3,40 +3,46 @@ import type { XmlNode } from "../../../../types/pptx-xml";
 import type { RibbonContext } from "./types";
 import { createPath } from "./helpers";
 
-const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+type RibbonRenderOptions = {
+  ctx: RibbonContext;
+  shapeType: string;
+};
+
+const getShapeAdjustments = ({ node }: { node: XmlNode }): XmlNode[] => {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 };
 
 /**
  * Render ellipseRibbon or ellipseRibbon2 shape
  */
-export function renderEllipseRibbon(ctx: RibbonContext, shapType: string): string {
+export function renderEllipseRibbon({ ctx, shapeType }: RibbonRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let adj1 = 25000 * slideFactor;
   let adj2 = 50000 * slideFactor;
   let adj3 = 12500 * slideFactor;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj3") {
-      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
@@ -82,7 +88,7 @@ export function renderEllipseRibbon(ctx: RibbonContext, shapType: string): strin
   const cx4 = x2 / 2;
   const q9 = f1 * cx4;
   const cx5 = r - cx4;
-  if (shapType === "ellipseRibbon") {
+  if (shapeType === "ellipseRibbon") {
     const y1 = f1 * q2;
     const cy1 = f1 * cx1;
     const y3 = q5 + dy3;
@@ -210,7 +216,7 @@ export function renderEllipseRibbon(ctx: RibbonContext, shapType: string): strin
       x4 +
       "," +
       y1;
-  } else if (shapType === "ellipseRibbon2") {
+  } else if (shapeType === "ellipseRibbon2") {
     const u1 = f1 * q2;
     const y1 = b - u1;
     const cu1 = f1 * cx1;

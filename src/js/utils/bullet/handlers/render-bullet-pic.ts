@@ -15,15 +15,27 @@ import type { WarpContext, XmlNode } from "../../../types/pptx-xml";
 
 type BulletWarpObj = Pick<WarpContext, "slideResObj" | "archive">;
 
-export async function renderBulletPic(
-  bulletPicNode: XmlNode,
-  warpContext: BulletWarpObj,
-  marginLeftStyle: string,
-  marginRightStyle: string,
-  bulletSize: string,
-  isRtl: boolean
-): Promise<string> {
-  const bulletPicId = getTextByPathList<string>(bulletPicNode, ["a:blip", "attrs", "r:embed"]);
+type RenderBulletPicOptions = {
+  bulletPicNode: XmlNode;
+  warpContext: BulletWarpObj;
+  marginLeftStyle: string;
+  marginRightStyle: string;
+  bulletSize: string;
+  isRtl: boolean;
+};
+
+export async function renderBulletPic({
+  bulletPicNode,
+  warpContext,
+  marginLeftStyle,
+  marginRightStyle,
+  bulletSize,
+  isRtl,
+}: RenderBulletPicOptions): Promise<string> {
+  const bulletPicId = getTextByPathList<string>({
+    node: bulletPicNode,
+    path: ["a:blip", "attrs", "r:embed"],
+  });
   let bulletImageHtml = "";
 
   if (bulletPicId !== undefined) {
@@ -34,12 +46,12 @@ export async function renderBulletPic(
     } else {
       const imgArrayBuffer = await imgFile.arrayBuffer();
       const imgExt = imgPath.split(".").pop() ?? "";
-      const imgMimeType = getMimeType(imgExt);
+      const imgMimeType = getMimeType({ fileExtension: imgExt });
       bulletImageHtml =
         "<img src='data:" +
         imgMimeType +
         ";base64," +
-        base64ArrayBuffer(imgArrayBuffer) +
+        base64ArrayBuffer({ arrayBuffer: imgArrayBuffer }) +
         "' style='width: 100%;'/>";
     }
   }

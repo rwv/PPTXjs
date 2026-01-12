@@ -6,17 +6,13 @@
  * - Strikethrough (strike attribute)
  *
  * @param textRunNode - Text run node from PPTX
- * @param type - Shape type (unused but kept for consistency)
- * @param slideMasterTextStyles - Master text styles (unused but kept for consistency)
  * @returns CSS text-decoration value ("underline", "line-through", "underline line-through", or "inherit")
  */
-export function getFontDecoration(
-  textRunNode: Record<string, unknown>,
-  _shapeType: string | undefined,
-  _masterTextStyles: unknown
-): string {
-  void _shapeType;
-  void _masterTextStyles;
+type GetFontDecorationOptions = {
+  textRunNode: Record<string, unknown>;
+};
+
+export function getFontDecoration({ textRunNode }: GetFontDecorationOptions): string {
   if (textRunNode["a:rPr"] !== undefined) {
     const underlineStyle =
       textRunNode["a:rPr"]["attrs"]["u"] !== undefined

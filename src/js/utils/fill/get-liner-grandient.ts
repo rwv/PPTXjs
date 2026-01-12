@@ -29,24 +29,30 @@ import { getTilePattern } from "./liner-grandient/tiles";
 import { getSpecialPattern } from "./liner-grandient/special";
 import { getPercentPattern } from "./liner-grandient/percent";
 
-export function getLinerGrandient(
-  patternPreset: string,
-  backgroundColor: string,
-  foregroundColor: string
-): Array<string | number> {
-  const gridPattern = getGridPattern(patternPreset, backgroundColor, foregroundColor);
+type GetLinerGrandientOptions = {
+  patternPreset: string;
+  backgroundColor: string;
+  foregroundColor: string;
+};
+
+export function getLinerGrandient({
+  patternPreset,
+  backgroundColor,
+  foregroundColor,
+}: GetLinerGrandientOptions): Array<string | number> {
+  const gridPattern = getGridPattern({ patternPreset, backgroundColor, foregroundColor });
   if (gridPattern) return gridPattern;
 
-  const linePattern = getLinePattern(patternPreset, backgroundColor, foregroundColor);
+  const linePattern = getLinePattern({ patternPreset, backgroundColor, foregroundColor });
   if (linePattern) return linePattern;
 
-  const tilePattern = getTilePattern(patternPreset, backgroundColor, foregroundColor);
+  const tilePattern = getTilePattern({ patternPreset, backgroundColor, foregroundColor });
   if (tilePattern) return tilePattern;
 
-  const specialPattern = getSpecialPattern(patternPreset, backgroundColor, foregroundColor);
+  const specialPattern = getSpecialPattern({ patternPreset, backgroundColor, foregroundColor });
   if (specialPattern) return specialPattern;
 
-  const percentPattern = getPercentPattern(patternPreset, backgroundColor, foregroundColor);
+  const percentPattern = getPercentPattern({ patternPreset, backgroundColor, foregroundColor });
   if (percentPattern) return percentPattern;
 
   return [0, 0];

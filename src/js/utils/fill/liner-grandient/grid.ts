@@ -1,42 +1,48 @@
-export function getGridPattern(
-  prst: string,
-  bgColor: string,
-  fgColor: string
-): string[] | undefined {
-  switch (prst) {
+type GetGridPatternOptions = {
+  patternPreset: string;
+  backgroundColor: string;
+  foregroundColor: string;
+};
+
+export function getGridPattern({
+  patternPreset,
+  backgroundColor,
+  foregroundColor,
+}: GetGridPatternOptions): string[] | undefined {
+  switch (patternPreset) {
     case "smGrid":
       return [
         "linear-gradient(to right,  #" +
-          fgColor +
+          foregroundColor +
           " -1px, transparent 1px ), " +
           "linear-gradient(to bottom,  #" +
-          fgColor +
+          foregroundColor +
           " -1px, transparent 1px)  #" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 4px",
       ];
     case "dotGrid":
       return [
         "linear-gradient(to right,  #" +
-          fgColor +
+          foregroundColor +
           " -1px, transparent 1px ), " +
           "linear-gradient(to bottom,  #" +
-          fgColor +
+          foregroundColor +
           " -1px, transparent 1px)  #" +
-          bgColor +
+          backgroundColor +
           ";",
         "8px 8px",
       ];
     case "lgGrid":
       return [
         "linear-gradient(to right,  #" +
-          fgColor +
+          foregroundColor +
           " -1px, transparent 1.5px ), " +
           "linear-gradient(to bottom,  #" +
-          fgColor +
+          foregroundColor +
           " -1px, transparent 1.5px)  #" +
-          bgColor +
+          backgroundColor +
           ";",
         "8px 8px",
       ];
@@ -44,7 +50,7 @@ export function getGridPattern(
     case "smCheck": {
       let size = "";
       let pos = "";
-      if (prst === "lgCheck") {
+      if (patternPreset === "lgCheck") {
         size = "8px 8px";
         pos = "0 0, 4px 4px, 4px 4px, 8px 8px";
       } else {
@@ -53,17 +59,17 @@ export function getGridPattern(
       }
       return [
         "linear-gradient(45deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 0, transparent 75%,  #" +
-          fgColor +
+          foregroundColor +
           " 0), " +
           "linear-gradient(45deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 0, transparent 75%,  #" +
-          fgColor +
+          foregroundColor +
           " 0) " +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         size,
         pos,

@@ -21,32 +21,41 @@ import type { WarpContext, XmlNode } from "../../types/pptx-xml";
  * @param warpContext - Container object with layout tables and master styles
  * @returns CSS text-align value ("left", "right", "center", "justify", or "inherit")
  */
-export function getTextHorizontalAlign(
-  textNode: XmlNode,
-  paragraphNode: XmlNode,
-  shapeType: string | undefined,
-  warpContext: WarpContext
-): string {
+type GetTextHorizontalAlignOptions = {
+  textNode: XmlNode;
+  paragraphNode: XmlNode;
+  shapeType: string | undefined;
+  warpContext: WarpContext;
+};
+
+export function getTextHorizontalAlign({
+  textNode,
+  paragraphNode,
+  shapeType,
+  warpContext,
+}: GetTextHorizontalAlignOptions): string {
   //console.log("getTextHorizontalAlign: type: ", shapeType, ", node: ", textNode)
   const asString = (value: string | number | undefined): string | undefined =>
     value !== undefined ? String(value) : undefined;
 
   let alignmentValue = asString(
-    getTextByPathList<string | number>(textNode, ["a:pPr", "attrs", "algn"])
+    getTextByPathList<string | number>({ node: textNode, path: ["a:pPr", "attrs", "algn"] })
   );
   if (alignmentValue === undefined) {
     alignmentValue = asString(
-      getTextByPathList<string | number>(paragraphNode, ["a:pPr", "attrs", "algn"])
+      getTextByPathList<string | number>({
+        node: paragraphNode,
+        path: ["a:pPr", "attrs", "algn"],
+      })
     );
   }
   if (alignmentValue === undefined) {
     if (shapeType === "title" || shapeType === "ctrTitle" || shapeType === "subTitle") {
       let listLevel = 1;
-      const levelAttr = getTextByPathList<string | number>(paragraphNode, [
-        "a:pPr",
-        "attrs",
-        "lvl",
-      ]);
+      const levelAttr = getTextByPathList<string | number>({
+        node: paragraphNode,
+        path: ["a:pPr", "attrs", "lvl"],
+      });
       if (levelAttr !== undefined) {
         listLevel = parseInt(String(levelAttr), 10) + 1;
       }
@@ -54,49 +63,39 @@ export function getTextHorizontalAlign(
       const layoutTypeEntry = warpContext.slideLayoutTables?.typeTable[shapeType];
       alignmentValue = asString(
         layoutTypeEntry
-          ? getTextByPathList<string | number>(layoutTypeEntry, [
-              "p:txBody",
-              "a:lstStyle",
-              levelKey,
-              "attrs",
-              "algn",
-            ])
+          ? getTextByPathList<string | number>({
+              node: layoutTypeEntry,
+              path: ["p:txBody", "a:lstStyle", levelKey, "attrs", "algn"],
+            })
           : undefined
       );
       if (alignmentValue === undefined) {
         const masterTypeEntry = warpContext.slideMasterTables?.typeTable[shapeType];
         alignmentValue = asString(
           masterTypeEntry
-            ? getTextByPathList<string | number>(masterTypeEntry, [
-                "p:txBody",
-                "a:lstStyle",
-                levelKey,
-                "attrs",
-                "algn",
-              ])
+            ? getTextByPathList<string | number>({
+                node: masterTypeEntry,
+                path: ["p:txBody", "a:lstStyle", levelKey, "attrs", "algn"],
+              })
             : undefined
         );
         if (alignmentValue === undefined) {
           const masterTextStyles = warpContext.slideMasterTextStyles;
           alignmentValue = asString(
             masterTextStyles
-              ? getTextByPathList<string | number>(masterTextStyles, [
-                  "p:titleStyle",
-                  levelKey,
-                  "attrs",
-                  "algn",
-                ])
+              ? getTextByPathList<string | number>({
+                  node: masterTextStyles,
+                  path: ["p:titleStyle", levelKey, "attrs", "algn"],
+                })
               : undefined
           );
           if (alignmentValue === undefined && shapeType === "subTitle") {
             alignmentValue = asString(
               masterTextStyles
-                ? getTextByPathList<string | number>(masterTextStyles, [
-                    "p:bodyStyle",
-                    levelKey,
-                    "attrs",
-                    "algn",
-                  ])
+                ? getTextByPathList<string | number>({
+                    node: masterTextStyles,
+                    path: ["p:bodyStyle", levelKey, "attrs", "algn"],
+                  })
                 : undefined
             );
           }
@@ -105,25 +104,20 @@ export function getTextHorizontalAlign(
     } else if (shapeType === "body") {
       alignmentValue = asString(
         warpContext.slideMasterTextStyles
-          ? getTextByPathList<string | number>(warpContext.slideMasterTextStyles, [
-              "p:bodyStyle",
-              "a:lvl1pPr",
-              "attrs",
-              "algn",
-            ])
+          ? getTextByPathList<string | number>({
+              node: warpContext.slideMasterTextStyles,
+              path: ["p:bodyStyle", "a:lvl1pPr", "attrs", "algn"],
+            })
           : undefined
       );
     } else {
       const masterTypeEntry = warpContext.slideMasterTables?.typeTable[shapeType ?? ""];
       alignmentValue = asString(
         masterTypeEntry
-          ? getTextByPathList<string | number>(masterTypeEntry, [
-              "p:txBody",
-              "a:lstStyle",
-              "a:lvl1pPr",
-              "attrs",
-              "algn",
-            ])
+          ? getTextByPathList<string | number>({
+              node: masterTypeEntry,
+              path: ["p:txBody", "a:lstStyle", "a:lvl1pPr", "attrs", "algn"],
+            })
           : undefined
       );
     }

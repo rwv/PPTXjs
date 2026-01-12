@@ -1,5 +1,11 @@
 import tinycolor from "tinycolor2";
 
+type ApplyTintOptions = {
+  colorValue: string;
+  tintValue: number | string;
+  isAlpha: boolean;
+};
+
 /**
  * Applies a tint transformation to a color
  * Tint makes colors lighter by increasing lightness
@@ -9,11 +15,7 @@ import tinycolor from "tinycolor2";
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)
  */
-export function applyTint(
-  colorValue: string,
-  tintValue: number | string,
-  isAlpha: boolean
-): string {
+export function applyTint({ colorValue, tintValue, isAlpha }: ApplyTintOptions): string {
   const tintAmount = typeof tintValue === "number" ? tintValue : parseFloat(tintValue);
   const color = tinycolor(colorValue).toHsl();
 

@@ -42,19 +42,28 @@ export const STAR_SHAPE_TYPES = Object.keys(STAR_RENDERERS);
 /**
  * Check if a shape type is a star shape
  */
-export function isStarShape(shapType: string): boolean {
-  return shapType in STAR_RENDERERS;
+type IsStarShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isStarShape({ shapeType }: IsStarShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in STAR_RENDERERS;
 }
 
 /**
  * Render a star shape SVG path
  *
- * @param shapType - The star shape type (star4, star5, etc.)
+ * @param shapeType - The star shape type (star4, star5, etc.)
  * @param ctx - The shape rendering context
  * @returns SVG path string or empty string if not a star shape
  */
-export function renderStarShape(shapType: string, ctx: StarShapeContext): string {
-  const renderer = STAR_RENDERERS[shapType];
+type RenderStarShapeOptions = {
+  shapeType: string;
+  ctx: StarShapeContext;
+};
+
+export function renderStarShape({ shapeType, ctx }: RenderStarShapeOptions): string {
+  const renderer = STAR_RENDERERS[shapeType];
   if (renderer) {
     return renderer(ctx);
   }

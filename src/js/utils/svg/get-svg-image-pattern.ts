@@ -16,21 +16,31 @@ import type { WarpContext, XmlAttrs, XmlNode } from "../../types/pptx-xml";
 
 type RgbColor = { r: number; g: number; b: number; a?: number };
 
-export function getSvgImagePattern(
-  shapeNode: XmlNode,
-  imageDataUrl: string,
-  shapeId: string | number,
-  warpContext: WarpContext
-): string {
-  const imageDimensions = getBase64ImageDimensions(imageDataUrl);
+type GetSvgImagePatternOptions = {
+  shapeNode: XmlNode;
+  imageDataUrl: string;
+  shapeId: string | number;
+  warpContext: WarpContext;
+};
+
+export function getSvgImagePattern({
+  shapeNode,
+  imageDataUrl,
+  shapeId,
+  warpContext,
+}: GetSvgImagePatternOptions): string {
+  const imageDimensions = getBase64ImageDimensions({ imgSrc: imageDataUrl });
   const width = imageDimensions?.[0];
   const height = imageDimensions?.[1];
 
-  const blipFillNode = getTextByPathList<XmlNode>(shapeNode, ["p:spPr", "a:blipFill"]);
+  const blipFillNode = getTextByPathList<XmlNode>({
+    node: shapeNode,
+    path: ["p:spPr", "a:blipFill"],
+  });
   if (blipFillNode === undefined) {
     return "";
   }
-  const tileAttrs = getTextByPathList<XmlAttrs>(blipFillNode, ["a:tile", "attrs"]);
+  const tileAttrs = getTextByPathList<XmlAttrs>({ node: blipFillNode, path: ["a:tile", "attrs"] });
   let tileWidth: number | undefined;
   let tileHeight: number | undefined;
 
@@ -47,10 +57,10 @@ export function getSvgImagePattern(
     tileHeight = (Number(tileScaleY) / 100000) * height;
   }
 
-  const blipNode = getTextByPathList<XmlNode>(blipFillNode, ["a:blip"]);
+  const blipNode = getTextByPathList<XmlNode>({ node: blipFillNode, path: ["a:blip"] });
   const alphaModFixNode =
     blipNode !== undefined
-      ? getTextByPathList<XmlAttrs>(blipNode, ["a:alphaModFix", "attrs"])
+      ? getTextByPathList<XmlAttrs>({ node: blipNode, path: ["a:alphaModFix", "attrs"] })
       : undefined;
   let imageOpacityAttr = "";
 
@@ -79,7 +89,9 @@ export function getSvgImagePattern(
   }
 
   const duotoneNode =
-    blipNode !== undefined ? getTextByPathList<XmlNode>(blipNode, ["a:duotone"]) : undefined;
+    blipNode !== undefined
+      ? getTextByPathList<XmlNode>({ node: blipNode, path: ["a:duotone"] })
+      : undefined;
   let filterMarkup = "";
   let filterAttr = "";
 
@@ -89,7 +101,12 @@ export function getSvgImagePattern(
       if (colorType !== "attrs") {
         const colorNode: XmlNode = {};
         colorNode[colorType] = duotoneNode[colorType];
-        const hexColor = getSolidFill(colorNode, undefined, undefined, warpContext);
+        const hexColor = getSolidFill({
+          fillNode: colorNode,
+          colorMap: undefined,
+          placeholderColor: undefined,
+          warpContext,
+        });
         const duotoneColor = tinycolor("#" + hexColor);
         duotoneColors.push(duotoneColor.toRgb());
       }
@@ -127,7 +144,7 @@ export function getSvgImagePattern(
     patternMarkup += filterMarkup;
   }
 
-  const escapedImageDataUrl = escapeHtml(imageDataUrl);
+  const escapedImageDataUrl = escapeHtml({ text: imageDataUrl });
 
   if (tileWidth !== undefined && tileWidth !== 0) {
     patternMarkup +=

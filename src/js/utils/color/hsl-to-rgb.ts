@@ -7,6 +7,12 @@ export interface RgbColor {
   b: number;
 }
 
+type HslToRgbOptions = {
+  hue: number | string;
+  saturation: number | string;
+  lightness: number | string;
+};
+
 /**
  * Converts HSL color values to RGB
  *
@@ -15,11 +21,7 @@ export interface RgbColor {
  * @param lightness - Lightness (0-1)
  * @returns RGB color object with r, g, b values (0-255)
  */
-export function hslToRgb(
-  hue: number | string,
-  saturation: number | string,
-  lightness: number | string
-): RgbColor {
+export function hslToRgb({ hue, saturation, lightness }: HslToRgbOptions): RgbColor {
   const hueValue = typeof hue === "number" ? hue : parseFloat(hue);
   const saturationValue = typeof saturation === "number" ? saturation : parseFloat(saturation);
   const lightnessValue = typeof lightness === "number" ? lightness : parseFloat(lightness);
@@ -35,9 +37,9 @@ export function hslToRgb(
 
   const temp1 = lightnessValue * 2 - temp2;
 
-  const r = hueToRgb(temp1, temp2, hueNorm + 2) * 255;
-  const g = hueToRgb(temp1, temp2, hueNorm) * 255;
-  const b = hueToRgb(temp1, temp2, hueNorm - 2) * 255;
+  const r = hueToRgb({ temp1, temp2, hueValue: hueNorm + 2 }) * 255;
+  const g = hueToRgb({ temp1, temp2, hueValue: hueNorm }) * 255;
+  const b = hueToRgb({ temp1, temp2, hueValue: hueNorm - 2 }) * 255;
 
   return { r, g, b };
 }
@@ -50,7 +52,13 @@ export function hslToRgb(
  * @param hueValue - Normalized hue value
  * @returns RGB component value (0-1)
  */
-export function hueToRgb(temp1: number, temp2: number, hueValue: number): number {
+type HueToRgbOptions = {
+  temp1: number;
+  temp2: number;
+  hueValue: number;
+};
+
+export function hueToRgb({ temp1, temp2, hueValue }: HueToRgbOptions): number {
   let normalizedHue = hueValue;
   if (normalizedHue < 0) normalizedHue += 6;
   if (normalizedHue >= 6) normalizedHue -= 6;

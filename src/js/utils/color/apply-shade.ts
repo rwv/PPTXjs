@@ -1,5 +1,11 @@
 import tinycolor from "tinycolor2";
 
+type ApplyShadeOptions = {
+  colorValue: string;
+  shadeValue: number | string;
+  isAlpha: boolean;
+};
+
 /**
  * Applies a shade transformation to a color
  * Shade makes colors darker by reducing lightness
@@ -9,11 +15,7 @@ import tinycolor from "tinycolor2";
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)
  */
-export function applyShade(
-  colorValue: string,
-  shadeValue: number | string,
-  isAlpha: boolean
-): string {
+export function applyShade({ colorValue, shadeValue, isAlpha }: ApplyShadeOptions): string {
   const shadeAmount = typeof shadeValue === "number" ? shadeValue : parseFloat(shadeValue);
   const color = tinycolor(colorValue).toHsl();
 

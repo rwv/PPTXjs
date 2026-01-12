@@ -1,10 +1,15 @@
 import type { BasicShapeParams } from "./types";
 
-export function renderIrregularSeal(shapType: string, params: BasicShapeParams): string {
+type RenderIrregularSealOptions = {
+  shapeType: string;
+  params: BasicShapeParams;
+};
+
+export function renderIrregularSeal({ shapeType, params }: RenderIrregularSealOptions): string {
   const { w, h, shpId, fillColor, grndFillFlg, imgFillFlg, border } = params;
   let result = "";
   let d = "";
-  if (shapType === "irregularSeal1") {
+  if (shapeType === "irregularSeal1") {
     d =
       "M" +
       (w * 10800) / 21600 +
@@ -103,7 +108,7 @@ export function renderIrregularSeal(shapType: string, params: BasicShapeParams):
       "," +
       (h * 2295) / 21600 +
       " z";
-  } else if (shapType === "irregularSeal2") {
+  } else if (shapeType === "irregularSeal2") {
     d =
       "M" +
       (w * 11462) / 21600 +

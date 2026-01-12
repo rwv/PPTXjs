@@ -10,12 +10,10 @@ export interface MathShapeAdjustments {
 }
 
 export function getMathShapeAdjustments(node: XmlNode): MathShapeAdjustments {
-  const shapAdjst_ary = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+  const shapAdjst_ary = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   let adj1: number | undefined;
   let adj2: number | undefined;
   let adj3: number | undefined;
@@ -23,26 +21,38 @@ export function getMathShapeAdjustments(node: XmlNode): MathShapeAdjustments {
   if (shapAdjst_ary !== undefined) {
     if (Array.isArray(shapAdjst_ary)) {
       for (let i = 0; i < shapAdjst_ary.length; i++) {
-        const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+        const sAdj_name = getTextByPathList<string>({
+          node: shapAdjst_ary[i],
+          path: ["attrs", "name"],
+        });
         if (sAdj_name === "adj1") {
-          const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+          const sAdj1 = getTextByPathList<string>({
+            node: shapAdjst_ary[i],
+            path: ["attrs", "fmla"],
+          });
           if (sAdj1 !== undefined) {
             adj1 = parseInt(sAdj1.substr(4));
           }
         } else if (sAdj_name === "adj2") {
-          const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+          const sAdj2 = getTextByPathList<string>({
+            node: shapAdjst_ary[i],
+            path: ["attrs", "fmla"],
+          });
           if (sAdj2 !== undefined) {
             adj2 = parseInt(sAdj2.substr(4));
           }
         } else if (sAdj_name === "adj3") {
-          const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+          const sAdj3 = getTextByPathList<string>({
+            node: shapAdjst_ary[i],
+            path: ["attrs", "fmla"],
+          });
           if (sAdj3 !== undefined) {
             adj3 = parseInt(sAdj3.substr(4));
           }
         }
       }
     } else {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary, ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary, path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4));
       }

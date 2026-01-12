@@ -4,7 +4,11 @@
  * @param angle - Angle in EMU units (1 degree = 60000 EMU)
  * @returns Angle in degrees, or 0 if input is null/empty
  */
-export function angleToDegrees(angle: number | string | null): number {
+type AngleToDegreesOptions = {
+  angle: number | string | null;
+};
+
+export function angleToDegrees({ angle }: AngleToDegreesOptions): number {
   if (angle === "" || angle == null) {
     return 0;
   }

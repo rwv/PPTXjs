@@ -35,17 +35,15 @@ export function createPath(d: string, ctx: StarShapeContext): string {
  * Parse single adjustment value from shape node
  */
 export function parseSingleAdj(node: XmlNode, defaultVal: number, slideFactor: number): number {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const name = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "name"] });
     if (name === "adj") {
-      const fmla = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const fmla = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (fmla !== undefined) {
         return parseInt(fmla.substr(4)) * slideFactor;
       }
@@ -66,16 +64,14 @@ export function parseMultiAdj(
   let hf = (defaults.hf ?? 100000) * slideFactor;
   let vf = (defaults.vf ?? 100000) * slideFactor;
 
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
-    const fmla = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+    const name = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "name"] });
+    const fmla = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
     if (fmla === undefined) {
       continue;
     }

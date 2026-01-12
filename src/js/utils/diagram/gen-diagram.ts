@@ -4,8 +4,8 @@ import { processSpNode } from "../node";
 import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
 type DiagramWarpContext = WarpContext & { digramFileContent?: XmlNode };
-type TransformNode = Parameters<typeof getPosition>[0];
-type ExtentNode = Parameters<typeof getSize>[0];
+type TransformNode = XmlNode;
+type ExtentNode = XmlNode;
 
 function isXmlNode(value: XmlValue): value is XmlNode {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -33,7 +33,6 @@ function isXmlNodeArray(value: XmlValue): value is XmlNode[] {
  *
  * @param diagramNode - Diagram node (dgm:relIds containing file references)
  * @param warpContext - Warp object containing zip, slideResObj, digramFileContent
- * @param sourceType - Source context (e.g., "diagramBg")
  * @param shapeType - Shape type context
  * @param emuToPx - EMU to pixel conversion factor
  * @param styleTable - Global CSS style table
@@ -42,19 +41,29 @@ function isXmlNodeArray(value: XmlValue): value is XmlNode[] {
  * @param firstLineBreak - Mutable object tracking first line break state
  * @returns HTML string for the diagram
  */
-export async function genDiagram(
-  diagramNode: unknown,
-  warpContext: DiagramWarpContext,
-  sourceType: string,
-  shapeType: string,
-  emuToPx: number,
-  styleTable: unknown,
-  fontSizeFactor: number,
-  rtlLanguages: string[],
-  firstLineBreak: { value: boolean }
-): Promise<string> {
+type GenDiagramOptions = {
+  diagramNode: XmlNode;
+  warpContext: DiagramWarpContext;
+  shapeType: string;
+  emuToPx: number;
+  styleTable: unknown;
+  fontSizeFactor: number;
+  rtlLanguages: string[];
+  firstLineBreak: { value: boolean };
+};
+
+export async function genDiagram({
+  diagramNode,
+  warpContext,
+  shapeType,
+  emuToPx,
+  styleTable,
+  fontSizeFactor,
+  rtlLanguages,
+  firstLineBreak,
+}: GenDiagramOptions): Promise<string> {
   //console.log(warpContext)
-  const diagramNodeRecord = diagramNode as XmlNode;
+  const diagramNodeRecord = diagramNode;
   //readXmlFile(archive, sldFileName)
   /**files define the diagram:
    * 1-colors#.xml,
@@ -64,7 +73,7 @@ export async function genDiagram(
    * 5-drawing#.xml, which Microsoft added as an extension for persisting diagram layout information.
    */
   ///get colors#.xml, data#.xml , layout#.xml , quickStyle#.xml
-  const transformNodeValue = getTextByPathList(diagramNodeRecord, ["p:xfrm"]);
+  const transformNodeValue = getTextByPathList({ node: diagramNodeRecord, path: ["p:xfrm"] });
   const transformNode = isXmlNode(transformNodeValue)
     ? (transformNodeValue as TransformNode)
     : undefined;
@@ -72,7 +81,7 @@ export async function genDiagram(
   //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
   ///get drawing#.xml
   // var dgmDrwFileName = "";
-  // var dataModelExt = getTextByPathList(dgmData, ["dgm:dataModel", "dgm:extLst", "a:ext", "dsp:dataModelExt", "attrs"]);
+  // var dataModelExt = getTextByPathList({ node: dgmData, path: ["dgm:dataModel", "dgm:extLst", "a:ext", "dsp:dataModelExt", "attrs"] });
   // if (dataModelExt !== undefined) {
   //     var dgmDrwFileId = dataModelExt["relId"];
   //     dgmDrwFileName = warpObj["slideResObj"][dgmDrwFileId]["target"];
@@ -81,13 +90,12 @@ export async function genDiagram(
   // if (dgmDrwFileName != "") {
   //     dgmDrwFile = readXmlFile(archive, dgmDrwFileName);
   // }
-  // var dgmDrwSpArray = getTextByPathList(dgmDrwFile, ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
-  //var dgmDrwSpArray = getTextByPathList(warpContext["digramFileContent"], ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
-  const diagramShapeNodes = getTextByPathList((warpContext.digramFileContent ?? {}) as XmlNode, [
-    "p:drawing",
-    "p:spTree",
-    "p:sp",
-  ]);
+  // var dgmDrwSpArray = getTextByPathList({ node: dgmDrwFile, path: ["dsp:drawing", "dsp:spTree", "dsp:sp"] });
+  //var dgmDrwSpArray = getTextByPathList({ node: warpContext["digramFileContent"], path: ["dsp:drawing", "dsp:spTree", "dsp:sp"] });
+  const diagramShapeNodes = getTextByPathList({
+    node: (warpContext.digramFileContent ?? {}) as XmlNode,
+    path: ["p:drawing", "p:spTree", "p:sp"],
+  });
   let diagramHtml = "";
   if (diagramShapeNodes !== undefined && isXmlNodeArray(diagramShapeNodes)) {
     const diagramShapeCount = diagramShapeNodes.length;
@@ -98,26 +106,38 @@ export async function genDiagram(
       // var pSpStrToObj = JSON.parse(pSpStr);
       //console.log("pSpStrToObj[" + i + "]: ", pSpStrToObj);
       //rslt += processSpNode(pSpStrToObj, node, warpObj, "diagramBg", sType)
-      diagramHtml += await processSpNode(
-        diagramShapeNode,
-        diagramNodeRecord,
+      diagramHtml += await processSpNode({
+        spNode: diagramShapeNode,
+        parentNodes: diagramNodeRecord,
         warpContext,
-        "diagramBg",
+        sourceType: "diagramBg",
         shapeType,
         emuToPx,
         styleTable,
-        fontSizeFactor,
+        fontSizeScale: fontSizeFactor,
         rtlLanguages,
-        firstLineBreak
-      );
+        firstLineBreak,
+      });
     }
     // dgmDrwFile: "dsp:"-> "p:"
   }
 
   return (
     "<div class='block diagram-content' style='" +
-    getPosition(transformNode, diagramNodeRecord, undefined, undefined, shapeType, emuToPx) +
-    getSize(extentNode, undefined, undefined, emuToPx) +
+    getPosition({
+      slideSpNode: transformNode,
+      parentNode: diagramNodeRecord,
+      slideLayoutSpNode: undefined,
+      slideMasterSpNode: undefined,
+      shapeType,
+      emuToPx,
+    }) +
+    getSize({
+      slideSpNode: extentNode,
+      slideLayoutSpNode: undefined,
+      slideMasterSpNode: undefined,
+      emuToPx,
+    }) +
     "'>" +
     diagramHtml +
     "</div>"

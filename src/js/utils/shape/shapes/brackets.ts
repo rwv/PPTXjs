@@ -80,14 +80,10 @@ function createPath(d: string, ctx: BracketShapeContext): string {
 function renderBracePair(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 8333 * slideFactor;
   const cnstVal1 = 25000 * slideFactor;
   const cnstVal2 = 50000 * slideFactor;
@@ -153,12 +149,10 @@ function renderBracePair(ctx: BracketShapeContext): string {
 function renderLeftBrace(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
   let sAdj1: string | undefined;
   let adj1 = 8333 * slideFactor;
@@ -166,14 +160,17 @@ function renderLeftBrace(ctx: BracketShapeContext): string {
   let adj2 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -221,12 +218,10 @@ function renderLeftBrace(ctx: BracketShapeContext): string {
 function renderRightBrace(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
   let sAdj1: string | undefined;
   let adj1 = 8333 * slideFactor;
@@ -234,14 +229,17 @@ function renderRightBrace(ctx: BracketShapeContext): string {
   let adj2 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -290,14 +288,10 @@ function renderRightBrace(ctx: BracketShapeContext): string {
 function renderBracketPair(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 16667 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
@@ -329,14 +323,10 @@ function renderBracketPair(ctx: BracketShapeContext): string {
 function renderLeftBracket(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 8333 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
@@ -379,14 +369,10 @@ function renderLeftBracket(ctx: BracketShapeContext): string {
 function renderRightBracket(ctx: BracketShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 8333 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
@@ -440,15 +426,24 @@ const BRACKET_SHAPE_RENDERERS: Record<string, (ctx: BracketShapeContext) => stri
 /**
  * Check if a shape type is a bracket shape handled by this module
  */
-export function isBracketShape(shapType: string): boolean {
-  return shapType in BRACKET_SHAPE_RENDERERS;
+type IsBracketShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isBracketShape({ shapeType }: IsBracketShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in BRACKET_SHAPE_RENDERERS;
 }
 
 /**
  * Render a bracket shape
  * @returns SVG string for the shape, or empty string if not a bracket shape
  */
-export function renderBracketShape(shapType: string, ctx: BracketShapeContext): string {
-  const renderer = BRACKET_SHAPE_RENDERERS[shapType];
+type RenderBracketShapeOptions = {
+  shapeType: string;
+  ctx: BracketShapeContext;
+};
+
+export function renderBracketShape({ shapeType, ctx }: RenderBracketShapeOptions): string {
+  const renderer = BRACKET_SHAPE_RENDERERS[shapeType];
   return renderer ? renderer(ctx) : "";
 }

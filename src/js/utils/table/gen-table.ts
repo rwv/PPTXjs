@@ -35,33 +35,42 @@ import type { XmlNode } from "../../types/pptx-xml";
  * @param fontSizeScale - Font size scaling factor
  * @returns HTML string for the table
  */
-export async function genTable(
-  node: any,
-  warpContext: any,
-  tableStyles: any,
-  firstLineBreak: { value: boolean },
-  styleTable: any,
-  rtlLanguages: string[],
-  emuToPx: number,
-  fontSizeScale: number
-): Promise<string> {
+type GenTableOptions = {
+  node: any;
+  warpContext: any;
+  tableStyles: any;
+  firstLineBreak: { value: boolean };
+  styleTable: any;
+  rtlLanguages: string[];
+  emuToPx: number;
+  fontSizeScale: number;
+};
+
+export async function genTable({
+  node,
+  warpContext,
+  tableStyles,
+  firstLineBreak,
+  styleTable,
+  rtlLanguages,
+  emuToPx,
+  fontSizeScale,
+}: GenTableOptions): Promise<string> {
   const order = node["attrs"]["order"];
-  const tableNode = getTextByPathList<XmlNode>(node, ["a:graphic", "a:graphicData", "a:tbl"]);
-  const xfrmNode = getTextByPathList<XmlNode>(node, ["p:xfrm"]);
+  const tableNode = getTextByPathList<XmlNode>({
+    node,
+    path: ["a:graphic", "a:graphicData", "a:tbl"],
+  });
+  const xfrmNode = getTextByPathList<XmlNode>({ node, path: ["p:xfrm"] });
   /////////////////////////////////////////Amir////////////////////////////////////////////////
-  const getTblPr = getTextByPathList<XmlNode>(node, [
-    "a:graphic",
-    "a:graphicData",
-    "a:tbl",
-    "a:tblPr",
-  ]);
-  const getColsGrid = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "a:graphic",
-    "a:graphicData",
-    "a:tbl",
-    "a:tblGrid",
-    "a:gridCol",
-  ]);
+  const getTblPr = getTextByPathList<XmlNode>({
+    node,
+    path: ["a:graphic", "a:graphicData", "a:tbl", "a:tblPr"],
+  });
+  const getColsGrid = getTextByPathList<XmlNode | XmlNode[]>({
+    node,
+    path: ["a:graphic", "a:graphicData", "a:tbl", "a:tblGrid", "a:gridCol"],
+  });
   let tblDir = "";
   if (getTblPr !== undefined) {
     const isRTL = getTblPr["attrs"]["rtl"];
@@ -84,38 +93,53 @@ export async function genTable(
   };
 
   const tbleStyleId =
-    getTblPr !== undefined ? getTextByPathList<string>(getTblPr, ["a:tableStyleId"]) : undefined;
-  const thisTblStyle = getTableStyleById(tbleStyleId, tableStyles, tblStylAttrObj);
+    getTblPr !== undefined
+      ? getTextByPathList<string>({ node: getTblPr, path: ["a:tableStyleId"] })
+      : undefined;
+  const thisTblStyle = getTableStyleById({ styleId: tbleStyleId, tableStyles });
   if (thisTblStyle !== undefined) {
     warpContext["thisTbiStyle"] = thisTblStyle;
   }
   const tblStyl =
     thisTblStyle !== undefined
-      ? getTextByPathList<XmlNode>(thisTblStyle, ["a:wholeTbl", "a:tcStyle"])
+      ? getTextByPathList<XmlNode>({
+          node: thisTblStyle,
+          path: ["a:wholeTbl", "a:tcStyle"],
+        })
       : undefined;
   const tblBorderStyl =
-    tblStyl !== undefined ? getTextByPathList<XmlNode>(tblStyl, ["a:tcBdr"]) : undefined;
+    tblStyl !== undefined
+      ? getTextByPathList<XmlNode>({ node: tblStyl, path: ["a:tcBdr"] })
+      : undefined;
   let tbl_borders = "";
   if (tblBorderStyl !== undefined) {
-    tbl_borders = getTableBorders(tblBorderStyl, warpContext);
+    tbl_borders = getTableBorders({ tableBorderNode: tblBorderStyl, warpContext });
   }
   let tbl_bgcolor = "";
   let tbl_bgFillschemeClr =
     thisTblStyle !== undefined
-      ? getTextByPathList<XmlNode>(thisTblStyle, ["a:tblBg", "a:fillRef"])
+      ? getTextByPathList<XmlNode>({ node: thisTblStyle, path: ["a:tblBg", "a:fillRef"] })
       : undefined;
   //console.log( "thisTblStyle:", thisTblStyle, "warpContext:", warpContext)
   if (tbl_bgFillschemeClr !== undefined) {
-    tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpContext);
+    tbl_bgcolor = getSolidFill({
+      fillNode: tbl_bgFillschemeClr,
+      colorMap: undefined,
+      placeholderColor: undefined,
+      warpContext,
+    });
   }
   if (tbl_bgFillschemeClr === undefined && thisTblStyle !== undefined) {
-    tbl_bgFillschemeClr = getTextByPathList<XmlNode>(thisTblStyle, [
-      "a:wholeTbl",
-      "a:tcStyle",
-      "a:fill",
-      "a:solidFill",
-    ]);
-    tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpContext);
+    tbl_bgFillschemeClr = getTextByPathList<XmlNode>({
+      node: thisTblStyle,
+      path: ["a:wholeTbl", "a:tcStyle", "a:fill", "a:solidFill"],
+    });
+    tbl_bgcolor = getSolidFill({
+      fillNode: tbl_bgFillschemeClr,
+      colorMap: undefined,
+      placeholderColor: undefined,
+      warpContext,
+    });
   }
   if (tbl_bgcolor !== "") {
     tbl_bgcolor = "background-color: #" + tbl_bgcolor + ";";
@@ -125,8 +149,20 @@ export async function genTable(
     "<table " +
     tblDir +
     " style='border-collapse: collapse;" +
-    getPosition(xfrmNode, node, undefined, undefined, undefined, emuToPx) +
-    getSize(xfrmNode, undefined, undefined, emuToPx) +
+    getPosition({
+      slideSpNode: xfrmNode,
+      parentNode: node,
+      slideLayoutSpNode: undefined,
+      slideMasterSpNode: undefined,
+      shapeType: undefined,
+      emuToPx,
+    }) +
+    getSize({
+      slideSpNode: xfrmNode,
+      slideLayoutSpNode: undefined,
+      slideMasterSpNode: undefined,
+      emuToPx,
+    }) +
     " z-index: " +
     order +
     ";" +
@@ -149,7 +185,13 @@ export async function genTable(
       rowsStyl += "height:" + rowHeight + "px;";
     }
     // Get row styling based on position and table style attributes
-    const rowStyle = getTableRowStyle(i, trNodes.length, tblStylAttrObj, thisTblStyle, warpContext);
+    const rowStyle = getTableRowStyle({
+      rowIndex: i,
+      totalRows: trNodes.length,
+      tableStyleFlags: tblStylAttrObj,
+      tableStyle: thisTblStyle,
+      warpContext,
+    });
     const fillColor = rowStyle.fillColor;
     const row_borders = rowStyle.row_borders;
     const fontClrPr = rowStyle.fontClrPr;
@@ -185,13 +227,13 @@ export async function genTable(
               if (
                 tblStylAttrObj["isLstRowAttr"] === 1 &&
                 i === trNodes.length - 1 &&
-                getTextByPathList(thisTblStyle, ["a:seCell"]) !== undefined
+                getTextByPathList({ node: thisTblStyle, path: ["a:seCell"] }) !== undefined
               ) {
                 a_sorce = "a:seCell";
               } else if (
                 tblStylAttrObj["isFrstRowAttr"] === 1 &&
                 i === 0 &&
-                getTextByPathList(thisTblStyle, ["a:neCell"]) !== undefined
+                getTextByPathList({ node: thisTblStyle, path: ["a:neCell"] }) !== undefined
               ) {
                 a_sorce = "a:neCell";
               }
@@ -203,9 +245,9 @@ export async function genTable(
               j !== tcNodes.length - 1
             ) {
               if (j % 2 !== 0) {
-                let aBandNode = getTextByPathList(thisTblStyle, ["a:band2V"]);
+                let aBandNode = getTextByPathList({ node: thisTblStyle, path: ["a:band2V"] });
                 if (aBandNode === undefined) {
-                  aBandNode = getTextByPathList(thisTblStyle, ["a:band1V"]);
+                  aBandNode = getTextByPathList({ node: thisTblStyle, path: ["a:band1V"] });
                   if (aBandNode !== undefined) {
                     a_sorce = "a:band2V";
                   }
@@ -220,32 +262,31 @@ export async function genTable(
               if (
                 tblStylAttrObj["isLstRowAttr"] === 1 &&
                 i === trNodes.length - 1 &&
-                getTextByPathList(thisTblStyle, ["a:swCell"]) !== undefined
+                getTextByPathList({ node: thisTblStyle, path: ["a:swCell"] }) !== undefined
               ) {
                 a_sorce = "a:swCell";
               } else if (
                 tblStylAttrObj["isFrstRowAttr"] === 1 &&
                 i === 0 &&
-                getTextByPathList(thisTblStyle, ["a:nwCell"]) !== undefined
+                getTextByPathList({ node: thisTblStyle, path: ["a:nwCell"] }) !== undefined
               ) {
                 a_sorce = "a:nwCell";
               }
             }
 
-            const cellParmAry = await getTableCellParams(
-              tcNodes[j] as XmlNode,
+            const cellParmAry = await getTableCellParams({
+              tcNodes: tcNodes[j] as XmlNode,
               getColsGrid,
-              i,
-              j,
-              thisTblStyle,
-              a_sorce,
+              colIndex: j,
+              tableStyle: thisTblStyle,
+              cellSource: a_sorce,
               warpContext,
               firstLineBreak,
               styleTable,
               rtlLanguages,
               emuToPx,
-              fontSizeScale
-            );
+              fontSizeScale,
+            });
             const text = cellParmAry[0];
             const colStyl = cellParmAry[1];
             const cssName = cellParmAry[2];
@@ -318,9 +359,9 @@ export async function genTable(
           tblStylAttrObj["isBandColAttr"] === 1 &&
           !(tblStylAttrObj["isLstRowAttr"] === 1)
         ) {
-          let aBandNode = getTextByPathList(thisTblStyle, ["a:band2V"]);
+          let aBandNode = getTextByPathList({ node: thisTblStyle, path: ["a:band2V"] });
           if (aBandNode === undefined) {
-            aBandNode = getTextByPathList(thisTblStyle, ["a:band1V"]);
+            aBandNode = getTextByPathList({ node: thisTblStyle, path: ["a:band1V"] });
             if (aBandNode !== undefined) {
               a_sorce = "a:band2V";
             }
@@ -333,20 +374,19 @@ export async function genTable(
           a_sorce = "a:lastCol";
         }
 
-        const cellParmAry = await getTableCellParams(
-          tcNodes[0] as XmlNode,
+        const cellParmAry = await getTableCellParams({
+          tcNodes: tcNodes[0] as XmlNode,
           getColsGrid,
-          i,
-          undefined,
-          thisTblStyle,
-          a_sorce,
+          colIndex: 0,
+          tableStyle: thisTblStyle,
+          cellSource: a_sorce,
           warpContext,
           firstLineBreak,
           styleTable,
           rtlLanguages,
           emuToPx,
-          fontSizeScale
-        );
+          fontSizeScale,
+        });
         const text = cellParmAry[0];
         const colStyl = cellParmAry[1];
         const cssName = cellParmAry[2];

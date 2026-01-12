@@ -20,11 +20,15 @@ type TableStyleNode = XmlNode & {
   attrs?: TableStyleAttrs;
 };
 
-export function getTableStyleById(
-  styleId: string | undefined,
-  tableStyles: Record<string, unknown> | undefined,
-  tblStylAttrObj: Record<string, unknown>
-): TableStyleNode | undefined {
+type GetTableStyleByIdOptions = {
+  styleId: string | undefined;
+  tableStyles: Record<string, unknown> | undefined;
+};
+
+export function getTableStyleById({
+  styleId,
+  tableStyles,
+}: GetTableStyleByIdOptions): TableStyleNode | undefined {
   if (styleId === undefined) {
     return undefined;
   }
@@ -54,8 +58,6 @@ export function getTableStyleById(
       foundStyle = tableStyleList;
     }
   }
-
-  void tblStylAttrObj;
 
   return foundStyle;
 }

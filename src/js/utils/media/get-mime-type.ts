@@ -30,9 +30,13 @@ const MIME_TYPE_MAP: Record<string, string> = {
  * Gets the MIME type for a given file extension
  * Uses object lookup for O(1) performance (much faster than switch statements)
  *
- * @param imgFileExt - File extension (e.g., "jpg", "png", "mp4")
+ * @param fileExtension - File extension (e.g., "jpg", "png", "mp4")
  * @returns MIME type string (e.g., "image/jpeg", "video/mp4"), or empty string if not found
  */
-export function getMimeType(imgFileExt: string): string {
-  return MIME_TYPE_MAP[imgFileExt.toLowerCase()] || "";
+type GetMimeTypeOptions = {
+  fileExtension: string;
+};
+
+export function getMimeType({ fileExtension }: GetMimeTypeOptions): string {
+  return MIME_TYPE_MAP[fileExtension.toLowerCase()] || "";
 }

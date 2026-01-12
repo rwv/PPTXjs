@@ -9,6 +9,15 @@ function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
   return value !== undefined && isXmlNode(value) ? value : undefined;
 }
 
+type GetFontSizeOptions = {
+  textRunNode: XmlNode;
+  textBodyNode: XmlNode | undefined;
+  listLevel: number | string;
+  shapeType: string | undefined;
+  warpContext: WarpContext;
+  fontSizeScale: number;
+};
+
 /**
  * Determines font size for a PPTX node with complex fallback hierarchy
  *
@@ -35,18 +44,16 @@ function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
  * @param warpContext - Container object with layout tables and master styles
  * @returns Font size as CSS string (e.g., "12px") or "inherit"/"initial"
  */
-export function getFontSize(
-  textRunNode: XmlNode,
-  textBodyNode: XmlNode | undefined,
-  paragraphFontStyle: XmlNode | undefined,
-  listLevel: number | string,
-  shapeType: string | undefined,
-  warpContext: WarpContext,
-  fontSizeScale: number
-): string {
+export function getFontSize({
+  textRunNode,
+  textBodyNode,
+  listLevel,
+  shapeType,
+  warpContext,
+  fontSizeScale,
+}: GetFontSizeOptions): string {
   // if (shapeType === "sldNum")
   //console.log("getFontSize node:", textRunNode, "listStyleNode", listStyleNode, "listLevel:", listLevel, 'shapeType:', shapeType, "warpContext:", warpContext)
-  void paragraphFontStyle;
   const listStyleNode =
     textBodyNode !== undefined ? asXmlNode(textBodyNode["a:lstStyle"]) : undefined;
   const listLevelKey = "a:lvl" + listLevel + "pPr";
@@ -54,41 +61,52 @@ export function getFontSize(
   let fontSizePoints: number | undefined = undefined;
   let fontSizeValue: string | number | undefined;
   let kerningValue: string | number | undefined;
-  const runSizeValue = getTextByPathList<string | number>(textRunNode, ["a:rPr", "attrs", "sz"]);
+  const runSizeValue = getTextByPathList<string | number>({
+    node: textRunNode,
+    path: ["a:rPr", "attrs", "sz"],
+  });
   if (runSizeValue !== undefined) {
     fontSizePoints = parseInt(String(runSizeValue), 10) / 100;
   }
-  const fieldRunNode = asXmlNode(getTextByPathList(textRunNode, ["a:fld"]));
+  const fieldRunNode = asXmlNode(
+    getTextByPathList({
+      node: textRunNode,
+      path: ["a:fld"],
+    })
+  );
   if (isNaN(fontSizePoints) || (fontSizePoints === undefined && fieldRunNode !== undefined)) {
     fontSizeValue =
       fieldRunNode !== undefined
-        ? getTextByPathList<string | number>(fieldRunNode, ["a:rPr", "attrs", "sz"])
+        ? getTextByPathList<string | number>({
+            node: fieldRunNode,
+            path: ["a:rPr", "attrs", "sz"],
+          })
         : undefined;
     fontSizePoints = parseInt(String(fontSizeValue), 10) / 100;
   }
-  const textContent = getTextByPathList<string>(textRunNode, ["a:t"]);
+  const textContent = getTextByPathList<string>({ node: textRunNode, path: ["a:t"] });
   if ((isNaN(fontSizePoints) || fontSizePoints === undefined) && textContent === undefined) {
-    fontSizeValue = getTextByPathList<string | number>(textRunNode, [
-      "a:endParaRPr",
-      "attrs",
-      "sz",
-    ]);
+    fontSizeValue = getTextByPathList<string | number>({
+      node: textRunNode,
+      path: ["a:endParaRPr", "attrs", "sz"],
+    });
     fontSizePoints = parseInt(String(fontSizeValue), 10) / 100;
   }
   if ((isNaN(fontSizePoints) || fontSizePoints === undefined) && listStyleNode !== undefined) {
-    fontSizeValue = getTextByPathList<string | number>(listStyleNode, [
-      listLevelKey,
-      "a:defRPr",
-      "attrs",
-      "sz",
-    ]);
+    fontSizeValue = getTextByPathList<string | number>({
+      node: listStyleNode,
+      path: [listLevelKey, "a:defRPr", "attrs", "sz"],
+    });
     fontSizePoints = parseInt(String(fontSizeValue), 10) / 100;
   }
   let shouldApplyKerning = false;
   if (textBodyNode !== undefined) {
-    const shapeAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:spAutoFit"]);
+    const shapeAutoFitNode = getTextByPathList({
+      node: textBodyNode,
+      path: ["a:bodyPr", "a:spAutoFit"],
+    });
     // if (spAutoFitNode === undefined) {
-    //     spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:normAutofit"]);
+    //     spAutoFitNode = getTextByPathList({ node: textBodyNode, path: ["a:bodyPr", "a:normAutofit"] });
     // }
     if (shapeAutoFitNode !== undefined) {
       shouldApplyKerning = true;
@@ -101,27 +119,33 @@ export function getFontSize(
     // }
     const slideLayoutTables = warpContext.slideLayoutTables as XmlNode | undefined;
     if (slideLayoutTables !== undefined) {
-      fontSizeValue = getTextByPathList<string | number>(slideLayoutTables, [
-        "typeTable",
-        shapeKey,
-        "p:txBody",
-        "a:lstStyle",
-        listLevelKey,
-        "a:defRPr",
-        "attrs",
-        "sz",
-      ]);
+      fontSizeValue = getTextByPathList<string | number>({
+        node: slideLayoutTables,
+        path: [
+          "typeTable",
+          shapeKey,
+          "p:txBody",
+          "a:lstStyle",
+          listLevelKey,
+          "a:defRPr",
+          "attrs",
+          "sz",
+        ],
+      });
       fontSizePoints = parseInt(String(fontSizeValue), 10) / 100;
-      kerningValue = getTextByPathList<string | number>(slideLayoutTables, [
-        "typeTable",
-        shapeKey,
-        "p:txBody",
-        "a:lstStyle",
-        listLevelKey,
-        "a:defRPr",
-        "attrs",
-        "kern",
-      ]);
+      kerningValue = getTextByPathList<string | number>({
+        node: slideLayoutTables,
+        path: [
+          "typeTable",
+          shapeKey,
+          "p:txBody",
+          "a:lstStyle",
+          listLevelKey,
+          "a:defRPr",
+          "attrs",
+          "kern",
+        ],
+      });
     }
     if (
       shouldApplyKerning &&
@@ -140,45 +164,45 @@ export function getFontSize(
     // }
     const slideMasterTables = warpContext.slideMasterTables as XmlNode | undefined;
     if (slideMasterTables !== undefined) {
-      fontSizeValue = getTextByPathList<string | number>(slideMasterTables, [
-        "typeTable",
-        shapeKey,
-        "p:txBody",
-        "a:lstStyle",
-        listLevelKey,
-        "a:defRPr",
-        "attrs",
-        "sz",
-      ]);
-      kerningValue = getTextByPathList<string | number>(slideMasterTables, [
-        "typeTable",
-        shapeKey,
-        "p:txBody",
-        "a:lstStyle",
-        listLevelKey,
-        "a:defRPr",
-        "attrs",
-        "kern",
-      ]);
+      fontSizeValue = getTextByPathList<string | number>({
+        node: slideMasterTables,
+        path: [
+          "typeTable",
+          shapeKey,
+          "p:txBody",
+          "a:lstStyle",
+          listLevelKey,
+          "a:defRPr",
+          "attrs",
+          "sz",
+        ],
+      });
+      kerningValue = getTextByPathList<string | number>({
+        node: slideMasterTables,
+        path: [
+          "typeTable",
+          shapeKey,
+          "p:txBody",
+          "a:lstStyle",
+          listLevelKey,
+          "a:defRPr",
+          "attrs",
+          "kern",
+        ],
+      });
     }
     if (fontSizeValue === undefined) {
       const slideMasterTextStyles = warpContext.slideMasterTextStyles as XmlNode | undefined;
       if (shapeType === "title" || shapeType === "subTitle" || shapeType === "ctrTitle") {
         if (slideMasterTextStyles !== undefined) {
-          fontSizeValue = getTextByPathList<string | number>(slideMasterTextStyles, [
-            "p:titleStyle",
-            listLevelKey,
-            "a:defRPr",
-            "attrs",
-            "sz",
-          ]);
-          kerningValue = getTextByPathList<string | number>(slideMasterTextStyles, [
-            "p:titleStyle",
-            listLevelKey,
-            "a:defRPr",
-            "attrs",
-            "kern",
-          ]);
+          fontSizeValue = getTextByPathList<string | number>({
+            node: slideMasterTextStyles,
+            path: ["p:titleStyle", listLevelKey, "a:defRPr", "attrs", "sz"],
+          });
+          kerningValue = getTextByPathList<string | number>({
+            node: slideMasterTextStyles,
+            path: ["p:titleStyle", listLevelKey, "a:defRPr", "attrs", "kern"],
+          });
         }
       } else if (
         shapeType === "body" ||
@@ -188,38 +212,26 @@ export function getFontSize(
         shapeType === "textBox"
       ) {
         if (slideMasterTextStyles !== undefined) {
-          fontSizeValue = getTextByPathList<string | number>(slideMasterTextStyles, [
-            "p:bodyStyle",
-            listLevelKey,
-            "a:defRPr",
-            "attrs",
-            "sz",
-          ]);
-          kerningValue = getTextByPathList<string | number>(slideMasterTextStyles, [
-            "p:bodyStyle",
-            listLevelKey,
-            "a:defRPr",
-            "attrs",
-            "kern",
-          ]);
+          fontSizeValue = getTextByPathList<string | number>({
+            node: slideMasterTextStyles,
+            path: ["p:bodyStyle", listLevelKey, "a:defRPr", "attrs", "sz"],
+          });
+          kerningValue = getTextByPathList<string | number>({
+            node: slideMasterTextStyles,
+            path: ["p:bodyStyle", listLevelKey, "a:defRPr", "attrs", "kern"],
+          });
         }
       } else if (shapeType === "shape") {
         //textBox and shape text does not indent
         if (slideMasterTextStyles !== undefined) {
-          fontSizeValue = getTextByPathList<string | number>(slideMasterTextStyles, [
-            "p:otherStyle",
-            listLevelKey,
-            "a:defRPr",
-            "attrs",
-            "sz",
-          ]);
-          kerningValue = getTextByPathList<string | number>(slideMasterTextStyles, [
-            "p:otherStyle",
-            listLevelKey,
-            "a:defRPr",
-            "attrs",
-            "kern",
-          ]);
+          fontSizeValue = getTextByPathList<string | number>({
+            node: slideMasterTextStyles,
+            path: ["p:otherStyle", listLevelKey, "a:defRPr", "attrs", "sz"],
+          });
+          kerningValue = getTextByPathList<string | number>({
+            node: slideMasterTextStyles,
+            path: ["p:otherStyle", listLevelKey, "a:defRPr", "attrs", "kern"],
+          });
         }
         shouldApplyKerning = false;
       }
@@ -227,31 +239,27 @@ export function getFontSize(
       if (fontSizeValue === undefined) {
         const defaultTextStyle = warpContext.defaultTextStyle as XmlNode | undefined;
         if (defaultTextStyle !== undefined) {
-          fontSizeValue = getTextByPathList<string | number>(defaultTextStyle, [
-            listLevelKey,
-            "a:defRPr",
-            "attrs",
-            "sz",
-          ]);
+          fontSizeValue = getTextByPathList<string | number>({
+            node: defaultTextStyle,
+            path: [listLevelKey, "a:defRPr", "attrs", "sz"],
+          });
           kerningValue =
             kerningValue === undefined
-              ? getTextByPathList<string | number>(defaultTextStyle, [
-                  listLevelKey,
-                  "a:defRPr",
-                  "attrs",
-                  "kern",
-                ])
+              ? getTextByPathList<string | number>({
+                  node: defaultTextStyle,
+                  path: [listLevelKey, "a:defRPr", "attrs", "kern"],
+                })
               : undefined;
         }
         shouldApplyKerning = false;
       }
       //  else if (shapeType === undefined || shapeType === "shape") {
-      //     sz = getTextByPathList(warpContext["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-      //     kern = getTextByPathList(warpContext["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
+      //     sz = getTextByPathList({ node: warpContext["slideMasterTextStyles"], path: ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "sz"] });
+      //     kern = getTextByPathList({ node: warpContext["slideMasterTextStyles"], path: ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "kern"] });
       // }
       // else if (shapeType === "textBox") {
-      //     sz = getTextByPathList(warpContext["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-      //     kern = getTextByPathList(warpContext["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
+      //     sz = getTextByPathList({ node: warpContext["slideMasterTextStyles"], path: ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "sz"] });
+      //     kern = getTextByPathList({ node: warpContext["slideMasterTextStyles"], path: ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "kern"] });
       // }
     }
     fontSizePoints = parseInt(String(fontSizeValue), 10) / 100;
@@ -267,11 +275,10 @@ export function getFontSize(
     }
   }
 
-  const baselineValue = getTextByPathList<string | number>(textRunNode, [
-    "a:rPr",
-    "attrs",
-    "baseline",
-  ]);
+  const baselineValue = getTextByPathList<string | number>({
+    node: textRunNode,
+    path: ["a:rPr", "attrs", "baseline"],
+  });
   if (baselineValue !== undefined && !isNaN(fontSizePoints)) {
     const baselineOffset = parseInt(String(baselineValue), 10) / 100000;
     //fontSize -= 10;
@@ -282,12 +289,10 @@ export function getFontSize(
   if (!isNaN(fontSizePoints)) {
     const normalAutofit =
       textBodyNode !== undefined
-        ? getTextByPathList<string | number>(textBodyNode, [
-            "a:bodyPr",
-            "a:normAutofit",
-            "attrs",
-            "fontScale",
-          ])
+        ? getTextByPathList<string | number>({
+            node: textBodyNode,
+            path: ["a:bodyPr", "a:normAutofit", "attrs", "fontScale"],
+          })
         : undefined;
     const normalAutofitScale = normalAutofit !== undefined ? Number(normalAutofit) : 0;
     if (normalAutofitScale !== 0) {

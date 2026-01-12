@@ -5,7 +5,11 @@
  * @param middleStopCount - Number of middle stops (not including 0% and 100%)
  * @returns Array of stop percentage strings
  */
-export function getMiddleStops(middleStopCount: number): string[] {
+type GetMiddleStopsOptions = {
+  middleStopCount: number;
+};
+
+export function getMiddleStops({ middleStopCount }: GetMiddleStopsOptions): string[] {
   const stopPercentages: string[] = ["0%", "100%"];
 
   if (middleStopCount === 0) {

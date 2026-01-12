@@ -32,11 +32,9 @@ export function createPath(d: string, ctx: CurvedArrowContext): string {
 }
 
 export function getShapeAdjustments(node: XmlNode): XmlNode[] {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 }

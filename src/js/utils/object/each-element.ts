@@ -9,10 +9,12 @@
  * eachElement([1, 2, 3], (item, i) => `${i}:${item} `); // "0:1 1:2 2:3 "
  * eachElement(5, (item) => `value:${item}`); // "value:5"
  */
-export function eachElement<T>(
-  node: T | T[] | undefined,
-  callback: (element: T, index: number) => string
-): string {
+type EachElementOptions<T> = {
+  node: T | T[] | undefined;
+  callback: (element: T, index: number) => string;
+};
+
+export function eachElement<T>({ node, callback }: EachElementOptions<T>): string {
   if (node === undefined) {
     return "";
   }

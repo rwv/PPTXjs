@@ -25,12 +25,19 @@ interface ExtentNode {
  * @param emuToPx - Conversion factor from PPTX units to pixels (default: 96/914400)
  * @returns CSS size string (e.g., "width: 100px; height: 50px;") or empty string if no extent found
  */
-export function getSize(
-  slideSpNode: ExtentNode | undefined,
-  slideLayoutSpNode: ExtentNode | undefined,
-  slideMasterSpNode: ExtentNode | undefined,
-  emuToPx: number
-): string {
+type GetSizeOptions = {
+  slideSpNode: ExtentNode | undefined;
+  slideLayoutSpNode: ExtentNode | undefined;
+  slideMasterSpNode: ExtentNode | undefined;
+  emuToPx: number;
+};
+
+export function getSize({
+  slideSpNode,
+  slideLayoutSpNode,
+  slideMasterSpNode,
+  emuToPx,
+}: GetSizeOptions): string {
   let extentAttributes: { cx?: string; cy?: string } | undefined;
   let widthPx = -1,
     heightPx = -1;

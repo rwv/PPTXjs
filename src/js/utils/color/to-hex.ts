@@ -4,7 +4,11 @@
  * @param value - Number to convert (0-255)
  * @returns Two-digit hex string (e.g., "0a", "ff")
  */
-export function toHex(value: number | string): string {
+type ToHexOptions = {
+  value: number | string;
+};
+
+export function toHex({ value }: ToHexOptions): string {
   const numericValue = typeof value === "number" ? value : parseFloat(value);
 
   // Handle invalid input

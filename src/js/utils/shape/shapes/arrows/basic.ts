@@ -3,35 +3,41 @@ import type { XmlNode } from "../../../../types/pptx-xml";
 import type { ArrowShapeContext } from "./types";
 import { createPolygon } from "./helpers";
 
-const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+type ArrowRenderOptions = {
+  ctx: ArrowShapeContext;
+  shapeType: string;
+};
+
+const getShapeAdjustments = ({ node }: { node: XmlNode }): XmlNode[] => {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 };
 
 /**
  * Render rightArrow shape
  */
-export function renderRightArrow(ctx: ArrowShapeContext): string {
+export function renderRightArrow({ ctx }: ArrowRenderOptions): string {
   const { node, w, h } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let sAdj1_val = 0.25,
     sAdj2_val = 0.5;
   const max_sAdj2_const = w / h;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         sAdj1_val = 0.5 - parseInt(sAdj1.substr(4)) / 200000;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = 1 - sAdj2_val2 / max_sAdj2_const;
@@ -43,22 +49,25 @@ export function renderRightArrow(ctx: ArrowShapeContext): string {
   return " " + createPolygon(points, ctx);
 }
 
-export function renderLeftArrow(ctx: ArrowShapeContext): string {
+export function renderLeftArrow({ ctx }: ArrowRenderOptions): string {
   const { node, w, h } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let sAdj1_val = 0.25,
     sAdj2_val = 0.5;
   const max_sAdj2_const = w / h;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         sAdj1_val = 0.5 - parseInt(sAdj1.substr(4)) / 200000;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;
@@ -70,22 +79,25 @@ export function renderLeftArrow(ctx: ArrowShapeContext): string {
   return " " + createPolygon(points, ctx);
 }
 
-export function renderDownArrow(ctx: ArrowShapeContext, shapType: string): string {
+export function renderDownArrow({ ctx, shapeType }: ArrowRenderOptions): string {
   const { node, w, h } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let sAdj1_val = 0.25,
     sAdj2_val = 0.5;
   const max_sAdj2_const = h / w;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         sAdj1_val = parseInt(sAdj1.substr(4)) / 200000;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;
@@ -93,7 +105,7 @@ export function renderDownArrow(ctx: ArrowShapeContext, shapType: string): strin
     }
   }
 
-  if (shapType === "flowChartOffpageConnector") {
+  if (shapeType === "flowChartOffpageConnector") {
     sAdj1_val = 0.5;
     sAdj2_val = 0.212;
   }
@@ -102,22 +114,25 @@ export function renderDownArrow(ctx: ArrowShapeContext, shapType: string): strin
   return " " + createPolygon(points, ctx);
 }
 
-export function renderUpArrow(ctx: ArrowShapeContext): string {
+export function renderUpArrow({ ctx }: ArrowRenderOptions): string {
   const { node, w, h } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let sAdj1_val = 0.25,
     sAdj2_val = 0.5;
   const max_sAdj2_const = h / w;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         sAdj1_val = parseInt(sAdj1.substr(4)) / 200000;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;
@@ -129,22 +144,25 @@ export function renderUpArrow(ctx: ArrowShapeContext): string {
   return " " + createPolygon(points, ctx);
 }
 
-export function renderLeftRightArrow(ctx: ArrowShapeContext): string {
+export function renderLeftRightArrow({ ctx }: ArrowRenderOptions): string {
   const { node, w, h } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let sAdj1_val = 0.25,
     sAdj2_val = 0.25;
   const max_sAdj2_const = w / h;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         sAdj1_val = 0.5 - parseInt(sAdj1.substr(4)) / 200000;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;
@@ -156,22 +174,25 @@ export function renderLeftRightArrow(ctx: ArrowShapeContext): string {
   return " " + createPolygon(points, ctx);
 }
 
-export function renderUpDownArrow(ctx: ArrowShapeContext): string {
+export function renderUpDownArrow({ ctx }: ArrowRenderOptions): string {
   const { node, w, h } = ctx;
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   let sAdj1_val = 0.25,
     sAdj2_val = 0.25;
   const max_sAdj2_const = h / w;
 
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         sAdj1_val = 0.5 - parseInt(sAdj1.substr(4)) / 200000;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         const sAdj2_val2 = parseInt(sAdj2.substr(4)) / 100000;
         sAdj2_val = sAdj2_val2 / max_sAdj2_const;

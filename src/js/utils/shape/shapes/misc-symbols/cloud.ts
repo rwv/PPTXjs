@@ -76,14 +76,10 @@ export function renderCloud(ctx: MiscSymbolContext): string {
 
 export function renderSmileyFace(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   const refr = slideFactor;
   let adj = 4653 * refr;
   if (shapAdjst !== undefined) {

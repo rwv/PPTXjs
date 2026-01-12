@@ -40,10 +40,8 @@ function measureHtmlWidth(html: string): number {
  *
  * @param textBodyNode - Text body node (p:txBody) containing paragraphs
  * @param spNode - Parent shape node for property lookup
- * @param slideLayoutSpNode - Shape node from slide layout for fallback
- * @param slideMasterSpNode - Shape node from slide master for fallback
- * @param type - Shape type (body, obj, shape, etc.)
- * @param idx - Placeholder index for layout lookup
+ * @param shapeType - Shape type (body, obj, shape, etc.)
+ * @param placeholderIndex - Placeholder index for layout lookup
  * @param warpContext - Warp object containing slide resources and styles
  * @param tableColumnWidth - Table column width (for table cells, undefined otherwise)
  * @param firstLineBreak - Object {value: boolean} for line break state (modified in place)
@@ -53,33 +51,42 @@ function measureHtmlWidth(html: string): number {
  * @param fontSizeScale - Font size scaling factor
  * @returns HTML string for the text body
  */
-export async function genTextBody(
-  textBodyNode: any,
-  spNode: any,
-  slideLayoutSpNode: any,
-  slideMasterSpNode: any,
-  type: string | undefined,
-  idx: number | string | undefined,
-  warpContext: any,
-  tableColumnWidth: number | string | undefined,
-  firstLineBreak: { value: boolean },
-  styleTable: any,
-  rtlLanguages: string[],
-  emuToPx: number,
-  fontSizeScale: number
-): Promise<string> {
-  let text = "";
-  const _slideMasterTextStyles = warpContext["slideMasterTextStyles"];
-  void _slideMasterTextStyles;
+type GenTextBodyOptions = {
+  textBodyNode: any;
+  spNode: any;
+  shapeType: string | undefined;
+  placeholderIndex: number | string | undefined;
+  warpContext: any;
+  tableColumnWidth: number | string | undefined;
+  firstLineBreak: { value: boolean };
+  styleTable: any;
+  rtlLanguages: string[];
+  emuToPx: number;
+  fontSizeScale: number;
+};
 
+export async function genTextBody({
+  textBodyNode,
+  spNode,
+  shapeType,
+  placeholderIndex,
+  warpContext,
+  tableColumnWidth,
+  firstLineBreak,
+  styleTable,
+  rtlLanguages,
+  emuToPx,
+  fontSizeScale,
+}: GenTextBodyOptions): Promise<string> {
+  let text = "";
   if (textBodyNode === undefined) {
     return text;
   }
   //rtl : <p:txBody>
   //          <a:bodyPr wrap="square" rtlCol="1">
 
-  const pFontStyle = getTextByPathList<XmlNode>(spNode, ["p:style", "a:fontRef"]);
-  //console.log("genTextBody spNode: ", getTextByPathList(spNode,["p:spPr","a:xfrm","a:ext"]));
+  const pFontStyle = getTextByPathList<XmlNode>({ node: spNode, path: ["p:style", "a:fontRef"] });
+  //console.log("genTextBody spNode: ", getTextByPathList({ node: spNode, path: ["p:spPr","a:xfrm","a:ext"] }));
 
   //var lstStyle = textBodyNode["a:lstStyle"];
 
@@ -118,18 +125,18 @@ export async function genTextBody(
     }
     //rtlStr = "";//"dir='"+isRTL+"'";
     let styleText = "";
-    const marginsVer = getVerticalMargins(
-      pNode,
+    const marginsVer = getVerticalMargins({
+      paragraphNode: pNode,
       textBodyNode,
-      type,
-      idx,
+      shapeType,
+      layoutIndex: placeholderIndex,
       warpContext,
-      fontSizeScale
-    );
+      fontSizeScale,
+    });
     if (marginsVer !== "") {
       styleText = marginsVer;
     }
-    if (type === "body" || type === "obj" || type === "shape") {
+    if (shapeType === "body" || shapeType === "obj" || shapeType === "shape") {
       styleText += "font-size: 0px;";
       //styleText += "line-height: 0;";
       styleText += "font-weight: 100;";
@@ -147,14 +154,11 @@ export async function genTextBody(
       };
     }
     //console.log("textBodyNode: ", textBodyNode["a:lstStyle"])
-    let prg_width_node = getTextByPathList<string | number>(spNode, [
-      "p:spPr",
-      "a:xfrm",
-      "a:ext",
-      "attrs",
-      "cx",
-    ]);
-    let prg_height_node; // = getTextByPathList(spNode, ["p:spPr", "a:xfrm", "a:ext", "attrs", "cy"]);
+    let prg_width_node = getTextByPathList<string | number>({
+      node: spNode,
+      path: ["p:spPr", "a:xfrm", "a:ext", "attrs", "cx"],
+    });
+    let prg_height_node; // = getTextByPathList({ node: spNode, path: ["p:spPr", "a:xfrm", "a:ext", "attrs", "cy"] });
     const sld_prg_width =
       prg_width_node !== undefined
         ? "width:" + parseInt(String(prg_width_node), 10) * emuToPx + "px;"
@@ -163,30 +167,41 @@ export async function genTextBody(
       prg_height_node !== undefined
         ? "height:" + parseInt(String(prg_height_node), 10) * emuToPx + "px;"
         : "";
-    const prg_dir = getPregraphDir(pNode, textBodyNode, idx, type, warpContext);
+    const prg_dir = getPregraphDir({
+      paragraphNode: pNode,
+      paragraphIndex: placeholderIndex,
+      elementType: shapeType,
+      warpContext,
+    });
     text +=
       "<div style='display: flex;" +
       sld_prg_width +
       sld_prg_height +
       "' class='slide-prgrph " +
-      getHorizontalAlign(pNode, textBodyNode, idx, type, prg_dir, warpContext) +
+      getHorizontalAlign({
+        paragraphNode: pNode,
+        textBodyNode,
+        layoutIndex: placeholderIndex,
+        shapeType,
+        paragraphDirection: prg_dir,
+        warpContext,
+      }) +
       " " +
       prg_dir +
       " " +
       cssName +
       "' >";
-    const buText_ary = await genBuChar(
-      pNode,
-      i,
-      spNode,
-      textBodyNode,
-      pFontStyle,
-      idx,
-      type,
+    const buText_ary = await genBuChar({
+      paragraphNode: pNode,
+      shapeNode: spNode,
+      textBody: textBodyNode,
+      parentFontStyle: pFontStyle,
+      placeholderIndex,
+      shapeType,
       warpContext,
       emuToPx,
-      fontSizeScale
-    );
+      fontSizeScale,
+    });
     const isBullate =
       buText_ary[0] !== undefined && buText_ary[0] !== null && buText_ary[0] !== "" ? true : false;
     const bu_width =
@@ -195,7 +210,14 @@ export async function genTextBody(
         : 0;
     text += buText_ary[0] !== undefined ? buText_ary[0] : "";
     //get text margin
-    const margin_ary = getPregraphMargn(pNode, idx, type, isBullate, warpContext, emuToPx);
+    const margin_ary = getPregraphMargn({
+      paragraphNode: pNode,
+      paragraphIndex: placeholderIndex,
+      elementType: shapeType,
+      isBulleted: isBullate,
+      warpContext,
+      emuToPx,
+    });
     const margin = margin_ary[0];
     const mrgin_val = margin_ary[1];
     if (prg_width_node === undefined && tableColumnWidth !== undefined && prg_width_node !== 0) {
@@ -208,24 +230,20 @@ export async function genTextBody(
     let total_text_len = 0;
     if (rNode === undefined && pNode !== undefined) {
       // without r
-      const prgr_text = genSpanElement(
-        pNode,
-        undefined,
-        spNode,
+      const prgr_text = genSpanElement({
+        runNode: pNode,
+        paragraphNode: spNode,
         textBodyNode,
-        pFontStyle,
-        slideLayoutSpNode,
-        idx,
-        type,
-        1,
+        parentFontStyle: pFontStyle,
+        placeholderIndex,
+        shapeType,
         warpContext,
-        isBullate,
         styleTable,
         firstLineBreak,
         rtlLanguages,
         emuToPx,
-        fontSizeScale
-      );
+        fontSizeScale,
+      });
       if (isBullate) {
         total_text_len += measureHtmlWidth(prgr_text);
       }
@@ -233,24 +251,20 @@ export async function genTextBody(
     } else if (rNode !== undefined) {
       // with multi r
       for (let j = 0; j < rNode.length; j++) {
-        const prgr_text = genSpanElement(
-          rNode[j],
-          j,
-          pNode,
+        const prgr_text = genSpanElement({
+          runNode: rNode[j],
+          paragraphNode: pNode,
           textBodyNode,
-          pFontStyle,
-          slideLayoutSpNode,
-          idx,
-          type,
-          rNode.length,
+          parentFontStyle: pFontStyle,
+          placeholderIndex,
+          shapeType,
           warpContext,
-          isBullate,
           styleTable,
           firstLineBreak,
           rtlLanguages,
           emuToPx,
-          fontSizeScale
-        );
+          fontSizeScale,
+        });
         if (isBullate) {
           total_text_len += measureHtmlWidth(prgr_text);
         }

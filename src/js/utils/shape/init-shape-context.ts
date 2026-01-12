@@ -70,51 +70,71 @@ export interface ShapeContext {
 /**
  * Initialize shape rendering context
  */
-export async function initShapeContext(
-  node: XmlNode,
-  pNode: XmlNode | undefined,
-  slideLayoutSpNode: XmlNode | undefined,
-  slideMasterSpNode: XmlNode | undefined,
-  id: number | string | undefined,
-  idx: number | string | undefined,
-  type: string | undefined,
-  name: string | undefined,
-  order: number | string | undefined,
-  sType: string | undefined,
-  source: string,
-  warpContext: WarpContext,
-  emuToPx: number,
-  styleTable: Record<string, { name: string; text: string }>
-): Promise<ShapeContext | null> {
+type InitShapeContextOptions = {
+  node: XmlNode;
+  parentNode: XmlNode | undefined;
+  slideLayoutSpNode: XmlNode | undefined;
+  slideMasterSpNode: XmlNode | undefined;
+  id: number | string | undefined;
+  idx: number | string | undefined;
+  type: string | undefined;
+  name: string | undefined;
+  order: number | string | undefined;
+  shapeType: string | undefined;
+  source: string;
+  warpContext: WarpContext;
+  emuToPx: number;
+  styleTable: Record<string, { name: string; text: string }>;
+};
+
+export async function initShapeContext({
+  node,
+  parentNode,
+  slideLayoutSpNode,
+  slideMasterSpNode,
+  id,
+  idx,
+  type,
+  name,
+  order,
+  shapeType,
+  source,
+  warpContext,
+  emuToPx,
+  styleTable,
+}: InitShapeContextOptions): Promise<ShapeContext | null> {
   //var dltX = 0;
   //var dltY = 0;
   const xfrmList = ["p:spPr", "a:xfrm"];
-  const slideXfrmNode = asXmlNode(getTextByPathList(node, xfrmList));
+  const slideXfrmNode = asXmlNode(getTextByPathList({ node, path: xfrmList }));
   const slideLayoutXfrmNode = slideLayoutSpNode
-    ? asXmlNode(getTextByPathList(slideLayoutSpNode, xfrmList))
+    ? asXmlNode(getTextByPathList({ node: slideLayoutSpNode, path: xfrmList }))
     : undefined;
   const slideMasterXfrmNode = slideMasterSpNode
-    ? asXmlNode(getTextByPathList(slideMasterSpNode, xfrmList))
+    ? asXmlNode(getTextByPathList({ node: slideMasterSpNode, path: xfrmList }))
     : undefined;
 
-  const shpId = getTextByPathList<string | number>(node, ["attrs", "order"]) ?? "";
+  const shpId = getTextByPathList<string | number>({ node, path: ["attrs", "order"] }) ?? "";
   //console.log("shpId: ",shpId)
-  const shapType = getTextByPathList<string>(node, ["p:spPr", "a:prstGeom", "attrs", "prst"]);
+  const shapType = getTextByPathList<string>({
+    node,
+    path: ["p:spPr", "a:prstGeom", "attrs", "prst"],
+  });
 
   //custGeom - Amir
-  const custShapType = asXmlNode(getTextByPathList(node, ["p:spPr", "a:custGeom"]));
+  const custShapType = asXmlNode(getTextByPathList({ node, path: ["p:spPr", "a:custGeom"] }));
 
   let isFlipV = false;
   let isFlipH = false;
   let flip = "";
   const flipVValue = slideXfrmNode
-    ? getTextByPathList<string | number>(slideXfrmNode, ["attrs", "flipV"])
+    ? getTextByPathList<string | number>({ node: slideXfrmNode, path: ["attrs", "flipV"] })
     : undefined;
   if (String(flipVValue) === "1") {
     isFlipV = true;
   }
   const flipHValue = slideXfrmNode
-    ? getTextByPathList<string | number>(slideXfrmNode, ["attrs", "flipH"])
+    ? getTextByPathList<string | number>({ node: slideXfrmNode, path: ["attrs", "flipH"] })
     : undefined;
   if (String(flipHValue) === "1") {
     isFlipH = true;
@@ -129,17 +149,20 @@ export async function initShapeContext(
   /////////////////////////Amir////////////////////////
   //rotate
   const rotateValue = slideXfrmNode
-    ? getTextByPathList<string | number>(slideXfrmNode, ["attrs", "rot"])
+    ? getTextByPathList<string | number>({ node: slideXfrmNode, path: ["attrs", "rot"] })
     : undefined;
-  const rotate = angleToDegrees(rotateValue ?? null);
+  const rotate = angleToDegrees({ angle: rotateValue ?? null });
 
   //console.log("genShape rotate: " + rotate);
   let txtRotate;
-  const txtXframeNode = asXmlNode(getTextByPathList(node, ["p:txXfrm"]));
+  const txtXframeNode = asXmlNode(getTextByPathList({ node, path: ["p:txXfrm"] }));
   if (txtXframeNode !== undefined) {
-    const txtXframeRot = getTextByPathList<string | number>(txtXframeNode, ["attrs", "rot"]);
+    const txtXframeRot = getTextByPathList<string | number>({
+      node: txtXframeNode,
+      path: ["attrs", "rot"],
+    });
     if (txtXframeRot !== undefined) {
-      txtRotate = angleToDegrees(txtXframeRot) + 90;
+      txtRotate = angleToDegrees({ angle: txtXframeRot }) + 90;
     }
   } else {
     txtRotate = rotate;
@@ -149,14 +172,14 @@ export async function initShapeContext(
     if (!slideXfrmNode) {
       return null;
     }
-    const offAttrs = getTextByPathList<Record<string, string | number>>(slideXfrmNode, [
-      "a:off",
-      "attrs",
-    ]);
-    const extAttrs = getTextByPathList<Record<string, string | number>>(slideXfrmNode, [
-      "a:ext",
-      "attrs",
-    ]);
+    const offAttrs = getTextByPathList<Record<string, string | number>>({
+      node: slideXfrmNode,
+      path: ["a:off", "attrs"],
+    });
+    const extAttrs = getTextByPathList<Record<string, string | number>>({
+      node: slideXfrmNode,
+      path: ["a:ext", "attrs"],
+    });
     if (!offAttrs || !extAttrs) {
       return null;
     }
@@ -186,8 +209,20 @@ export async function initShapeContext(
       name +
       "'" +
       "' style='" +
-      getPosition(slideXfrmNode, pNode, undefined, undefined, sType, emuToPx) +
-      getSize(slideXfrmNode, undefined, undefined, emuToPx) +
+      getPosition({
+        slideSpNode: slideXfrmNode,
+        parentNode,
+        slideLayoutSpNode: undefined,
+        slideMasterSpNode: undefined,
+        shapeType,
+        emuToPx,
+      }) +
+      getSize({
+        slideSpNode: slideXfrmNode,
+        slideLayoutSpNode: undefined,
+        slideMasterSpNode: undefined,
+        emuToPx,
+      }) +
       " z-index: " +
       order +
       ";" +
@@ -201,20 +236,30 @@ export async function initShapeContext(
     let defsContent = "";
 
     // Fill Color
-    let fillColor = await getShapeFill(node, pNode, true, warpContext, source);
+    let fillColor = await getShapeFill({
+      shapeNode: node,
+      parentNode,
+      isSvgMode: true,
+      warpContext,
+      sourceType: source,
+    });
     //console.log("genShape: fillColor: ", fillColor)
     let grndFillFlg = false;
     let imgFillFlg = false;
-    const shapePropsNode = asXmlNode(getTextByPathList(node, ["p:spPr"]));
-    let clrFillType = shapePropsNode ? getFillType(shapePropsNode as Record<string, unknown>) : "";
+    const shapePropsNode = asXmlNode(getTextByPathList({ node, path: ["p:spPr"] }));
+    let clrFillType = shapePropsNode
+      ? getFillType({ shapePropsNode: shapePropsNode as Record<string, unknown> })
+      : "";
     if (clrFillType === "GROUP_FILL") {
-      const groupShapeProps = pNode
-        ? asXmlNode(getTextByPathList(pNode, ["p:grpSpPr"]))
+      const groupShapeProps = parentNode
+        ? asXmlNode(getTextByPathList({ node: parentNode, path: ["p:grpSpPr"] }))
         : undefined;
-      clrFillType = groupShapeProps ? getFillType(groupShapeProps as Record<string, unknown>) : "";
+      clrFillType = groupShapeProps
+        ? getFillType({ shapePropsNode: groupShapeProps as Record<string, unknown> })
+        : "";
     }
     // if (clrFillType == "") {
-    //     var clrFillType = getFillType(getTextByPathList(node, ["p:style","a:fillRef"]));
+    //     var clrFillType = getFillType(getTextByPathList({ node: node, path: ["p:style","a:fillRef"] }));
     // }
     //console.log("genShape: fillColor: ", fillColor, ", clrFillType: ", clrFillType, ", node: ", node)
     /////////////////////////////////////////
@@ -224,7 +269,13 @@ export async function initShapeContext(
         const gradientFill = fillColor as { color: string[]; rot: number };
         const colorArray = gradientFill.color;
         const angle = gradientFill.rot + 90;
-        const svgGrdnt = getSvgGradient(w, h, angle, colorArray, String(shpId));
+        const svgGrdnt = getSvgGradient({
+          width: w,
+          height: h,
+          angleDegrees: angle,
+          colorStops: colorArray,
+          shapeId: String(shpId),
+        });
         //fill="url(#linGrd)"
         //console.log("genShape: svgGrdnt: ", svgGrdnt)
         defsContent += svgGrdnt;
@@ -232,7 +283,12 @@ export async function initShapeContext(
     } else if (clrFillType === "PIC_FILL") {
       imgFillFlg = true;
       if (typeof fillColor === "string") {
-        const svgBgImg = getSvgImagePattern(node, fillColor, String(shpId), warpContext);
+        const svgBgImg = getSvgImagePattern({
+          shapeNode: node,
+          imageDataUrl: fillColor,
+          shapeId: String(shpId),
+          warpContext,
+        });
         //fill="url(#imgPtrn)"
         //console.log(svgBgImg)
         defsContent += svgBgImg;
@@ -265,7 +321,12 @@ export async function initShapeContext(
       }
     }
     // Border Color
-    const borderValue = getBorder(node, pNode, true, "shape", warpContext);
+    const borderValue = getBorder({
+      shapeNode: node,
+      isSvgMode: true,
+      borderType: "shape",
+      warpContext,
+    });
     const border =
       typeof borderValue === "string"
         ? { color: "none", width: "0", strokeDasharray: "0" }

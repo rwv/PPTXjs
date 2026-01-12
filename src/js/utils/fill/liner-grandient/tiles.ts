@@ -1,41 +1,47 @@
-export function getTilePattern(
-  prst: string,
-  bgColor: string,
-  fgColor: string
-): string[] | undefined {
-  switch (prst) {
+type GetTilePatternOptions = {
+  patternPreset: string;
+  backgroundColor: string;
+  foregroundColor: string;
+};
+
+export function getTilePattern({
+  patternPreset,
+  backgroundColor,
+  foregroundColor,
+}: GetTilePatternOptions): string[] | undefined {
+  switch (patternPreset) {
     case "diagBrick":
       return [
         "linear-gradient(45deg, transparent 15%,  #" +
-          fgColor +
+          foregroundColor +
           " 30%, transparent 30%), " +
           "linear-gradient(-45deg, transparent 15%,  #" +
-          fgColor +
+          foregroundColor +
           " 30%, transparent 30%), " +
           "linear-gradient(-45deg, transparent 65%,  #" +
-          fgColor +
+          foregroundColor +
           " 80%, transparent 0) " +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 4px",
       ];
     case "horzBrick":
       return [
         "linear-gradient(335deg, #" +
-          bgColor +
+          backgroundColor +
           " 1.6px, transparent 1.6px), " +
           "linear-gradient(155deg, #" +
-          bgColor +
+          backgroundColor +
           " 1.6px, transparent 1.6px), " +
           "linear-gradient(335deg, #" +
-          bgColor +
+          backgroundColor +
           " 1.6px, transparent 1.6px), " +
           "linear-gradient(155deg, #" +
-          bgColor +
+          backgroundColor +
           " 1.6px, transparent 1.6px) " +
           "#" +
-          fgColor +
+          foregroundColor +
           ";",
         "4px 4px",
         "0 0.15px, 0.3px 2.5px, 2px 2.15px, 2.35px 0.4px",
@@ -43,45 +49,45 @@ export function getTilePattern(
     case "solidDmnd":
       return [
         "linear-gradient(135deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%), " +
           "linear-gradient(225deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%), " +
           "linear-gradient(315deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%), " +
           "linear-gradient(45deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%) " +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "8px 8px",
       ];
     case "openDmnd":
       return [
         "linear-gradient(45deg, transparent 0%, transparent calc(50% - 0.5px),  #" +
-          fgColor +
+          foregroundColor +
           " 50%, transparent calc(50% + 0.5px),  transparent 100%), " +
           "linear-gradient(-45deg, transparent 0%, transparent calc(50% - 0.5px) , #" +
-          fgColor +
+          foregroundColor +
           " 50%, transparent calc(50% + 0.5px),  transparent 100%) " +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "8px 8px",
       ];
     case "dotDmnd":
       return [
         "radial-gradient(#" +
-          fgColor +
+          foregroundColor +
           " 15%, transparent 0), " +
           "radial-gradient(#" +
-          fgColor +
+          foregroundColor +
           " 15%, transparent 0) " +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 4px",
         "0 0, 2px 2px",
@@ -89,27 +95,27 @@ export function getTilePattern(
     case "zigZag":
     case "wave": {
       let size = "";
-      if (prst === "zigZag") size = "0";
+      if (patternPreset === "zigZag") size = "0";
       else size = "1px";
       return [
         "linear-gradient(135deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%) 50px " +
           size +
           ", " +
           "linear-gradient(225deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%) 50px " +
           size +
           ", " +
           "linear-gradient(315deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%), " +
           "linear-gradient(45deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%) " +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         "4px 4px",
       ];
@@ -117,23 +123,23 @@ export function getTilePattern(
     case "lgConfetti":
     case "smConfetti": {
       let size = "";
-      if (prst === "lgConfetti") size = "4px 4px";
+      if (patternPreset === "lgConfetti") size = "4px 4px";
       else size = "2px 2px";
       return [
         "linear-gradient(135deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%) 50px 1px, " +
           "linear-gradient(225deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%), " +
           "linear-gradient(315deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%) 50px 1px , " +
           "linear-gradient(45deg,  #" +
-          fgColor +
+          foregroundColor +
           " 25%, transparent 25%) " +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         size,
       ];

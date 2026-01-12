@@ -5,13 +5,18 @@ import { getDingbatToUnicode } from "./get-dingbat-to-unicode";
  * Handles special characters and Wingdings fonts
  *
  * @param typefaceNode - Font typeface name (e.g., "Wingdings 2", "Wingdings 3")
- * @param buChar - Bullet character to convert
+ * @param bulletChar - Bullet character to convert
  * @returns HTML entity string
  */
-export function getHtmlBullet(typefaceNode: string, buChar: string): string {
+type GetHtmlBulletOptions = {
+  typefaceNode: string | undefined;
+  bulletChar: string;
+};
+
+export function getHtmlBullet({ typefaceNode, bulletChar }: GetHtmlBulletOptions): string {
   // http://www.alanwood.net/demos/wingdings.html
   // Handle common special cases
-  switch (buChar) {
+  switch (bulletChar) {
     case "§":
       return "&#9632;"; // ■ Black square (U+25A0)
     case "q":
@@ -25,12 +30,12 @@ export function getHtmlBullet(typefaceNode: string, buChar: string): string {
     default:
       // Handle Wingdings fonts
       if (typefaceNode === "Wingdings 2" || typefaceNode === "Wingdings 3") {
-        const wingCharCode = getDingbatToUnicode(typefaceNode, buChar);
+        const wingCharCode = getDingbatToUnicode({ typefaceNode, bulletChar });
         if (wingCharCode !== null) {
           return "&#" + wingCharCode + ";";
         }
       }
       // Default: use the character's code point
-      return "&#" + buChar.charCodeAt(0) + ";";
+      return "&#" + bulletChar.charCodeAt(0) + ";";
   }
 }

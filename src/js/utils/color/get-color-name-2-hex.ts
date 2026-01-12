@@ -161,6 +161,10 @@ const COLOR_MAP = new Map<string, string>([
  * @param name - CSS color name (e.g., "red", "AliceBlue")
  * @returns Hex color string without # prefix, or undefined if not found
  */
-export function getColorName2Hex(name: string): string | undefined {
+type GetColorName2HexOptions = {
+  name: string;
+};
+
+export function getColorName2Hex({ name }: GetColorName2HexOptions): string | undefined {
   return COLOR_MAP.get(name);
 }

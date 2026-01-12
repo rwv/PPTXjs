@@ -57,32 +57,53 @@ export const MISC_SYMBOL_TYPES = [
 // Shape Registry
 // =============================================================================
 
-const MISC_SYMBOL_RENDERERS: Record<string, (ctx: MiscSymbolContext, shapType: string) => string> =
-  {
-    moon: (ctx) => renderMoon(ctx),
-    corner: (ctx) => renderCorner(ctx),
-    diagStripe: (ctx) => renderDiagStripe(ctx),
-    gear6: renderGear,
-    gear9: renderGear,
-    plus: (ctx) => renderPlus(ctx),
-    teardrop: (ctx) => renderTeardrop(ctx),
-    plaque: (ctx) => renderPlaque(ctx),
-    sun: (ctx) => renderSun(ctx),
-    heart: (ctx) => renderHeart(ctx),
-    lightningBolt: (ctx) => renderLightningBolt(ctx),
-    cube: (ctx) => renderCube(ctx),
-    bevel: (ctx) => renderBevel(ctx),
-    foldedCorner: (ctx) => renderFoldedCorner(ctx),
-    cloud: (ctx) => renderCloud(ctx),
-    cloudCallout: (ctx) => renderCloud(ctx),
-    smileyFace: (ctx) => renderSmileyFace(ctx),
-  };
+type MiscSymbolRendererOptions = {
+  ctx: MiscSymbolContext;
+  shapeType: string;
+};
 
-export function isMiscSymbolShape(shapType: string): boolean {
-  return shapType in MISC_SYMBOL_RENDERERS;
+const withCtx = (renderer: (ctx: MiscSymbolContext) => string) => {
+  return ({ ctx }: MiscSymbolRendererOptions) => renderer(ctx);
+};
+
+const withCtxAndShape = (renderer: (ctx: MiscSymbolContext, shapeType: string) => string) => {
+  return ({ ctx, shapeType }: MiscSymbolRendererOptions) => renderer(ctx, shapeType);
+};
+
+const MISC_SYMBOL_RENDERERS: Record<string, (options: MiscSymbolRendererOptions) => string> = {
+  moon: withCtx(renderMoon),
+  corner: withCtx(renderCorner),
+  diagStripe: withCtx(renderDiagStripe),
+  gear6: withCtxAndShape(renderGear),
+  gear9: withCtxAndShape(renderGear),
+  plus: withCtx(renderPlus),
+  teardrop: withCtx(renderTeardrop),
+  plaque: withCtx(renderPlaque),
+  sun: withCtx(renderSun),
+  heart: withCtx(renderHeart),
+  lightningBolt: withCtx(renderLightningBolt),
+  cube: withCtx(renderCube),
+  bevel: withCtx(renderBevel),
+  foldedCorner: withCtx(renderFoldedCorner),
+  cloud: withCtx(renderCloud),
+  cloudCallout: withCtx(renderCloud),
+  smileyFace: withCtx(renderSmileyFace),
+};
+
+type IsMiscSymbolShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isMiscSymbolShape({ shapeType }: IsMiscSymbolShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in MISC_SYMBOL_RENDERERS;
 }
 
-export function renderMiscSymbolShape(shapType: string, ctx: MiscSymbolContext): string {
-  const renderer = MISC_SYMBOL_RENDERERS[shapType];
-  return renderer ? renderer(ctx, shapType) : "";
+type RenderMiscSymbolShapeOptions = {
+  shapeType: string;
+  ctx: MiscSymbolContext;
+};
+
+export function renderMiscSymbolShape({ shapeType, ctx }: RenderMiscSymbolShapeOptions): string {
+  const renderer = MISC_SYMBOL_RENDERERS[shapeType];
+  return renderer ? renderer({ ctx, shapeType }) : "";
 }

@@ -274,17 +274,17 @@ export async function pptxToHtml(
     }
     // Create archive instance using new interface
     const archive = await createPptxArchive(file);
-    const rslt_ary = await processPPTX(
+    const rslt_ary = await processPPTX({
       archive,
-      slideFactor,
+      emuToPx: slideFactor,
       settings,
       styleTable,
-      rtl_langs_array,
-      fontSizeFactor,
-      chartID,
-      MsgQueue,
-      { value: is_first_br }
-    );
+      rtlLanguages: rtl_langs_array,
+      fontSizeScale: fontSizeFactor,
+      chartIdCounter: chartID,
+      messageQueue: MsgQueue,
+      firstLineBreak: { value: is_first_br },
+    });
     //s = readXmlFile(zip, 'ppt/tableStyles.xml');
     //var slidesHeight = $("#" + divId + " .slide").height();
     for (let i = 0; i < rslt_ary.length; i++) {

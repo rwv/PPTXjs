@@ -1,5 +1,11 @@
 import tinycolor from "tinycolor2";
 
+type ApplyHueModOptions = {
+  colorValue: string;
+  multiplier: number | string;
+  isAlpha: boolean;
+};
+
 /**
  * Applies a hue multiplier to a color
  * FIXED BUG: Original code had typo "cocacl_h" in one place
@@ -9,11 +15,7 @@ import tinycolor from "tinycolor2";
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)
  */
-export function applyHueMod(
-  colorValue: string,
-  multiplier: number | string,
-  isAlpha: boolean
-): string {
+export function applyHueMod({ colorValue, multiplier, isAlpha }: ApplyHueModOptions): string {
   const multiplierValue = typeof multiplier === "number" ? multiplier : parseFloat(multiplier);
   const color = tinycolor(colorValue).toHsl();
 

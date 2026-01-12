@@ -20,51 +20,83 @@ import type { XmlNode, XmlValue } from "../../../types/pptx-xml";
 const isXmlNode = (value: XmlValue): value is XmlNode =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-export async function renderCustomGeometry(
-  custShapType: any,
-  node: any,
-  slideLayoutSpNode: any,
-  slideMasterSpNode: any,
-  slideXfrmNode: any,
-  slideLayoutXfrmNode: any,
-  pNode: any,
-  slideMasterXfrmNode: any,
-  w: number,
-  h: number,
-  shpId: any,
-  imgFillFlg: boolean,
-  grndFillFlg: boolean,
-  fillColor: string,
-  border: any,
-  id: any,
-  idx: any,
-  type: any,
-  name: any,
-  order: any,
-  sType: any,
-  txtRotate: number | undefined,
-  warpContext: any,
-  isUserDrawnBg: any,
-  firstLineBreak: { value: boolean },
-  styleTable: any,
-  rtlLanguages: string[],
-  emuToPx: number,
-  fontSizeScale: number
-): Promise<string> {
+type RenderCustomGeometryOptions = {
+  custShapType: any;
+  shapeNode: any;
+  layoutShapeNode: any;
+  masterShapeNode: any;
+  slideXfrmNode: any;
+  slideLayoutXfrmNode: any;
+  parentNode: any;
+  slideMasterXfrmNode: any;
+  width: number;
+  height: number;
+  shapeId: any;
+  imgFillFlg: boolean;
+  grndFillFlg: boolean;
+  fillColor: string;
+  border: any;
+  id: any;
+  idx: any;
+  placeholderType: any;
+  shapeName: any;
+  order: any;
+  shapeType: any;
+  txtRotate: number | undefined;
+  warpContext: any;
+  isUserDrawnBg: any;
+  firstLineBreak: { value: boolean };
+  styleTable: any;
+  rtlLanguages: string[];
+  emuToPx: number;
+  fontSizeScale: number;
+};
+
+export async function renderCustomGeometry({
+  custShapType,
+  shapeNode: node,
+  layoutShapeNode: slideLayoutSpNode,
+  masterShapeNode: slideMasterSpNode,
+  slideXfrmNode,
+  slideLayoutXfrmNode,
+  parentNode: pNode,
+  slideMasterXfrmNode,
+  width: w,
+  height: h,
+  shapeId: shpId,
+  imgFillFlg,
+  grndFillFlg,
+  fillColor,
+  border,
+  id,
+  idx,
+  placeholderType: type,
+  shapeName: name,
+  order,
+  shapeType: sType,
+  txtRotate,
+  warpContext,
+  isUserDrawnBg,
+  firstLineBreak,
+  styleTable,
+  rtlLanguages,
+  emuToPx,
+  fontSizeScale,
+}: RenderCustomGeometryOptions): Promise<string> {
   let result = "";
 
   //custGeom here - Amir ///////////////////////////////////////////////////////
   //http://officeopenxml.com/drwSp-custGeom.php
-  const pathLstNode = getTextByPathList<XmlNode>(custShapType, ["a:pathLst"]);
+  const pathLstNode = getTextByPathList<XmlNode>({ node: custShapType, path: ["a:pathLst"] });
   const pathNodesValue =
     pathLstNode !== undefined
-      ? getTextByPathList<XmlNode | XmlNode[]>(pathLstNode, ["a:path"])
+      ? getTextByPathList<XmlNode | XmlNode[]>({ node: pathLstNode, path: ["a:path"] })
       : undefined;
   const pathNodes = Array.isArray(pathNodesValue) ? pathNodesValue[0] : pathNodesValue;
   if (!pathNodes || !isXmlNode(pathNodes)) {
     return result;
   }
-  //var pathNode = getTextByPathList(pathLstNode, ["a:path", "attrs"]);
+  //var pathNode = getTextByPathList({ node: pathLstNode, path: ["a:path", "attrs"] });
   const maxX = parseInt(String(pathNodes.attrs?.w ?? "0"), 10); // * emuToPx;
   const maxY = parseInt(String(pathNodes.attrs?.h ?? "0"), 10); // * emuToPx;
   const cX = (1 / maxX) * w;
@@ -74,12 +106,15 @@ export async function renderCustomGeometry(
 
   //console.log("custShapType : ", custShapType, ", pathLstNode: ", pathLstNode, ", node: ", node);//, ", y:", y, ", w:", w, ", h:", h);
 
-  let moveToNode = getTextByPathList<XmlNode | XmlNode[]>(pathNodes, ["a:moveTo"]);
+  let moveToNode = getTextByPathList<XmlNode | XmlNode[]>({ node: pathNodes, path: ["a:moveTo"] });
 
   const lnToNodes = pathNodes["a:lnTo"] as XmlNode | XmlNode[] | undefined; //total a:pt : 1
   let cubicBezToNodes = pathNodes["a:cubicBezTo"] as XmlNode | XmlNode[] | undefined; //total a:pt : 3
   const arcToNodes = pathNodes["a:arcTo"] as XmlNode | undefined; //total a:pt : 0?1? ; attrs: ~4 ()
-  let closeNode = getTextByPathList<XmlNode | XmlNode[]>(pathNodes, ["a:close"]); //total a:pt : 0
+  let closeNode = getTextByPathList<XmlNode | XmlNode[]>({
+    node: pathNodes,
+    path: ["a:close"],
+  }); //total a:pt : 0
   //quadBezTo //total a:pt : 2 - TODO
   //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
   if (!Array.isArray(moveToNode)) {
@@ -171,7 +206,7 @@ export async function renderCustomGeometry(
       let shftY = 0;
       const arcToPtNode =
         arcToNodes !== undefined
-          ? getTextByPathList<XmlNode>(arcToNodes, ["a:pt", "attrs"])
+          ? getTextByPathList<XmlNode>({ node: arcToNodes, path: ["a:pt", "attrs"] })
           : undefined;
       if (arcToPtNode !== undefined) {
         const shiftXValue = arcToPtNode["x"];
@@ -310,9 +345,13 @@ export async function renderCustomGeometry(
   result += "</svg>";
   result +=
     "<div class='block " +
-    getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) + //block content
+    getVerticalAlign({
+      textBodyContainerNode: node,
+      layoutShapeNode: slideLayoutSpNode,
+      masterShapeNode: slideMasterSpNode,
+    }) + //block content
     " " +
-    getContentDir(node, type, warpContext) +
+    getContentDir({ textBodyNode: node, shapeType: type, warpContext }) +
     "' _id='" +
     id +
     "' _idx='" +
@@ -322,8 +361,20 @@ export async function renderCustomGeometry(
     "' _name='" +
     name +
     "' style='" +
-    getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, emuToPx) +
-    getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, emuToPx) +
+    getPosition({
+      slideSpNode: slideXfrmNode,
+      parentNode: pNode,
+      slideLayoutSpNode: slideLayoutXfrmNode,
+      slideMasterSpNode: slideMasterXfrmNode,
+      shapeType: sType,
+      emuToPx,
+    }) +
+    getSize({
+      slideSpNode: slideXfrmNode,
+      slideLayoutSpNode: slideLayoutXfrmNode,
+      slideMasterSpNode: slideMasterXfrmNode,
+      emuToPx,
+    }) +
     " z-index: " +
     order +
     ";" +
@@ -337,21 +388,19 @@ export async function renderCustomGeometry(
     if (type !== "diagram" && type !== "textBox") {
       type = "shape";
     }
-    result += await genTextBody(
-      node["p:txBody"],
-      node,
-      slideLayoutSpNode,
-      slideMasterSpNode,
-      type,
-      idx,
+    result += await genTextBody({
+      textBodyNode: node["p:txBody"],
+      spNode: node,
+      shapeType: type,
+      placeholderIndex: idx,
       warpContext,
-      undefined,
+      tableColumnWidth: undefined,
       firstLineBreak,
       styleTable,
       rtlLanguages,
       emuToPx,
-      fontSizeScale
-    ); //type=shape
+      fontSizeScale,
+    }); //type=shape
   }
   result += "</div>";
 

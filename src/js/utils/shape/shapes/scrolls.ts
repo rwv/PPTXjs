@@ -72,14 +72,10 @@ function createPath(d: string, ctx: ScrollShapeContext): string {
 function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   const refr = slideFactor;
   let adj = 12500 * refr;
   if (shapAdjst !== undefined) {
@@ -251,29 +247,44 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
 // Shape Registry
 // =============================================================================
 
+type ScrollRendererOptions = {
+  ctx: ScrollShapeContext;
+  shapeType: string;
+};
+
+const withCtxAndShape = (renderer: (ctx: ScrollShapeContext, shapeType: string) => string) => {
+  return ({ ctx, shapeType }: ScrollRendererOptions) => renderer(ctx, shapeType);
+};
+
 /**
  * Registry mapping shape types to their render functions
  */
-const SCROLL_SHAPE_RENDERERS: Record<
-  string,
-  (ctx: ScrollShapeContext, shapType: string) => string
-> = {
-  verticalScroll: renderScrollShape,
-  horizontalScroll: renderScrollShape,
+const SCROLL_SHAPE_RENDERERS: Record<string, (options: ScrollRendererOptions) => string> = {
+  verticalScroll: withCtxAndShape(renderScrollShape),
+  horizontalScroll: withCtxAndShape(renderScrollShape),
 };
 
 /**
  * Check if a shape type is a scroll shape handled by this module
  */
-export function isScrollShape(shapType: string): boolean {
-  return shapType in SCROLL_SHAPE_RENDERERS;
+type IsScrollShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isScrollShape({ shapeType }: IsScrollShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in SCROLL_SHAPE_RENDERERS;
 }
 
 /**
  * Render a scroll shape
  * @returns SVG string for the shape, or empty string if not a scroll shape
  */
-export function renderScrollShapeType(shapType: string, ctx: ScrollShapeContext): string {
-  const renderer = SCROLL_SHAPE_RENDERERS[shapType];
-  return renderer ? renderer(ctx, shapType) : "";
+type RenderScrollShapeTypeOptions = {
+  shapeType: string;
+  ctx: ScrollShapeContext;
+};
+
+export function renderScrollShapeType({ shapeType, ctx }: RenderScrollShapeTypeOptions): string {
+  const renderer = SCROLL_SHAPE_RENDERERS[shapeType];
+  return renderer ? renderer({ ctx, shapeType }) : "";
 }

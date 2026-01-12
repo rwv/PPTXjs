@@ -48,6 +48,15 @@ interface ParentNode {
   [key: string]: unknown;
 }
 
+type GetPositionOptions = {
+  slideSpNode: TransformNode | undefined;
+  parentNode: ParentNode | undefined;
+  slideLayoutSpNode: TransformNode | undefined;
+  slideMasterSpNode: TransformNode | undefined;
+  shapeType: string | undefined;
+  emuToPx: number;
+};
+
 /**
  * Calculates the CSS position styling for a PPTX shape element
  *
@@ -68,14 +77,14 @@ interface ParentNode {
  * @param emuToPx - Conversion factor from PPTX units to pixels (default: 96/914400)
  * @returns CSS position string (e.g., "top: 100px; left: 50px;") or empty string if no position found
  */
-export function getPosition(
-  slideSpNode: TransformNode | undefined,
-  parentNode: ParentNode | undefined,
-  slideLayoutSpNode: TransformNode | undefined,
-  slideMasterSpNode: TransformNode | undefined,
-  shapeType: string | undefined,
-  emuToPx: number
-): string {
+export function getPosition({
+  slideSpNode,
+  parentNode,
+  slideLayoutSpNode,
+  slideMasterSpNode,
+  shapeType,
+  emuToPx,
+}: GetPositionOptions): string {
   let offsetAttributes: { x?: string; y?: string } | undefined;
   let xPosition = -1,
     yPosition = -1;
@@ -98,7 +107,10 @@ export function getPosition(
 
   // Handle group positioning
   if (shapeType === "group" && parentNode !== undefined) {
-    const groupTransformNode = getTextByPathList(parentNode as XmlNode, ["p:grpSpPr", "a:xfrm"]);
+    const groupTransformNode = getTextByPathList({
+      node: parentNode as XmlNode,
+      path: ["p:grpSpPr", "a:xfrm"],
+    });
     // BUG FIX: Use the group transform node when computing offsets.
     if (groupTransformNode !== undefined) {
       groupOffsetX = parseInt(groupTransformNode["a:off"]["attrs"]["x"]) * emuToPx;

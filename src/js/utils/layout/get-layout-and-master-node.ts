@@ -1,6 +1,13 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
 import type { XmlNode, WarpContext } from "../../types/pptx-xml";
 
+type GetLayoutAndMasterNodeOptions = {
+  paragraphNode: XmlNode | Record<string, unknown>;
+  layoutIndex: number | string | undefined;
+  shapeType: string | undefined;
+  warpContext: WarpContext | Record<string, unknown>;
+};
+
 /**
  * Retrieves layout and master slide nodes for paragraph properties
  *
@@ -17,19 +24,23 @@ import type { XmlNode, WarpContext } from "../../types/pptx-xml";
  * @param warpContext - Container object with layout tables and master styles
  * @returns Object with nodeLayout and nodeMaster properties
  */
-export function getLayoutAndMasterNode(
-  paragraphNode: XmlNode | Record<string, unknown>,
-  layoutIndex: number | string | undefined,
-  shapeType: string | undefined,
-  warpContext: WarpContext | Record<string, unknown>
-): { nodeLayout?: XmlNode; nodeMaster?: XmlNode; nodeLaout?: XmlNode } {
+export function getLayoutAndMasterNode({
+  paragraphNode,
+  layoutIndex,
+  shapeType,
+  warpContext,
+}: GetLayoutAndMasterNodeOptions): {
+  nodeLayout?: XmlNode;
+  nodeMaster?: XmlNode;
+  nodeLaout?: XmlNode;
+} {
   const context = warpContext as WarpContext;
   let layoutParagraphPropsNode: XmlNode | undefined;
   let masterParagraphPropsNode: XmlNode | undefined;
   const paragraphPropsNode = (paragraphNode as XmlNode)["a:pPr"] as XmlNode | undefined;
   //lvl
   let listLevel = 1;
-  const levelAttr = getTextByPathList<string>(paragraphPropsNode, ["attrs", "lvl"]);
+  const levelAttr = getTextByPathList<string>({ node: paragraphPropsNode, path: ["attrs", "lvl"] });
   if (levelAttr !== undefined) {
     listLevel = parseInt(levelAttr) + 1;
   }
@@ -38,20 +49,20 @@ export function getLayoutAndMasterNode(
     const slideLayoutTables = context.slideLayoutTables;
     const indexTable = slideLayoutTables.idxTable;
     const layoutTableEntry = indexTable[layoutIndex];
-    layoutParagraphPropsNode = getTextByPathList(layoutTableEntry, [
-      "p:txBody",
-      "a:lstStyle",
-      "a:lvl" + listLevel + "pPr",
-    ]) as XmlNode | undefined;
+    layoutParagraphPropsNode = getTextByPathList({
+      node: layoutTableEntry,
+      path: ["p:txBody", "a:lstStyle", "a:lvl" + listLevel + "pPr"],
+    }) as XmlNode | undefined;
     if (layoutParagraphPropsNode === undefined) {
-      layoutParagraphPropsNode = getTextByPathList(layoutTableEntry, ["p:txBody", "a:p", "a:pPr"]);
+      layoutParagraphPropsNode = getTextByPathList({
+        node: layoutTableEntry,
+        path: ["p:txBody", "a:p", "a:pPr"],
+      });
       if (layoutParagraphPropsNode === undefined) {
-        layoutParagraphPropsNode = getTextByPathList(layoutTableEntry, [
-          "p:txBody",
-          "a:p",
-          listLevel - 1,
-          "a:pPr",
-        ]) as XmlNode | undefined;
+        layoutParagraphPropsNode = getTextByPathList({
+          node: layoutTableEntry,
+          path: ["p:txBody", "a:p", listLevel - 1, "a:pPr"],
+        }) as XmlNode | undefined;
       }
     }
   }
@@ -59,40 +70,37 @@ export function getLayoutAndMasterNode(
     //slidelayout
     const levelKey = "a:lvl" + listLevel + "pPr";
     if (layoutParagraphPropsNode === undefined && context.slideLayoutTables !== undefined) {
-      layoutParagraphPropsNode = getTextByPathList(context.slideLayoutTables.typeTable, [
-        shapeType,
-        "p:txBody",
-        "a:lstStyle",
-        levelKey,
-      ]) as XmlNode | undefined;
+      layoutParagraphPropsNode = getTextByPathList({
+        node: context.slideLayoutTables.typeTable,
+        path: [shapeType, "p:txBody", "a:lstStyle", levelKey],
+      }) as XmlNode | undefined;
     }
     //masterlayout
     if (shapeType === "title" || shapeType === "ctrTitle") {
-      masterParagraphPropsNode = getTextByPathList(context.slideMasterTextStyles, [
-        "p:titleStyle",
-        levelKey,
-      ]) as XmlNode | undefined;
+      masterParagraphPropsNode = getTextByPathList({
+        node: context.slideMasterTextStyles,
+        path: ["p:titleStyle", levelKey],
+      }) as XmlNode | undefined;
     } else if (shapeType === "body" || shapeType === "obj" || shapeType === "subTitle") {
-      masterParagraphPropsNode = getTextByPathList(context.slideMasterTextStyles, [
-        "p:bodyStyle",
-        levelKey,
-      ]) as XmlNode | undefined;
+      masterParagraphPropsNode = getTextByPathList({
+        node: context.slideMasterTextStyles,
+        path: ["p:bodyStyle", levelKey],
+      }) as XmlNode | undefined;
     } else if (shapeType === "shape" || shapeType === "diagram") {
-      masterParagraphPropsNode = getTextByPathList(context.slideMasterTextStyles, [
-        "p:otherStyle",
-        levelKey,
-      ]) as XmlNode | undefined;
+      masterParagraphPropsNode = getTextByPathList({
+        node: context.slideMasterTextStyles,
+        path: ["p:otherStyle", levelKey],
+      }) as XmlNode | undefined;
     } else if (shapeType === "textBox") {
-      masterParagraphPropsNode = getTextByPathList(context.defaultTextStyle, [levelKey]) as
-        | XmlNode
-        | undefined;
+      masterParagraphPropsNode = getTextByPathList({
+        node: context.defaultTextStyle,
+        path: [levelKey],
+      }) as XmlNode | undefined;
     } else {
-      masterParagraphPropsNode = getTextByPathList(context.slideMasterTables?.typeTable, [
-        shapeType,
-        "p:txBody",
-        "a:lstStyle",
-        levelKey,
-      ]) as XmlNode | undefined;
+      masterParagraphPropsNode = getTextByPathList({
+        node: context.slideMasterTables?.typeTable,
+        path: [shapeType, "p:txBody", "a:lstStyle", levelKey],
+      }) as XmlNode | undefined;
     }
   }
   return {

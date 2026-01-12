@@ -12,7 +12,11 @@
  * @param shapePropsNode - Shape properties node from PPTX
  * @returns Fill type as string constant
  */
-export function getFillType(shapePropsNode: Record<string, unknown>): string {
+type GetFillTypeOptions = {
+  shapePropsNode: Record<string, unknown>;
+};
+
+export function getFillType({ shapePropsNode }: GetFillTypeOptions): string {
   let detectedFillType = "";
   if (shapePropsNode["a:noFill"] !== undefined) {
     detectedFillType = "NO_FILL";

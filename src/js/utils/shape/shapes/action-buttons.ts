@@ -66,14 +66,26 @@ const ACTION_BUTTON_RENDERERS: Record<string, (ctx: ActionButtonContext) => stri
 /**
  * Check if a shape type is an action button
  */
-export function isActionButtonShape(shapType: string): boolean {
-  return shapType in ACTION_BUTTON_RENDERERS;
+type IsActionButtonShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isActionButtonShape({ shapeType }: IsActionButtonShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in ACTION_BUTTON_RENDERERS;
 }
 
 /**
  * Render an action button shape
  */
-export function renderActionButtonShape(shapType: string, ctx: ActionButtonContext): string {
-  const renderer = ACTION_BUTTON_RENDERERS[shapType];
+type RenderActionButtonShapeOptions = {
+  shapeType: string;
+  ctx: ActionButtonContext;
+};
+
+export function renderActionButtonShape({
+  shapeType,
+  ctx,
+}: RenderActionButtonShapeOptions): string {
+  const renderer = ACTION_BUTTON_RENDERERS[shapeType];
   return renderer ? renderer(ctx) : "";
 }

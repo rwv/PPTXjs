@@ -6,6 +6,8 @@ import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handle
 import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
 type BulletColor = unknown[];
+type SolidFillOptions = Parameters<typeof getSolidFill>[0];
+type SolidFillNode = SolidFillOptions["fillNode"];
 
 const parsePxValue = (value: string | number | undefined): number => {
   if (value === undefined) {
@@ -23,12 +25,12 @@ const parseIntValue = (value: string | number | undefined): number => {
 
 const getValue = <T extends XmlValue>(
   node: XmlNode | undefined,
-  path: Array<keyof XmlNode>
+  path: readonly (string | number)[]
 ): T | undefined => {
   if (!node) {
     return undefined;
   }
-  return getTextByPathList<T>(node, path);
+  return getTextByPathList<T>({ node, path });
 };
 
 /**
@@ -54,19 +56,29 @@ const getValue = <T extends XmlValue>(
  * @param fontSizeScale - Font size scaling factor
  * @returns Array [bulletHTML, marginValue, fontValue] or empty string if no bullet
  */
-export async function genBuChar(
-  paragraphNode: XmlNode,
-  paragraphIndex: number,
-  shapeNode: XmlNode,
-  textBody: XmlNode,
-  parentFontStyle: XmlNode | undefined,
-  placeholderIndex: number | string | undefined,
-  shapeType: string | undefined,
-  warpContext: WarpContext,
-  emuToPx: number,
-  fontSizeScale: number
-): Promise<string | [string, number, number]> {
-  void paragraphIndex;
+type GenBuCharOptions = {
+  paragraphNode: XmlNode;
+  shapeNode: XmlNode;
+  textBody: XmlNode;
+  parentFontStyle: XmlNode | undefined;
+  placeholderIndex: number | string | undefined;
+  shapeType: string | undefined;
+  warpContext: WarpContext;
+  emuToPx: number;
+  fontSizeScale: number;
+};
+
+export async function genBuChar({
+  paragraphNode,
+  shapeNode,
+  textBody,
+  parentFontStyle,
+  placeholderIndex,
+  shapeType,
+  warpContext,
+  emuToPx,
+  fontSizeScale,
+}: GenBuCharOptions): Promise<string | [string, number, number]> {
   //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
   ///////////////////////////////////////Amir///////////////////////////////
   const listStyle = getValue<XmlNode>(textBody, ["a:lstStyle"]);
@@ -89,28 +101,27 @@ export async function genBuChar(
   let colorType: string | undefined;
 
   if (runNode !== undefined) {
-    const defaultBulletColorRaw = getFontColorPr(
-      runNode,
-      shapeNode,
-      listStyle,
-      parentFontStyle,
-      level,
+    const defaultBulletColorRaw = getFontColorPr({
+      textRunNode: runNode,
+      paragraphNode: shapeNode,
+      listStyleNode: listStyle,
+      paragraphFontStyle: parentFontStyle,
+      listLevel: level,
       placeholderIndex,
       shapeType,
       warpContext,
-      emuToPx
-    );
+      emuToPx,
+    });
     defaultBulletColor = defaultBulletColorRaw as BulletColor;
     colorType = defaultBulletColorRaw[2];
-    defaultBulletSize = getFontSize(
-      runNode,
-      textBody,
-      parentFontStyle,
-      level,
+    defaultBulletSize = getFontSize({
+      textRunNode: runNode,
+      textBodyNode: textBody,
+      listLevel: level,
       shapeType,
-      warpContext as unknown as Parameters<typeof getFontSize>[5],
-      fontSizeScale
-    );
+      warpContext,
+      fontSizeScale,
+    });
   } else {
     return "";
   }
@@ -131,12 +142,12 @@ export async function genBuChar(
 
   let bulletType = "TYPE_NONE";
 
-  const layoutMasterNode = getLayoutAndMasterNode(
+  const layoutMasterNode = getLayoutAndMasterNode({
     paragraphNode,
-    placeholderIndex,
+    layoutIndex: placeholderIndex,
     shapeType,
-    warpContext
-  );
+    warpContext,
+  });
   const layoutParagraphPropsNode = layoutMasterNode.nodeLayout;
   const masterParagraphPropsNode = layoutMasterNode.nodeMaster;
 
@@ -330,7 +341,7 @@ export async function genBuChar(
   }
 
   if (bulletType !== "TYPE_NONE") {
-    //var buFontAttrs = getTextByPathList(pPrNode, ["a:buFont", "attrs"]);
+    //var buFontAttrs = getTextByPathList({ node: pPrNode, path: ["a:buFont", "attrs"] });
   }
   //console.log("Bullet Type: " + buType);
   //console.log("NumericTypr: " + buNum);
@@ -348,21 +359,21 @@ export async function genBuChar(
   }
   let resolvedBulletColor;
   if (bulletColorNode !== undefined) {
-    resolvedBulletColor = getSolidFill(
-      bulletColorNode as Parameters<typeof getSolidFill>[0],
-      undefined,
-      undefined,
-      warpContext
-    );
+    resolvedBulletColor = getSolidFill({
+      fillNode: bulletColorNode as SolidFillNode,
+      colorMap: undefined,
+      placeholderColor: undefined,
+      warpContext,
+    });
   } else {
     if (parentFontStyle !== undefined) {
       //console.log("genBuChar pFontStyle: ", pFontStyle)
-      resolvedBulletColor = getSolidFill(
-        parentFontStyle as Parameters<typeof getSolidFill>[0],
-        undefined,
-        undefined,
-        warpContext
-      );
+      resolvedBulletColor = getSolidFill({
+        fillNode: parentFontStyle as SolidFillNode,
+        colorMap: undefined,
+        placeholderColor: undefined,
+        warpContext,
+      });
     }
   }
   if (resolvedBulletColor === undefined || resolvedBulletColor === "NONE") {
@@ -428,36 +439,36 @@ export async function genBuChar(
   const resolvedColorType = colorType ?? "solid";
   ////////////////////////////////////////////////////////////////////////
   if (bulletType === "TYPE_BULLET") {
-    bulletHtml = renderBulletChar(
+    bulletHtml = renderBulletChar({
       paragraphPropsNode,
-      bulletChar ?? "",
-      bulletColor as Parameters<typeof renderBulletChar>[2],
-      resolvedColorType,
-      resolvedBulletSize,
+      bulletChar: bulletChar ?? "",
+      bulletColor: bulletColor as Parameters<typeof renderBulletChar>[0]["bulletColor"],
+      colorType: resolvedColorType,
+      bulletSize: resolvedBulletSize,
       marginLeftStyle,
       marginRightStyle,
       isRtl,
-      fontValue
-    );
+      fontSizeValue: fontValue,
+    });
   } else if (bulletType === "TYPE_NUMERIC") {
-    bulletHtml = renderBulletNumeric(
-      bulletColor as unknown as string[],
-      resolvedBulletSize,
+    bulletHtml = renderBulletNumeric({
+      bulletColor: bulletColor as unknown as string[],
+      bulletSize: resolvedBulletSize,
       marginLeftStyle,
       marginRightStyle,
       isRtl,
-      bulletNumberType ?? "",
-      level
-    );
+      bulletNumberType: bulletNumberType ?? "",
+      level,
+    });
   } else if (bulletType === "TYPE_BULPIC") {
-    bulletHtml = await renderBulletPic(
-      bulletPicNode as XmlNode,
+    bulletHtml = await renderBulletPic({
+      bulletPicNode: bulletPicNode as XmlNode,
       warpContext,
       marginLeftStyle,
       marginRightStyle,
-      resolvedBulletSize,
-      isRtl
-    );
+      bulletSize: resolvedBulletSize,
+      isRtl,
+    });
   }
   // else {
   //     bullet = "<div style='margin-left: " + 328600 * slideFactor * lvl + "px" +

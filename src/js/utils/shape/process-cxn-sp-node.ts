@@ -10,7 +10,7 @@ import { genShape } from "./gen-shape";
  * @param parentNode - Parent node
  * @param warpContext - Warp object containing slide resources
  * @param sourceType - Source type (slide, slideLayout, slideMaster, etc.)
- * @param shapeContext - Shape type
+ * @param shapeType - Shape type
  * @param emuToPx - EMU to pixel conversion factor
  * @param styleTable - Global CSS style table
  * @param fontSizeScale - Font size scaling factor
@@ -18,19 +18,32 @@ import { genShape } from "./gen-shape";
  * @param isFirstLineBreak - Mutable object tracking first line break state
  * @returns HTML string for the connection shape
  */
-export async function processCxnSpNode(
-  connectionNode: unknown,
-  parentNode: unknown,
-  warpContext: unknown,
-  sourceType: string,
-  shapeContext: string,
-  emuToPx: number,
-  styleTable: unknown,
-  fontSizeScale: number,
-  rtlLanguages: string[],
-  isFirstLineBreak: { value: boolean }
-): Promise<string> {
-  const connectionNodeRecord = connectionNode as Record<string, unknown>;
+type ProcessCxnSpNodeOptions = {
+  spNode: Record<string, unknown>;
+  parentNodes: unknown;
+  warpContext: unknown;
+  sourceType: string;
+  shapeType: string;
+  emuToPx: number;
+  styleTable: unknown;
+  fontSizeScale: number;
+  rtlLanguages: string[];
+  firstLineBreak: { value: boolean };
+};
+
+export async function processCxnSpNode({
+  spNode,
+  parentNodes,
+  warpContext,
+  sourceType,
+  shapeType,
+  emuToPx,
+  styleTable,
+  fontSizeScale,
+  rtlLanguages,
+  firstLineBreak,
+}: ProcessCxnSpNodeOptions): Promise<string> {
+  const connectionNodeRecord = spNode as Record<string, unknown>;
   const nonVisualConnectionProps = connectionNodeRecord["p:nvCxnSpPr"] as Record<string, unknown>;
   const connectionPropsAttrs = (nonVisualConnectionProps["p:cNvPr"] as Record<string, unknown>)[
     "attrs"
@@ -51,24 +64,24 @@ export async function processCxnSpNode(
   // <p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
   const zIndexOrder = (connectionNodeRecord["attrs"] as Record<string, string | number>)["order"];
 
-  return await genShape(
-    connectionNode,
-    parentNode,
-    undefined,
-    undefined,
+  return await genShape({
+    shapeNode: connectionNodeRecord,
+    parentNode: parentNodes,
+    layoutShapeNode: undefined,
+    masterShapeNode: undefined,
     shapeId,
     shapeName,
     placeholderIndex,
     placeholderType,
     zIndexOrder,
     warpContext,
-    undefined,
-    shapeContext,
+    isUserDrawnBackground: undefined,
+    shapeType,
     sourceType,
     emuToPx,
     styleTable,
     fontSizeScale,
     rtlLanguages,
-    isFirstLineBreak
-  );
+    firstLineBreak,
+  });
 }

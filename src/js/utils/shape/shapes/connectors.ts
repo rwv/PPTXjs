@@ -37,8 +37,14 @@ function getMarkerNodeAttrs(node: XmlNode): {
   headEndNodeAttrs: MarkerEndAttrs | undefined;
   tailEndNodeAttrs: MarkerEndAttrs | undefined;
 } {
-  const headEndNode = getTextByPathList<XmlNode>(node, ["p:spPr", "a:ln", "a:headEnd"]);
-  const tailEndNode = getTextByPathList<XmlNode>(node, ["p:spPr", "a:ln", "a:tailEnd"]);
+  const headEndNode = getTextByPathList<XmlNode>({
+    node: node,
+    path: ["p:spPr", "a:ln", "a:headEnd"],
+  });
+  const tailEndNode = getTextByPathList<XmlNode>({
+    node: node,
+    path: ["p:spPr", "a:ln", "a:tailEnd"],
+  });
   return {
     headEndNodeAttrs: headEndNode?.attrs as MarkerEndAttrs | undefined,
     tailEndNodeAttrs: tailEndNode?.attrs as MarkerEndAttrs | undefined,
@@ -114,14 +120,10 @@ function renderBentConnector2(ctx: ConnectorContext): string {
 function renderBentConnector3(ctx: ConnectorContext): string {
   const { node, w, h } = ctx;
 
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let shapAdjst_val = 0.5;
   if (shapAdjst !== undefined) {
     shapAdjst_val = parseInt(shapAdjst.substr(4)) / 100000;
@@ -164,15 +166,24 @@ const CONNECTOR_RENDERERS: Record<string, (ctx: ConnectorContext) => string> = {
 /**
  * Check if a shape type is a connector shape handled by this module
  */
-export function isConnectorShape(shapType: string): boolean {
-  return shapType in CONNECTOR_RENDERERS;
+type IsConnectorShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isConnectorShape({ shapeType }: IsConnectorShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in CONNECTOR_RENDERERS;
 }
 
 /**
  * Render a connector shape
  * @returns SVG string for the shape, or empty string if not a connector shape
  */
-export function renderConnectorShape(shapType: string, ctx: ConnectorContext): string {
-  const renderer = CONNECTOR_RENDERERS[shapType];
+type RenderConnectorShapeOptions = {
+  shapeType: string;
+  ctx: ConnectorContext;
+};
+
+export function renderConnectorShape({ shapeType, ctx }: RenderConnectorShapeOptions): string {
+  const renderer = CONNECTOR_RENDERERS[shapeType];
   return renderer ? renderer(ctx) : "";
 }

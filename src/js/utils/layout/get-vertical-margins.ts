@@ -30,6 +30,15 @@ function firstXmlNode(value: XmlValue | undefined): XmlNode | undefined {
   return asXmlNode(value);
 }
 
+type GetVerticalMarginsOptions = {
+  paragraphNode: XmlNode;
+  textBodyNode: XmlNode | undefined;
+  shapeType: string | undefined;
+  layoutIndex: number | string | undefined;
+  warpContext: WarpContext;
+  fontSizeScale: number;
+};
+
 /**
  * Calculates vertical margin/padding CSS styling for a PPTX paragraph node
  *
@@ -55,14 +64,14 @@ function firstXmlNode(value: XmlValue | undefined): XmlNode | undefined {
  * @param fontSizeScale - Font size multiplier factor (usually 4/3.2)
  * @returns CSS string with margin and padding styles
  */
-export function getVerticalMargins(
-  paragraphNode: XmlNode,
-  textBodyNode: XmlNode | undefined,
-  shapeType: string | undefined,
-  layoutIndex: number | string | undefined,
-  warpContext: WarpContext,
-  fontSizeScale: number
-): string {
+export function getVerticalMargins({
+  paragraphNode,
+  textBodyNode,
+  shapeType,
+  layoutIndex,
+  warpContext,
+  fontSizeScale,
+}: GetVerticalMarginsOptions): string {
   //margin-top ;
   //a:pPr => a:spcBef => a:spcPts (/100) | a:spcPct (/?)
   //margin-bottom
@@ -72,56 +81,51 @@ export function getVerticalMargins(
   //console.log("getVerticalMargins ", paragraphNode, shapeType, layoutIndex, warpContext)
   //var lstStyle = textBodyNode["a:lstStyle"];
   let listLevel = 1;
-  let spaceBeforeValue = getTextByPathList<string | number>(paragraphNode, [
-    "a:pPr",
-    "a:spcBef",
-    "a:spcPts",
-    "attrs",
-    "val",
-  ]);
-  let spaceAfterValue = getTextByPathList<string | number>(paragraphNode, [
-    "a:pPr",
-    "a:spcAft",
-    "a:spcPts",
-    "attrs",
-    "val",
-  ]);
-  let lineSpacingValue = getTextByPathList<string | number>(paragraphNode, [
-    "a:pPr",
-    "a:lnSpc",
-    "a:spcPct",
-    "attrs",
-    "val",
-  ]);
+  let spaceBeforeValue = getTextByPathList<string | number>({
+    node: paragraphNode,
+    path: ["a:pPr", "a:spcBef", "a:spcPts", "attrs", "val"],
+  });
+  let spaceAfterValue = getTextByPathList<string | number>({
+    node: paragraphNode,
+    path: ["a:pPr", "a:spcAft", "a:spcPts", "attrs", "val"],
+  });
+  let lineSpacingValue = getTextByPathList<string | number>({
+    node: paragraphNode,
+    path: ["a:pPr", "a:lnSpc", "a:spcPct", "attrs", "val"],
+  });
   let lineSpacingUnit = "Pct";
   if (lineSpacingValue === undefined) {
-    lineSpacingValue = getTextByPathList<string | number>(paragraphNode, [
-      "a:pPr",
-      "a:lnSpc",
-      "a:spcPts",
-      "attrs",
-      "val",
-    ]);
+    lineSpacingValue = getTextByPathList<string | number>({
+      node: paragraphNode,
+      path: ["a:pPr", "a:lnSpc", "a:spcPts", "attrs", "val"],
+    });
     if (lineSpacingValue !== undefined) {
       lineSpacingUnit = "Pts";
     }
   }
-  const levelAttr = getTextByPathList<string | number>(paragraphNode, ["a:pPr", "attrs", "lvl"]);
+  const levelAttr = getTextByPathList<string | number>({
+    node: paragraphNode,
+    path: ["a:pPr", "attrs", "lvl"],
+  });
   if (levelAttr !== undefined) {
     listLevel = parseInt(String(levelAttr), 10) + 1;
   }
   let fontSizePoints: number | undefined;
-  const textRunNode = firstXmlNode(getTextByPathList(paragraphNode, ["a:r"]));
+  const textRunNode = firstXmlNode(
+    getTextByPathList({
+      node: paragraphNode,
+      path: ["a:r"],
+    })
+  );
   if (textRunNode !== undefined) {
-    const fontSizeValue = getFontSize(
+    const fontSizeValue = getFontSize({
       textRunNode,
       textBodyNode,
-      undefined,
       listLevel,
       shapeType,
       warpContext,
-      fontSizeScale
-    );
+      fontSizeScale,
+    });
     if (fontSizeValue !== "inherit") {
       const parsedFontSize = Number.parseFloat(fontSizeValue);
       if (!Number.isNaN(parsedFontSize)) {
@@ -136,7 +140,7 @@ export function getVerticalMargins(
   // }
   // else{
   //    //i did not found case with percentage
-  //     spcBefNode = getTextByPathList(pNode, ["a:pPr", "a:spcBef", "a:spcPct","attrs","val"]);
+  //     spcBefNode = getTextByPathList({ node: pNode, path: ["a:pPr", "a:spcBef", "a:spcPct","attrs","val"] });
   //     if(spcBefNode !== undefined){
   //         spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "%;"
   //     }
@@ -147,7 +151,7 @@ export function getVerticalMargins(
   // }
   // else{
   //    //i did not found case with percentage
-  //     spcAftNode = getTextByPathList(pNode, ["a:pPr", "a:spcAft", "a:spcPct","attrs","val"]);
+  //     spcAftNode = getTextByPathList({ node: pNode, path: ["a:pPr", "a:spcAft", "a:spcPct","attrs","val"] });
   //     if(spcAftNode !== undefined){
   //         spcBef = "margin-bottom:" + parseInt(spcAftNode)/100 + "%;"
   //     }
@@ -168,32 +172,33 @@ export function getVerticalMargins(
     //check in layout
     if (layoutIndex !== undefined) {
       const layoutParagraphProps = asXmlNode(
-        getTextByPathList(warpContext as unknown as XmlNode, [
-          "slideLayoutTables",
-          "idxTable",
-          layoutIndex,
-          "p:txBody",
-          "a:p",
-          listLevel - 1,
-          "a:pPr",
-        ])
+        getTextByPathList({
+          node: warpContext as unknown as XmlNode,
+          path: [
+            "slideLayoutTables",
+            "idxTable",
+            layoutIndex,
+            "p:txBody",
+            "a:p",
+            listLevel - 1,
+            "a:pPr",
+          ],
+        })
       );
 
       if (spaceBeforeValue === undefined) {
         spaceBeforeValue = layoutParagraphProps
-          ? getTextByPathList<string | number>(layoutParagraphProps, [
-              "a:spcBef",
-              "a:spcPts",
-              "attrs",
-              "val",
-            ])
+          ? getTextByPathList<string | number>({
+              node: layoutParagraphProps,
+              path: ["a:spcBef", "a:spcPts", "attrs", "val"],
+            })
           : undefined;
         // if(spcBefNode !== undefined){
         //     spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "pt;"
         // }
         // else{
         //    //i did not found case with percentage
-        //     spcBefNode = getTextByPathList(laypPrNode, ["a:spcBef", "a:spcPct","attrs","val"]);
+        //     spcBefNode = getTextByPathList({ node: laypPrNode, path: ["a:spcBef", "a:spcPct","attrs","val"] });
         //     if(spcBefNode !== undefined){
         //         spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "%;"
         //     }
@@ -202,19 +207,17 @@ export function getVerticalMargins(
 
       if (spaceAfterValue === undefined) {
         spaceAfterValue = layoutParagraphProps
-          ? getTextByPathList<string | number>(layoutParagraphProps, [
-              "a:spcAft",
-              "a:spcPts",
-              "attrs",
-              "val",
-            ])
+          ? getTextByPathList<string | number>({
+              node: layoutParagraphProps,
+              path: ["a:spcAft", "a:spcPts", "attrs", "val"],
+            })
           : undefined;
         // if(spcAftNode !== undefined){
         //     spcAft = "margin-bottom:" + parseInt(spcAftNode)/100 + "pt;"
         // }
         // else{
         //    //i did not found case with percentage
-        //     spcAftNode = getTextByPathList(laypPrNode, ["a:spcAft", "a:spcPct","attrs","val"]);
+        //     spcAftNode = getTextByPathList({ node: laypPrNode, path: ["a:spcAft", "a:spcPct","attrs","val"] });
         //     if(spcAftNode !== undefined){
         //         spcBef = "margin-bottom:" + parseInt(spcAftNode)/100 + "%;"
         //     }
@@ -223,22 +226,17 @@ export function getVerticalMargins(
 
       if (lineSpacingValue === undefined) {
         lineSpacingValue = layoutParagraphProps
-          ? getTextByPathList<string | number>(layoutParagraphProps, [
-              "a:lnSpc",
-              "a:spcPct",
-              "attrs",
-              "val",
-            ])
+          ? getTextByPathList<string | number>({
+              node: layoutParagraphProps,
+              path: ["a:lnSpc", "a:spcPct", "attrs", "val"],
+            })
           : undefined;
         if (lineSpacingValue === undefined) {
           lineSpacingValue = layoutParagraphProps
-            ? getTextByPathList<string | number>(layoutParagraphProps, [
-                "a:pPr",
-                "a:lnSpc",
-                "a:spcPts",
-                "attrs",
-                "val",
-              ])
+            ? getTextByPathList<string | number>({
+                node: layoutParagraphProps,
+                path: ["a:pPr", "a:lnSpc", "a:spcPts", "attrs", "val"],
+              })
             : undefined;
           if (lineSpacingValue !== undefined) {
             lineSpacingUnit = "Pts";
@@ -283,22 +281,25 @@ export function getVerticalMargins(
     //     lvlKey = "a:lvl1pPr";
     // }
     const listLevelStyle = masterTextStyles
-      ? asXmlNode(getTextByPathList(masterTextStyles, [styleKey, listLevelKey]))
+      ? asXmlNode(
+          getTextByPathList({
+            node: masterTextStyles,
+            path: [styleKey, listLevelKey],
+          })
+        )
       : undefined;
     if (listLevelStyle !== undefined) {
       if (spaceBeforeValue === undefined) {
-        spaceBeforeValue = getTextByPathList<string | number>(listLevelStyle, [
-          "a:spcBef",
-          "a:spcPts",
-          "attrs",
-          "val",
-        ]);
+        spaceBeforeValue = getTextByPathList<string | number>({
+          node: listLevelStyle,
+          path: ["a:spcBef", "a:spcPts", "attrs", "val"],
+        });
         // if(spcBefNode !== undefined){
         //     spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "pt;"
         // }
         // else{
         //    //i did not found case with percentage
-        //     spcBefNode = getTextByPathList(inLvlNode, ["a:spcBef", "a:spcPct","attrs","val"]);
+        //     spcBefNode = getTextByPathList({ node: inLvlNode, path: ["a:spcBef", "a:spcPct","attrs","val"] });
         //     if(spcBefNode !== undefined){
         //         spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "%;"
         //     }
@@ -306,18 +307,16 @@ export function getVerticalMargins(
       }
 
       if (spaceAfterValue === undefined) {
-        spaceAfterValue = getTextByPathList<string | number>(listLevelStyle, [
-          "a:spcAft",
-          "a:spcPts",
-          "attrs",
-          "val",
-        ]);
+        spaceAfterValue = getTextByPathList<string | number>({
+          node: listLevelStyle,
+          path: ["a:spcAft", "a:spcPts", "attrs", "val"],
+        });
         // if(spcAftNode !== undefined){
         //     spcAft = "margin-bottom:" + parseInt(spcAftNode)/100 + "pt;"
         // }
         // else{
         //    //i did not found case with percentage
-        //     spcAftNode = getTextByPathList(inLvlNode, ["a:spcAft", "a:spcPct","attrs","val"]);
+        //     spcAftNode = getTextByPathList({ node: inLvlNode, path: ["a:spcAft", "a:spcPct","attrs","val"] });
         //     if(spcAftNode !== undefined){
         //         spcBef = "margin-bottom:" + parseInt(spcAftNode)/100 + "%;"
         //     }
@@ -325,20 +324,15 @@ export function getVerticalMargins(
       }
 
       if (lineSpacingValue === undefined) {
-        lineSpacingValue = getTextByPathList<string | number>(listLevelStyle, [
-          "a:lnSpc",
-          "a:spcPct",
-          "attrs",
-          "val",
-        ]);
+        lineSpacingValue = getTextByPathList<string | number>({
+          node: listLevelStyle,
+          path: ["a:lnSpc", "a:spcPct", "attrs", "val"],
+        });
         if (lineSpacingValue === undefined) {
-          lineSpacingValue = getTextByPathList<string | number>(listLevelStyle, [
-            "a:pPr",
-            "a:lnSpc",
-            "a:spcPts",
-            "attrs",
-            "val",
-          ]);
+          lineSpacingValue = getTextByPathList<string | number>({
+            node: listLevelStyle,
+            path: ["a:pPr", "a:lnSpc", "a:spcPts", "attrs", "val"],
+          });
           if (lineSpacingValue !== undefined) {
             lineSpacingUnit = "Pts";
           }

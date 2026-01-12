@@ -18,34 +18,48 @@ import type { WarpContext, XmlNode } from "../../types/pptx-xml";
  * @param warpContext - Container object with layout tables and master styles
  * @returns CSS class name for text direction (pregraph-rtl, pregraph-ltr, or pregraph-inherit)
  */
-export function getPregraphDir(
-  paragraphNode: XmlNode,
-  textBodyNode: XmlNode | undefined,
-  paragraphIndex: number | string | undefined,
-  elementType: string | undefined,
-  warpContext: WarpContext
-): string {
-  void textBodyNode;
-  const rtlValue = getTextByPathList<string | number>(paragraphNode, ["a:pPr", "attrs", "rtl"]);
+type GetPregraphDirOptions = {
+  paragraphNode: XmlNode;
+  paragraphIndex: number | string | undefined;
+  elementType: string | undefined;
+  warpContext: WarpContext;
+};
+
+export function getPregraphDir({
+  paragraphNode,
+  paragraphIndex,
+  elementType,
+  warpContext,
+}: GetPregraphDirOptions): string {
+  const rtlValue = getTextByPathList<string | number>({
+    node: paragraphNode,
+    path: ["a:pPr", "attrs", "rtl"],
+  });
   let rtlString = rtlValue !== undefined ? String(rtlValue) : undefined;
   //console.log("getPregraphDir node:", paragraphNode, "textBodyNode", textBodyNode, "rtl:", rtlValue, "paragraphIndex", paragraphIndex, "elementType", elementType, "warpContext", warpContext)
 
   if (rtlString === undefined) {
-    const layoutMasterNodes = getLayoutAndMasterNode(
+    const layoutMasterNodes = getLayoutAndMasterNode({
       paragraphNode,
-      paragraphIndex,
-      elementType,
-      warpContext
-    );
+      layoutIndex: paragraphIndex,
+      shapeType: elementType,
+      warpContext,
+    });
     const layoutParagraphPropsNode = layoutMasterNodes.nodeLayout;
     const masterParagraphPropsNode = layoutMasterNodes.nodeMaster;
     const layoutRtlValue = layoutParagraphPropsNode
-      ? getTextByPathList<string | number>(layoutParagraphPropsNode, ["attrs", "rtl"])
+      ? getTextByPathList<string | number>({
+          node: layoutParagraphPropsNode,
+          path: ["attrs", "rtl"],
+        })
       : undefined;
     rtlString = layoutRtlValue !== undefined ? String(layoutRtlValue) : undefined;
     if (rtlString === undefined && elementType !== "shape") {
       const masterRtlValue = masterParagraphPropsNode
-        ? getTextByPathList<string | number>(masterParagraphPropsNode, ["attrs", "rtl"])
+        ? getTextByPathList<string | number>({
+            node: masterParagraphPropsNode,
+            path: ["attrs", "rtl"],
+          })
         : undefined;
       rtlString = masterRtlValue !== undefined ? String(masterRtlValue) : undefined;
     }

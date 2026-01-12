@@ -1,6 +1,13 @@
 import type { PptxArchive } from "../../archive/pptx-archive";
 import { tXml } from "../vendors/txml";
 
+type ReadXmlFileOptions = {
+  archive: PptxArchive;
+  filename: string;
+  isSlideContent?: boolean;
+  appVersion?: number;
+};
+
 /**
  * Reads and parses an XML file from a PPTX archive
  *
@@ -10,12 +17,12 @@ import { tXml } from "../vendors/txml";
  * @param appVersion - Office application version (only used when isSlideContent is true)
  * @returns Parsed XML data object or null if file doesn't exist
  */
-export async function readXmlFile(
-  archive: PptxArchive,
-  filename: string,
-  isSlideContent?: boolean,
-  appVersion?: number
-): Promise<any | null> {
+export async function readXmlFile({
+  archive,
+  filename,
+  isSlideContent,
+  appVersion,
+}: ReadXmlFileOptions): Promise<any | null> {
   try {
     const file = await archive.file(filename);
     if (!file) {

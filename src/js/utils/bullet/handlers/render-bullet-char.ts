@@ -19,19 +19,34 @@ type BulletColor =
   | [[string, string?, string?], BulletColorEffects]
   | [{ color: string[]; rot: number }, BulletColorEffects];
 
-export function renderBulletChar(
-  pPrNode: XmlNode | undefined,
-  bulletChar: string,
-  bulletColor: BulletColor,
-  colorType: string,
-  bulletSize: string,
-  marginLeftStyle: string,
-  marginRightStyle: string,
-  isRtl: boolean,
-  fontSizeValue: number
-): string {
-  const typefaceName = pPrNode
-    ? getTextByPathList<string>(pPrNode, ["a:buFont", "attrs", "typeface"])
+type RenderBulletCharOptions = {
+  paragraphPropsNode: XmlNode | undefined;
+  bulletChar: string;
+  bulletColor: BulletColor;
+  colorType: string;
+  bulletSize: string;
+  marginLeftStyle: string;
+  marginRightStyle: string;
+  isRtl: boolean;
+  fontSizeValue: number;
+};
+
+export function renderBulletChar({
+  paragraphPropsNode,
+  bulletChar,
+  bulletColor,
+  colorType,
+  bulletSize,
+  marginLeftStyle,
+  marginRightStyle,
+  isRtl,
+  fontSizeValue,
+}: RenderBulletCharOptions): string {
+  const typefaceName = paragraphPropsNode
+    ? getTextByPathList<string>({
+        node: paragraphPropsNode,
+        path: ["a:buFont", "attrs", "typeface"],
+      })
     : undefined;
   let typefaceStyle = "";
   if (typefaceName !== undefined) {
@@ -113,7 +128,7 @@ export function renderBulletChar(
 
   if (!isIE11) {
     // IE11 does not support unicode
-    bulletHtml = getHtmlBullet(typefaceName, bulletChar);
+    bulletHtml = getHtmlBullet({ typefaceNode: typefaceName, bulletChar });
   }
 
   bullet +=

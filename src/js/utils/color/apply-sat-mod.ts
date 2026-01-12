@@ -1,5 +1,11 @@
 import tinycolor from "tinycolor2";
 
+type ApplySatModOptions = {
+  colorValue: string;
+  multiplier: number | string;
+  isAlpha: boolean;
+};
+
 /**
  * Applies a saturation multiplier to a color
  *
@@ -8,11 +14,7 @@ import tinycolor from "tinycolor2";
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)
  */
-export function applySatMod(
-  colorValue: string,
-  multiplier: number | string,
-  isAlpha: boolean
-): string {
+export function applySatMod({ colorValue, multiplier, isAlpha }: ApplySatModOptions): string {
   const multiplierValue = typeof multiplier === "number" ? multiplier : parseFloat(multiplier);
   const color = tinycolor(colorValue).toHsl();
 

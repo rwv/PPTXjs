@@ -3,34 +3,40 @@ import type { XmlNode } from "../../../../types/pptx-xml";
 import type { RibbonContext } from "./types";
 import { createPath } from "./helpers";
 
-const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+type RibbonRenderOptions = {
+  ctx: RibbonContext;
+  shapeType: string;
+};
+
+const getShapeAdjustments = ({ node }: { node: XmlNode }): XmlNode[] => {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 };
 
 /**
  * Render wave or doubleWave shape
  */
-export function renderWave(ctx: RibbonContext, shapType: string): string {
+export function renderWave({ ctx, shapeType }: RibbonRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getShapeAdjustments(node);
-  let adj1 = shapType === "doubleWave" ? 6250 * slideFactor : 12500 * slideFactor;
+  const shapAdjst_ary = getShapeAdjustments({ node });
+  let adj1 = shapeType === "doubleWave" ? 6250 * slideFactor : 12500 * slideFactor;
   let adj2 = 0;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -43,7 +49,7 @@ export function renderWave(ctx: RibbonContext, shapType: string): string {
   const l = 0;
   const b = h;
   const r = w;
-  if (shapType === "doubleWave") {
+  if (shapeType === "doubleWave") {
     const cnstVal1 = 12500 * slideFactor;
     const a1 = adj1 < 0 ? 0 : adj1 > cnstVal1 ? cnstVal1 : adj1;
     const a2 = adj2 < cnstVal2 ? cnstVal2 : adj2 > cnstVal4 ? cnstVal4 : adj2;
@@ -132,7 +138,7 @@ export function renderWave(ctx: RibbonContext, shapType: string): string {
       "," +
       y4 +
       " z";
-  } else if (shapType === "wave") {
+  } else if (shapeType === "wave") {
     const cnstVal5 = 20000 * slideFactor;
     const a1 = adj1 < 0 ? 0 : adj1 > cnstVal5 ? cnstVal5 : adj1;
     const a2 = adj2 < cnstVal2 ? cnstVal2 : adj2 > cnstVal4 ? cnstVal4 : adj2;

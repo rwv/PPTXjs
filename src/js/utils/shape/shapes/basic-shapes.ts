@@ -21,7 +21,11 @@ export type { BasicShapeParams } from "./basic-shapes/types";
 /**
  * Check if shape type is a basic shape
  */
-export function isBasicShape(shapType: string): boolean {
+type IsBasicShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isBasicShape({ shapeType }: IsBasicShapeOptions): boolean {
   const basicShapes = [
     "rect",
     "flowChartProcess",
@@ -45,32 +49,37 @@ export function isBasicShape(shapType: string): boolean {
     "flowChartPunchedCard",
     "snipRoundRect",
   ];
-  return basicShapes.includes(shapType);
+  return shapeType !== undefined && basicShapes.includes(shapeType);
 }
 
 /**
  * Render basic shape SVG
  */
-export function renderBasicShape(shapType: string, params: BasicShapeParams): string {
+type RenderBasicShapeOptions = {
+  shapeType: string;
+  params: BasicShapeParams;
+};
+
+export function renderBasicShape({ shapeType, params }: RenderBasicShapeOptions): string {
   let result = "";
 
-  switch (shapType) {
+  switch (shapeType) {
     case "rect":
     case "flowChartProcess":
     case "flowChartPredefinedProcess":
     case "flowChartInternalStorage":
     case "actionButtonBlank":
-      result = renderRectLike(shapType, params);
+      result = renderRectLike({ shapeType, params });
       break;
     case "irregularSeal1":
     case "irregularSeal2":
-      result = renderIrregularSeal(shapType, params);
+      result = renderIrregularSeal({ shapeType, params });
       break;
     case "ellipse":
     case "flowChartConnector":
     case "flowChartSummingJunction":
     case "flowChartOr":
-      result = renderEllipseLike(shapType, params);
+      result = renderEllipseLike({ shapeType, params });
       break;
     case "roundRect":
     case "round1Rect":
@@ -81,10 +90,10 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
     case "snip2SameRect":
     case "flowChartAlternateProcess":
     case "flowChartPunchedCard":
-      result = renderRoundSnipRect(shapType, params);
+      result = renderRoundSnipRect({ shapeType, params });
       break;
     case "snipRoundRect":
-      result = renderSnipRoundRect(params);
+      result = renderSnipRoundRect({ params });
       break;
     case "leftRightCircularArrow":
     case "chartPlus":
@@ -99,11 +108,11 @@ export function renderBasicShape(shapType: string, params: BasicShapeParams): st
     case "plaqueTabs":
     case "squareTabs":
     case "upDownArrowCallout":
-      console.log(shapType, " -unsupported shape type.");
+      console.log(shapeType, " -unsupported shape type.");
       break;
     case undefined:
     default:
-      console.warn("Undefine shape type.(" + shapType + ")");
+      console.warn("Undefine shape type.(" + shapeType + ")");
   }
 
   return result;

@@ -23,20 +23,25 @@ function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
  * @param picNode - Picture node from PPTX
  * @param warpContext - Warp object containing slide resources and zip
  * @param sourceType - Source type (slideMasterBg, slideLayoutBg, etc.)
- * @param shapeType - Shape type
  * @param emuToPx - EMU to pixel conversion factor
  * @param renderSettings - Settings object containing mediaProcess flag
  * @returns HTML string for the picture/video/audio element
  */
-export async function processPicNode(
-  picNode: XmlNode,
-  warpContext: WarpContext,
-  sourceType: string,
-  shapeType: string,
-  emuToPx: number,
-  renderSettings: { mediaProcess: boolean }
-): Promise<string> {
-  void shapeType;
+type ProcessPicNodeOptions = {
+  picNode: XmlNode;
+  warpContext: WarpContext;
+  sourceType: string;
+  emuToPx: number;
+  renderSettings: { mediaProcess: boolean };
+};
+
+export async function processPicNode({
+  picNode,
+  warpContext,
+  sourceType,
+  emuToPx,
+  renderSettings,
+}: ProcessPicNodeOptions): Promise<string> {
   //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
   const pictureNode = picNode;
   const warpContextValue = warpContext;
@@ -66,7 +71,7 @@ export async function processPicNode(
   }
 
   //console.log("processPicNode imgName:", imgName);
-  const imageExtension = extractFileExtension(imagePath).toLowerCase();
+  const imageExtension = extractFileExtension({ filename: imagePath }).toLowerCase();
   const archive = warpContextValue.archive;
   const imageArchiveFile = await archive.file(imagePath);
   if (!imageArchiveFile) {
@@ -79,17 +84,14 @@ export async function processPicNode(
     ? asXmlNode(shapePropertiesNode["a:xfrm"])
     : undefined;
   if (transformPropertiesNode === undefined) {
-    const placeholderIndex = getTextByPathList<string | number>(pictureNode, [
-      "p:nvPicPr",
-      "p:nvPr",
-      "p:ph",
-      "attrs",
-      "idx",
-    ]);
+    const placeholderIndex = getTextByPathList<string | number>({
+      node: pictureNode,
+      path: ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "idx"],
+    });
     if (placeholderIndex !== undefined && warpContextValue.slideLayoutTables) {
       const layoutShapeNode = warpContextValue.slideLayoutTables.idxTable[placeholderIndex];
       const layoutTransformNode = layoutShapeNode
-        ? asXmlNode(getTextByPathList(layoutShapeNode, ["p:spPr", "a:xfrm"]))
+        ? asXmlNode(getTextByPathList({ node: layoutShapeNode, path: ["p:spPr", "a:xfrm"] }))
         : undefined;
       if (layoutTransformNode !== undefined) {
         transformPropertiesNode = layoutTransformNode;
@@ -98,18 +100,16 @@ export async function processPicNode(
   }
   ///////////////////////////////////////Amir//////////////////////////////
   let rotationDegrees = 0;
-  const rotationValue = getTextByPathList<number | string | null>(pictureNode, [
-    "p:spPr",
-    "a:xfrm",
-    "attrs",
-    "rot",
-  ]);
+  const rotationValue = getTextByPathList<number | string | null>({
+    node: pictureNode,
+    path: ["p:spPr", "a:xfrm", "attrs", "rot"],
+  });
   if (rotationValue !== undefined && rotationValue !== null) {
-    rotationDegrees = angleToDegrees(rotationValue);
+    rotationDegrees = angleToDegrees({ angle: rotationValue });
   }
   //video
   const videoNode = asXmlNode(
-    getTextByPathList(pictureNode, ["p:nvPicPr", "p:nvPr", "a:videoFile"])
+    getTextByPathList({ node: pictureNode, path: ["p:nvPicPr", "p:nvPr", "a:videoFile"] })
   );
   let videoRelationshipId: string | undefined;
   let videoPath: string | undefined;
@@ -128,22 +128,22 @@ export async function processPicNode(
       videoPath = relationshipTargets[videoRelationshipId]?.target;
     }
     if (videoPath) {
-      const isLink = isVideoLink(videoPath);
+      const isLink = isVideoLink({ videoUrl: videoPath });
       if (isLink) {
-        videoPath = escapeHtml(videoPath);
+        videoPath = escapeHtml({ text: videoPath });
         //videoObjectUrl = videoPath;
         isVideoLinkSource = true;
         isMediaSupported = true;
         hasMediaAsset = true;
       } else {
-        videoExtension = extractFileExtension(videoPath).toLowerCase();
+        videoExtension = extractFileExtension({ filename: videoPath }).toLowerCase();
         if (videoExtension === "mp4" || videoExtension === "webm" || videoExtension === "ogg") {
           const videoArchiveFile = await archive.file(videoPath);
           if (!videoArchiveFile) {
             throw new Error(`File not found in archive: ${videoPath}`);
           }
           videoArrayBuffer = await videoArchiveFile.arrayBuffer();
-          videoMimeType = getMimeType(videoExtension);
+          videoMimeType = getMimeType({ fileExtension: videoExtension });
           videoBlob = new Blob([videoArrayBuffer], {
             type: videoMimeType,
           });
@@ -156,7 +156,7 @@ export async function processPicNode(
   }
   //Audio
   const audioNode = asXmlNode(
-    getTextByPathList(pictureNode, ["p:nvPicPr", "p:nvPr", "a:audioFile"])
+    getTextByPathList({ node: pictureNode, path: ["p:nvPicPr", "p:nvPr", "a:audioFile"] })
   );
   let audioRelationshipId: string | undefined;
   let audioPath: string | undefined;
@@ -173,7 +173,7 @@ export async function processPicNode(
       audioPath = relationshipTargets[audioRelationshipId]?.target;
     }
     if (audioPath) {
-      audioExtension = extractFileExtension(audioPath).toLowerCase();
+      audioExtension = extractFileExtension({ filename: audioPath }).toLowerCase();
       if (audioExtension === "mp3" || audioExtension === "wav" || audioExtension === "ogg") {
         const audioArchiveFile = await archive.file(audioPath);
         if (!audioArchiveFile) {
@@ -214,22 +214,39 @@ export async function processPicNode(
   }
   //console.log(node)
   //////////////////////////////////////////////////////////////////////////
-  imageMimeType = getMimeType(imageExtension);
+  imageMimeType = getMimeType({ fileExtension: imageExtension });
   htmlOutput =
     "<div class='block content' style='" +
     (shouldProcessMedia && shouldRenderAudioPlayer
-      ? getPosition(audioTransformOverride, pictureNode, undefined, undefined, undefined, emuToPx)
-      : getPosition(
-          transformPropertiesNode,
-          pictureNode,
-          undefined,
-          undefined,
-          undefined,
-          emuToPx
-        )) +
+      ? getPosition({
+          slideSpNode: audioTransformOverride,
+          parentNode: pictureNode,
+          slideLayoutSpNode: undefined,
+          slideMasterSpNode: undefined,
+          shapeType: undefined,
+          emuToPx,
+        })
+      : getPosition({
+          slideSpNode: transformPropertiesNode,
+          parentNode: pictureNode,
+          slideLayoutSpNode: undefined,
+          slideMasterSpNode: undefined,
+          shapeType: undefined,
+          emuToPx,
+        })) +
     (shouldProcessMedia && shouldRenderAudioPlayer
-      ? getSize(audioTransformOverride, undefined, undefined, emuToPx)
-      : getSize(transformPropertiesNode, undefined, undefined, emuToPx)) +
+      ? getSize({
+          slideSpNode: audioTransformOverride,
+          slideLayoutSpNode: undefined,
+          slideMasterSpNode: undefined,
+          emuToPx,
+        })
+      : getSize({
+          slideSpNode: transformPropertiesNode,
+          slideLayoutSpNode: undefined,
+          slideMasterSpNode: undefined,
+          emuToPx,
+        })) +
     " z-index: " +
     zIndexValue +
     ";" +
@@ -245,7 +262,7 @@ export async function processPicNode(
       "<img src='data:" +
       imageMimeType +
       ";base64," +
-      base64ArrayBuffer(imageArrayBuffer) +
+      base64ArrayBuffer({ arrayBuffer: imageArrayBuffer }) +
       "' style='width: 100%; height: 100%'/>";
   } else if (
     (videoNode !== undefined || audioNode !== undefined) &&

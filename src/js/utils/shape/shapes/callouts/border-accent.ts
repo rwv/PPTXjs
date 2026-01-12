@@ -3,23 +3,26 @@ import type { XmlNode } from "../../../../types/pptx-xml";
 import type { CalloutContext } from "./types";
 import { createPath } from "./helpers";
 
-const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+type CalloutRenderOptions = {
+  ctx: CalloutContext;
+  shapeType: string;
+};
+
+const getShapeAdjustments = ({ node }: { node: XmlNode }): XmlNode[] => {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 };
 
 /**
  * Render border/accent callout shapes (1, 2, 3 variants)
  */
-export function renderBorderAccentCallout(ctx: CalloutContext, shapType: string): string {
+export function renderBorderAccentCallout({ ctx, shapeType }: CalloutRenderOptions): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getShapeAdjustments(node);
+  const shapAdjst_ary = getShapeAdjustments({ node });
   const refr = slideFactor;
   let sAdj1,
     adj1 = 18750 * refr;
@@ -38,44 +41,47 @@ export function renderBorderAccentCallout(ctx: CalloutContext, shapType: string)
   let sAdj8,
     adj8 = -8333 * refr;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj2") {
-      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj3") {
-      sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj3 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj4") {
-      sAdj4 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj4 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj4 !== undefined) {
         adj4 = parseInt(sAdj4.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj5") {
-      sAdj5 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj5 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj5 !== undefined) {
         adj5 = parseInt(sAdj5.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj6") {
-      sAdj6 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj6 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj6 !== undefined) {
         adj6 = parseInt(sAdj6.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj7") {
-      sAdj7 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj7 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj7 !== undefined) {
         adj7 = parseInt(sAdj7.substr(4)) * refr;
       }
     } else if (sAdj_name === "adj8") {
-      sAdj8 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      sAdj8 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj8 !== undefined) {
         adj8 = parseInt(sAdj8.substr(4)) * refr;
       }
@@ -84,7 +90,7 @@ export function renderBorderAccentCallout(ctx: CalloutContext, shapType: string)
   let d_val;
   const cnstVal1 = 100000 * refr;
 
-  switch (shapType) {
+  switch (shapeType) {
     case "borderCallout1":
     case "callout1": {
       if (shapAdjst_ary.length === 0) {

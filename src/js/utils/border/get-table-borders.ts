@@ -19,10 +19,12 @@ interface BorderTableNode extends XmlNode {
   "a:left"?: BorderSideNode;
 }
 
-export function getTableBorders(
-  tableBorderNode: BorderTableNode,
-  warpContext: WarpContext
-): string {
+type GetTableBordersOptions = {
+  tableBorderNode: BorderTableNode;
+  warpContext: WarpContext;
+};
+
+export function getTableBorders({ tableBorderNode, warpContext }: GetTableBordersOptions): string {
   let borderStyle = "";
 
   const bottom = tableBorderNode["a:bottom"];
@@ -32,7 +34,12 @@ export function getTableBorders(
         "a:ln": bottom["a:ln"],
       },
     };
-    const borderCss = getBorder(borderNode, undefined, false, "shape", warpContext);
+    const borderCss = getBorder({
+      shapeNode: borderNode,
+      isSvgMode: false,
+      borderType: "shape",
+      warpContext,
+    });
     if (typeof borderCss === "string") {
       borderStyle += borderCss.replace("border", "border-bottom");
     }
@@ -45,7 +52,12 @@ export function getTableBorders(
         "a:ln": top["a:ln"],
       },
     };
-    const borderCss = getBorder(borderNode, undefined, false, "shape", warpContext);
+    const borderCss = getBorder({
+      shapeNode: borderNode,
+      isSvgMode: false,
+      borderType: "shape",
+      warpContext,
+    });
     if (typeof borderCss === "string") {
       borderStyle += borderCss.replace("border", "border-top");
     }
@@ -58,7 +70,12 @@ export function getTableBorders(
         "a:ln": right["a:ln"],
       },
     };
-    const borderCss = getBorder(borderNode, undefined, false, "shape", warpContext);
+    const borderCss = getBorder({
+      shapeNode: borderNode,
+      isSvgMode: false,
+      borderType: "shape",
+      warpContext,
+    });
     if (typeof borderCss === "string") {
       borderStyle += borderCss.replace("border", "border-right");
     }
@@ -71,7 +88,12 @@ export function getTableBorders(
         "a:ln": left["a:ln"],
       },
     };
-    const borderCss = getBorder(borderNode, undefined, false, "shape", warpContext);
+    const borderCss = getBorder({
+      shapeNode: borderNode,
+      isSvgMode: false,
+      borderType: "shape",
+      warpContext,
+    });
     if (typeof borderCss === "string") {
       borderStyle += borderCss.replace("border", "border-left");
     }

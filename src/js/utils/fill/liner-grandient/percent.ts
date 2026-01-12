@@ -1,9 +1,15 @@
-export function getPercentPattern(
-  prst: string,
-  bgColor: string,
-  fgColor: string
-): string[] | undefined {
-  switch (prst) {
+type GetPercentPatternOptions = {
+  patternPreset: string;
+  backgroundColor: string;
+  foregroundColor: string;
+};
+
+export function getPercentPattern({
+  patternPreset,
+  backgroundColor,
+  foregroundColor,
+}: GetPercentPatternOptions): string[] | undefined {
+  switch (patternPreset) {
     case "pct5":
     case "pct10":
     case "pct20":
@@ -18,8 +24,8 @@ export function getPercentPattern(
     case "pct90":
     case "trellis":
     case "divot": {
-      let px_pr_ary;
-      switch (prst) {
+      let px_pr_ary: string[];
+      switch (patternPreset) {
         case "pct5":
           px_pr_ary = ["0.3px", "10%", "2px 2px"];
           break;
@@ -63,14 +69,14 @@ export function getPercentPattern(
       }
       return [
         "radial-gradient(#" +
-          fgColor +
+          foregroundColor +
           " " +
           px_pr_ary[0] +
           ", transparent " +
           px_pr_ary[1] +
           ")," +
           "#" +
-          bgColor +
+          backgroundColor +
           ";",
         px_pr_ary[2],
       ];

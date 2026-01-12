@@ -6,12 +6,10 @@ import type { MiscSymbolContext } from "./types";
 import { createPath, getFillAttr, getStrokeAttrs } from "./helpers";
 
 const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
-  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-  ]);
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"],
+  });
   return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 };
 
@@ -21,14 +19,10 @@ const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
 
 export function renderMoon(ctx: MiscSymbolContext): string {
   const { node, w, h } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj = 0.5;
   if (shapAdjst !== undefined) {
     adj = parseInt(shapAdjst.substr(4)) / 100000;
@@ -55,14 +49,17 @@ export function renderCorner(ctx: MiscSymbolContext): string {
   let sAdj2_val = 50000 * slideFactor;
   const cnsVal = 100000 * slideFactor;
   for (let i = 0; i < shapAdjst_ary.length; i++) {
-    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const sAdj_name = getTextByPathList<string>({
+      node: shapAdjst_ary[i],
+      path: ["attrs", "name"],
+    });
     if (sAdj_name === "adj1") {
-      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj1 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj1 !== undefined) {
         sAdj1_val = parseInt(sAdj1.substr(4)) * slideFactor;
       }
     } else if (sAdj_name === "adj2") {
-      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      const sAdj2 = getTextByPathList<string>({ node: shapAdjst_ary[i], path: ["attrs", "fmla"] });
       if (sAdj2 !== undefined) {
         sAdj2_val = parseInt(sAdj2.substr(4)) * slideFactor;
       }
@@ -105,14 +102,10 @@ export function renderCorner(ctx: MiscSymbolContext): string {
 
 export function renderDiagStripe(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let sAdj1_val = 50000 * slideFactor;
   const cnsVal = 100000 * slideFactor;
   if (shapAdjst !== undefined) {
@@ -135,14 +128,10 @@ export function renderGear(ctx: MiscSymbolContext, shapType: string): string {
 
 export function renderPlus(ctx: MiscSymbolContext): string {
   const { node, w, h } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj1 = 0.25;
   if (shapAdjst !== undefined) {
     adj1 = parseInt(shapAdjst.substr(4)) / 100000;
@@ -153,14 +142,10 @@ export function renderPlus(ctx: MiscSymbolContext): string {
 
 export function renderTeardrop(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj1 = 100000 * slideFactor;
   const cnsVal1 = adj1;
   const cnsVal2 = 200000 * slideFactor;
@@ -204,14 +189,10 @@ export function renderTeardrop(ctx: MiscSymbolContext): string {
 
 export function renderPlaque(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   let adj1 = 16667 * slideFactor;
   const cnsVal1 = 50000 * slideFactor;
   const cnsVal2 = 100000 * slideFactor;
@@ -246,14 +227,10 @@ export function renderPlaque(ctx: MiscSymbolContext): string {
 
 export function renderSun(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList<string>(node, [
-    "p:spPr",
-    "a:prstGeom",
-    "a:avLst",
-    "a:gd",
-    "attrs",
-    "fmla",
-  ]);
+  const shapAdjst = getTextByPathList<string>({
+    node: node,
+    path: ["p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla"],
+  });
   const refr = slideFactor;
   let adj1 = 25000 * refr;
   const cnstVal1 = 12500 * refr;

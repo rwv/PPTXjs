@@ -4,7 +4,11 @@
  * @param rgbaValue - RGBA or RGB color string (e.g., "rgba(255, 0, 0, 0.5)")
  * @returns Hex color string with alpha (8 digits)
  */
-export function rgba2hex(rgbaValue: string): string {
+type Rgba2HexOptions = {
+  rgbaValue: string;
+};
+
+export function rgba2hex({ rgbaValue }: Rgba2HexOptions): string {
   // Parse RGBA string
   const rgbMatch = rgbaValue.replace(/\s/g, "").match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i);
 

@@ -433,15 +433,24 @@ const FLOWCHART_RENDERERS: Record<string, (ctx: FlowchartShapeContext) => string
 /**
  * Check if a shape type is an independent flowchart shape handled by this module
  */
-export function isFlowchartShape(shapType: string): boolean {
-  return shapType in FLOWCHART_RENDERERS;
+type IsFlowchartShapeOptions = {
+  shapeType: string | undefined;
+};
+
+export function isFlowchartShape({ shapeType }: IsFlowchartShapeOptions): boolean {
+  return shapeType !== undefined && shapeType in FLOWCHART_RENDERERS;
 }
 
 /**
  * Render a flowchart shape
  * @returns SVG string for the shape, or empty string if not a flowchart shape
  */
-export function renderFlowchartShape(shapType: string, ctx: FlowchartShapeContext): string {
-  const renderer = FLOWCHART_RENDERERS[shapType];
+type RenderFlowchartShapeOptions = {
+  shapeType: string;
+  ctx: FlowchartShapeContext;
+};
+
+export function renderFlowchartShape({ shapeType, ctx }: RenderFlowchartShapeOptions): string {
+  const renderer = FLOWCHART_RENDERERS[shapeType];
   return renderer ? renderer(ctx) : "";
 }

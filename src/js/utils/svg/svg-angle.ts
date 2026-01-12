@@ -7,11 +7,17 @@
  * @param svgWidthInput - SVG width
  * @returns Array of [x1, y1, x2, y2] as percentages
  */
-export function svgAngle(
-  angleDegrees: number | string,
-  svgHeightInput: number | string,
-  svgWidthInput: number | string
-): [number, number, number, number] {
+type SvgAngleOptions = {
+  angleDegrees: number | string;
+  svgHeightInput: number | string;
+  svgWidthInput: number | string;
+};
+
+export function svgAngle({
+  angleDegrees,
+  svgHeightInput,
+  svgWidthInput,
+}: SvgAngleOptions): [number, number, number, number] {
   const width = parseFloat(String(svgWidthInput));
   const height = parseFloat(String(svgHeightInput));
   const angle = parseFloat(String(angleDegrees));

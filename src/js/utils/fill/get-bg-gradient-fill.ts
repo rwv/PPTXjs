@@ -12,9 +12,10 @@ import { getSolidFill } from "../color/get-solid-fill";
 import { angleToDegrees } from "../layout/angle-to-degrees";
 import type { XmlNode, XmlValue } from "../../types/pptx-xml";
 
-type SolidFillNode = Parameters<typeof getSolidFill>[0];
-type SolidFillWarpObj = Parameters<typeof getSolidFill>[3];
-type ColorMap = Parameters<typeof getSolidFill>[1];
+type SolidFillOptions = Parameters<typeof getSolidFill>[0];
+type SolidFillNode = SolidFillOptions["fillNode"];
+type SolidFillWarpObj = SolidFillOptions["warpContext"];
+type ColorMap = SolidFillOptions["colorMap"];
 
 function isXmlNode(value: XmlValue): value is XmlNode {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -24,40 +25,49 @@ function isXmlNodeArray(value: XmlValue): value is XmlNode[] {
   return Array.isArray(value);
 }
 
-export function getBgGradientFill(
-  backgroundProps: XmlNode | undefined,
-  placeholderColor: string | undefined,
-  slideMasterContent: XmlNode,
-  warpContext: SolidFillWarpObj
-): string {
+type GetBgGradientFillOptions = {
+  backgroundProps: XmlNode | undefined;
+  placeholderColor: string | undefined;
+  slideMasterContent: XmlNode;
+  warpContext: SolidFillWarpObj;
+};
+
+export function getBgGradientFill({
+  backgroundProps,
+  placeholderColor,
+  slideMasterContent,
+  warpContext,
+}: GetBgGradientFillOptions): string {
   let backgroundCss = "";
   if (backgroundProps !== undefined) {
-    const gradientFillNodeValue = getTextByPathList(backgroundProps, ["a:gradFill"]);
+    const gradientFillNodeValue = getTextByPathList({
+      node: backgroundProps,
+      path: ["a:gradFill"],
+    });
     const gradientFillNode = isXmlNode(gradientFillNodeValue) ? gradientFillNodeValue : undefined;
     const gradientStopsValue =
       gradientFillNode !== undefined
-        ? getTextByPathList(gradientFillNode, ["a:gsLst", "a:gs"])
+        ? getTextByPathList({ node: gradientFillNode, path: ["a:gsLst", "a:gs"] })
         : undefined;
     const gradientStops =
       gradientStopsValue && isXmlNodeArray(gradientStopsValue) ? gradientStopsValue : [];
     const colorStops: string[] = [];
     const positionStops: string[] = [];
-    const colorMapValue = getTextByPathList(slideMasterContent, [
-      "p:sldMaster",
-      "p:clrMap",
-      "attrs",
-    ]);
+    const colorMapValue = getTextByPathList({
+      node: slideMasterContent,
+      path: ["p:sldMaster", "p:clrMap", "attrs"],
+    });
     const colorMap =
       colorMapValue && isXmlNode(colorMapValue) ? (colorMapValue as ColorMap) : undefined;
 
     for (let i = 0; i < gradientStops.length; i++) {
-      const solidFillColor = getSolidFill(
-        gradientStops[i] as SolidFillNode,
+      const solidFillColor = getSolidFill({
+        fillNode: gradientStops[i] as SolidFillNode,
         colorMap,
         placeholderColor,
-        warpContext
-      );
-      const pos = getTextByPathList<string>(gradientStops[i], ["attrs", "pos"]);
+        warpContext,
+      });
+      const pos = getTextByPathList<string>({ node: gradientStops[i], path: ["attrs", "pos"] });
       if (pos !== undefined) {
         positionStops[i] = Number(pos) / 1000 + "%";
       } else {
@@ -68,16 +78,21 @@ export function getBgGradientFill(
 
     // get rotation
     const linearGradientNodeValue =
-      gradientFillNode !== undefined ? getTextByPathList(gradientFillNode, ["a:lin"]) : undefined;
+      gradientFillNode !== undefined
+        ? getTextByPathList({ node: gradientFillNode, path: ["a:lin"] })
+        : undefined;
     const linearGradientNode =
       linearGradientNodeValue && isXmlNode(linearGradientNodeValue)
         ? linearGradientNodeValue
         : undefined;
     let rotationDegrees = 90;
     if (linearGradientNode !== undefined) {
-      const angle = getTextByPathList<string | number>(linearGradientNode, ["attrs", "ang"]);
+      const angle = getTextByPathList<string | number>({
+        node: linearGradientNode,
+        path: ["attrs", "ang"],
+      });
       if (angle !== undefined) {
-        rotationDegrees = angleToDegrees(angle) + 90;
+        rotationDegrees = angleToDegrees({ angle }) + 90;
       }
     }
 
