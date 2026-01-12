@@ -1,5 +1,5 @@
 /**
- * Shared PPTX XML node types produced by tXml.simplify().
+ * Shared PPTX XML node types produced by simplify().
  *
  * Nodes are plain objects with optional `attrs` (string/number values)
  * and child entries that can be nested nodes, arrays, or primitive values.
