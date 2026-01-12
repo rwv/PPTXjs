@@ -10,12 +10,13 @@
  */
 
 import { getTextByPathList } from "../../object";
+import type { XmlNode } from "../../../types/pptx-xml";
 
 /**
  * Context for rendering polygon shapes
  */
 export interface PolygonShapeContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;
@@ -95,7 +96,7 @@ function renderRtTriangle(ctx: PolygonShapeContext): string {
 function renderTriangle(ctx: PolygonShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -133,7 +134,7 @@ function renderDiamond(ctx: PolygonShapeContext, shapType: string): string {
 function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -165,7 +166,7 @@ function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
 function renderParallelogram(ctx: PolygonShapeContext): string {
   const { node, w, h } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -201,7 +202,7 @@ function renderPentagon(ctx: PolygonShapeContext): string {
 function renderHexagon(ctx: PolygonShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -273,7 +274,7 @@ function renderHeptagon(ctx: PolygonShapeContext): string {
 function renderOctagon(ctx: PolygonShapeContext): string {
   const { node, w, h } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",

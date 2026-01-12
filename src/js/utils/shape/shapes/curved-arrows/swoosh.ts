@@ -1,6 +1,6 @@
 import { getTextByPathList } from "../../../object";
 import type { CurvedArrowContext } from "./types";
-import { createPath } from "./helpers";
+import { createPath, getShapeAdjustments } from "./helpers";
 
 /**
  * Render swooshArrow shape
@@ -8,20 +8,22 @@ import { createPath } from "./helpers";
 export function renderSwooshArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const shapAdjst_ary = getShapeAdjustments(node);
   const refr = slideFactor;
   let sAdj1,
     adj1 = 25000 * refr;
   let sAdj2,
     adj2 = 16667 * refr;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * refr;
-      } else if (sAdj_name === "adj2") {
-        sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * refr;
       }
     }

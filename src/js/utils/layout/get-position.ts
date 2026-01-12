@@ -1,4 +1,5 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
+import type { XmlNode } from "../../types/pptx-xml";
 
 /**
  * PPTX transform node containing offset attributes
@@ -97,7 +98,7 @@ export function getPosition(
 
   // Handle group positioning
   if (shapeType === "group" && parentNode !== undefined) {
-    const groupTransformNode = getTextByPathList(parentNode, ["p:grpSpPr", "a:xfrm"]);
+    const groupTransformNode = getTextByPathList(parentNode as XmlNode, ["p:grpSpPr", "a:xfrm"]);
     // BUG FIX: Use the group transform node when computing offsets.
     if (groupTransformNode !== undefined) {
       groupOffsetX = parseInt(groupTransformNode["a:off"]["attrs"]["x"]) * emuToPx;

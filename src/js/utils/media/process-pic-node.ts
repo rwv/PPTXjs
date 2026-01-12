@@ -7,7 +7,15 @@ import { isVideoLink } from "./is-video-link";
 import { getMimeType } from "./get-mime-type";
 import { base64ArrayBuffer } from "./base64-array-buffer";
 import { escapeHtml } from "../string";
-import type { PptxArchive } from "../../archive/pptx-archive";
+import type { RelationshipMap, WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
+  return value !== undefined && isXmlNode(value) ? value : undefined;
+}
 
 /**
  * Process picture/video/audio node and generate HTML
@@ -21,8 +29,8 @@ import type { PptxArchive } from "../../archive/pptx-archive";
  * @returns HTML string for the picture/video/audio element
  */
 export async function processPicNode(
-  picNode: unknown,
-  warpContext: unknown,
+  picNode: XmlNode,
+  warpContext: WarpContext,
   sourceType: string,
   shapeType: string,
   emuToPx: number,
@@ -30,33 +38,32 @@ export async function processPicNode(
 ): Promise<string> {
   void shapeType;
   //console.log("processPicNode node:", node, "source:", source, "sType:", sType, "warpObj;", warpObj);
-  type RelationshipMap = Record<string, { target: string }>;
-  type WarpContext = {
-    masterResObj?: RelationshipMap;
-    layoutResObj?: RelationshipMap;
-    slideResObj: RelationshipMap;
-    archive: PptxArchive;
-    slideLayoutTables?: Record<string, unknown>;
-  };
-  const pictureNode = picNode as Record<string, unknown>;
-  const warpContextValue = warpContext as WarpContext;
+  const pictureNode = picNode;
+  const warpContextValue = warpContext;
   let htmlOutput = "";
   let hasMediaAsset = false;
-  const zIndexValue = (pictureNode["attrs"] as Record<string, string | number>)["order"];
+  const zIndexValue = String(pictureNode.attrs?.order ?? 0);
 
-  const blipFillNode = pictureNode["p:blipFill"] as Record<string, unknown>;
-  const blipNode = blipFillNode["a:blip"] as Record<string, unknown>;
-  const relationshipId = (blipNode["attrs"] as Record<string, string>)["r:embed"];
+  const blipFillNode = pictureNode["p:blipFill"] as XmlNode;
+  const blipNode = blipFillNode["a:blip"] as XmlNode;
+  const relationshipIdValue = blipNode.attrs?.["r:embed"];
+  if (relationshipIdValue === undefined) {
+    throw new Error("Missing relationship id for picture embed.");
+  }
+  const relationshipId = String(relationshipIdValue);
   let relationshipTargets: RelationshipMap;
   if (sourceType === "slideMasterBg") {
-    relationshipTargets = warpContextValue.masterResObj as RelationshipMap;
+    relationshipTargets = warpContextValue.masterResObj ?? warpContextValue.slideResObj;
   } else if (sourceType === "slideLayoutBg") {
-    relationshipTargets = warpContextValue.layoutResObj as RelationshipMap;
+    relationshipTargets = warpContextValue.layoutResObj ?? warpContextValue.slideResObj;
   } else {
     //imgName = warpObj["slideResObj"][rid]["target"];
     relationshipTargets = warpContextValue.slideResObj;
   }
-  const imagePath = relationshipTargets[relationshipId]["target"];
+  const imagePath = relationshipTargets[relationshipId]?.target;
+  if (!imagePath) {
+    throw new Error(`Missing relationship target for id: ${relationshipId}`);
+  }
 
   //console.log("processPicNode imgName:", imgName);
   const imageExtension = extractFileExtension(imagePath).toLowerCase();
@@ -67,10 +74,10 @@ export async function processPicNode(
   }
   const imageArrayBuffer = await imageArchiveFile.arrayBuffer();
   let imageMimeType = "";
-  const shapePropertiesNode = pictureNode["p:spPr"] as Record<string, unknown>;
-  let transformPropertiesNode = shapePropertiesNode["a:xfrm"] as
-    | Record<string, unknown>
-    | undefined;
+  const shapePropertiesNode = asXmlNode(pictureNode["p:spPr"]);
+  let transformPropertiesNode = shapePropertiesNode
+    ? asXmlNode(shapePropertiesNode["a:xfrm"])
+    : undefined;
   if (transformPropertiesNode === undefined) {
     const placeholderIndex = getTextByPathList<string | number>(pictureNode, [
       "p:nvPicPr",
@@ -79,11 +86,14 @@ export async function processPicNode(
       "attrs",
       "idx",
     ]);
-    if (placeholderIndex !== undefined) {
-      transformPropertiesNode = getTextByPathList<Record<string, unknown>>(
-        warpContextValue.slideLayoutTables,
-        ["idxTable", placeholderIndex, "p:spPr", "a:xfrm"]
-      );
+    if (placeholderIndex !== undefined && warpContextValue.slideLayoutTables) {
+      const layoutShapeNode = warpContextValue.slideLayoutTables.idxTable[placeholderIndex];
+      const layoutTransformNode = layoutShapeNode
+        ? asXmlNode(getTextByPathList(layoutShapeNode, ["p:spPr", "a:xfrm"]))
+        : undefined;
+      if (layoutTransformNode !== undefined) {
+        transformPropertiesNode = layoutTransformNode;
+      }
     }
   }
   ///////////////////////////////////////Amir//////////////////////////////
@@ -94,15 +104,13 @@ export async function processPicNode(
     "attrs",
     "rot",
   ]);
-  if (rotationValue !== undefined) {
+  if (rotationValue !== undefined && rotationValue !== null) {
     rotationDegrees = angleToDegrees(rotationValue);
   }
   //video
-  const videoNode = getTextByPathList<Record<string, unknown>>(pictureNode, [
-    "p:nvPicPr",
-    "p:nvPr",
-    "a:videoFile",
-  ]);
+  const videoNode = asXmlNode(
+    getTextByPathList(pictureNode, ["p:nvPicPr", "p:nvPr", "a:videoFile"])
+  );
   let videoRelationshipId: string | undefined;
   let videoPath: string | undefined;
   let videoExtension: string | undefined;
@@ -114,8 +122,11 @@ export async function processPicNode(
   let isVideoLinkSource = false;
   const shouldProcessMedia = renderSettings.mediaProcess;
   if (videoNode !== undefined && shouldProcessMedia) {
-    videoRelationshipId = (videoNode["attrs"] as Record<string, string>)["r:link"];
-    videoPath = relationshipTargets[videoRelationshipId]?.target;
+    const videoRelationshipIdValue = videoNode.attrs?.["r:link"];
+    if (videoRelationshipIdValue !== undefined) {
+      videoRelationshipId = String(videoRelationshipIdValue);
+      videoPath = relationshipTargets[videoRelationshipId]?.target;
+    }
     if (videoPath) {
       const isLink = isVideoLink(videoPath);
       if (isLink) {
@@ -144,11 +155,9 @@ export async function processPicNode(
     }
   }
   //Audio
-  const audioNode = getTextByPathList<Record<string, unknown>>(pictureNode, [
-    "p:nvPicPr",
-    "p:nvPr",
-    "a:audioFile",
-  ]);
+  const audioNode = asXmlNode(
+    getTextByPathList(pictureNode, ["p:nvPicPr", "p:nvPr", "a:audioFile"])
+  );
   let audioRelationshipId: string | undefined;
   let audioPath: string | undefined;
   let audioExtension: string | undefined;
@@ -156,10 +165,13 @@ export async function processPicNode(
   let audioBlob: Blob | undefined;
   let audioObjectUrl: string | undefined;
   let shouldRenderAudioPlayer = false;
-  let audioTransformOverride: Record<string, unknown> | undefined;
+  let audioTransformOverride: XmlNode | undefined;
   if (audioNode !== undefined && shouldProcessMedia) {
-    audioRelationshipId = (audioNode["attrs"] as Record<string, string>)["r:link"];
-    audioPath = relationshipTargets[audioRelationshipId]?.target;
+    const audioRelationshipIdValue = audioNode.attrs?.["r:link"];
+    if (audioRelationshipIdValue !== undefined) {
+      audioRelationshipId = String(audioRelationshipIdValue);
+      audioPath = relationshipTargets[audioRelationshipId]?.target;
+    }
     if (audioPath) {
       audioExtension = extractFileExtension(audioPath).toLowerCase();
       if (audioExtension === "mp3" || audioExtension === "wav" || audioExtension === "ogg") {
@@ -170,31 +182,30 @@ export async function processPicNode(
         audioArrayBuffer = await audioArchiveFile.arrayBuffer();
         audioBlob = new Blob([audioArrayBuffer]);
         audioObjectUrl = URL.createObjectURL(audioBlob);
-        const transformAttributes = transformPropertiesNode as Record<string, unknown>;
-        const extentAttributes = (transformAttributes["a:ext"] as Record<string, unknown>)[
-          "attrs"
-        ] as Record<string, string>;
-        const offsetAttributes = (transformAttributes["a:off"] as Record<string, unknown>)[
-          "attrs"
-        ] as Record<string, string>;
-        const extentWidth = parseInt(extentAttributes["cx"]) * 20;
-        const extentHeight = extentAttributes["cy"];
-        const offsetX = parseInt(offsetAttributes["x"]) / 2.5;
-        const offsetY = offsetAttributes["y"];
-        audioTransformOverride = {
-          "a:ext": {
-            attrs: {
-              cx: extentWidth,
-              cy: extentHeight,
-            },
-          },
-          "a:off": {
-            attrs: {
-              x: offsetX,
-              y: offsetY,
-            },
-          },
-        };
+        if (transformPropertiesNode) {
+          const extentAttributes = asXmlNode(transformPropertiesNode["a:ext"])?.attrs;
+          const offsetAttributes = asXmlNode(transformPropertiesNode["a:off"])?.attrs;
+          if (extentAttributes && offsetAttributes) {
+            const extentWidth = parseInt(String(extentAttributes["cx"] ?? "0"), 10) * 20;
+            const extentHeight = extentAttributes["cy"] ?? 0;
+            const offsetX = parseInt(String(offsetAttributes["x"] ?? "0"), 10) / 2.5;
+            const offsetY = offsetAttributes["y"] ?? 0;
+            audioTransformOverride = {
+              "a:ext": {
+                attrs: {
+                  cx: extentWidth,
+                  cy: extentHeight,
+                },
+              },
+              "a:off": {
+                attrs: {
+                  x: offsetX,
+                  y: offsetY,
+                },
+              },
+            };
+          }
+        }
         shouldRenderAudioPlayer = true;
         isMediaSupported = true;
         hasMediaAsset = true;

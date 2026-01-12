@@ -1,4 +1,5 @@
 import { getTextByPathList } from "../../../object";
+import type { XmlNode } from "../../../../types/pptx-xml";
 import type { StarShapeContext } from "./types";
 
 /**
@@ -33,12 +34,21 @@ export function createPath(d: string, ctx: StarShapeContext): string {
 /**
  * Parse single adjustment value from shape node
  */
-export function parseSingleAdj(node: unknown, defaultVal: number, slideFactor: number): number {
-  const shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  if (shapAdjst !== undefined) {
-    const name = shapAdjst["attrs"]["name"];
+export function parseSingleAdj(node: XmlNode, defaultVal: number, slideFactor: number): number {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
     if (name === "adj") {
-      return parseInt(shapAdjst["attrs"]["fmla"].substr(4)) * slideFactor;
+      const fmla = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (fmla !== undefined) {
+        return parseInt(fmla.substr(4)) * slideFactor;
+      }
     }
   }
   return defaultVal * slideFactor;
@@ -48,7 +58,7 @@ export function parseSingleAdj(node: unknown, defaultVal: number, slideFactor: n
  * Parse multiple adjustment values from shape node
  */
 export function parseMultiAdj(
-  node: unknown,
+  node: XmlNode,
   defaults: { adj: number; hf?: number; vf?: number },
   slideFactor: number
 ): { adj: number; hf: number; vf: number } {
@@ -56,18 +66,26 @@ export function parseMultiAdj(
   let hf = (defaults.hf ?? 100000) * slideFactor;
   let vf = (defaults.vf ?? 100000) * slideFactor;
 
-  const shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  if (shapAdjst !== undefined) {
-    Object.keys(shapAdjst).forEach(function (key) {
-      const name = shapAdjst[key]["attrs"]["name"];
-      if (name === "adj") {
-        adj = parseInt(shapAdjst[key]["attrs"]["fmla"].substr(4)) * slideFactor;
-      } else if (name === "hf") {
-        hf = parseInt(shapAdjst[key]["attrs"]["fmla"].substr(4)) * slideFactor;
-      } else if (name === "vf") {
-        vf = parseInt(shapAdjst[key]["attrs"]["fmla"].substr(4)) * slideFactor;
-      }
-    });
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    const fmla = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+    if (fmla === undefined) {
+      continue;
+    }
+    if (name === "adj") {
+      adj = parseInt(fmla.substr(4)) * slideFactor;
+    } else if (name === "hf") {
+      hf = parseInt(fmla.substr(4)) * slideFactor;
+    } else if (name === "vf") {
+      vf = parseInt(fmla.substr(4)) * slideFactor;
+    }
   }
   return { adj, hf, vf };
 }

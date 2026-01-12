@@ -1,4 +1,13 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
+  return value !== undefined && isXmlNode(value) ? value : undefined;
+}
 
 /**
  * Determines the font typeface (font family) for a PPTX text node
@@ -14,24 +23,35 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns Font family name or "inherit"
  */
 export function getFontType(
-  textRunNode: Record<string, unknown>,
+  textRunNode: XmlNode,
   shapeType: string | undefined,
-  warpContext: Record<string, unknown>,
-  paragraphFontStyle: Record<string, unknown> | undefined
+  warpContext: WarpContext,
+  paragraphFontStyle: XmlNode | undefined
 ): string {
-  let typefaceValue = getTextByPathList(textRunNode, ["a:rPr", "a:latin", "attrs", "typeface"]);
+  const typefaceValueRaw = getTextByPathList<string | number>(textRunNode, [
+    "a:rPr",
+    "a:latin",
+    "attrs",
+    "typeface",
+  ]);
+  let typefaceValue = typefaceValueRaw !== undefined ? String(typefaceValueRaw) : undefined;
 
   if (typefaceValue === undefined) {
     let fontIndexKey = "";
     let fontGroupKey = "";
     if (paragraphFontStyle !== undefined) {
-      fontIndexKey = getTextByPathList(paragraphFontStyle, ["attrs", "idx"]);
+      const fontIndexValue = getTextByPathList<string | number>(paragraphFontStyle, [
+        "attrs",
+        "idx",
+      ]);
+      if (fontIndexValue !== undefined) {
+        fontIndexKey = String(fontIndexValue);
+      }
     }
-    const fontSchemeNode = getTextByPathList(warpContext["themeContent"], [
-      "a:theme",
-      "a:themeElements",
-      "a:fontScheme",
-    ]);
+    const fontSchemeNodeValue = warpContext.themeContent
+      ? getTextByPathList(warpContext.themeContent, ["a:theme", "a:themeElements", "a:fontScheme"])
+      : undefined;
+    const fontSchemeNode = asXmlNode(fontSchemeNodeValue);
     if (fontIndexKey === "") {
       if (shapeType === "title" || shapeType === "subTitle" || shapeType === "ctrTitle") {
         fontIndexKey = "major";
@@ -40,12 +60,16 @@ export function getFontType(
       }
     }
     fontGroupKey = "a:" + fontIndexKey + "Font";
-    typefaceValue = getTextByPathList(fontSchemeNode, [
-      fontGroupKey,
-      "a:latin",
-      "attrs",
-      "typeface",
-    ]);
+    const fontTypefaceValue =
+      fontSchemeNode !== undefined
+        ? getTextByPathList<string | number>(fontSchemeNode, [
+            fontGroupKey,
+            "a:latin",
+            "attrs",
+            "typeface",
+          ])
+        : undefined;
+    typefaceValue = fontTypefaceValue !== undefined ? String(fontTypefaceValue) : undefined;
   }
 
   return typefaceValue === undefined ? "inherit" : typefaceValue;

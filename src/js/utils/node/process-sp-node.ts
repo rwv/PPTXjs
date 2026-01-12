@@ -1,5 +1,6 @@
 import { getTextByPathList } from "../object";
 import { genShape } from "../shape";
+import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 /**
  * Process shape node (p:sp) to generate HTML
@@ -26,9 +27,9 @@ import { genShape } from "../shape";
  * @returns HTML string for the shape
  */
 export async function processSpNode(
-  shapeNode: unknown,
-  parentNode: unknown,
-  warpContext: unknown,
+  shapeNode: XmlNode,
+  parentNode: XmlNode | XmlNode[] | undefined,
+  warpContext: WarpContext | Record<string, unknown>,
   sourceType: string,
   shapeContext: string,
   emuToPx: number,
@@ -49,8 +50,8 @@ export async function processSpNode(
    *  966 </xsd:complexType>
    */
 
-  const shapeNodeRecord = shapeNode as Record<string, unknown>;
-  const warpContextRecord = warpContext as Record<string, unknown>;
+  const shapeNodeRecord = shapeNode as XmlNode;
+  const context = warpContext as WarpContext;
   const shapeId = getTextByPathList<string | number>(shapeNodeRecord, [
     "p:nvSpPr",
     "p:cNvPr",
@@ -95,29 +96,19 @@ export async function processSpNode(
   let layoutShapeNode = undefined;
   let masterShapeNode = undefined;
 
-  const slideLayoutTables = warpContextRecord["slideLayoutTables"] as Record<string, unknown>;
-  const slideMasterTables = warpContextRecord["slideMasterTables"] as Record<string, unknown>;
-  if (placeholderIndex !== undefined) {
-    layoutShapeNode = (slideLayoutTables["idxTable"] as Record<string | number, unknown>)[
-      placeholderIndex
-    ];
-    if (placeholderType !== undefined) {
-      masterShapeNode = (slideMasterTables["typeTable"] as Record<string, unknown>)[
-        placeholderType
-      ];
-    } else {
-      masterShapeNode = (slideMasterTables["idxTable"] as Record<string | number, unknown>)[
-        placeholderIndex
-      ];
-    }
-  } else {
-    if (placeholderType !== undefined) {
-      layoutShapeNode = (slideLayoutTables["typeTable"] as Record<string, unknown>)[
-        placeholderType
-      ];
-      masterShapeNode = (slideMasterTables["typeTable"] as Record<string, unknown>)[
-        placeholderType
-      ];
+  const slideLayoutTables = context.slideLayoutTables;
+  const slideMasterTables = context.slideMasterTables;
+  if (slideLayoutTables !== undefined && slideMasterTables !== undefined) {
+    if (placeholderIndex !== undefined) {
+      layoutShapeNode = slideLayoutTables.idxTable[placeholderIndex];
+      if (placeholderType !== undefined) {
+        masterShapeNode = slideMasterTables.typeTable[placeholderType];
+      } else {
+        masterShapeNode = slideMasterTables.idxTable[placeholderIndex];
+      }
+    } else if (placeholderType !== undefined) {
+      layoutShapeNode = slideLayoutTables.typeTable[placeholderType];
+      masterShapeNode = slideMasterTables.typeTable[placeholderType];
     }
   }
 

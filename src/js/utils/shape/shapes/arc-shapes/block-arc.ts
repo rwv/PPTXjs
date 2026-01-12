@@ -1,31 +1,39 @@
 import { shapeArc } from "../helpers/arc";
 import { getTextByPathList } from "../../../object";
+import type { XmlNode } from "../../../../types/pptx-xml";
 import type { ArcShapeContext } from "./types";
 import { createPath } from "./helpers";
 
 export function renderBlockArc(ctx: ArcShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  let sAdj1,
-    adj1 = 180;
-  let sAdj2,
-    adj2 = 0;
-  let sAdj3,
-    adj3 = 25000 * slideFactor;
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
+  let adj1 = 180;
+  let adj2 = 0;
+  let adj3 = 25000 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) / 60000;
-      } else if (sAdj_name === "adj2") {
-        sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) / 60000;
-      } else if (sAdj_name === "adj3") {
-        sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj3") {
+      const sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     }

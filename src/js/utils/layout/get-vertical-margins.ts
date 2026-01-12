@@ -1,5 +1,34 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
 import { getFontSize } from "../font/get-font-size";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
+  return value !== undefined && isXmlNode(value) ? value : undefined;
+}
+
+function asString(value: XmlValue | undefined): string | undefined {
+  if (typeof value === "string") {
+    return value;
+  }
+  if (typeof value === "number") {
+    return String(value);
+  }
+  return undefined;
+}
+
+function firstXmlNode(value: XmlValue | undefined): XmlNode | undefined {
+  if (value === undefined || value === null) {
+    return undefined;
+  }
+  if (Array.isArray(value)) {
+    return value.length > 0 ? value[0] : undefined;
+  }
+  return asXmlNode(value);
+}
 
 /**
  * Calculates vertical margin/padding CSS styling for a PPTX paragraph node
@@ -27,11 +56,11 @@ import { getFontSize } from "../font/get-font-size";
  * @returns CSS string with margin and padding styles
  */
 export function getVerticalMargins(
-  paragraphNode: Record<string, unknown>,
-  textBodyNode: Record<string, unknown> | undefined,
+  paragraphNode: XmlNode,
+  textBodyNode: XmlNode | undefined,
   shapeType: string | undefined,
   layoutIndex: number | string | undefined,
-  warpContext: Record<string, unknown>,
+  warpContext: WarpContext,
   fontSizeScale: number
 ): string {
   //margin-top ;
@@ -43,21 +72,21 @@ export function getVerticalMargins(
   //console.log("getVerticalMargins ", paragraphNode, shapeType, layoutIndex, warpContext)
   //var lstStyle = textBodyNode["a:lstStyle"];
   let listLevel = 1;
-  let spaceBeforeValue = getTextByPathList(paragraphNode, [
+  let spaceBeforeValue = getTextByPathList<string | number>(paragraphNode, [
     "a:pPr",
     "a:spcBef",
     "a:spcPts",
     "attrs",
     "val",
   ]);
-  let spaceAfterValue = getTextByPathList(paragraphNode, [
+  let spaceAfterValue = getTextByPathList<string | number>(paragraphNode, [
     "a:pPr",
     "a:spcAft",
     "a:spcPts",
     "attrs",
     "val",
   ]);
-  let lineSpacingValue = getTextByPathList(paragraphNode, [
+  let lineSpacingValue = getTextByPathList<string | number>(paragraphNode, [
     "a:pPr",
     "a:lnSpc",
     "a:spcPct",
@@ -66,7 +95,7 @@ export function getVerticalMargins(
   ]);
   let lineSpacingUnit = "Pct";
   if (lineSpacingValue === undefined) {
-    lineSpacingValue = getTextByPathList(paragraphNode, [
+    lineSpacingValue = getTextByPathList<string | number>(paragraphNode, [
       "a:pPr",
       "a:lnSpc",
       "a:spcPts",
@@ -77,14 +106,15 @@ export function getVerticalMargins(
       lineSpacingUnit = "Pts";
     }
   }
-  const levelAttr = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "lvl"]);
+  const levelAttr = getTextByPathList<string | number>(paragraphNode, ["a:pPr", "attrs", "lvl"]);
   if (levelAttr !== undefined) {
-    listLevel = parseInt(levelAttr) + 1;
+    listLevel = parseInt(String(levelAttr), 10) + 1;
   }
-  let fontSizePoints;
-  if (getTextByPathList(paragraphNode, ["a:r"]) !== undefined) {
+  let fontSizePoints: number | undefined;
+  const textRunNode = firstXmlNode(getTextByPathList(paragraphNode, ["a:r"]));
+  if (textRunNode !== undefined) {
     const fontSizeValue = getFontSize(
-      paragraphNode["a:r"],
+      textRunNode,
       textBodyNode,
       undefined,
       listLevel,
@@ -137,23 +167,27 @@ export function getVerticalMargins(
   ) {
     //check in layout
     if (layoutIndex !== undefined) {
-      const layoutParagraphProps = getTextByPathList(warpContext, [
-        "slideLayoutTables",
-        "idxTable",
-        layoutIndex,
-        "p:txBody",
-        "a:p",
-        listLevel - 1,
-        "a:pPr",
-      ]);
+      const layoutParagraphProps = asXmlNode(
+        getTextByPathList(warpContext as unknown as XmlNode, [
+          "slideLayoutTables",
+          "idxTable",
+          layoutIndex,
+          "p:txBody",
+          "a:p",
+          listLevel - 1,
+          "a:pPr",
+        ])
+      );
 
       if (spaceBeforeValue === undefined) {
-        spaceBeforeValue = getTextByPathList(layoutParagraphProps, [
-          "a:spcBef",
-          "a:spcPts",
-          "attrs",
-          "val",
-        ]);
+        spaceBeforeValue = layoutParagraphProps
+          ? getTextByPathList<string | number>(layoutParagraphProps, [
+              "a:spcBef",
+              "a:spcPts",
+              "attrs",
+              "val",
+            ])
+          : undefined;
         // if(spcBefNode !== undefined){
         //     spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "pt;"
         // }
@@ -167,12 +201,14 @@ export function getVerticalMargins(
       }
 
       if (spaceAfterValue === undefined) {
-        spaceAfterValue = getTextByPathList(layoutParagraphProps, [
-          "a:spcAft",
-          "a:spcPts",
-          "attrs",
-          "val",
-        ]);
+        spaceAfterValue = layoutParagraphProps
+          ? getTextByPathList<string | number>(layoutParagraphProps, [
+              "a:spcAft",
+              "a:spcPts",
+              "attrs",
+              "val",
+            ])
+          : undefined;
         // if(spcAftNode !== undefined){
         //     spcAft = "margin-bottom:" + parseInt(spcAftNode)/100 + "pt;"
         // }
@@ -186,20 +222,24 @@ export function getVerticalMargins(
       }
 
       if (lineSpacingValue === undefined) {
-        lineSpacingValue = getTextByPathList(layoutParagraphProps, [
-          "a:lnSpc",
-          "a:spcPct",
-          "attrs",
-          "val",
-        ]);
+        lineSpacingValue = layoutParagraphProps
+          ? getTextByPathList<string | number>(layoutParagraphProps, [
+              "a:lnSpc",
+              "a:spcPct",
+              "attrs",
+              "val",
+            ])
+          : undefined;
         if (lineSpacingValue === undefined) {
-          lineSpacingValue = getTextByPathList(layoutParagraphProps, [
-            "a:pPr",
-            "a:lnSpc",
-            "a:spcPts",
-            "attrs",
-            "val",
-          ]);
+          lineSpacingValue = layoutParagraphProps
+            ? getTextByPathList<string | number>(layoutParagraphProps, [
+                "a:pPr",
+                "a:lnSpc",
+                "a:spcPts",
+                "attrs",
+                "val",
+              ])
+            : undefined;
           if (lineSpacingValue !== undefined) {
             lineSpacingUnit = "Pts";
           }
@@ -215,7 +255,7 @@ export function getVerticalMargins(
   ) {
     //check in master
     //slideMasterTextStyles
-    const masterTextStyles = warpContext["slideMasterTextStyles"];
+    const masterTextStyles = warpContext.slideMasterTextStyles;
     let styleKey = "";
     const listLevelKey = "a:lvl" + listLevel + "pPr";
     switch (shapeType) {
@@ -242,10 +282,12 @@ export function getVerticalMargins(
     // if (type === "shape" || type === "textBox") {
     //     lvlKey = "a:lvl1pPr";
     // }
-    const listLevelStyle = getTextByPathList(masterTextStyles, [styleKey, listLevelKey]);
+    const listLevelStyle = masterTextStyles
+      ? asXmlNode(getTextByPathList(masterTextStyles, [styleKey, listLevelKey]))
+      : undefined;
     if (listLevelStyle !== undefined) {
       if (spaceBeforeValue === undefined) {
-        spaceBeforeValue = getTextByPathList(listLevelStyle, [
+        spaceBeforeValue = getTextByPathList<string | number>(listLevelStyle, [
           "a:spcBef",
           "a:spcPts",
           "attrs",
@@ -264,7 +306,7 @@ export function getVerticalMargins(
       }
 
       if (spaceAfterValue === undefined) {
-        spaceAfterValue = getTextByPathList(listLevelStyle, [
+        spaceAfterValue = getTextByPathList<string | number>(listLevelStyle, [
           "a:spcAft",
           "a:spcPts",
           "attrs",
@@ -283,14 +325,14 @@ export function getVerticalMargins(
       }
 
       if (lineSpacingValue === undefined) {
-        lineSpacingValue = getTextByPathList(listLevelStyle, [
+        lineSpacingValue = getTextByPathList<string | number>(listLevelStyle, [
           "a:lnSpc",
           "a:spcPct",
           "attrs",
           "val",
         ]);
         if (lineSpacingValue === undefined) {
-          lineSpacingValue = getTextByPathList(listLevelStyle, [
+          lineSpacingValue = getTextByPathList<string | number>(listLevelStyle, [
             "a:pPr",
             "a:lnSpc",
             "a:spcPts",
@@ -309,23 +351,33 @@ export function getVerticalMargins(
     lineSpacingPaddingPx = 0;
   let marginCss = "";
   if (spaceBeforeValue !== undefined) {
-    spaceBeforePx = parseInt(spaceBeforeValue) / 100;
+    const spaceBeforeText = asString(spaceBeforeValue);
+    if (spaceBeforeText !== undefined) {
+      spaceBeforePx = parseInt(spaceBeforeText, 10) / 100;
+    }
   }
   if (spaceAfterValue !== undefined) {
-    spaceAfterPx = parseInt(spaceAfterValue) / 100;
+    const spaceAfterText = asString(spaceAfterValue);
+    if (spaceAfterText !== undefined) {
+      spaceAfterPx = parseInt(spaceAfterText, 10) / 100;
+    }
   }
 
   if (lineSpacingValue !== undefined && fontSizePoints !== undefined) {
-    if (lineSpacingUnit === "Pts") {
-      marginCss += "padding-top: " + (parseInt(lineSpacingValue) / 100 - fontSizePoints) + "px;"; //+ "pt;";
-    } else {
-      const lineSpacingFactor = parseInt(lineSpacingValue) / 100000;
-      lineSpacingPaddingPx = fontSizePoints * (lineSpacingFactor - 1) - fontSizePoints; // fontSize *
-      const paddingTopPx = lineSpacingFactor > 1 ? fontSizePoints : 0;
-      // marginTopBottomStr += "padding-top: " + spcLines + "pt;";
-      // marginTopBottomStr += "padding-bottom: " + pBottom + "pt;";
-      marginCss += "padding-top: " + paddingTopPx + "px;"; // + "pt;";
-      marginCss += "padding-bottom: " + lineSpacingPaddingPx + "px;"; // + "pt;";
+    const lineSpacingText = asString(lineSpacingValue);
+    if (lineSpacingText !== undefined) {
+      if (lineSpacingUnit === "Pts") {
+        marginCss +=
+          "padding-top: " + (parseInt(lineSpacingText, 10) / 100 - fontSizePoints) + "px;"; //+ "pt;";
+      } else {
+        const lineSpacingFactor = parseInt(lineSpacingText, 10) / 100000;
+        lineSpacingPaddingPx = fontSizePoints * (lineSpacingFactor - 1) - fontSizePoints; // fontSize *
+        const paddingTopPx = lineSpacingFactor > 1 ? fontSizePoints : 0;
+        // marginTopBottomStr += "padding-top: " + spcLines + "pt;";
+        // marginTopBottomStr += "padding-bottom: " + pBottom + "pt;";
+        marginCss += "padding-top: " + paddingTopPx + "px;"; // + "pt;";
+        marginCss += "padding-bottom: " + lineSpacingPaddingPx + "px;"; // + "pt;";
+      }
     }
   }
 

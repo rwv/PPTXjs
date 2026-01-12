@@ -1,13 +1,25 @@
 import { shapePie } from "../helpers/pie";
 import { getTextByPathList } from "../../../object";
+import type { XmlNode } from "../../../../types/pptx-xml";
 import type { ArcShapeContext } from "./types";
 import { createPath } from "./helpers";
 
 export function renderPieArcShape(ctx: ArcShapeContext, shapType: string): string {
   const { node, w, h } = ctx;
 
-  const shapAdjst = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  let adj1, adj2, H, shapAdjst1, shapAdjst2, isClose;
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
+  let adj1;
+  let adj2;
+  let H;
+  let shapAdjst1: string | undefined;
+  let shapAdjst2: string | undefined;
+  let isClose;
   if (shapType === "pie") {
     adj1 = 0;
     adj2 = 270;
@@ -24,12 +36,13 @@ export function renderPieArcShape(ctx: ArcShapeContext, shapType: string): strin
     H = h;
     isClose = false;
   }
-  if (shapAdjst !== undefined) {
-    shapAdjst1 = getTextByPathList(shapAdjst, ["attrs", "fmla"]);
-    shapAdjst2 = shapAdjst1;
-    if (shapAdjst1 === undefined) {
-      shapAdjst1 = shapAdjst[0]["attrs"]["fmla"];
-      shapAdjst2 = shapAdjst[1]["attrs"]["fmla"];
+  if (shapAdjst_ary.length > 0) {
+    if (shapAdjst_ary.length === 1) {
+      shapAdjst1 = getTextByPathList<string>(shapAdjst_ary[0], ["attrs", "fmla"]);
+      shapAdjst2 = shapAdjst1;
+    } else {
+      shapAdjst1 = getTextByPathList<string>(shapAdjst_ary[0], ["attrs", "fmla"]);
+      shapAdjst2 = getTextByPathList<string>(shapAdjst_ary[1], ["attrs", "fmla"]);
     }
     if (shapAdjst1 !== undefined) {
       adj1 = parseInt(shapAdjst1.substr(4)) / 60000;

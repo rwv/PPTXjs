@@ -1,4 +1,5 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
 /**
  * Color mapping attributes from theme (e.g., tx1="dk1", bg2="lt2")
@@ -14,12 +15,8 @@ interface ColorMap {
 /**
  * Warp object containing PPTX presentation content for lookups
  */
-interface WarpContext {
-  slideContent?: any;
-  slideLayoutContent?: any;
-  slideMasterContent?: any;
-  themeContent?: any;
-  [key: string]: any;
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /**
@@ -50,29 +47,29 @@ export function getSchemeColorFromTheme(
   if (clrMap !== undefined) {
     slideLayoutColorOverride = clrMap; //getTextByPathList(clrMap, ["p:sldMaster", "p:clrMap", "attrs"])
   } else {
-    let slideColorMapOverride = getTextByPathList(warpContext["slideContent"], [
+    const slideColorMapOverride = getTextByPathList(warpContext["slideContent"] as XmlNode, [
       "p:sld",
       "p:clrMapOvr",
       "a:overrideClrMapping",
       "attrs",
     ]);
-    if (slideColorMapOverride !== undefined) {
-      slideLayoutColorOverride = slideColorMapOverride;
+    if (slideColorMapOverride !== undefined && isXmlNode(slideColorMapOverride)) {
+      slideLayoutColorOverride = slideColorMapOverride as ColorMap;
     } else {
-      slideColorMapOverride = getTextByPathList(warpContext["slideLayoutContent"], [
-        "p:sldLayout",
-        "p:clrMapOvr",
-        "a:overrideClrMapping",
-        "attrs",
-      ]);
-      if (slideColorMapOverride !== undefined) {
-        slideLayoutColorOverride = slideColorMapOverride;
+      const slideLayoutColorOverrideNode = getTextByPathList(
+        warpContext["slideLayoutContent"] as XmlNode,
+        ["p:sldLayout", "p:clrMapOvr", "a:overrideClrMapping", "attrs"]
+      );
+      if (slideLayoutColorOverrideNode !== undefined && isXmlNode(slideLayoutColorOverrideNode)) {
+        slideLayoutColorOverride = slideLayoutColorOverrideNode as ColorMap;
       } else {
-        slideLayoutColorOverride = getTextByPathList(warpContext["slideMasterContent"], [
-          "p:sldMaster",
-          "p:clrMap",
-          "attrs",
-        ]);
+        const slideMasterColorOverride = getTextByPathList(
+          warpContext["slideMasterContent"] as XmlNode,
+          ["p:sldMaster", "p:clrMap", "attrs"]
+        );
+        if (slideMasterColorOverride !== undefined && isXmlNode(slideMasterColorOverride)) {
+          slideLayoutColorOverride = slideMasterColorOverride as ColorMap;
+        }
       }
     }
   }
@@ -108,15 +105,17 @@ export function getSchemeColorFromTheme(
       }
     }
     //console.log("getSchemeColorFromTheme:  schemeColorKey: ", schemeColorKey);
-    const refNode = getTextByPathList(warpContext["themeContent"], [
+    const refNode = getTextByPathList(warpContext["themeContent"] as XmlNode, [
       "a:theme",
       "a:themeElements",
       "a:clrScheme",
       schemeColorKey,
     ]);
-    color = getTextByPathList(refNode, ["a:srgbClr", "attrs", "val"]);
+    if (refNode !== undefined && isXmlNode(refNode)) {
+      color = getTextByPathList(refNode, ["a:srgbClr", "attrs", "val"]);
+    }
     //console.log("themeContent: color", color);
-    if (color === undefined && refNode !== undefined) {
+    if (color === undefined && refNode !== undefined && isXmlNode(refNode)) {
       color = getTextByPathList(refNode, ["a:sysClr", "attrs", "lastClr"]);
     }
   }

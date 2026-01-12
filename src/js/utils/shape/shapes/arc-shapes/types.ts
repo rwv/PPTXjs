@@ -1,8 +1,10 @@
 /**
  * Context for rendering arc shapes
  */
+import type { XmlNode } from "../../../../types/pptx-xml";
+
 export interface ArcShapeContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;

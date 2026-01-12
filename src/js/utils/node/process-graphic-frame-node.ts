@@ -3,6 +3,15 @@ import { genTable } from "../table";
 import { genChart } from "../chart";
 import { genDiagram } from "../diagram";
 import { processGroupSpNode } from "./process-group-sp-node";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
+  return value !== undefined && isXmlNode(value) ? value : undefined;
+}
 
 /**
  * Process graphic frame node (p:graphicFrame) to generate HTML
@@ -33,8 +42,8 @@ import { processGroupSpNode } from "./process-group-sp-node";
  * @returns HTML string for the graphic frame content
  */
 export async function processGraphicFrameNode(
-  graphicFrameNode: unknown,
-  warpContext: unknown,
+  graphicFrameNode: XmlNode,
+  warpContext: WarpContext,
   sourceType: string,
   shapeType: string,
   tableStyles: unknown,
@@ -49,13 +58,17 @@ export async function processGraphicFrameNode(
 ): Promise<string> {
   let result = "";
   const chartIdState = chartIdCounter ?? { value: 0 };
-  const graphicTypeUri = getTextByPathList(graphicFrameNode, [
+  const graphicTypeUriValue = getTextByPathList<string | number>(graphicFrameNode, [
     "a:graphic",
     "a:graphicData",
     "attrs",
     "uri",
   ]);
-  const chartMessageQueue: unknown[] = Array.isArray(messageQueue) ? messageQueue : [];
+  const graphicTypeUri =
+    graphicTypeUriValue !== undefined ? String(graphicTypeUriValue) : undefined;
+  const chartMessageQueue: Array<Record<string, unknown>> = Array.isArray(messageQueue)
+    ? (messageQueue as Array<Record<string, unknown>>)
+    : [];
 
   switch (graphicTypeUri) {
     case "http://schemas.openxmlformats.org/drawingml/2006/table":
@@ -94,20 +107,20 @@ export async function processGraphicFrameNode(
       break;
     case "http://schemas.openxmlformats.org/presentationml/2006/ole": {
       //result = genDiagram(graphicFrameNode, warpContext, sourceType, shapeType);
-      let oleObjectNode = getTextByPathList(graphicFrameNode, [
-        "a:graphic",
-        "a:graphicData",
-        "mc:AlternateContent",
-        "mc:Fallback",
-        "p:oleObj",
-      ]);
-
-      if (oleObjectNode === undefined) {
-        oleObjectNode = getTextByPathList(graphicFrameNode, [
+      let oleObjectNode = asXmlNode(
+        getTextByPathList(graphicFrameNode, [
           "a:graphic",
           "a:graphicData",
+          "mc:AlternateContent",
+          "mc:Fallback",
           "p:oleObj",
-        ]);
+        ])
+      );
+
+      if (oleObjectNode === undefined) {
+        oleObjectNode = asXmlNode(
+          getTextByPathList(graphicFrameNode, ["a:graphic", "a:graphicData", "p:oleObj"])
+        );
       }
       //console.log("node:", node, "oleObjectNode:", oleObjectNode)
       if (oleObjectNode !== undefined) {

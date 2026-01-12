@@ -18,6 +18,7 @@
 import { getTextByPathList } from "../../object";
 import { getSolidFill } from "../../color";
 import { getTableBorders } from "../../border";
+import type { WarpContext, XmlNode } from "../../../types/pptx-xml";
 
 export interface TableRowStyle {
   fillColor: string;
@@ -39,8 +40,8 @@ export function getTableRowStyle(
   rowIndex: number,
   totalRows: number,
   tableStyleFlags: TableStyleAttrFlags,
-  tableStyle: Record<string, unknown> | undefined,
-  warpContext: Record<string, unknown>
+  tableStyle: XmlNode | undefined,
+  warpContext: WarpContext
 ): TableRowStyle {
   let fillColor = "";
   let rowBorders: string | undefined = "";
@@ -52,7 +53,7 @@ export function getTableRowStyle(
   // Helper function to apply style from a path
   const applyStyleFromPath = (basePath: string[]) => {
     // Get background fill color
-    const backgroundFillNode = getTextByPathList(tableStyle, [
+    const backgroundFillNode = getTextByPathList<XmlNode>(tableStyle as XmlNode, [
       ...basePath,
       "a:tcStyle",
       "a:fill",
@@ -66,7 +67,11 @@ export function getTableRowStyle(
     }
 
     // Get border styling
-    const borderStyleNode = getTextByPathList(tableStyle, [...basePath, "a:tcStyle", "a:tcBdr"]);
+    const borderStyleNode = getTextByPathList<XmlNode>(tableStyle as XmlNode, [
+      ...basePath,
+      "a:tcStyle",
+      "a:tcBdr",
+    ]);
     if (borderStyleNode !== undefined) {
       const resolvedRowBorders = getTableBorders(borderStyleNode, warpContext);
       if (resolvedRowBorders !== "") {
@@ -75,7 +80,10 @@ export function getTableRowStyle(
     }
 
     // Get font color
-    const rowTextStyleNode = getTextByPathList(tableStyle, [...basePath, "a:tcTxStyle"]);
+    const rowTextStyleNode = getTextByPathList<XmlNode>(tableStyle as XmlNode, [
+      ...basePath,
+      "a:tcTxStyle",
+    ]);
     if (rowTextStyleNode !== undefined) {
       const resolvedFontColor = getSolidFill(rowTextStyleNode, undefined, undefined, warpContext);
       if (resolvedFontColor !== undefined) {
@@ -84,7 +92,7 @@ export function getTableRowStyle(
 
       // Get font weight
       const resolvedFontWeight =
-        getTextByPathList(rowTextStyleNode, ["attrs", "b"]) === "on" ? "bold" : "";
+        getTextByPathList<string>(rowTextStyleNode, ["attrs", "b"]) === "on" ? "bold" : "";
       if (resolvedFontWeight !== "") {
         fontWeight = resolvedFontWeight;
       }

@@ -9,12 +9,13 @@
  */
 
 import { getTextByPathList } from "../../object";
+import type { XmlAttrs, XmlNode } from "../../../types/pptx-xml";
 
 /**
  * Context for rendering connector shapes
  */
 export interface ConnectorContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;
@@ -25,31 +26,22 @@ export interface ConnectorContext {
   };
 }
 
-interface MarkerEndAttrs {
+type MarkerEndAttrs = XmlAttrs & {
   type?: string;
-  [key: string]: unknown;
-}
+};
 
 /**
  * Extract arrow marker attributes from node
  */
-function getMarkerNodeAttrs(node: unknown): {
+function getMarkerNodeAttrs(node: XmlNode): {
   headEndNodeAttrs: MarkerEndAttrs | undefined;
   tailEndNodeAttrs: MarkerEndAttrs | undefined;
 } {
+  const headEndNode = getTextByPathList<XmlNode>(node, ["p:spPr", "a:ln", "a:headEnd"]);
+  const tailEndNode = getTextByPathList<XmlNode>(node, ["p:spPr", "a:ln", "a:tailEnd"]);
   return {
-    headEndNodeAttrs: getTextByPathList<MarkerEndAttrs>(node, [
-      "p:spPr",
-      "a:ln",
-      "a:headEnd",
-      "attrs",
-    ]),
-    tailEndNodeAttrs: getTextByPathList<MarkerEndAttrs>(node, [
-      "p:spPr",
-      "a:ln",
-      "a:tailEnd",
-      "attrs",
-    ]),
+    headEndNodeAttrs: headEndNode?.attrs as MarkerEndAttrs | undefined,
+    tailEndNodeAttrs: tailEndNode?.attrs as MarkerEndAttrs | undefined,
   };
 }
 

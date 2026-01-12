@@ -4,6 +4,7 @@ import { getTableBorders } from "../border";
 import { getPosition, getSize } from "../layout";
 import { getTableCellParams } from "./get-table-cell-params";
 import { getTableRowStyle, getTableStyleById } from "./helpers";
+import type { XmlNode } from "../../types/pptx-xml";
 
 /**
  * Generate HTML table from PPTX table node
@@ -45,11 +46,16 @@ export async function genTable(
   fontSizeScale: number
 ): Promise<string> {
   const order = node["attrs"]["order"];
-  const tableNode = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl"]);
-  const xfrmNode = getTextByPathList(node, ["p:xfrm"]);
+  const tableNode = getTextByPathList<XmlNode>(node, ["a:graphic", "a:graphicData", "a:tbl"]);
+  const xfrmNode = getTextByPathList<XmlNode>(node, ["p:xfrm"]);
   /////////////////////////////////////////Amir////////////////////////////////////////////////
-  const getTblPr = getTextByPathList(node, ["a:graphic", "a:graphicData", "a:tbl", "a:tblPr"]);
-  const getColsGrid = getTextByPathList(node, [
+  const getTblPr = getTextByPathList<XmlNode>(node, [
+    "a:graphic",
+    "a:graphicData",
+    "a:tbl",
+    "a:tblPr",
+  ]);
+  const getColsGrid = getTextByPathList<XmlNode | XmlNode[]>(node, [
     "a:graphic",
     "a:graphicData",
     "a:tbl",
@@ -77,25 +83,33 @@ export async function genTable(
     isBandColAttr: bandColAttr !== undefined && bandColAttr === "1" ? 1 : 0,
   };
 
-  const tbleStyleId = getTblPr["a:tableStyleId"];
+  const tbleStyleId =
+    getTblPr !== undefined ? getTextByPathList<string>(getTblPr, ["a:tableStyleId"]) : undefined;
   const thisTblStyle = getTableStyleById(tbleStyleId, tableStyles, tblStylAttrObj);
   if (thisTblStyle !== undefined) {
     warpContext["thisTbiStyle"] = thisTblStyle;
   }
-  const tblStyl = getTextByPathList(thisTblStyle, ["a:wholeTbl", "a:tcStyle"]);
-  const tblBorderStyl = getTextByPathList(tblStyl, ["a:tcBdr"]);
+  const tblStyl =
+    thisTblStyle !== undefined
+      ? getTextByPathList<XmlNode>(thisTblStyle, ["a:wholeTbl", "a:tcStyle"])
+      : undefined;
+  const tblBorderStyl =
+    tblStyl !== undefined ? getTextByPathList<XmlNode>(tblStyl, ["a:tcBdr"]) : undefined;
   let tbl_borders = "";
   if (tblBorderStyl !== undefined) {
     tbl_borders = getTableBorders(tblBorderStyl, warpContext);
   }
   let tbl_bgcolor = "";
-  let tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, ["a:tblBg", "a:fillRef"]);
+  let tbl_bgFillschemeClr =
+    thisTblStyle !== undefined
+      ? getTextByPathList<XmlNode>(thisTblStyle, ["a:tblBg", "a:fillRef"])
+      : undefined;
   //console.log( "thisTblStyle:", thisTblStyle, "warpContext:", warpContext)
   if (tbl_bgFillschemeClr !== undefined) {
     tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpContext);
   }
-  if (tbl_bgFillschemeClr === undefined) {
-    tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, [
+  if (tbl_bgFillschemeClr === undefined && thisTblStyle !== undefined) {
+    tbl_bgFillschemeClr = getTextByPathList<XmlNode>(thisTblStyle, [
       "a:wholeTbl",
       "a:tcStyle",
       "a:fill",
@@ -121,10 +135,8 @@ export async function genTable(
     tbl_bgcolor +
     "'>";
 
-  let trNodes = tableNode["a:tr"];
-  if (trNodes.constructor !== Array) {
-    trNodes = [trNodes];
-  }
+  const trNodesValue = tableNode ? tableNode["a:tr"] : undefined;
+  const trNodes = Array.isArray(trNodesValue) ? trNodesValue : trNodesValue ? [trNodesValue] : [];
   //multi rows
   let rowSpanAry: number[] = [];
   for (let i = 0; i < trNodes.length; i++) {
@@ -152,9 +164,10 @@ export async function genTable(
     tableHtml += "<tr style='" + rowsStyl + "'>";
     ////////////////////////////////////////////////
 
-    const tcNodes = trNodes[i]["a:tc"];
-    if (tcNodes !== undefined) {
-      if (tcNodes.constructor === Array) {
+    const tcNodesValue = trNodes[i]["a:tc"];
+    const tcNodes = Array.isArray(tcNodesValue) ? tcNodesValue : tcNodesValue ? [tcNodesValue] : [];
+    if (tcNodes.length > 0) {
+      if (tcNodes.length > 1) {
         //multi columns
         let j = 0;
         if (rowSpanAry.length === 0) {
@@ -220,7 +233,7 @@ export async function genTable(
             }
 
             const cellParmAry = await getTableCellParams(
-              tcNodes[j],
+              tcNodes[j] as XmlNode,
               getColsGrid,
               i,
               j,
@@ -321,7 +334,7 @@ export async function genTable(
         }
 
         const cellParmAry = await getTableCellParams(
-          tcNodes,
+          tcNodes[0] as XmlNode,
           getColsGrid,
           i,
           undefined,

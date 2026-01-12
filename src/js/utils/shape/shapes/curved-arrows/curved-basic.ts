@@ -1,7 +1,7 @@
 import { shapeArc } from "../helpers/arc";
 import { getTextByPathList } from "../../../object";
 import type { CurvedArrowContext } from "./types";
-import { createPath } from "./helpers";
+import { createPath, getShapeAdjustments } from "./helpers";
 
 /**
  * Render curvedDownArrow shape
@@ -9,7 +9,7 @@ import { createPath } from "./helpers";
 export function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const shapAdjst_ary = getShapeAdjustments(node);
   let sAdj1,
     adj1 = 25000 * slideFactor;
   let sAdj2,
@@ -18,17 +18,21 @@ export function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
     adj3 = 25000 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj2") {
-        sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj3") {
-        sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj3") {
+      sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     }
@@ -127,7 +131,7 @@ export function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
 export function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const shapAdjst_ary = getShapeAdjustments(node);
   let sAdj1,
     adj1 = 25000 * slideFactor;
   let sAdj2,
@@ -136,17 +140,21 @@ export function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
     adj3 = 25000 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj2") {
-        sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj3") {
-        sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj3") {
+      sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     }
@@ -246,7 +254,7 @@ export function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
 export function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const shapAdjst_ary = getShapeAdjustments(node);
   let sAdj1,
     adj1 = 25000 * slideFactor;
   let sAdj2,
@@ -255,17 +263,21 @@ export function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
     adj3 = 25000 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj2") {
-        sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj3") {
-        sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj3") {
+      sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     }
@@ -367,7 +379,7 @@ export function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
 export function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const shapAdjst_ary = getShapeAdjustments(node);
   let sAdj1,
     adj1 = 25000 * slideFactor;
   let sAdj2,
@@ -376,17 +388,21 @@ export function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
     adj3 = 25000 * slideFactor;
   const cnstVal1 = 50000 * slideFactor;
   const cnstVal2 = 100000 * slideFactor;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj2") {
-        sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj3") {
-        sAdj3 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj3") {
+      sAdj3 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj3 !== undefined) {
         adj3 = parseInt(sAdj3.substr(4)) * slideFactor;
       }
     }

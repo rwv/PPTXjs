@@ -10,6 +10,7 @@
 
 import { getTextByPathList } from "../../object";
 import { getHtmlBullet } from "../get-html-bullet";
+import type { XmlNode } from "../../../types/pptx-xml";
 
 type BulletColorEffects = { border?: string; effcts?: string };
 type BulletColor =
@@ -19,7 +20,7 @@ type BulletColor =
   | [{ color: string[]; rot: number }, BulletColorEffects];
 
 export function renderBulletChar(
-  pPrNode: Record<string, unknown> | undefined,
+  pPrNode: XmlNode | undefined,
   bulletChar: string,
   bulletColor: BulletColor,
   colorType: string,
@@ -29,7 +30,9 @@ export function renderBulletChar(
   isRtl: boolean,
   fontSizeValue: number
 ): string {
-  const typefaceName = getTextByPathList<string>(pPrNode, ["a:buFont", "attrs", "typeface"]);
+  const typefaceName = pPrNode
+    ? getTextByPathList<string>(pPrNode, ["a:buFont", "attrs", "typeface"])
+    : undefined;
   let typefaceStyle = "";
   if (typefaceName !== undefined) {
     typefaceStyle = "font-family: " + typefaceName;

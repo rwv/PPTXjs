@@ -1,22 +1,31 @@
 import { getTextByPathList } from "../../../object";
+import type { XmlNode } from "../../../../types/pptx-xml";
 import type { BasicShapeParams } from "./types";
 
 export function renderSnipRoundRect(params: BasicShapeParams): string {
   const { node, w, h, shpId, fillColor, grndFillFlg, imgFillFlg, border } = params;
   let result = "";
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
   let sAdj1;
   let sAdj1_val = 0.33334;
   let sAdj2;
   let sAdj2_val = 0.33334;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         sAdj1_val = parseInt(sAdj1.substr(4)) / 50000;
-      } else if (sAdj_name === "adj2") {
-        sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         sAdj2_val = parseInt(sAdj2.substr(4)) / 50000;
       }
     }

@@ -1,6 +1,7 @@
 import { getTextByPathList } from "../object";
 import { angleToDegrees } from "../layout";
 import { processNodesInSlide } from "./process-nodes-in-slide";
+import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 /**
  * Process group shape node (p:grpSp) to generate HTML
@@ -31,8 +32,8 @@ import { processNodesInSlide } from "./process-nodes-in-slide";
  * @returns HTML string for the group
  */
 export async function processGroupSpNode(
-  groupNode: unknown,
-  warpContext: unknown,
+  groupNode: XmlNode,
+  warpContext: WarpContext | Record<string, unknown>,
   sourceType: string,
   emuToPx: number,
   tableStyles: unknown,
@@ -45,11 +46,8 @@ export async function processGroupSpNode(
   renderSettings: { mediaProcess: boolean } & Record<string, unknown>
 ): Promise<string> {
   //console.log("processGroupSpNode: node: ", groupNode)
-  const groupNodeRecord = groupNode as Record<string, unknown>;
-  const transformNode = getTextByPathList<Record<string, unknown>>(groupNodeRecord, [
-    "p:grpSpPr",
-    "a:xfrm",
-  ]);
+  const groupNodeRecord = groupNode as XmlNode;
+  const transformNode = getTextByPathList<XmlNode>(groupNodeRecord, ["p:grpSpPr", "a:xfrm"]);
   let rotationCss = ""; //;" border: 3px solid black;";
   let topPx;
   let leftPx;
@@ -57,20 +55,16 @@ export async function processGroupSpNode(
   let heightPx;
   let shapeType = "group";
   if (transformNode !== undefined) {
-    const offsetAttrs = (transformNode["a:off"] as Record<string, unknown>)["attrs"] as Record<
+    const offsetAttrs = (transformNode["a:off"] as XmlNode)["attrs"] as Record<string, string>;
+    const childOffsetAttrs = (transformNode["a:chOff"] as XmlNode)["attrs"] as Record<
       string,
       string
     >;
-    const childOffsetAttrs = (transformNode["a:chOff"] as Record<string, unknown>)[
-      "attrs"
-    ] as Record<string, string>;
-    const extentAttrs = (transformNode["a:ext"] as Record<string, unknown>)["attrs"] as Record<
+    const extentAttrs = (transformNode["a:ext"] as XmlNode)["attrs"] as Record<string, string>;
+    const childExtentAttrs = (transformNode["a:chExt"] as XmlNode)["attrs"] as Record<
       string,
       string
     >;
-    const childExtentAttrs = (transformNode["a:chExt"] as Record<string, unknown>)[
-      "attrs"
-    ] as Record<string, string>;
     const offsetX = parseInt(offsetAttrs["x"]) * emuToPx;
     const offsetY = parseInt(offsetAttrs["y"]) * emuToPx;
     const childOffsetX = parseInt(childOffsetAttrs["x"]) * emuToPx;
@@ -132,9 +126,7 @@ export async function processGroupSpNode(
 
   // Process all child nodes
   for (const nodeKey in groupNodeRecord) {
-    const childNode = groupNodeRecord[nodeKey] as
-      | Record<string, unknown>
-      | Array<Record<string, unknown>>;
+    const childNode = groupNodeRecord[nodeKey] as XmlNode | XmlNode[] | undefined;
     if (Array.isArray(childNode)) {
       for (let i = 0; i < childNode.length; i++) {
         htmlOutput += await processNodesInSlide(

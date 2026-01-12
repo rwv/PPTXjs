@@ -1,4 +1,5 @@
 import { getTextByPathList } from "../../../object";
+import type { XmlNode } from "../../../../types/pptx-xml";
 import type { MathShapeContext } from "./types";
 
 export interface MathShapeAdjustments {
@@ -8,8 +9,8 @@ export interface MathShapeAdjustments {
   adj3?: number;
 }
 
-export function getMathShapeAdjustments(node: unknown): MathShapeAdjustments {
-  const shapAdjst_ary = getTextByPathList<unknown>(node, [
+export function getMathShapeAdjustments(node: XmlNode): MathShapeAdjustments {
+  const shapAdjst_ary = getTextByPathList<XmlNode | XmlNode[]>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",

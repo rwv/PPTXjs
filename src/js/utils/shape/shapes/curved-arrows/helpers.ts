@@ -1,3 +1,5 @@
+import { getTextByPathList } from "../../../object";
+import type { XmlNode } from "../../../../types/pptx-xml";
 import type { CurvedArrowContext } from "./types";
 
 /**
@@ -27,4 +29,14 @@ export function getStrokeAttrs(ctx: CurvedArrowContext): string {
  */
 export function createPath(d: string, ctx: CurvedArrowContext): string {
   return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
+}
+
+export function getShapeAdjustments(node: XmlNode): XmlNode[] {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
 }

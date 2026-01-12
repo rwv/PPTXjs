@@ -11,12 +11,13 @@
  */
 
 import { shapeArc } from "./helpers/arc";
+import type { XmlNode } from "../../../types/pptx-xml";
 
 /**
  * Context for rendering flowchart shapes
  */
 export interface FlowchartShapeContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;

@@ -12,23 +12,25 @@ import { getSolidFill } from "../color/get-solid-fill";
 import { getBase64ImageDimensions } from "../media/get-base64-image-dimensions";
 import { escapeHtml } from "../string/escape-html";
 import tinycolor from "tinycolor2";
+import type { WarpContext, XmlAttrs, XmlNode } from "../../types/pptx-xml";
 
-type XmlNode = Record<string, unknown>;
-type AttrsNode = Record<string, string>;
 type RgbColor = { r: number; g: number; b: number; a?: number };
 
 export function getSvgImagePattern(
   shapeNode: XmlNode,
   imageDataUrl: string,
   shapeId: string | number,
-  warpContext: unknown
+  warpContext: WarpContext
 ): string {
   const imageDimensions = getBase64ImageDimensions(imageDataUrl);
   const width = imageDimensions?.[0];
   const height = imageDimensions?.[1];
 
-  const blipFillNode = (shapeNode["p:spPr"] as XmlNode)["a:blipFill"] as XmlNode;
-  const tileAttrs = getTextByPathList<AttrsNode>(blipFillNode, ["a:tile", "attrs"]);
+  const blipFillNode = getTextByPathList<XmlNode>(shapeNode, ["p:spPr", "a:blipFill"]);
+  if (blipFillNode === undefined) {
+    return "";
+  }
+  const tileAttrs = getTextByPathList<XmlAttrs>(blipFillNode, ["a:tile", "attrs"]);
   let tileWidth: number | undefined;
   let tileHeight: number | undefined;
 
@@ -36,22 +38,25 @@ export function getSvgImagePattern(
   const tileScaleY = tileAttrs?.["sy"];
   if (
     tileAttrs !== undefined &&
-    typeof tileScaleX === "string" &&
-    typeof tileScaleY === "string" &&
+    tileScaleX !== undefined &&
+    tileScaleY !== undefined &&
     width &&
     height
   ) {
-    tileWidth = (parseInt(tileScaleX) / 100000) * width;
-    tileHeight = (parseInt(tileScaleY) / 100000) * height;
+    tileWidth = (Number(tileScaleX) / 100000) * width;
+    tileHeight = (Number(tileScaleY) / 100000) * height;
   }
 
-  const blipNode = blipFillNode["a:blip"] as XmlNode;
-  const alphaModFixNode = getTextByPathList<AttrsNode>(blipNode, ["a:alphaModFix", "attrs"]);
+  const blipNode = getTextByPathList<XmlNode>(blipFillNode, ["a:blip"]);
+  const alphaModFixNode =
+    blipNode !== undefined
+      ? getTextByPathList<XmlAttrs>(blipNode, ["a:alphaModFix", "attrs"])
+      : undefined;
   let imageOpacityAttr = "";
 
   const alphaAmount = alphaModFixNode?.["amt"];
-  if (typeof alphaAmount === "string" && alphaAmount !== "") {
-    const opacityAmount = parseInt(alphaAmount) / 100000;
+  if (alphaAmount !== undefined && alphaAmount !== "") {
+    const opacityAmount = Number(alphaAmount) / 100000;
     const opacity = opacityAmount;
     imageOpacityAttr = "opacity='" + opacity + "'";
   }
@@ -73,7 +78,8 @@ export function getSvgImagePattern(
       '"  patternContentUnits="objectBoundingBox"  width="1" height="1">';
   }
 
-  const duotoneNode = getTextByPathList<Record<string, unknown>>(blipNode, ["a:duotone"]);
+  const duotoneNode =
+    blipNode !== undefined ? getTextByPathList<XmlNode>(blipNode, ["a:duotone"]) : undefined;
   let filterMarkup = "";
   let filterAttr = "";
 
@@ -81,7 +87,7 @@ export function getSvgImagePattern(
     const duotoneColors: RgbColor[] = [];
     Object.keys(duotoneNode).forEach(function (colorType) {
       if (colorType !== "attrs") {
-        const colorNode: Record<string, unknown> = {};
+        const colorNode: XmlNode = {};
         colorNode[colorType] = duotoneNode[colorType];
         const hexColor = getSolidFill(colorNode, undefined, undefined, warpContext);
         const duotoneColor = tinycolor("#" + hexColor);

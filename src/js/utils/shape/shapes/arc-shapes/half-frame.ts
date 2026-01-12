@@ -1,24 +1,31 @@
 import { getTextByPathList } from "../../../object";
+import type { XmlNode } from "../../../../types/pptx-xml";
 import type { ArcShapeContext } from "./types";
 import { createPath } from "./helpers";
 
 export function renderHalfFrame(ctx: ArcShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  let sAdj1,
-    sAdj1_val = 3.5;
-  let sAdj2,
-    sAdj2_val = 3.5;
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  const shapAdjst_ary = Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
+  let sAdj1_val = 3.5;
+  let sAdj2_val = 3.5;
   const cnsVal = 100000 * slideFactor;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         sAdj1_val = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj2") {
-        sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         sAdj2_val = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     }

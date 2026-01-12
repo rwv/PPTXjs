@@ -1,4 +1,5 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
+import type { XmlNode } from "../../types/pptx-xml";
 
 /**
  * Determines vertical text alignment (baseline offset) for superscript/subscript
@@ -12,12 +13,18 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns CSS vertical-align value (percentage or "baseline")
  */
 export function getTextVerticalAlign(
-  textRunNode: unknown,
+  textRunNode: XmlNode,
   shapeType: string | undefined,
-  masterTextStyles: unknown
+  masterTextStyles: XmlNode | undefined
 ): string {
   void shapeType;
   void masterTextStyles;
-  const baselineValue = getTextByPathList(textRunNode, ["a:rPr", "attrs", "baseline"]);
-  return baselineValue === undefined ? "baseline" : parseInt(baselineValue) / 1000 + "%";
+  const baselineValue = getTextByPathList<string | number>(textRunNode, [
+    "a:rPr",
+    "attrs",
+    "baseline",
+  ]);
+  return baselineValue === undefined
+    ? "baseline"
+    : parseInt(String(baselineValue), 10) / 1000 + "%";
 }

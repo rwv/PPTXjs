@@ -6,19 +6,28 @@
  * @returns CSS border style string
  */
 import { getBorder } from "./get-border";
+import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
-type BorderSideNode = {
-  "a:ln"?: unknown;
-};
+interface BorderSideNode extends XmlNode {
+  "a:ln"?: XmlNode;
+}
 
-type BorderTableNode = Record<string, BorderSideNode | undefined>;
+interface BorderTableNode extends XmlNode {
+  "a:bottom"?: BorderSideNode;
+  "a:top"?: BorderSideNode;
+  "a:right"?: BorderSideNode;
+  "a:left"?: BorderSideNode;
+}
 
-export function getTableBorders(tableBorderNode: BorderTableNode, warpContext: unknown): string {
+export function getTableBorders(
+  tableBorderNode: BorderTableNode,
+  warpContext: WarpContext
+): string {
   let borderStyle = "";
 
   const bottom = tableBorderNode["a:bottom"];
   if (bottom?.["a:ln"] !== undefined) {
-    const borderNode = {
+    const borderNode: XmlNode = {
       "p:spPr": {
         "a:ln": bottom["a:ln"],
       },
@@ -31,7 +40,7 @@ export function getTableBorders(tableBorderNode: BorderTableNode, warpContext: u
 
   const top = tableBorderNode["a:top"];
   if (top?.["a:ln"] !== undefined) {
-    const borderNode = {
+    const borderNode: XmlNode = {
       "p:spPr": {
         "a:ln": top["a:ln"],
       },
@@ -44,7 +53,7 @@ export function getTableBorders(tableBorderNode: BorderTableNode, warpContext: u
 
   const right = tableBorderNode["a:right"];
   if (right?.["a:ln"] !== undefined) {
-    const borderNode = {
+    const borderNode: XmlNode = {
       "p:spPr": {
         "a:ln": right["a:ln"],
       },
@@ -57,7 +66,7 @@ export function getTableBorders(tableBorderNode: BorderTableNode, warpContext: u
 
   const left = tableBorderNode["a:left"];
   if (left?.["a:ln"] !== undefined) {
-    const borderNode = {
+    const borderNode: XmlNode = {
       "p:spPr": {
         "a:ln": left["a:ln"],
       },

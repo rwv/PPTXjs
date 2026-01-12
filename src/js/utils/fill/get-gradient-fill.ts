@@ -1,6 +1,7 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
 import { getSolidFill } from "../color/get-solid-fill";
 import { angleToDegrees } from "../layout/angle-to-degrees";
+import type { XmlNode, XmlValue } from "../../types/pptx-xml";
 
 /**
  * Extracts gradient fill information from PPTX node
@@ -14,15 +15,18 @@ import { angleToDegrees } from "../layout/angle-to-degrees";
  */
 type SolidFillNode = Parameters<typeof getSolidFill>[0];
 type SolidFillWarpObj = Parameters<typeof getSolidFill>[3];
-type GradientFillNode = {
-  "a:gsLst"?: { "a:gs"?: Array<Record<string, unknown>> };
-  "a:lin"?: { attrs?: { ang?: string | number } };
-  [key: string]: unknown;
-};
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
-export function getGradientFill(gradientFillNode: GradientFillNode, warpContext: SolidFillWarpObj) {
+function isXmlNodeArray(value: XmlValue): value is XmlNode[] {
+  return Array.isArray(value);
+}
+
+export function getGradientFill(gradientFillNode: XmlNode, warpContext: SolidFillWarpObj) {
+  const gradientStopsValue = getTextByPathList(gradientFillNode, ["a:gsLst", "a:gs"]);
   const gradientStops =
-    getTextByPathList<Array<Record<string, unknown>>>(gradientFillNode, ["a:gsLst", "a:gs"]) || [];
+    gradientStopsValue && isXmlNodeArray(gradientStopsValue) ? gradientStopsValue : [];
   const colorStops: Array<string | undefined> = [];
   for (let i = 0; i < gradientStops.length; i++) {
     const solidFillColor = getSolidFill(
@@ -33,9 +37,11 @@ export function getGradientFill(gradientFillNode: GradientFillNode, warpContext:
     );
     colorStops[i] = solidFillColor;
   }
-  const linearGradientNode = getTextByPathList<Record<string, unknown>>(gradientFillNode, [
-    "a:lin",
-  ]);
+  const linearGradientNodeValue = getTextByPathList(gradientFillNode, ["a:lin"]);
+  const linearGradientNode =
+    linearGradientNodeValue && isXmlNode(linearGradientNodeValue)
+      ? linearGradientNodeValue
+      : undefined;
   let rotationDegrees = 0;
   if (linearGradientNode !== undefined) {
     const angle = getTextByPathList<string | number>(linearGradientNode, ["attrs", "ang"]);

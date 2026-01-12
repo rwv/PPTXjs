@@ -1,3 +1,6 @@
+import { XmlNode } from "../../types/pptx-xml";
+import { XmlValue } from "../../types/pptx-xml";
+
 /**
  * Get value from nested object by path array
  *
@@ -11,11 +14,11 @@
  * getTextByPathList(obj, ['a', 'b', 'c']); // 'value'
  * getTextByPathList(obj, ['a', 'x', 'y']); // undefined
  */
-export function getTextByPathList<T = any>(
-  node: unknown,
-  path: Array<string | number>
+export function getTextByPathList<T extends XmlValue>(
+  node: XmlNode,
+  path: (keyof XmlNode)[]
 ): T | undefined {
-  if (path.constructor !== Array) {
+  if (!Array.isArray(path)) {
     throw Error("Error of path type! path is not array.");
   }
 
@@ -23,10 +26,10 @@ export function getTextByPathList<T = any>(
     return undefined;
   }
 
-  let current: unknown = node;
+  let current: XmlValue = node;
   const length = path.length;
   for (let i = 0; i < length; i++) {
-    const record = current as Record<string | number, unknown>;
+    const record = current;
     current = record[path[i]];
     if (current === undefined) {
       return undefined;

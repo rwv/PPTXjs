@@ -1,6 +1,17 @@
 import { getTextByPathList } from "../../../object";
+import type { XmlNode } from "../../../../types/pptx-xml";
 import type { RibbonContext } from "./types";
 import { createPath } from "./helpers";
+
+const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
+};
 
 /**
  * Render wave or doubleWave shape
@@ -8,19 +19,19 @@ import { createPath } from "./helpers";
 export function renderWave(ctx: RibbonContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
-  let sAdj1,
-    adj1 = shapType === "doubleWave" ? 6250 * slideFactor : 12500 * slideFactor;
-  let sAdj2,
-    adj2 = 0;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  const shapAdjst_ary = getShapeAdjustments(node);
+  let adj1 = shapType === "doubleWave" ? 6250 * slideFactor : 12500 * slideFactor;
+  let adj2 = 0;
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         adj1 = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj2") {
-        sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         adj2 = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     }

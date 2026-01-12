@@ -7,12 +7,13 @@
 
 import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
+import type { XmlNode } from "../../../types/pptx-xml";
 
 /**
  * Context for rendering scroll shapes
  */
 export interface ScrollShapeContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;
@@ -71,7 +72,7 @@ function createPath(d: string, ctx: ScrollShapeContext): string {
 function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",

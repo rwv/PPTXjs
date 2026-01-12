@@ -1,5 +1,6 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
 import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
+import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 /**
  * Determines paragraph text direction (RTL/LTR) for a PPTX paragraph node
@@ -18,16 +19,18 @@ import { getLayoutAndMasterNode } from "./get-layout-and-master-node";
  * @returns CSS class name for text direction (pregraph-rtl, pregraph-ltr, or pregraph-inherit)
  */
 export function getPregraphDir(
-  paragraphNode: Record<string, unknown>,
-  textBodyNode: Record<string, unknown> | undefined,
+  paragraphNode: XmlNode,
+  textBodyNode: XmlNode | undefined,
   paragraphIndex: number | string | undefined,
   elementType: string | undefined,
-  warpContext: Record<string, unknown>
+  warpContext: WarpContext
 ): string {
-  let rtlValue = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "rtl"]);
+  void textBodyNode;
+  const rtlValue = getTextByPathList<string | number>(paragraphNode, ["a:pPr", "attrs", "rtl"]);
+  let rtlString = rtlValue !== undefined ? String(rtlValue) : undefined;
   //console.log("getPregraphDir node:", paragraphNode, "textBodyNode", textBodyNode, "rtl:", rtlValue, "paragraphIndex", paragraphIndex, "elementType", elementType, "warpContext", warpContext)
 
-  if (rtlValue === undefined) {
+  if (rtlString === undefined) {
     const layoutMasterNodes = getLayoutAndMasterNode(
       paragraphNode,
       paragraphIndex,
@@ -36,15 +39,21 @@ export function getPregraphDir(
     );
     const layoutParagraphPropsNode = layoutMasterNodes.nodeLayout;
     const masterParagraphPropsNode = layoutMasterNodes.nodeMaster;
-    rtlValue = getTextByPathList(layoutParagraphPropsNode, ["attrs", "rtl"]);
-    if (rtlValue === undefined && elementType !== "shape") {
-      rtlValue = getTextByPathList(masterParagraphPropsNode, ["attrs", "rtl"]);
+    const layoutRtlValue = layoutParagraphPropsNode
+      ? getTextByPathList<string | number>(layoutParagraphPropsNode, ["attrs", "rtl"])
+      : undefined;
+    rtlString = layoutRtlValue !== undefined ? String(layoutRtlValue) : undefined;
+    if (rtlString === undefined && elementType !== "shape") {
+      const masterRtlValue = masterParagraphPropsNode
+        ? getTextByPathList<string | number>(masterParagraphPropsNode, ["attrs", "rtl"])
+        : undefined;
+      rtlString = masterRtlValue !== undefined ? String(masterRtlValue) : undefined;
     }
   }
 
-  if (rtlValue === "1") {
+  if (rtlString === "1") {
     return "pregraph-rtl";
-  } else if (rtlValue === "0") {
+  } else if (rtlString === "0") {
     return "pregraph-ltr";
   }
   return "pregraph-inherit";

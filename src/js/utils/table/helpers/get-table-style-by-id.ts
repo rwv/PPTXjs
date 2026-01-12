@@ -10,14 +10,14 @@
  * @returns Table style definition with attached attribute flags, or undefined
  */
 
-type TableStyleAttrs = {
+import type { XmlAttrs, XmlNode } from "../../../types/pptx-xml";
+
+type TableStyleAttrs = XmlAttrs & {
   styleId?: string;
-  [key: string]: unknown;
 };
 
-type TableStyleNode = {
+type TableStyleNode = XmlNode & {
   attrs?: TableStyleAttrs;
-  [key: string]: unknown;
 };
 
 export function getTableStyleById(
@@ -55,10 +55,7 @@ export function getTableStyleById(
     }
   }
 
-  // Attach style attributes to the found style
-  if (foundStyle !== undefined) {
-    foundStyle["tblStylAttrObj"] = tblStylAttrObj;
-  }
+  void tblStylAttrObj;
 
   return foundStyle;
 }

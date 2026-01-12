@@ -15,6 +15,10 @@ import { getTextByPathList } from "../../object";
 import { getVerticalAlign, getPosition, getSize, getContentDir } from "../../layout";
 import { shapeArc } from "./helpers/arc";
 import { genTextBody } from "../../text";
+import type { XmlNode, XmlValue } from "../../../types/pptx-xml";
+
+const isXmlNode = (value: XmlValue): value is XmlNode =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 export async function renderCustomGeometry(
   custShapType: any,
@@ -51,11 +55,18 @@ export async function renderCustomGeometry(
 
   //custGeom here - Amir ///////////////////////////////////////////////////////
   //http://officeopenxml.com/drwSp-custGeom.php
-  const pathLstNode = getTextByPathList(custShapType, ["a:pathLst"]);
-  const pathNodes = getTextByPathList(pathLstNode, ["a:path"]);
+  const pathLstNode = getTextByPathList<XmlNode>(custShapType, ["a:pathLst"]);
+  const pathNodesValue =
+    pathLstNode !== undefined
+      ? getTextByPathList<XmlNode | XmlNode[]>(pathLstNode, ["a:path"])
+      : undefined;
+  const pathNodes = Array.isArray(pathNodesValue) ? pathNodesValue[0] : pathNodesValue;
+  if (!pathNodes || !isXmlNode(pathNodes)) {
+    return result;
+  }
   //var pathNode = getTextByPathList(pathLstNode, ["a:path", "attrs"]);
-  const maxX = parseInt(pathNodes["attrs"]["w"]); // * emuToPx;
-  const maxY = parseInt(pathNodes["attrs"]["h"]); // * emuToPx;
+  const maxX = parseInt(String(pathNodes.attrs?.w ?? "0"), 10); // * emuToPx;
+  const maxY = parseInt(String(pathNodes.attrs?.h ?? "0"), 10); // * emuToPx;
   const cX = (1 / maxX) * w;
   const cY = (1 / maxY) * h;
   //console.log("w = "+w+"\nh = "+h+"\nmaxX = "+maxX +"\nmaxY = " + maxY);
@@ -63,16 +74,16 @@ export async function renderCustomGeometry(
 
   //console.log("custShapType : ", custShapType, ", pathLstNode: ", pathLstNode, ", node: ", node);//, ", y:", y, ", w:", w, ", h:", h);
 
-  let moveToNode = getTextByPathList(pathNodes, ["a:moveTo"]);
+  let moveToNode = getTextByPathList<XmlNode | XmlNode[]>(pathNodes, ["a:moveTo"]);
 
-  const lnToNodes = pathNodes["a:lnTo"]; //total a:pt : 1
-  let cubicBezToNodes = pathNodes["a:cubicBezTo"]; //total a:pt : 3
-  const arcToNodes = pathNodes["a:arcTo"]; //total a:pt : 0?1? ; attrs: ~4 ()
-  let closeNode = getTextByPathList(pathNodes, ["a:close"]); //total a:pt : 0
+  const lnToNodes = pathNodes["a:lnTo"] as XmlNode | XmlNode[] | undefined; //total a:pt : 1
+  let cubicBezToNodes = pathNodes["a:cubicBezTo"] as XmlNode | XmlNode[] | undefined; //total a:pt : 3
+  const arcToNodes = pathNodes["a:arcTo"] as XmlNode | undefined; //total a:pt : 0?1? ; attrs: ~4 ()
+  let closeNode = getTextByPathList<XmlNode | XmlNode[]>(pathNodes, ["a:close"]); //total a:pt : 0
   //quadBezTo //total a:pt : 2 - TODO
   //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
   if (!Array.isArray(moveToNode)) {
-    moveToNode = [moveToNode];
+    moveToNode = moveToNode ? [moveToNode] : [];
   }
   //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
 
@@ -158,10 +169,15 @@ export async function renderCustomGeometry(
       const swAng = arcToNodesAttrs["swAng"];
       let shftX = 0;
       let shftY = 0;
-      const arcToPtNode = getTextByPathList(arcToNodes, ["a:pt", "attrs"]);
+      const arcToPtNode =
+        arcToNodes !== undefined
+          ? getTextByPathList<XmlNode>(arcToNodes, ["a:pt", "attrs"])
+          : undefined;
       if (arcToPtNode !== undefined) {
-        shftX = arcToPtNode["x"];
-        shftY = arcToPtNode["y"];
+        const shiftXValue = arcToPtNode["x"];
+        const shiftYValue = arcToPtNode["y"];
+        shftX = shiftXValue !== undefined ? Number(shiftXValue) : 0;
+        shftY = shiftYValue !== undefined ? Number(shiftYValue) : 0;
         //console.log("shftX: ",shftX," shftY: ",shftY)
       }
       const ptObj: any = {};

@@ -1,8 +1,10 @@
 /**
  * Context for rendering curved arrow shapes
  */
+import type { XmlNode } from "../../../../types/pptx-xml";
+
 export interface CurvedArrowContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;

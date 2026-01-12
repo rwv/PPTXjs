@@ -7,6 +7,7 @@ import {
 } from "../layout";
 import { genBuChar } from "../bullet";
 import { genSpanElement } from "./gen-span-element";
+import type { XmlNode } from "../../types/pptx-xml";
 
 function measureHtmlWidth(html: string): number {
   const temp = document.createElement("div");
@@ -77,7 +78,7 @@ export async function genTextBody(
   //rtl : <p:txBody>
   //          <a:bodyPr wrap="square" rtlCol="1">
 
-  const pFontStyle = getTextByPathList(spNode, ["p:style", "a:fontRef"]);
+  const pFontStyle = getTextByPathList<XmlNode>(spNode, ["p:style", "a:fontRef"]);
   //console.log("genTextBody spNode: ", getTextByPathList(spNode,["p:spPr","a:xfrm","a:ext"]));
 
   //var lstStyle = textBodyNode["a:lstStyle"];
@@ -146,14 +147,22 @@ export async function genTextBody(
       };
     }
     //console.log("textBodyNode: ", textBodyNode["a:lstStyle"])
-    let prg_width_node = getTextByPathList(spNode, ["p:spPr", "a:xfrm", "a:ext", "attrs", "cx"]);
+    let prg_width_node = getTextByPathList<string | number>(spNode, [
+      "p:spPr",
+      "a:xfrm",
+      "a:ext",
+      "attrs",
+      "cx",
+    ]);
     let prg_height_node; // = getTextByPathList(spNode, ["p:spPr", "a:xfrm", "a:ext", "attrs", "cy"]);
     const sld_prg_width =
       prg_width_node !== undefined
-        ? "width:" + parseInt(prg_width_node) * emuToPx + "px;"
+        ? "width:" + parseInt(String(prg_width_node), 10) * emuToPx + "px;"
         : "width:inherit;";
     const sld_prg_height =
-      prg_height_node !== undefined ? "height:" + parseInt(prg_height_node) * emuToPx + "px;" : "";
+      prg_height_node !== undefined
+        ? "height:" + parseInt(String(prg_height_node), 10) * emuToPx + "px;"
+        : "";
     const prg_dir = getPregraphDir(pNode, textBodyNode, idx, type, warpContext);
     text +=
       "<div style='display: flex;" +

@@ -6,7 +6,7 @@ import { createPath } from "./helpers";
 export function renderNoSmoking(ctx: ArcShapeContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",

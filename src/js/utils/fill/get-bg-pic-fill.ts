@@ -1,9 +1,14 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
 import { getSolidFill } from "../color/get-solid-fill";
 import { getPicFill } from "./get-pic-fill";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
 type PicFillWarpObj = Parameters<typeof getPicFill>[2];
 type SolidFillNode = Parameters<typeof getSolidFill>[0];
+
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 /**
  * Extracts background picture fill with advanced styling options
@@ -25,70 +30,71 @@ type SolidFillNode = Parameters<typeof getSolidFill>[0];
  * @returns CSS background style string with z-index
  */
 export async function getBgPicFill(
-  backgroundProps: Record<string, unknown>,
+  backgroundProps: XmlNode,
   sourceType: string,
-  warpContext: Record<string, unknown>,
+  warpContext: PicFillWarpObj,
   placeholderColor: string | undefined
 ): Promise<string> {
-  const blipFillNode = backgroundProps["a:blipFill"] as Record<string, unknown>;
-  const pictureFillDataUrl = await getPicFill(
-    sourceType,
-    blipFillNode,
-    warpContext as PicFillWarpObj
-  );
-  const zIndexOrder = (backgroundProps["attrs"] as Record<string, string | number>)["order"];
-  const blipNode = getTextByPathList<Record<string, unknown>>(backgroundProps, [
-    "a:blipFill",
-    "a:blip",
-  ]);
+  const blipFillNodeValue = backgroundProps["a:blipFill"];
+  const blipFillNode = isXmlNode(blipFillNodeValue) ? blipFillNodeValue : undefined;
+  if (blipFillNode === undefined) {
+    return "";
+  }
+  const pictureFillDataUrl = await getPicFill(sourceType, blipFillNode, warpContext);
+  const zIndexOrder = backgroundProps.attrs?.order;
+  const blipNodeValue = getTextByPathList(backgroundProps, ["a:blipFill", "a:blip"]);
+  const blipNode = blipNodeValue && isXmlNode(blipNodeValue) ? blipNodeValue : undefined;
 
-  const duotoneNode = getTextByPathList<Record<string, unknown>>(blipNode, ["a:duotone"]);
+  const duotoneNodeValue =
+    blipNode !== undefined ? getTextByPathList(blipNode, ["a:duotone"]) : undefined;
+  const duotoneNode =
+    duotoneNodeValue && isXmlNode(duotoneNodeValue) ? duotoneNodeValue : undefined;
   if (duotoneNode !== undefined) {
     const duotonePalette: Array<string | undefined> = [];
     Object.keys(duotoneNode).forEach(function (colorType) {
       if (colorType !== "attrs") {
-        const colorNode: Record<string, unknown> = {};
+        const colorNode: XmlNode = {};
         colorNode[colorType] = duotoneNode[colorType];
         duotonePalette.push(
-          getSolidFill(colorNode as SolidFillNode, undefined, placeholderColor, warpContext)
+          getSolidFill(
+            colorNode as SolidFillNode,
+            undefined,
+            placeholderColor,
+            warpContext as WarpContext
+          )
         );
       }
     });
   }
 
-  const alphaModFixNode = getTextByPathList<Record<string, string>>(blipNode, [
-    "a:alphaModFix",
-    "attrs",
-  ]);
+  const alphaModFixValue =
+    blipNode !== undefined ? getTextByPathList(blipNode, ["a:alphaModFix", "attrs"]) : undefined;
+  const alphaModFixNode =
+    alphaModFixValue && isXmlNode(alphaModFixValue) ? alphaModFixValue : undefined;
   let imageOpacityStyle = "";
   if (
     alphaModFixNode !== undefined &&
     alphaModFixNode["amt"] !== undefined &&
     alphaModFixNode["amt"] !== ""
   ) {
-    const opacityAmount = parseInt(alphaModFixNode["amt"]) / 100000;
+    const opacityAmount = parseInt(String(alphaModFixNode["amt"]), 10) / 100000;
     imageOpacityStyle = "opacity:" + opacityAmount + ";";
   }
 
-  const tileAttrs = getTextByPathList<Record<string, string>>(backgroundProps, [
-    "a:blipFill",
-    "a:tile",
-    "attrs",
-  ]);
+  const tileAttrsValue = getTextByPathList(backgroundProps, ["a:blipFill", "a:tile", "attrs"]);
+  const tileAttrs = tileAttrsValue && isXmlNode(tileAttrsValue) ? tileAttrsValue : undefined;
   let backgroundCss = "";
   if (tileAttrs !== undefined && tileAttrs["sx"] !== undefined) {
     backgroundCss += "background-repeat: round;";
   }
 
-  const stretchNode = getTextByPathList<Record<string, unknown>>(backgroundProps, [
-    "a:blipFill",
-    "a:stretch",
-  ]);
+  const stretchNodeValue = getTextByPathList(backgroundProps, ["a:blipFill", "a:stretch"]);
+  const stretchNode =
+    stretchNodeValue && isXmlNode(stretchNodeValue) ? stretchNodeValue : undefined;
   if (stretchNode !== undefined) {
-    const fillRectAttrs = getTextByPathList<Record<string, string>>(stretchNode, [
-      "a:fillRect",
-      "attrs",
-    ]);
+    const fillRectAttrsValue = getTextByPathList(stretchNode, ["a:fillRect", "attrs"]);
+    const fillRectAttrs =
+      fillRectAttrsValue && isXmlNode(fillRectAttrsValue) ? fillRectAttrsValue : undefined;
     backgroundCss += "background-repeat: no-repeat;";
     backgroundCss += "background-position: center;";
     if (fillRectAttrs !== undefined) {
@@ -99,7 +105,7 @@ export async function getBgPicFill(
     "background: url(" +
     pictureFillDataUrl +
     ");  z-index: " +
-    zIndexOrder +
+    String(zIndexOrder ?? "") +
     ";" +
     backgroundCss +
     imageOpacityStyle;

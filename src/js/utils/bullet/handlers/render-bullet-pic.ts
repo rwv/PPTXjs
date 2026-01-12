@@ -11,16 +11,12 @@
 
 import { getTextByPathList } from "../../object";
 import { getMimeType, base64ArrayBuffer } from "../../media";
-import type { PptxArchive } from "../../../archive/pptx-archive";
+import type { WarpContext, XmlNode } from "../../../types/pptx-xml";
 
-type BulletPicNode = Record<string, unknown>;
-type BulletWarpObj = {
-  slideResObj: Record<string, { target: string }>;
-  archive: PptxArchive;
-};
+type BulletWarpObj = Pick<WarpContext, "slideResObj" | "archive">;
 
 export async function renderBulletPic(
-  bulletPicNode: BulletPicNode,
+  bulletPicNode: XmlNode,
   warpContext: BulletWarpObj,
   marginLeftStyle: string,
   marginRightStyle: string,

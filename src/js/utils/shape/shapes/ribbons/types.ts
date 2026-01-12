@@ -1,8 +1,10 @@
 /**
  * Context for rendering ribbon shapes
  */
+import type { XmlNode } from "../../../../types/pptx-xml";
+
 export interface RibbonContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;

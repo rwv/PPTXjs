@@ -1,4 +1,5 @@
 import { getTextByPathList } from "../object";
+import type { XmlNode } from "../../types/pptx-xml";
 
 /**
  * Build ID, index, and type lookup tables for slide nodes
@@ -6,12 +7,10 @@ import { getTextByPathList } from "../object";
  * @param content - Slide XML content object
  * @returns Object with idTable, idxTable, and typeTable lookup maps
  */
-type XmlNode = Record<string, unknown>;
-
 export function indexNodes(content: Record<string, XmlNode>): {
-  idTable: Record<string, unknown>;
-  idxTable: Record<string, unknown>;
-  typeTable: Record<string, unknown>;
+  idTable: Record<string, XmlNode>;
+  idxTable: Record<string, XmlNode>;
+  typeTable: Record<string, XmlNode>;
 } {
   const contentKeys = Object.keys(content);
   const shapeTreeNode = (content[contentKeys[0]]["p:cSld"] as XmlNode)["p:spTree"] as Record<
@@ -19,9 +18,9 @@ export function indexNodes(content: Record<string, XmlNode>): {
     XmlNode | XmlNode[]
   >;
 
-  const idTable: Record<string, unknown> = {};
-  const idxTable: Record<string, unknown> = {};
-  const typeTable: Record<string, unknown> = {};
+  const idTable: Record<string, XmlNode> = {};
+  const idxTable: Record<string, XmlNode> = {};
+  const typeTable: Record<string, XmlNode> = {};
 
   for (const nodeKey in shapeTreeNode) {
     if (nodeKey === "p:nvGrpSpPr" || nodeKey === "p:grpSpPr") {

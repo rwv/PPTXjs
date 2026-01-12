@@ -1,4 +1,5 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
+import type { XmlNode } from "../../types/pptx-xml";
 
 /**
  * Gets the vertical alignment CSS class for a PPTX text body
@@ -21,24 +22,46 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns CSS class name for vertical alignment ("v-mid", "v-down", or "v-up")
  */
 export function getVerticalAlign(
-  textBodyContainerNode: Record<string, unknown>,
-  layoutShapeNode: Record<string, unknown> | undefined,
-  masterShapeNode: Record<string, unknown> | undefined,
+  textBodyContainerNode: XmlNode,
+  layoutShapeNode: XmlNode | undefined,
+  masterShapeNode: XmlNode | undefined,
   shapeType: string | undefined
 ): string {
   void shapeType;
+  const asString = (value: string | number | undefined): string | undefined =>
+    value !== undefined ? String(value) : undefined;
   // Find anchor with fallback hierarchy: node -> layout -> master -> default
-  let anchorValue = getTextByPathList(textBodyContainerNode, [
-    "p:txBody",
-    "a:bodyPr",
-    "attrs",
-    "anchor",
-  ]);
+  let anchorValue = asString(
+    getTextByPathList<string | number>(textBodyContainerNode, [
+      "p:txBody",
+      "a:bodyPr",
+      "attrs",
+      "anchor",
+    ])
+  );
 
   if (anchorValue === undefined) {
-    anchorValue = getTextByPathList(layoutShapeNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
+    anchorValue = asString(
+      layoutShapeNode
+        ? getTextByPathList<string | number>(layoutShapeNode, [
+            "p:txBody",
+            "a:bodyPr",
+            "attrs",
+            "anchor",
+          ])
+        : undefined
+    );
     if (anchorValue === undefined) {
-      anchorValue = getTextByPathList(masterShapeNode, ["p:txBody", "a:bodyPr", "attrs", "anchor"]);
+      anchorValue = asString(
+        masterShapeNode
+          ? getTextByPathList<string | number>(masterShapeNode, [
+              "p:txBody",
+              "a:bodyPr",
+              "attrs",
+              "anchor",
+            ])
+          : undefined
+      );
       if (anchorValue === undefined) {
         // "If this attribute is omitted, then a value of t, or top is implied."
         anchorValue = "t";

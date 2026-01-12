@@ -4,7 +4,24 @@ import { processCxnSpNode } from "../shape/process-cxn-sp-node";
 import { processPicNode } from "../media/process-pic-node";
 import { processGraphicFrameNode } from "./process-graphic-frame-node";
 import { processGroupSpNode } from "./process-group-sp-node";
-import type { WarpContext, XmlNode } from "../../types/pptx-xml";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+function firstXmlNode(value: XmlNode | XmlNode[] | undefined): XmlNode | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function asXmlNodeValue(value: XmlValue | undefined): XmlNode | undefined {
+  if (value === undefined || value === null) {
+    return undefined;
+  }
+  if (Array.isArray(value)) {
+    return value.length > 0 ? value[0] : undefined;
+  }
+  return typeof value === "object" ? (value as XmlNode) : undefined;
+}
 
 /**
  * Main dispatcher for processing slide nodes
@@ -54,13 +71,17 @@ export async function processNodesInSlide(
   renderSettings: { mediaProcess: boolean } & Record<string, unknown>
 ): Promise<string> {
   let result = "";
+  const nodeRecord = firstXmlNode(nodeData);
 
   switch (nodeType) {
     case "p:sp": // Shape, Text
+      if (!nodeRecord) {
+        break;
+      }
       result = await processSpNode(
-        nodeData,
-        parentNodes,
-        warpContext,
+        nodeRecord,
+        parentNodes as XmlNode | XmlNode[] | undefined,
+        warpContext as WarpContext,
         sourceType,
         shapeType,
         emuToPx,
@@ -71,10 +92,13 @@ export async function processNodesInSlide(
       );
       break;
     case "p:cxnSp": // Shape, Text (with connection)
+      if (!nodeRecord) {
+        break;
+      }
       result = await processCxnSpNode(
-        nodeData,
-        parentNodes,
-        warpContext,
+        nodeRecord,
+        parentNodes as XmlNode | XmlNode[] | undefined,
+        warpContext as WarpContext,
         sourceType,
         shapeType,
         emuToPx,
@@ -85,9 +109,12 @@ export async function processNodesInSlide(
       );
       break;
     case "p:pic": // Picture
+      if (!nodeRecord) {
+        break;
+      }
       result = await processPicNode(
-        nodeData,
-        warpContext,
+        nodeRecord,
+        warpContext as WarpContext,
         sourceType,
         shapeType,
         emuToPx,
@@ -95,9 +122,12 @@ export async function processNodesInSlide(
       );
       break;
     case "p:graphicFrame": // Chart, Diagram, Table
+      if (!nodeRecord) {
+        break;
+      }
       result = await processGraphicFrameNode(
-        nodeData,
-        warpContext,
+        nodeRecord,
+        warpContext as WarpContext,
         sourceType,
         shapeType,
         tableStyles,
@@ -112,9 +142,12 @@ export async function processNodesInSlide(
       );
       break;
     case "p:grpSp":
+      if (!nodeRecord) {
+        break;
+      }
       result = await processGroupSpNode(
-        nodeData,
-        warpContext,
+        nodeRecord,
+        warpContext as WarpContext,
         sourceType,
         emuToPx,
         tableStyles,
@@ -130,21 +163,26 @@ export async function processNodesInSlide(
     case "mc:AlternateContent": {
       //Equations and formulas as Image
       //console.log("mc:AlternateContent nodeValue:" , nodeData , "nodes:",parentNodes, "shapeType:",shapeType)
-      const mcFallbackNode = getTextByPathList(nodeData, ["mc:Fallback"]);
-      result = await processGroupSpNode(
-        mcFallbackNode,
-        warpContext,
-        sourceType,
-        emuToPx,
-        tableStyles,
-        isFirstLineBreak,
-        styleTable,
-        rtlLanguages,
-        fontSizeScale,
-        chartIdCounter,
-        messageQueue,
-        renderSettings
-      );
+      if (nodeRecord) {
+        const mcFallbackNodeValue = getTextByPathList(nodeRecord, ["mc:Fallback"]);
+        const mcFallbackNode = asXmlNodeValue(mcFallbackNodeValue);
+        if (mcFallbackNode) {
+          result = await processGroupSpNode(
+            mcFallbackNode,
+            warpContext,
+            sourceType,
+            emuToPx,
+            tableStyles,
+            isFirstLineBreak,
+            styleTable,
+            rtlLanguages,
+            fontSizeScale,
+            chartIdCounter,
+            messageQueue,
+            renderSettings
+          );
+        }
+      }
       break;
     }
     default:

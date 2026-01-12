@@ -1,5 +1,7 @@
+import type { XmlNode } from "../../../../types/pptx-xml";
+
 export interface BasicShapeParams {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: number | string;

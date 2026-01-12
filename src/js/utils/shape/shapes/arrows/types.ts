@@ -1,8 +1,10 @@
 /**
  * Context for rendering arrow shapes
  */
+import type { XmlNode } from "../../../../types/pptx-xml";
+
 export interface ArrowShapeContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;

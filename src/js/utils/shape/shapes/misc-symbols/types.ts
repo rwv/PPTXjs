@@ -1,8 +1,10 @@
 /**
  * Context for rendering misc symbol shapes
  */
+import type { XmlNode } from "../../../../types/pptx-xml";
+
 export interface MiscSymbolContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;

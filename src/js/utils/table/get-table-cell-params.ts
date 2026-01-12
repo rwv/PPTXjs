@@ -3,6 +3,7 @@ import { getSolidFill } from "../color";
 import { getShapeFill } from "../fill";
 import { getBorder } from "../border";
 import { genTextBody } from "../text";
+import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 /**
  * Generate table cell parameters (text, styling, CSS class, spans)
@@ -32,13 +33,13 @@ import { genTextBody } from "../text";
  * @returns Array [text, colStyl, cssName, rowSpan, colSpan]
  */
 export async function getTableCellParams(
-  tcNodes: any,
-  getColsGrid: any,
+  tcNodes: XmlNode,
+  getColsGrid: XmlNode[] | XmlNode,
   rowIndex: number,
   colIndex: number,
-  tableStyle: any,
+  tableStyle: XmlNode | undefined,
   cellSource: string | undefined,
-  warpContext: any,
+  warpContext: WarpContext,
   firstLineBreak: { value: boolean },
   styleTable: any,
   rtlLanguages: string[],
@@ -48,29 +49,34 @@ export async function getTableCellParams(
   //tableStyle["a:band1V"] => tableStyle[cellSource]
   //text, cell-width, cell-borders,
   //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpContext);//tableStyles
-  const rowSpan = getTextByPathList(tcNodes, ["attrs", "rowSpan"]);
-  const colSpan = getTextByPathList(tcNodes, ["attrs", "gridSpan"]);
+  const rowSpan = getTextByPathList<string | number>(tcNodes, ["attrs", "rowSpan"]);
+  const colSpan = getTextByPathList<string | number>(tcNodes, ["attrs", "gridSpan"]);
   let colStyl = "word-wrap: break-word;";
   let colWidth;
   let cellFillColor = "";
   let colFontColor = "";
   let colFontWeight = "";
-  let bottomLine = "",
-    topLine = "",
-    leftLine = "",
-    rightLine = "";
+  let bottomLine: XmlNode | undefined;
+  let topLine: XmlNode | undefined;
+  let leftLine: XmlNode | undefined;
+  let rightLine: XmlNode | undefined;
 
-  const colSpanInt = parseInt(colSpan);
+  const colSpanInt = parseInt(String(colSpan ?? ""), 10);
   let totalColumnWidth = 0;
   if (!isNaN(colSpanInt) && colSpanInt > 1) {
     for (let k = 0; k < colSpanInt; k++) {
-      totalColumnWidth += parseInt(getTextByPathList(getColsGrid[colIndex + k], ["attrs", "w"]));
+      const colNode = Array.isArray(getColsGrid) ? getColsGrid[colIndex + k] : getColsGrid;
+      const widthValue = colNode
+        ? getTextByPathList<string | number>(colNode, ["attrs", "w"])
+        : undefined;
+      totalColumnWidth += parseInt(String(widthValue ?? "0"), 10);
     }
   } else {
-    totalColumnWidth = getTextByPathList(
-      colIndex === undefined ? getColsGrid : getColsGrid[colIndex],
-      ["attrs", "w"]
-    );
+    const colNode = Array.isArray(getColsGrid) ? getColsGrid[colIndex] : getColsGrid;
+    const widthValue = colNode
+      ? getTextByPathList<string | number>(colNode, ["attrs", "w"])
+      : undefined;
+    totalColumnWidth = parseInt(String(widthValue ?? "0"), 10);
   }
 
   const text = await genTextBody(
@@ -95,17 +101,17 @@ export async function getTableCellParams(
   }
 
   //cell bords
-  bottomLine = getTextByPathList(tcNodes, ["a:tcPr", "a:lnB"]);
-  if (bottomLine === undefined && cellSource !== undefined) {
-    if (cellSource !== undefined)
-      bottomLine = getTextByPathList(tableStyle[cellSource], [
-        "a:tcStyle",
-        "a:tcBdr",
-        "a:bottom",
-        "a:ln",
-      ]);
+  bottomLine = getTextByPathList<XmlNode>(tcNodes, ["a:tcPr", "a:lnB"]);
+  if (bottomLine === undefined && cellSource !== undefined && tableStyle !== undefined) {
+    bottomLine = getTextByPathList<XmlNode>(tableStyle, [
+      cellSource,
+      "a:tcStyle",
+      "a:tcBdr",
+      "a:bottom",
+      "a:ln",
+    ]);
     if (bottomLine === undefined) {
-      bottomLine = getTextByPathList(tableStyle, [
+      bottomLine = getTextByPathList<XmlNode>(tableStyle, [
         "a:wholeTbl",
         "a:tcStyle",
         "a:tcBdr",
@@ -114,17 +120,19 @@ export async function getTableCellParams(
       ]);
     }
   }
-  topLine = getTextByPathList(tcNodes, ["a:tcPr", "a:lnT"]);
+  topLine = getTextByPathList<XmlNode>(tcNodes, ["a:tcPr", "a:lnT"]);
   if (topLine === undefined) {
-    if (cellSource !== undefined)
-      topLine = getTextByPathList(tableStyle[cellSource], [
+    if (cellSource !== undefined && tableStyle !== undefined) {
+      topLine = getTextByPathList<XmlNode>(tableStyle, [
+        cellSource,
         "a:tcStyle",
         "a:tcBdr",
         "a:top",
         "a:ln",
       ]);
-    if (topLine === undefined) {
-      topLine = getTextByPathList(tableStyle, [
+    }
+    if (topLine === undefined && tableStyle !== undefined) {
+      topLine = getTextByPathList<XmlNode>(tableStyle, [
         "a:wholeTbl",
         "a:tcStyle",
         "a:tcBdr",
@@ -133,17 +141,19 @@ export async function getTableCellParams(
       ]);
     }
   }
-  leftLine = getTextByPathList(tcNodes, ["a:tcPr", "a:lnL"]);
+  leftLine = getTextByPathList<XmlNode>(tcNodes, ["a:tcPr", "a:lnL"]);
   if (leftLine === undefined) {
-    if (cellSource !== undefined)
-      leftLine = getTextByPathList(tableStyle[cellSource], [
+    if (cellSource !== undefined && tableStyle !== undefined) {
+      leftLine = getTextByPathList<XmlNode>(tableStyle, [
+        cellSource,
         "a:tcStyle",
         "a:tcBdr",
         "a:left",
         "a:ln",
       ]);
-    if (leftLine === undefined) {
-      leftLine = getTextByPathList(tableStyle, [
+    }
+    if (leftLine === undefined && tableStyle !== undefined) {
+      leftLine = getTextByPathList<XmlNode>(tableStyle, [
         "a:wholeTbl",
         "a:tcStyle",
         "a:tcBdr",
@@ -152,17 +162,19 @@ export async function getTableCellParams(
       ]);
     }
   }
-  rightLine = getTextByPathList(tcNodes, ["a:tcPr", "a:lnR"]);
+  rightLine = getTextByPathList<XmlNode>(tcNodes, ["a:tcPr", "a:lnR"]);
   if (rightLine === undefined) {
-    if (cellSource !== undefined)
-      rightLine = getTextByPathList(tableStyle[cellSource], [
+    if (cellSource !== undefined && tableStyle !== undefined) {
+      rightLine = getTextByPathList<XmlNode>(tableStyle, [
+        cellSource,
         "a:tcStyle",
         "a:tcBdr",
         "a:right",
         "a:ln",
       ]);
-    if (rightLine === undefined) {
-      rightLine = getTextByPathList(tableStyle, [
+    }
+    if (rightLine === undefined && tableStyle !== undefined) {
+      rightLine = getTextByPathList<XmlNode>(tableStyle, [
         "a:wholeTbl",
         "a:tcStyle",
         "a:tcBdr",
@@ -171,53 +183,55 @@ export async function getTableCellParams(
       ]);
     }
   }
-  void getTextByPathList(tcNodes, ["a:tcPr", "a:lnBlToTr"]);
-  void getTextByPathList(tcNodes, ["a:tcPr", "a:InTlToBr"]);
+  void getTextByPathList<XmlNode>(tcNodes, ["a:tcPr", "a:lnBlToTr"]);
+  void getTextByPathList<XmlNode>(tcNodes, ["a:tcPr", "a:InTlToBr"]);
 
-  if (bottomLine !== undefined && bottomLine !== "") {
-    const bottomLineBorder = getBorder(bottomLine, undefined, false, "", warpContext);
+  if (bottomLine !== undefined) {
+    const bottomLineBorder = getBorder(bottomLine, undefined, false, "shape", warpContext);
     if (bottomLineBorder !== "") {
       colStyl += "border-bottom:" + bottomLineBorder + ";";
     }
   }
-  if (topLine !== undefined && topLine !== "") {
-    const topLineBorder = getBorder(topLine, undefined, false, "", warpContext);
+  if (topLine !== undefined) {
+    const topLineBorder = getBorder(topLine, undefined, false, "shape", warpContext);
     if (topLineBorder !== "") {
       colStyl += "border-top: " + topLineBorder + ";";
     }
   }
-  if (leftLine !== undefined && leftLine !== "") {
-    const leftLineBorder = getBorder(leftLine, undefined, false, "", warpContext);
+  if (leftLine !== undefined) {
+    const leftLineBorder = getBorder(leftLine, undefined, false, "shape", warpContext);
     if (leftLineBorder !== "") {
       colStyl += "border-left: " + leftLineBorder + ";";
     }
   }
-  if (rightLine !== undefined && rightLine !== "") {
-    const rightLineBorder = getBorder(rightLine, undefined, false, "", warpContext);
+  if (rightLine !== undefined) {
+    const rightLineBorder = getBorder(rightLine, undefined, false, "shape", warpContext);
     if (rightLineBorder !== "") {
       colStyl += "border-right:" + rightLineBorder + ";";
     }
   }
 
   //cell fill color custom
-  const getCelFill = getTextByPathList(tcNodes, ["a:tcPr"]);
-  if (getCelFill !== undefined && getCelFill !== "") {
+  const getCelFill = getTextByPathList<XmlNode>(tcNodes, ["a:tcPr"]);
+  if (getCelFill !== undefined) {
     const cellObj = {
       "p:spPr": getCelFill,
     };
-    cellFillColor = await getShapeFill(cellObj, undefined, false, warpContext, "slide");
+    const fillValue = await getShapeFill(cellObj, undefined, false, warpContext, "slide");
+    cellFillColor = typeof fillValue === "string" ? fillValue : "";
   }
 
   //cell fill color theme
   if (cellFillColor === "" || cellFillColor === "background-color: inherit;") {
     let bgFillschemeClr;
-    if (cellSource !== undefined)
-      bgFillschemeClr = getTextByPathList(tableStyle, [
+    if (cellSource !== undefined && tableStyle !== undefined) {
+      bgFillschemeClr = getTextByPathList<XmlNode>(tableStyle, [
         cellSource,
         "a:tcStyle",
         "a:fill",
         "a:solidFill",
       ]);
+    }
     if (bgFillschemeClr !== undefined) {
       const resolvedFillColor = getSolidFill(bgFillschemeClr, undefined, undefined, warpContext);
       if (resolvedFillColor !== undefined) {

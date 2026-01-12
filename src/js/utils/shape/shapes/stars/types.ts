@@ -1,8 +1,10 @@
 /**
  * Context for rendering star shapes
  */
+import type { XmlNode } from "../../../../types/pptx-xml";
+
 export interface StarShapeContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;

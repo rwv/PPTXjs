@@ -18,6 +18,15 @@
 
 import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
+  return value !== undefined && isXmlNode(value) ? value : undefined;
+}
 
 export interface ShapeEffectsResult {
   /** SVG defs content (markers, filters) */
@@ -30,13 +39,13 @@ export interface ShapeEffectsResult {
  * Process shape effects and generate SVG defs
  */
 export function processShapeEffects(
-  shapeNode: any,
+  shapeNode: XmlNode,
   shapeId: number | string,
   svgClassName: string,
   border: any,
-  warpContext: any,
+  warpContext: WarpContext,
   emuToPx: number,
-  styleTable: any
+  styleTable: Record<string, { name: string; text: string }>
 ): ShapeEffectsResult {
   let defsContent = "";
   const effectsClassName = svgClassName + "_effects";
@@ -64,20 +73,21 @@ export function processShapeEffects(
   //"a:extLst"?
   //////////////////////////////outerShdw///////////////////////////////////////////
   //not support sizing the shadow
-  const outerShadowNode = getTextByPathList(shapeNode, ["p:spPr", "a:effectLst", "a:outerShdw"]);
+  const outerShadowNode = asXmlNode(
+    getTextByPathList(shapeNode, ["p:spPr", "a:effectLst", "a:outerShdw"])
+  );
   if (outerShadowNode !== undefined) {
     const shadowColor = getSolidFill(outerShadowNode, undefined, undefined, warpContext);
-    const outerShadowAttrs = outerShadowNode["attrs"];
+    const outerShadowAttrs = outerShadowNode.attrs ?? {};
 
     //var algn = outerShdwAttrs["algn"];
-    const directionDegrees = outerShadowAttrs["dir"]
-      ? parseInt(outerShadowAttrs["dir"]) / 60000
-      : 0;
-    const shadowDistancePx = parseInt(outerShadowAttrs["dist"]) * emuToPx; //(px) //* (3 / 4); //(pt)
+    const directionValue = outerShadowAttrs["dir"];
+    const directionDegrees = directionValue ? parseInt(String(directionValue), 10) / 60000 : 0;
+    const distanceValue = outerShadowAttrs["dist"];
+    const shadowDistancePx = parseInt(String(distanceValue ?? "0"), 10) * emuToPx; //(px) //* (3 / 4); //(pt)
     //var rotWithShape = outerShdwAttrs["rotWithShape"];
-    const blurRadiusPx = outerShadowAttrs["blurRad"]
-      ? parseInt(outerShadowAttrs["blurRad"]) * emuToPx
-      : ""; //+ "px"
+    const blurValue = outerShadowAttrs["blurRad"];
+    const blurRadiusPx = blurValue ? parseInt(String(blurValue), 10) * emuToPx : ""; //+ "px"
     //var sx = (outerShdwAttrs["sx"]) ? (parseInt(outerShdwAttrs["sx"]) / 100000) : 1;
     //var sy = (outerShdwAttrs["sy"]) ? (parseInt(outerShdwAttrs["sy"]) / 100000) : 1;
     const offsetY = shadowDistancePx * Math.sin((directionDegrees * Math.PI) / 180);

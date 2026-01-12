@@ -10,12 +10,13 @@
 
 import { shapeArc } from "./helpers/arc";
 import { getTextByPathList } from "../../object";
+import type { XmlNode } from "../../../types/pptx-xml";
 
 /**
  * Context for rendering plate and cylinder shapes
  */
 export interface PlateCylinderContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;
@@ -73,7 +74,7 @@ function getStrokeAttrs(ctx: PlateCylinderContext): string {
 function renderHomePlate(ctx: PlateCylinderContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -125,7 +126,7 @@ function renderHomePlate(ctx: PlateCylinderContext): string {
 function renderChevron(ctx: PlateCylinderContext): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -185,7 +186,7 @@ function renderChevron(ctx: PlateCylinderContext): string {
 function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
   const { node, w, h, slideFactor } = ctx;
 
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",

@@ -10,32 +10,45 @@
 import { getTextByPathList } from "../object";
 import { getSolidFill } from "../color/get-solid-fill";
 import { angleToDegrees } from "../layout/angle-to-degrees";
+import type { XmlNode, XmlValue } from "../../types/pptx-xml";
 
 type SolidFillNode = Parameters<typeof getSolidFill>[0];
 type SolidFillWarpObj = Parameters<typeof getSolidFill>[3];
 type ColorMap = Parameters<typeof getSolidFill>[1];
 
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isXmlNodeArray(value: XmlValue): value is XmlNode[] {
+  return Array.isArray(value);
+}
+
 export function getBgGradientFill(
-  backgroundProps: Record<string, unknown> | undefined,
+  backgroundProps: XmlNode | undefined,
   placeholderColor: string | undefined,
-  slideMasterContent: Record<string, unknown>,
+  slideMasterContent: XmlNode,
   warpContext: SolidFillWarpObj
 ): string {
   let backgroundCss = "";
   if (backgroundProps !== undefined) {
-    const gradientFillNode = getTextByPathList<Record<string, unknown>>(backgroundProps, [
-      "a:gradFill",
-    ]);
+    const gradientFillNodeValue = getTextByPathList(backgroundProps, ["a:gradFill"]);
+    const gradientFillNode = isXmlNode(gradientFillNodeValue) ? gradientFillNodeValue : undefined;
+    const gradientStopsValue =
+      gradientFillNode !== undefined
+        ? getTextByPathList(gradientFillNode, ["a:gsLst", "a:gs"])
+        : undefined;
     const gradientStops =
-      getTextByPathList<Array<Record<string, unknown>>>(gradientFillNode, ["a:gsLst", "a:gs"]) ||
-      [];
+      gradientStopsValue && isXmlNodeArray(gradientStopsValue) ? gradientStopsValue : [];
     const colorStops: string[] = [];
     const positionStops: string[] = [];
-    const colorMap = getTextByPathList<ColorMap>(slideMasterContent, [
+    const colorMapValue = getTextByPathList(slideMasterContent, [
       "p:sldMaster",
       "p:clrMap",
       "attrs",
     ]);
+    const colorMap =
+      colorMapValue && isXmlNode(colorMapValue) ? (colorMapValue as ColorMap) : undefined;
 
     for (let i = 0; i < gradientStops.length; i++) {
       const solidFillColor = getSolidFill(
@@ -54,9 +67,12 @@ export function getBgGradientFill(
     }
 
     // get rotation
-    const linearGradientNode = getTextByPathList<Record<string, unknown>>(gradientFillNode, [
-      "a:lin",
-    ]);
+    const linearGradientNodeValue =
+      gradientFillNode !== undefined ? getTextByPathList(gradientFillNode, ["a:lin"]) : undefined;
+    const linearGradientNode =
+      linearGradientNodeValue && isXmlNode(linearGradientNodeValue)
+        ? linearGradientNodeValue
+        : undefined;
     let rotationDegrees = 90;
     if (linearGradientNode !== undefined) {
       const angle = getTextByPathList<string | number>(linearGradientNode, ["attrs", "ang"]);

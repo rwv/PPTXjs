@@ -1,4 +1,13 @@
 import { getTextByPathList } from "../object/get-text-by-path-list";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asXmlNode(value: XmlValue | undefined): XmlNode | undefined {
+  return value !== undefined && isXmlNode(value) ? value : undefined;
+}
 
 /**
  * Calculates horizontal text alignment CSS class for a PPTX paragraph node
@@ -23,125 +32,167 @@ import { getTextByPathList } from "../object/get-text-by-path-list";
  * @returns CSS class name for horizontal alignment (h-left, h-right, h-mid, etc.)
  */
 export function getHorizontalAlign(
-  paragraphNode: Record<string, unknown>,
-  textBodyNode: Record<string, unknown>,
+  paragraphNode: XmlNode,
+  textBodyNode: XmlNode,
   layoutIndex: number | string | undefined,
   shapeType: string | undefined,
   paragraphDirection: string | undefined,
-  warpContext: Record<string, unknown>
+  warpContext: WarpContext
 ): string {
-  let alignment = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "algn"]);
+  const asString = (value: string | number | undefined): string | undefined =>
+    value !== undefined ? String(value) : undefined;
+
+  let alignment = asString(
+    getTextByPathList<string | number>(paragraphNode, ["a:pPr", "attrs", "algn"])
+  );
   if (alignment === undefined) {
     //var layoutMasterNode = getLayoutAndMasterNode(node, layoutIndex, shapeType, warpContext);
     // var paragraphPropsNodeLayout = layoutMasterNode.nodeLayout;
     // var pPrNodeMaster = layoutMasterNode.nodeMaster;
     let listLevel = 1;
-    const levelAttr = getTextByPathList(paragraphNode, ["a:pPr", "attrs", "lvl"]);
+    const levelAttr = getTextByPathList<string | number>(paragraphNode, ["a:pPr", "attrs", "lvl"]);
     if (levelAttr !== undefined) {
-      listLevel = parseInt(levelAttr) + 1;
+      listLevel = parseInt(String(levelAttr), 10) + 1;
     }
     const levelKey = "a:lvl" + listLevel + "pPr";
 
-    const listStyle = textBodyNode["a:lstStyle"];
-    alignment = getTextByPathList(listStyle, [levelKey, "attrs", "algn"]);
+    const listStyle = asXmlNode(textBodyNode["a:lstStyle"]);
+    alignment = asString(
+      listStyle
+        ? getTextByPathList<string | number>(listStyle, [levelKey, "attrs", "algn"])
+        : undefined
+    );
 
     if (alignment === undefined && layoutIndex !== undefined) {
       //slidelayout
-      alignment = getTextByPathList(warpContext["slideLayoutTables"]["idxTable"][layoutIndex], [
-        "p:txBody",
-        "a:lstStyle",
-        levelKey,
-        "attrs",
-        "algn",
-      ]);
+      const layoutTableEntry = warpContext.slideLayoutTables?.idxTable[layoutIndex];
+      alignment = asString(
+        layoutTableEntry
+          ? getTextByPathList<string | number>(layoutTableEntry, [
+              "p:txBody",
+              "a:lstStyle",
+              levelKey,
+              "attrs",
+              "algn",
+            ])
+          : undefined
+      );
       if (alignment === undefined) {
-        alignment = getTextByPathList(warpContext["slideLayoutTables"]["idxTable"][layoutIndex], [
-          "p:txBody",
-          "a:p",
-          "a:pPr",
-          "attrs",
-          "algn",
-        ]);
+        alignment = asString(
+          layoutTableEntry
+            ? getTextByPathList<string | number>(layoutTableEntry, [
+                "p:txBody",
+                "a:p",
+                "a:pPr",
+                "attrs",
+                "algn",
+              ])
+            : undefined
+        );
         if (alignment === undefined) {
-          alignment = getTextByPathList(warpContext["slideLayoutTables"]["idxTable"][layoutIndex], [
-            "p:txBody",
-            "a:p",
-            listLevel - 1,
-            "a:pPr",
-            "attrs",
-            "algn",
-          ]);
+          alignment = asString(
+            layoutTableEntry
+              ? getTextByPathList<string | number>(layoutTableEntry, [
+                  "p:txBody",
+                  "a:p",
+                  listLevel - 1,
+                  "a:pPr",
+                  "attrs",
+                  "algn",
+                ])
+              : undefined
+          );
         }
       }
     }
     if (alignment === undefined) {
       if (shapeType !== undefined) {
         //slidelayout
-        alignment = getTextByPathList(warpContext, [
-          "slideLayoutTables",
-          "typeTable",
-          shapeType,
-          "p:txBody",
-          "a:lstStyle",
-          levelKey,
-          "attrs",
-          "algn",
-        ]);
+        const layoutTypeEntry = warpContext.slideLayoutTables?.typeTable[shapeType];
+        alignment = asString(
+          layoutTypeEntry
+            ? getTextByPathList<string | number>(layoutTypeEntry, [
+                "p:txBody",
+                "a:lstStyle",
+                levelKey,
+                "attrs",
+                "algn",
+              ])
+            : undefined
+        );
 
         if (alignment === undefined) {
+          const masterTextStyles = warpContext.slideMasterTextStyles;
           //masterlayout
           if (shapeType === "title" || shapeType === "ctrTitle") {
-            alignment = getTextByPathList(warpContext, [
-              "slideMasterTextStyles",
-              "p:titleStyle",
-              levelKey,
-              "attrs",
-              "algn",
-            ]);
+            alignment = asString(
+              masterTextStyles
+                ? getTextByPathList<string | number>(masterTextStyles, [
+                    "p:titleStyle",
+                    levelKey,
+                    "attrs",
+                    "algn",
+                  ])
+                : undefined
+            );
           } else if (shapeType === "body" || shapeType === "obj" || shapeType === "subTitle") {
-            alignment = getTextByPathList(warpContext, [
-              "slideMasterTextStyles",
-              "p:bodyStyle",
-              levelKey,
-              "attrs",
-              "algn",
-            ]);
+            alignment = asString(
+              masterTextStyles
+                ? getTextByPathList<string | number>(masterTextStyles, [
+                    "p:bodyStyle",
+                    levelKey,
+                    "attrs",
+                    "algn",
+                  ])
+                : undefined
+            );
           } else if (shapeType === "shape" || shapeType === "diagram") {
-            alignment = getTextByPathList(warpContext, [
-              "slideMasterTextStyles",
-              "p:otherStyle",
-              levelKey,
-              "attrs",
-              "algn",
-            ]);
+            alignment = asString(
+              masterTextStyles
+                ? getTextByPathList<string | number>(masterTextStyles, [
+                    "p:otherStyle",
+                    levelKey,
+                    "attrs",
+                    "algn",
+                  ])
+                : undefined
+            );
           } else if (shapeType === "textBox") {
-            alignment = getTextByPathList(warpContext, [
-              "defaultTextStyle",
-              levelKey,
-              "attrs",
-              "algn",
-            ]);
+            alignment = asString(
+              warpContext.defaultTextStyle
+                ? getTextByPathList<string | number>(warpContext.defaultTextStyle, [
+                    levelKey,
+                    "attrs",
+                    "algn",
+                  ])
+                : undefined
+            );
           } else {
-            alignment = getTextByPathList(warpContext, [
-              "slideMasterTables",
-              "typeTable",
-              shapeType,
-              "p:txBody",
-              "a:lstStyle",
-              levelKey,
-              "attrs",
-              "algn",
-            ]);
+            const masterTypeEntry = warpContext.slideMasterTables?.typeTable[shapeType];
+            alignment = asString(
+              masterTypeEntry
+                ? getTextByPathList<string | number>(masterTypeEntry, [
+                    "p:txBody",
+                    "a:lstStyle",
+                    levelKey,
+                    "attrs",
+                    "algn",
+                  ])
+                : undefined
+            );
           }
         }
       } else {
-        alignment = getTextByPathList(warpContext, [
-          "slideMasterTextStyles",
-          "p:bodyStyle",
-          levelKey,
-          "attrs",
-          "algn",
-        ]);
+        alignment = asString(
+          warpContext.slideMasterTextStyles
+            ? getTextByPathList<string | number>(warpContext.slideMasterTextStyles, [
+                "p:bodyStyle",
+                levelKey,
+                "attrs",
+                "algn",
+              ])
+            : undefined
+        );
       }
     }
   }

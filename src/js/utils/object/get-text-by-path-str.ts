@@ -1,4 +1,5 @@
 import { getTextByPathList } from "./get-text-by-path-list";
+import type { XmlNode, XmlValue } from "../../types/pptx-xml";
 
 /**
  * Get value from nested object by path string
@@ -12,6 +13,9 @@ import { getTextByPathList } from "./get-text-by-path-list";
  * getTextByPathStr(obj, 'a b c'); // 'value'
  * getTextByPathStr(obj, 'a  b  c'); // 'value' (multiple spaces)
  */
-export function getTextByPathStr(node: unknown, pathStr: string): unknown {
+export function getTextByPathStr(node: XmlNode | undefined, pathStr: string): XmlValue | undefined {
+  if (!node) {
+    return undefined;
+  }
   return getTextByPathList(node, pathStr.trim().split(/\s+/));
 }

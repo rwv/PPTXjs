@@ -29,6 +29,7 @@
  */
 
 import type { PptxArchive } from "../../archive/pptx-archive";
+import type { XmlNode } from "../../types/pptx-xml";
 import { readXmlFile, indexNodes } from "../xml";
 import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
@@ -150,7 +151,10 @@ export async function processSingleSlide(
   }
   // Open slideMasterXX.xml
   const slideMasterXml = await readXmlFile(archive, masterFilePath);
-  const slideMasterTextStyles = getTextByPathList(slideMasterXml, ["p:sldMaster", "p:txStyles"]);
+  const slideMasterTextStyles = getTextByPathList<XmlNode>(slideMasterXml, [
+    "p:sldMaster",
+    "p:txStyles",
+  ]);
   const slideMasterIndex = indexNodes(slideMasterXml);
 
   /////////////////Amir/////////////

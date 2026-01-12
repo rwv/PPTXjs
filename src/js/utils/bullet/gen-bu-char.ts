@@ -3,19 +3,32 @@ import { getFontColorPr, getFontSize } from "../font";
 import { getLayoutAndMasterNode } from "../layout";
 import { getSolidFill } from "../color";
 import { renderBulletChar, renderBulletNumeric, renderBulletPic } from "./handlers";
-import type { PptxArchive } from "../../archive/pptx-archive";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
-type BulletWarpObj = {
-  slideResObj: Record<string, { target: string }>;
-  archive: PptxArchive;
-  [key: string]: unknown;
-};
+type BulletColor = unknown[];
 
 const parsePxValue = (value: string | number | undefined): number => {
   if (value === undefined) {
     return NaN;
   }
   return Number.parseFloat(String(value));
+};
+
+const parseIntValue = (value: string | number | undefined): number => {
+  if (value === undefined) {
+    return NaN;
+  }
+  return Number.parseInt(String(value), 10);
+};
+
+const getValue = <T extends XmlValue>(
+  node: XmlNode | undefined,
+  path: Array<keyof XmlNode>
+): T | undefined => {
+  if (!node) {
+    return undefined;
+  }
+  return getTextByPathList<T>(node, path);
 };
 
 /**
@@ -42,40 +55,42 @@ const parsePxValue = (value: string | number | undefined): number => {
  * @returns Array [bulletHTML, marginValue, fontValue] or empty string if no bullet
  */
 export async function genBuChar(
-  paragraphNode: Record<string, unknown>,
+  paragraphNode: XmlNode,
   paragraphIndex: number,
-  shapeNode: Record<string, unknown>,
-  textBody: Record<string, unknown>,
-  parentFontStyle: Record<string, unknown> | undefined,
+  shapeNode: XmlNode,
+  textBody: XmlNode,
+  parentFontStyle: XmlNode | undefined,
   placeholderIndex: number | string | undefined,
   shapeType: string | undefined,
-  warpContext: BulletWarpObj,
+  warpContext: WarpContext,
   emuToPx: number,
   fontSizeScale: number
 ): Promise<string | [string, number, number]> {
   void paragraphIndex;
   //console.log("genBuChar node: ", node, ", spNode: ", spNode, ", pFontStyle: ", pFontStyle, "type", type)
   ///////////////////////////////////////Amir///////////////////////////////
-  const listStyle = textBody["a:lstStyle"] as Record<string, unknown> | undefined;
+  const listStyle = getValue<XmlNode>(textBody, ["a:lstStyle"]);
 
-  let runNode = getTextByPathList(paragraphNode, ["a:r"]) as
-    | Record<string, unknown>
-    | Record<string, unknown>[]
-    | undefined;
-  if (runNode !== undefined && runNode.constructor === Array) {
+  let runNode = getValue<XmlNode | XmlNode[]>(paragraphNode, ["a:r"]);
+  if (Array.isArray(runNode)) {
     runNode = runNode[0]; //bullet only to first "a:r"
   }
-  let level = parseInt(getTextByPathList(paragraphNode["a:pPr"], ["attrs", "lvl"])) + 1;
-  if (isNaN(level)) {
+  const paragraphPropsNodeInitial = getValue<XmlNode>(paragraphNode, ["a:pPr"]);
+  const levelValue = getValue<string | number>(paragraphPropsNodeInitial, ["attrs", "lvl"]);
+  let level = levelValue !== undefined ? Number(levelValue) + 1 : 1;
+  if (Number.isNaN(level)) {
     level = 1;
   }
   const levelStyleKey = "a:lvl" + level + "pPr";
-  let defaultBulletColor, defaultBulletSize, bulletColor, bulletSize, colorType;
+  let defaultBulletColor: BulletColor;
+  let defaultBulletSize: string | undefined;
+  let bulletColor: BulletColor;
+  let bulletSize: string | undefined;
+  let colorType: string | undefined;
 
   if (runNode !== undefined) {
-    const runNodeRecord = runNode as Record<string, unknown>;
-    defaultBulletColor = getFontColorPr(
-      runNodeRecord,
+    const defaultBulletColorRaw = getFontColorPr(
+      runNode,
       shapeNode,
       listStyle,
       parentFontStyle,
@@ -85,14 +100,15 @@ export async function genBuChar(
       warpContext,
       emuToPx
     );
-    colorType = defaultBulletColor[2];
+    defaultBulletColor = defaultBulletColorRaw as BulletColor;
+    colorType = defaultBulletColorRaw[2];
     defaultBulletSize = getFontSize(
-      runNodeRecord,
+      runNode,
       textBody,
       parentFontStyle,
       level,
       shapeType,
-      warpContext,
+      warpContext as unknown as Parameters<typeof getFontSize>[5],
       fontSizeScale
     );
   } else {
@@ -107,8 +123,8 @@ export async function genBuChar(
     fontValue = 0;
   /////////////////////////////////////////////////////////////////
 
-  let paragraphPropsNode = paragraphNode["a:pPr"] as Record<string, unknown> | undefined;
-  let bulletNoneNode = getTextByPathList(paragraphPropsNode, ["a:buNone"]);
+  let paragraphPropsNode = paragraphPropsNodeInitial;
+  let bulletNoneNode = getValue<XmlNode>(paragraphPropsNode, ["a:buNone"]);
   if (bulletNoneNode !== undefined) {
     return "";
   }
@@ -124,11 +140,9 @@ export async function genBuChar(
   const layoutParagraphPropsNode = layoutMasterNode.nodeLayout;
   const masterParagraphPropsNode = layoutMasterNode.nodeMaster;
 
-  let bulletChar = getTextByPathList(paragraphPropsNode, ["a:buChar", "attrs", "char"]);
-  let bulletNumberType = getTextByPathList(paragraphPropsNode, ["a:buAutoNum", "attrs", "type"]);
-  let bulletPicNode = getTextByPathList(paragraphPropsNode, ["a:buBlip"]) as
-    | Record<string, unknown>
-    | undefined;
+  let bulletChar = getValue<string>(paragraphPropsNode, ["a:buChar", "attrs", "char"]);
+  let bulletNumberType = getValue<string>(paragraphPropsNode, ["a:buAutoNum", "attrs", "type"]);
+  let bulletPicNode = getValue<XmlNode>(paragraphPropsNode, ["a:buBlip"]);
   if (bulletChar !== undefined) {
     bulletType = "TYPE_BULLET";
   }
@@ -139,38 +153,38 @@ export async function genBuChar(
     bulletType = "TYPE_BULPIC";
   }
 
-  let bulletFontSize = getTextByPathList(paragraphPropsNode, ["a:buSzPts", "attrs", "val"]);
+  let bulletFontSize = getValue<string | number>(paragraphPropsNode, ["a:buSzPts", "attrs", "val"]);
   if (bulletFontSize === undefined) {
-    bulletFontSize = getTextByPathList(paragraphPropsNode, ["a:buSzPct", "attrs", "val"]);
+    bulletFontSize = getValue<string | number>(paragraphPropsNode, ["a:buSzPct", "attrs", "val"]);
     if (bulletFontSize !== undefined) {
-      const scaleFraction = parseInt(bulletFontSize) / 100000;
+      const scaleFraction = parseIntValue(bulletFontSize) / 100000;
       //dfltBultSize = XXpt
       //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
       const defaultBulletSizeValue = parsePxValue(defaultBulletSize);
       bulletSize = scaleFraction * defaultBulletSizeValue + "px"; // + "pt";
     }
   } else {
-    bulletSize = (parseInt(bulletFontSize) / 100) * fontSizeScale + "px";
+    bulletSize = (parseIntValue(bulletFontSize) / 100) * fontSizeScale + "px";
   }
 
   //get definde bullet COLOR
-  let bulletColorNode = getTextByPathList(paragraphPropsNode, ["a:buClr"]);
+  let bulletColorNode = getValue<XmlNode>(paragraphPropsNode, ["a:buClr"]);
 
   if (bulletChar === undefined && bulletNumberType === undefined && bulletPicNode === undefined) {
     if (listStyle !== undefined) {
-      bulletNoneNode = getTextByPathList(listStyle, [levelStyleKey, "a:buNone"]);
+      bulletNoneNode = getValue<XmlNode>(listStyle, [levelStyleKey, "a:buNone"]);
       if (bulletNoneNode !== undefined) {
         return "";
       }
       bulletType = "TYPE_NONE";
-      bulletChar = getTextByPathList(listStyle, [levelStyleKey, "a:buChar", "attrs", "char"]);
-      bulletNumberType = getTextByPathList(listStyle, [
+      bulletChar = getValue<string>(listStyle, [levelStyleKey, "a:buChar", "attrs", "char"]);
+      bulletNumberType = getValue<string>(listStyle, [
         levelStyleKey,
         "a:buAutoNum",
         "attrs",
         "type",
       ]);
-      bulletPicNode = getTextByPathList(listStyle, [levelStyleKey, "a:buBlip"]);
+      bulletPicNode = getValue<XmlNode>(listStyle, [levelStyleKey, "a:buBlip"]);
       if (bulletChar !== undefined) {
         bulletType = "TYPE_BULLET";
       }
@@ -185,25 +199,25 @@ export async function genBuChar(
         bulletNumberType !== undefined ||
         bulletPicNode !== undefined
       ) {
-        paragraphPropsNode = listStyle[levelStyleKey] as Record<string, unknown> | undefined;
+        paragraphPropsNode = getValue<XmlNode>(listStyle, [levelStyleKey]);
       }
     }
   }
   if (bulletChar === undefined && bulletNumberType === undefined && bulletPicNode === undefined) {
     //check in slidelayout and masterlayout - TODO
     if (layoutParagraphPropsNode !== undefined) {
-      bulletNoneNode = getTextByPathList(layoutParagraphPropsNode, ["a:buNone"]);
+      bulletNoneNode = getValue<XmlNode>(layoutParagraphPropsNode, ["a:buNone"]);
       if (bulletNoneNode !== undefined) {
         return "";
       }
       bulletType = "TYPE_NONE";
-      bulletChar = getTextByPathList(layoutParagraphPropsNode, ["a:buChar", "attrs", "char"]);
-      bulletNumberType = getTextByPathList(layoutParagraphPropsNode, [
+      bulletChar = getValue<string>(layoutParagraphPropsNode, ["a:buChar", "attrs", "char"]);
+      bulletNumberType = getValue<string>(layoutParagraphPropsNode, [
         "a:buAutoNum",
         "attrs",
         "type",
       ]);
-      bulletPicNode = getTextByPathList(layoutParagraphPropsNode, ["a:buBlip"]);
+      bulletPicNode = getValue<XmlNode>(layoutParagraphPropsNode, ["a:buBlip"]);
       if (bulletChar !== undefined) {
         bulletType = "TYPE_BULLET";
       }
@@ -218,18 +232,18 @@ export async function genBuChar(
       //masterlayout
 
       if (masterParagraphPropsNode !== undefined) {
-        bulletNoneNode = getTextByPathList(masterParagraphPropsNode, ["a:buNone"]);
+        bulletNoneNode = getValue<XmlNode>(masterParagraphPropsNode, ["a:buNone"]);
         if (bulletNoneNode !== undefined) {
           return "";
         }
         bulletType = "TYPE_NONE";
-        bulletChar = getTextByPathList(masterParagraphPropsNode, ["a:buChar", "attrs", "char"]);
-        bulletNumberType = getTextByPathList(masterParagraphPropsNode, [
+        bulletChar = getValue<string>(masterParagraphPropsNode, ["a:buChar", "attrs", "char"]);
+        bulletNumberType = getValue<string>(masterParagraphPropsNode, [
           "a:buAutoNum",
           "attrs",
           "type",
         ]);
-        bulletPicNode = getTextByPathList(masterParagraphPropsNode, ["a:buBlip"]);
+        bulletPicNode = getValue<XmlNode>(masterParagraphPropsNode, ["a:buBlip"]);
         if (bulletChar !== undefined) {
           bulletType = "TYPE_BULLET";
         }
@@ -243,48 +257,48 @@ export async function genBuChar(
     }
   }
   //rtl
-  let rtlValue = getTextByPathList(paragraphPropsNode, ["attrs", "rtl"]);
+  let rtlValue = getValue<string | number>(paragraphPropsNode, ["attrs", "rtl"]);
   if (rtlValue === undefined) {
-    rtlValue = getTextByPathList(layoutParagraphPropsNode, ["attrs", "rtl"]);
+    rtlValue = getValue<string | number>(layoutParagraphPropsNode, ["attrs", "rtl"]);
     if (rtlValue === undefined && shapeType !== "shape") {
-      rtlValue = getTextByPathList(masterParagraphPropsNode, ["attrs", "rtl"]);
+      rtlValue = getValue<string | number>(masterParagraphPropsNode, ["attrs", "rtl"]);
     }
   }
   let isRtl = false;
-  if (rtlValue !== undefined && rtlValue === "1") {
+  if (rtlValue !== undefined && String(rtlValue) === "1") {
     isRtl = true;
   }
   //align
-  let alignNode = getTextByPathList(paragraphPropsNode, ["attrs", "algn"]); //"l" | "ctr" | "r" | "just" | "justLow" | "dist" | "thaiDist
+  let alignNode = getValue<string | number>(paragraphPropsNode, ["attrs", "algn"]); //"l" | "ctr" | "r" | "just" | "justLow" | "dist" | "thaiDist
   if (alignNode === undefined) {
-    alignNode = getTextByPathList(layoutParagraphPropsNode, ["attrs", "algn"]);
+    alignNode = getValue<string | number>(layoutParagraphPropsNode, ["attrs", "algn"]);
     if (alignNode === undefined) {
-      alignNode = getTextByPathList(masterParagraphPropsNode, ["attrs", "algn"]);
+      alignNode = getValue<string | number>(masterParagraphPropsNode, ["attrs", "algn"]);
     }
   }
   //indent?
-  let indentNode = getTextByPathList(paragraphPropsNode, ["attrs", "indent"]);
+  let indentNode = getValue<string | number>(paragraphPropsNode, ["attrs", "indent"]);
   if (indentNode === undefined) {
-    indentNode = getTextByPathList(layoutParagraphPropsNode, ["attrs", "indent"]);
+    indentNode = getValue<string | number>(layoutParagraphPropsNode, ["attrs", "indent"]);
     if (indentNode === undefined) {
-      indentNode = getTextByPathList(masterParagraphPropsNode, ["attrs", "indent"]);
+      indentNode = getValue<string | number>(masterParagraphPropsNode, ["attrs", "indent"]);
     }
   }
   let indentValue = 0;
   if (indentNode !== undefined) {
-    indentValue = parseInt(indentNode) * emuToPx;
+    indentValue = parseIntValue(indentNode) * emuToPx;
   }
   //marL
-  let marLNode = getTextByPathList(paragraphPropsNode, ["attrs", "marL"]);
+  let marLNode = getValue<string | number>(paragraphPropsNode, ["attrs", "marL"]);
   if (marLNode === undefined) {
-    marLNode = getTextByPathList(layoutParagraphPropsNode, ["attrs", "marL"]);
+    marLNode = getValue<string | number>(layoutParagraphPropsNode, ["attrs", "marL"]);
     if (marLNode === undefined) {
-      marLNode = getTextByPathList(masterParagraphPropsNode, ["attrs", "marL"]);
+      marLNode = getValue<string | number>(masterParagraphPropsNode, ["attrs", "marL"]);
     }
   }
   //console.log("genBuChar() isRTL", isRTL, "alignNode:", alignNode)
   if (marLNode !== undefined) {
-    const marginLeft = parseInt(marLNode) * emuToPx;
+    const marginLeft = parseIntValue(marLNode) * emuToPx;
     if (isRtl) {
       // && alignNode == "r") {
       marginLeftStyle = "padding-right:"; // "margin-right: ";
@@ -296,16 +310,16 @@ export async function genBuChar(
   }
 
   //marR?
-  let marRNode = getTextByPathList(paragraphPropsNode, ["attrs", "marR"]);
+  let marRNode = getValue<string | number>(paragraphPropsNode, ["attrs", "marR"]);
   if (marRNode === undefined && marLNode === undefined) {
     //need to check if this posble - TODO
-    marRNode = getTextByPathList(layoutParagraphPropsNode, ["attrs", "marR"]);
+    marRNode = getValue<string | number>(layoutParagraphPropsNode, ["attrs", "marR"]);
     if (marRNode === undefined) {
-      marRNode = getTextByPathList(masterParagraphPropsNode, ["attrs", "marR"]);
+      marRNode = getValue<string | number>(masterParagraphPropsNode, ["attrs", "marR"]);
     }
   }
   if (marRNode !== undefined) {
-    const marginRight = parseInt(marRNode) * emuToPx;
+    const marginRight = parseIntValue(marRNode) * emuToPx;
     if (isRtl) {
       // && alignNode == "r") {
       marginLeftStyle = "padding-right:"; // "margin-right: ";
@@ -324,21 +338,31 @@ export async function genBuChar(
   //get definde bullet COLOR
   if (bulletColorNode === undefined) {
     //lstStyle
-    bulletColorNode = getTextByPathList(listStyle, [levelStyleKey, "a:buClr"]);
+    bulletColorNode = getValue<XmlNode>(listStyle, [levelStyleKey, "a:buClr"]);
   }
   if (bulletColorNode === undefined) {
-    bulletColorNode = getTextByPathList(layoutParagraphPropsNode, ["a:buClr"]);
+    bulletColorNode = getValue<XmlNode>(layoutParagraphPropsNode, ["a:buClr"]);
     if (bulletColorNode === undefined) {
-      bulletColorNode = getTextByPathList(masterParagraphPropsNode, ["a:buClr"]);
+      bulletColorNode = getValue<XmlNode>(masterParagraphPropsNode, ["a:buClr"]);
     }
   }
   let resolvedBulletColor;
   if (bulletColorNode !== undefined) {
-    resolvedBulletColor = getSolidFill(bulletColorNode, undefined, undefined, warpContext);
+    resolvedBulletColor = getSolidFill(
+      bulletColorNode as Parameters<typeof getSolidFill>[0],
+      undefined,
+      undefined,
+      warpContext
+    );
   } else {
     if (parentFontStyle !== undefined) {
       //console.log("genBuChar pFontStyle: ", pFontStyle)
-      resolvedBulletColor = getSolidFill(parentFontStyle, undefined, undefined, warpContext);
+      resolvedBulletColor = getSolidFill(
+        parentFontStyle as Parameters<typeof getSolidFill>[0],
+        undefined,
+        undefined,
+        warpContext
+      );
     }
   }
   if (resolvedBulletColor === undefined || resolvedBulletColor === "NONE") {
@@ -352,46 +376,64 @@ export async function genBuChar(
   //console.log("genBuChar: buClrNode: ", buClrNode, "bultColor", bultColor)
   //get definde bullet SIZE
   if (bulletFontSize === undefined) {
-    bulletFontSize = getTextByPathList(layoutParagraphPropsNode, ["a:buSzPts", "attrs", "val"]);
+    bulletFontSize = getValue<string | number>(layoutParagraphPropsNode, [
+      "a:buSzPts",
+      "attrs",
+      "val",
+    ]);
     if (bulletFontSize === undefined) {
-      bulletFontSize = getTextByPathList(layoutParagraphPropsNode, ["a:buSzPct", "attrs", "val"]);
+      bulletFontSize = getValue<string | number>(layoutParagraphPropsNode, [
+        "a:buSzPct",
+        "attrs",
+        "val",
+      ]);
       if (bulletFontSize !== undefined) {
-        const scaleFraction = parseInt(bulletFontSize) / 100000;
+        const scaleFraction = parseIntValue(bulletFontSize) / 100000;
         //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
         const defaultBulletSizeValue = parsePxValue(defaultBulletSize);
         bulletSize = scaleFraction * defaultBulletSizeValue + "px"; // + "pt";
       }
     } else {
-      bulletSize = (parseInt(bulletFontSize) / 100) * fontSizeScale + "px";
+      bulletSize = (parseIntValue(bulletFontSize) / 100) * fontSizeScale + "px";
     }
   }
   if (bulletFontSize === undefined) {
-    bulletFontSize = getTextByPathList(masterParagraphPropsNode, ["a:buSzPts", "attrs", "val"]);
+    bulletFontSize = getValue<string | number>(masterParagraphPropsNode, [
+      "a:buSzPts",
+      "attrs",
+      "val",
+    ]);
     if (bulletFontSize === undefined) {
-      bulletFontSize = getTextByPathList(masterParagraphPropsNode, ["a:buSzPct", "attrs", "val"]);
+      bulletFontSize = getValue<string | number>(masterParagraphPropsNode, [
+        "a:buSzPct",
+        "attrs",
+        "val",
+      ]);
       if (bulletFontSize !== undefined) {
-        const scaleFraction = parseInt(bulletFontSize) / 100000;
+        const scaleFraction = parseIntValue(bulletFontSize) / 100000;
         //dfltBultSize = XXpt
         //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
         const defaultBulletSizeValue = parsePxValue(defaultBulletSize);
         bulletSize = scaleFraction * defaultBulletSizeValue + "px"; // + "pt";
       }
     } else {
-      bulletSize = (parseInt(bulletFontSize) / 100) * fontSizeScale + "px";
+      bulletSize = (parseIntValue(bulletFontSize) / 100) * fontSizeScale + "px";
     }
   }
   if (bulletFontSize === undefined) {
     bulletSize = defaultBulletSize;
   }
   fontValue = parsePxValue(bulletSize);
+  const resolvedBulletSize = bulletSize ?? defaultBulletSize ?? "0px";
+  const resolvedColorType = colorType ?? "solid";
   ////////////////////////////////////////////////////////////////////////
   if (bulletType === "TYPE_BULLET") {
     bulletHtml = renderBulletChar(
       paragraphPropsNode,
-      bulletChar,
-      bulletColor,
-      colorType,
-      bulletSize,
+      bulletChar ?? "",
+      bulletColor as Parameters<typeof renderBulletChar>[2],
+      resolvedColorType,
+      resolvedBulletSize,
       marginLeftStyle,
       marginRightStyle,
       isRtl,
@@ -399,21 +441,21 @@ export async function genBuChar(
     );
   } else if (bulletType === "TYPE_NUMERIC") {
     bulletHtml = renderBulletNumeric(
-      bulletColor,
-      bulletSize,
+      bulletColor as unknown as string[],
+      resolvedBulletSize,
       marginLeftStyle,
       marginRightStyle,
       isRtl,
-      bulletNumberType,
+      bulletNumberType ?? "",
       level
     );
   } else if (bulletType === "TYPE_BULPIC") {
     bulletHtml = await renderBulletPic(
-      bulletPicNode as Record<string, unknown>,
+      bulletPicNode as XmlNode,
       warpContext,
       marginLeftStyle,
       marginRightStyle,
-      bulletSize,
+      resolvedBulletSize,
       isRtl
     );
   }

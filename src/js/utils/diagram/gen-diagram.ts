@@ -1,6 +1,19 @@
 import { getTextByPathList } from "../object";
 import { getPosition, getSize } from "../layout";
 import { processSpNode } from "../node";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+type DiagramWarpContext = WarpContext & { digramFileContent?: XmlNode };
+type TransformNode = Parameters<typeof getPosition>[0];
+type ExtentNode = Parameters<typeof getSize>[0];
+
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isXmlNodeArray(value: XmlValue): value is XmlNode[] {
+  return Array.isArray(value);
+}
 
 /**
  * Generate HTML for SmartArt diagram
@@ -30,17 +43,18 @@ import { processSpNode } from "../node";
  * @returns HTML string for the diagram
  */
 export async function genDiagram(
-  diagramNode: any,
-  warpContext: any,
+  diagramNode: unknown,
+  warpContext: DiagramWarpContext,
   sourceType: string,
   shapeType: string,
   emuToPx: number,
-  styleTable: any,
+  styleTable: unknown,
   fontSizeFactor: number,
   rtlLanguages: string[],
   firstLineBreak: { value: boolean }
 ): Promise<string> {
   //console.log(warpContext)
+  const diagramNodeRecord = diagramNode as XmlNode;
   //readXmlFile(archive, sldFileName)
   /**files define the diagram:
    * 1-colors#.xml,
@@ -50,7 +64,11 @@ export async function genDiagram(
    * 5-drawing#.xml, which Microsoft added as an extension for persisting diagram layout information.
    */
   ///get colors#.xml, data#.xml , layout#.xml , quickStyle#.xml
-  const transformNode = getTextByPathList(diagramNode, ["p:xfrm"]);
+  const transformNodeValue = getTextByPathList(diagramNodeRecord, ["p:xfrm"]);
+  const transformNode = isXmlNode(transformNodeValue)
+    ? (transformNodeValue as TransformNode)
+    : undefined;
+  const extentNode = transformNode as ExtentNode | undefined;
   //console.log(dgmClr,dgmData,dgmLayout,dgmQuickStyle)
   ///get drawing#.xml
   // var dgmDrwFileName = "";
@@ -65,13 +83,13 @@ export async function genDiagram(
   // }
   // var dgmDrwSpArray = getTextByPathList(dgmDrwFile, ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
   //var dgmDrwSpArray = getTextByPathList(warpContext["digramFileContent"], ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
-  const diagramShapeNodes = getTextByPathList(warpContext["digramFileContent"], [
+  const diagramShapeNodes = getTextByPathList((warpContext.digramFileContent ?? {}) as XmlNode, [
     "p:drawing",
     "p:spTree",
     "p:sp",
   ]);
   let diagramHtml = "";
-  if (diagramShapeNodes !== undefined) {
+  if (diagramShapeNodes !== undefined && isXmlNodeArray(diagramShapeNodes)) {
     const diagramShapeCount = diagramShapeNodes.length;
     for (let i = 0; i < diagramShapeCount; i++) {
       const diagramShapeNode = diagramShapeNodes[i];
@@ -82,7 +100,7 @@ export async function genDiagram(
       //rslt += processSpNode(pSpStrToObj, node, warpObj, "diagramBg", sType)
       diagramHtml += await processSpNode(
         diagramShapeNode,
-        diagramNode,
+        diagramNodeRecord,
         warpContext,
         "diagramBg",
         shapeType,
@@ -98,8 +116,8 @@ export async function genDiagram(
 
   return (
     "<div class='block diagram-content' style='" +
-    getPosition(transformNode, diagramNode, undefined, undefined, shapeType, emuToPx) +
-    getSize(transformNode, undefined, undefined, emuToPx) +
+    getPosition(transformNode, diagramNodeRecord, undefined, undefined, shapeType, emuToPx) +
+    getSize(extentNode, undefined, undefined, emuToPx) +
     "'>" +
     diagramHtml +
     "</div>"

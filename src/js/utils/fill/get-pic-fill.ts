@@ -3,6 +3,7 @@ import { escapeHtml } from "../string/escape-html";
 import { getMimeType } from "../media/get-mime-type";
 import { base64ArrayBuffer } from "../media/base64-array-buffer";
 import type { PptxArchive } from "../../archive/pptx-archive";
+import type { XmlNode } from "../../types/pptx-xml";
 
 /**
  * Extracts picture fill from PPTX and returns base64 data URL
@@ -29,7 +30,7 @@ type PicWarpObj = {
 
 export async function getPicFill(
   sourceType: string,
-  blipFillNode: Record<string, unknown>,
+  blipFillNode: XmlNode,
   warpContext: PicWarpObj
 ): Promise<string | undefined> {
   let imageDataUrl: string | undefined;
@@ -39,20 +40,40 @@ export async function getPicFill(
   }
   let imagePath;
   if (sourceType === "slideBg" || sourceType === "slide") {
-    imagePath = getTextByPathList<string>(warpContext, ["slideResObj", relationshipId, "target"]);
+    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
+      "slideResObj",
+      relationshipId,
+      "target",
+    ]);
   } else if (sourceType === "slideLayoutBg") {
-    imagePath = getTextByPathList<string>(warpContext, ["layoutResObj", relationshipId, "target"]);
+    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
+      "layoutResObj",
+      relationshipId,
+      "target",
+    ]);
   } else if (sourceType === "slideMasterBg") {
-    imagePath = getTextByPathList<string>(warpContext, ["masterResObj", relationshipId, "target"]);
+    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
+      "masterResObj",
+      relationshipId,
+      "target",
+    ]);
   } else if (sourceType === "themeBg") {
-    imagePath = getTextByPathList<string>(warpContext, ["themeResObj", relationshipId, "target"]);
+    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
+      "themeResObj",
+      relationshipId,
+      "target",
+    ]);
   } else if (sourceType === "diagramBg") {
-    imagePath = getTextByPathList<string>(warpContext, ["diagramResObj", relationshipId, "target"]);
+    imagePath = getTextByPathList<string>(warpContext as XmlNode, [
+      "diagramResObj",
+      relationshipId,
+      "target",
+    ]);
   }
   if (imagePath === undefined) {
     return undefined;
   }
-  imageDataUrl = getTextByPathList<string>(warpContext, ["loaded-images", imagePath]);
+  imageDataUrl = getTextByPathList<string>(warpContext as XmlNode, ["loaded-images", imagePath]);
   if (imageDataUrl === undefined) {
     imagePath = escapeHtml(imagePath);
 

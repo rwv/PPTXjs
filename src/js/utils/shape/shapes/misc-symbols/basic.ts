@@ -1,8 +1,19 @@
 import { shapeArc } from "../helpers/arc";
 import { shapeGear } from "../helpers/gear";
 import { getTextByPathList } from "../../../object";
+import type { XmlNode } from "../../../../types/pptx-xml";
 import type { MiscSymbolContext } from "./types";
 import { createPath, getFillAttr, getStrokeAttrs } from "./helpers";
+
+const getShapeAdjustments = (node: XmlNode): XmlNode[] => {
+  const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>(node, [
+    "p:spPr",
+    "a:prstGeom",
+    "a:avLst",
+    "a:gd",
+  ]);
+  return Array.isArray(shapAdjst) ? shapAdjst : shapAdjst ? [shapAdjst] : [];
+};
 
 // =============================================================================
 // Shape Renderers
@@ -10,7 +21,7 @@ import { createPath, getFillAttr, getStrokeAttrs } from "./helpers";
 
 export function renderMoon(ctx: MiscSymbolContext): string {
   const { node, w, h } = ctx;
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -39,18 +50,20 @@ export function renderMoon(ctx: MiscSymbolContext): string {
 
 export function renderCorner(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst_ary = getTextByPathList(node, ["p:spPr", "a:prstGeom", "a:avLst", "a:gd"]);
+  const shapAdjst_ary = getShapeAdjustments(node);
   let sAdj1_val = 50000 * slideFactor;
   let sAdj2_val = 50000 * slideFactor;
   const cnsVal = 100000 * slideFactor;
-  if (shapAdjst_ary !== undefined) {
-    for (let i = 0; i < shapAdjst_ary.length; i++) {
-      const sAdj_name = getTextByPathList(shapAdjst_ary[i], ["attrs", "name"]);
-      if (sAdj_name === "adj1") {
-        const sAdj1 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+  for (let i = 0; i < shapAdjst_ary.length; i++) {
+    const sAdj_name = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "name"]);
+    if (sAdj_name === "adj1") {
+      const sAdj1 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj1 !== undefined) {
         sAdj1_val = parseInt(sAdj1.substr(4)) * slideFactor;
-      } else if (sAdj_name === "adj2") {
-        const sAdj2 = getTextByPathList(shapAdjst_ary[i], ["attrs", "fmla"]);
+      }
+    } else if (sAdj_name === "adj2") {
+      const sAdj2 = getTextByPathList<string>(shapAdjst_ary[i], ["attrs", "fmla"]);
+      if (sAdj2 !== undefined) {
         sAdj2_val = parseInt(sAdj2.substr(4)) * slideFactor;
       }
     }
@@ -92,7 +105,7 @@ export function renderCorner(ctx: MiscSymbolContext): string {
 
 export function renderDiagStripe(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -122,7 +135,7 @@ export function renderGear(ctx: MiscSymbolContext, shapType: string): string {
 
 export function renderPlus(ctx: MiscSymbolContext): string {
   const { node, w, h } = ctx;
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -140,7 +153,7 @@ export function renderPlus(ctx: MiscSymbolContext): string {
 
 export function renderTeardrop(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -191,7 +204,7 @@ export function renderTeardrop(ctx: MiscSymbolContext): string {
 
 export function renderPlaque(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",
@@ -233,7 +246,7 @@ export function renderPlaque(ctx: MiscSymbolContext): string {
 
 export function renderSun(ctx: MiscSymbolContext): string {
   const { node, w, h, slideFactor } = ctx;
-  const shapAdjst = getTextByPathList(node, [
+  const shapAdjst = getTextByPathList<string>(node, [
     "p:spPr",
     "a:prstGeom",
     "a:avLst",

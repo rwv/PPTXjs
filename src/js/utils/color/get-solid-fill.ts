@@ -10,6 +10,7 @@ import { applySatMod } from "./apply-sat-mod";
 import { applyShade } from "./apply-shade";
 import { applyTint } from "./apply-tint";
 import { getSchemeColorFromTheme } from "./get-scheme-color-from-theme";
+import type { WarpContext } from "../../types/pptx-xml";
 
 /**
  * Color node with attributes from PPTX XML
@@ -63,14 +64,6 @@ interface ColorMap {
 /**
  * Warp object containing PPTX presentation content for lookups
  */
-interface WarpContext {
-  slideContent?: any;
-  slideLayoutContent?: any;
-  slideMasterContent?: any;
-  themeContent?: any;
-  [key: string]: any;
-}
-
 /**
  * Extracts and processes solid fill color from PPTX node
  *
@@ -104,13 +97,13 @@ export function getSolidFill(
 
   if (fillNode["a:srgbClr"] !== undefined) {
     colorNode = fillNode["a:srgbClr"];
-    hexColor = getTextByPathList(colorNode, ["attrs", "val"]) || ""; //#...
+    hexColor = String(getTextByPathList(colorNode, ["attrs", "val"]) ?? ""); //#...
   } else if (fillNode["a:schemeClr"] !== undefined) {
     //a:schemeClr
     colorNode = fillNode["a:schemeClr"];
     const schemeColorKey = getTextByPathList(colorNode, ["attrs", "val"]);
     hexColor = getSchemeColorFromTheme(
-      "a:" + schemeColorKey,
+      "a:" + String(schemeColorKey ?? ""),
       colorMap,
       placeholderColor,
       warpContext
@@ -138,7 +131,7 @@ export function getSolidFill(
     const presetColor = getTextByPathList(colorNode, ["attrs", "val"]); //fillNode["a:prstClr"]["attrs"]["val"];
     // BUG FIX: Handle undefined prstClr value
     if (presetColor !== undefined) {
-      hexColor = getColorName2Hex(presetColor) || "";
+      hexColor = getColorName2Hex(String(presetColor)) || "";
     }
     //console.log("blip prstClr: ", presetColor, " => hexClr: ", hexColor);
   } else if (fillNode["a:hslClr"] !== undefined) {
@@ -168,7 +161,7 @@ export function getSolidFill(
     //<a:sysClr val="windowText" lastClr="000000"/>  //Need to test/////////////////////////////////////////////
     const systemColor = getTextByPathList(colorNode, ["attrs", "lastClr"]);
     if (systemColor !== undefined) {
-      hexColor = systemColor;
+      hexColor = String(systemColor);
     }
   }
   //console.log("color: [%cstart]", "color: #" + hexColor, tinycolor(hexColor).toHslString(), hexColor)
@@ -185,7 +178,7 @@ export function getSolidFill(
   // </a: solidFill >
   let hasAlpha = false;
   const alphaValue =
-    parseInt(getTextByPathList(colorNode, ["a:alpha", "attrs", "val"]) || "") / 100000;
+    parseInt(String(getTextByPathList(colorNode, ["a:alpha", "attrs", "val"]) ?? ""), 10) / 100000;
   //console.log("alpha: ", alphaValue)
   if (!isNaN(alphaValue)) {
     // const alphaColor = new colz.Color(hexColor);

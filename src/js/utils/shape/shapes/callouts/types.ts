@@ -1,8 +1,10 @@
 /**
  * Context for rendering callout shapes
  */
+import type { XmlNode } from "../../../../types/pptx-xml";
+
 export interface CalloutContext {
-  node: unknown;
+  node: XmlNode;
   w: number;
   h: number;
   shpId: string;

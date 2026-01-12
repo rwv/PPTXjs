@@ -15,42 +15,65 @@ import { getGradientFill } from "./get-gradient-fill";
 import { getPatternFill } from "./get-pattern-fill";
 import { getPicFill } from "./get-pic-fill";
 import tinycolor from "tinycolor2";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+function isXmlNode(value: XmlValue): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 export async function getShapeFill(
-  shapeNode: any,
-  parentNode: any,
+  shapeNode: XmlNode,
+  parentNode: XmlNode | undefined,
   isSvgMode: boolean,
-  warpContext: any,
+  warpContext: WarpContext,
   sourceType: string
-): Promise<any> {
+): Promise<unknown> {
   // 1. presentationML
   // p:spPr/ [a:noFill, solidFill, gradFill, blipFill, pattFill, grpFill]
   // From slide
   // Fill Type:
-  const fillType = getFillType(getTextByPathList(shapeNode, ["p:spPr"]));
-  let fillValue;
+  const shapePropsValue = getTextByPathList(shapeNode, ["p:spPr"]);
+  const shapePropsNode =
+    shapePropsValue && isXmlNode(shapePropsValue) ? shapePropsValue : undefined;
+  const fillType = shapePropsNode ? getFillType(shapePropsNode as Record<string, unknown>) : "";
+  let fillValue: unknown;
 
   if (fillType === "NO_FILL") {
     return isSvgMode ? "none" : "";
   } else if (fillType === "SOLID_FILL") {
-    const shapeFillNode = shapeNode["p:spPr"]["a:solidFill"];
-    fillValue = getSolidFill(shapeFillNode, undefined, undefined, warpContext);
+    const shapeFillNode = shapePropsNode?.["a:solidFill"];
+    if (shapeFillNode && isXmlNode(shapeFillNode)) {
+      fillValue = getSolidFill(shapeFillNode, undefined, undefined, warpContext);
+    }
   } else if (fillType === "GRADIENT_FILL") {
-    const shapeFillNode = shapeNode["p:spPr"]["a:gradFill"];
-    fillValue = getGradientFill(shapeFillNode, warpContext);
+    const shapeFillNode = shapePropsNode?.["a:gradFill"];
+    if (shapeFillNode && isXmlNode(shapeFillNode)) {
+      fillValue = getGradientFill(shapeFillNode, warpContext);
+    }
   } else if (fillType === "PATTERN_FILL") {
-    const shapeFillNode = shapeNode["p:spPr"]["a:pattFill"];
-    fillValue = getPatternFill(shapeFillNode, warpContext);
+    const shapeFillNode = shapePropsNode?.["a:pattFill"];
+    if (shapeFillNode && isXmlNode(shapeFillNode)) {
+      fillValue = getPatternFill(shapeFillNode as Record<string, unknown>, warpContext);
+    }
   } else if (fillType === "PIC_FILL") {
-    const shapeFillNode = shapeNode["p:spPr"]["a:blipFill"];
-    fillValue = await getPicFill(sourceType, shapeFillNode, warpContext);
+    const shapeFillNode = shapePropsNode?.["a:blipFill"];
+    if (shapeFillNode && isXmlNode(shapeFillNode)) {
+      fillValue = await getPicFill(
+        sourceType,
+        shapeFillNode,
+        warpContext as Parameters<typeof getPicFill>[2]
+      );
+    }
   }
 
   // 2. drawingML namespace
   if (fillValue === undefined) {
-    const fillRefNode = getTextByPathList(shapeNode, ["p:style", "a:fillRef"]);
+    const fillRefNodeValue = getTextByPathList(shapeNode, ["p:style", "a:fillRef"]);
+    const fillRefNode =
+      fillRefNodeValue && isXmlNode(fillRefNodeValue) ? fillRefNodeValue : undefined;
     const fillRefIndex = parseInt(
-      getTextByPathList(shapeNode, ["p:style", "a:fillRef", "attrs", "idx"])
+      String(getTextByPathList(shapeNode, ["p:style", "a:fillRef", "attrs", "idx"]) ?? ""),
+      10
     );
     if (fillRefIndex === 0 || fillRefIndex === 1000) {
       // no fill
@@ -60,17 +83,26 @@ export async function getShapeFill(
     } else if (fillRefIndex > 1000) {
       // <a:bgFillStyleLst>
     }
-    fillValue = getSolidFill(fillRefNode, undefined, undefined, warpContext);
+    if (fillRefNode !== undefined) {
+      fillValue = getSolidFill(fillRefNode, undefined, undefined, warpContext);
+    }
   }
 
   // 3. is group fill
   if (fillValue === undefined) {
-    const groupFillNode = getTextByPathList(shapeNode, ["p:spPr", "a:grpFill"]);
-    if (groupFillNode !== undefined) {
+    const groupFillValue = getTextByPathList(shapeNode, ["p:spPr", "a:grpFill"]);
+    const groupFillNode = groupFillValue && isXmlNode(groupFillValue) ? groupFillValue : undefined;
+    if (groupFillNode !== undefined && parentNode) {
       // get parent fill style
-      const groupShapePropsNode = parentNode["p:grpSpPr"];
-      const groupShapeNode = { "p:spPr": groupShapePropsNode };
-      return await getShapeFill(groupShapeNode, shapeNode, isSvgMode, warpContext, sourceType);
+      const groupShapePropsNodeValue = parentNode["p:grpSpPr"];
+      const groupShapePropsNode =
+        groupShapePropsNodeValue && isXmlNode(groupShapePropsNodeValue)
+          ? groupShapePropsNodeValue
+          : undefined;
+      if (groupShapePropsNode) {
+        const groupShapeNode: XmlNode = { "p:spPr": groupShapePropsNode };
+        return await getShapeFill(groupShapeNode, shapeNode, isSvgMode, warpContext, sourceType);
+      }
     } else if (fillType === "NO_FILL") {
       return isSvgMode ? "none" : "";
     }
@@ -81,8 +113,9 @@ export async function getShapeFill(
       if (isSvgMode) {
         return fillValue;
       } else {
-        const gradientColors = fillValue.color;
-        const gradientRotation = fillValue.rot;
+        const gradientValue = fillValue as { color: string[]; rot: number };
+        const gradientColors = gradientValue.color;
+        const gradientRotation = gradientValue.rot;
 
         let gradientStyle = "background: linear-gradient(" + gradientRotation + "deg,";
         for (let i = 0; i < gradientColors.length; i++) {
@@ -101,22 +134,25 @@ export async function getShapeFill(
         return "background-image:url(" + fillValue + ");";
       }
     } else if (fillType === "PATTERN_FILL") {
-      let backgroundPattern = "",
-        backgroundSizeStyle = "",
-        backgroundPositionStyle = "";
-      backgroundPattern = fillValue[0];
-      if (fillValue[1] !== null && fillValue[1] !== undefined && fillValue[1] !== "") {
-        backgroundSizeStyle = " background-size:" + fillValue[1] + ";";
+      if (Array.isArray(fillValue)) {
+        let backgroundPattern = "",
+          backgroundSizeStyle = "",
+          backgroundPositionStyle = "";
+        backgroundPattern = fillValue[0];
+        if (fillValue[1] !== null && fillValue[1] !== undefined && fillValue[1] !== "") {
+          backgroundSizeStyle = " background-size:" + fillValue[1] + ";";
+        }
+        if (fillValue[2] !== null && fillValue[2] !== undefined && fillValue[2] !== "") {
+          backgroundPositionStyle = " background-position:" + fillValue[2] + ";";
+        }
+        return (
+          "background: " + backgroundPattern + ";" + backgroundSizeStyle + backgroundPositionStyle
+        );
       }
-      if (fillValue[2] !== null && fillValue[2] !== undefined && fillValue[2] !== "") {
-        backgroundPositionStyle = " background-position:" + fillValue[2] + ";";
-      }
-      return (
-        "background: " + backgroundPattern + ";" + backgroundSizeStyle + backgroundPositionStyle
-      );
+      return isSvgMode ? "none" : "";
     } else {
       if (isSvgMode) {
-        const color = tinycolor(fillValue);
+        const color = tinycolor(String(fillValue));
         fillValue = color.toRgbString();
         return fillValue;
       } else {
