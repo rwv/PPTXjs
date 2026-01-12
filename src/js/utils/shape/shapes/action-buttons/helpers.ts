@@ -25,6 +25,11 @@ export function getStrokeAttrs(ctx: ActionButtonContext): string {
 /**
  * Create SVG path element with fill and stroke
  */
-export function createPath(d: string, ctx: ActionButtonContext): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: ActionButtonContext;
+};
+
+export function createPath({ d, ctx }: CreatePathOptions): string {
   return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }

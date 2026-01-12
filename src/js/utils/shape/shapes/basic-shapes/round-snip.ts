@@ -97,7 +97,14 @@ export function renderRoundSnipRect({ shapeType, params }: RenderRoundSnipRectOp
       if (sAdj2_val === undefined) sAdj2_val = 0;
       break;
   }
-  const d_val = shapeSnipRoundRect(w, h, sAdj1_val, sAdj2_val, shpTyp, adjTyp);
+  const d_val = shapeSnipRoundRect({
+    w,
+    h,
+    adj1: sAdj1_val,
+    adj2: sAdj2_val,
+    shapeType: shpTyp,
+    adjType: adjTyp,
+  });
   result +=
     "<path " +
     tranglRott +

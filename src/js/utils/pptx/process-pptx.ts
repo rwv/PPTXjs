@@ -142,7 +142,7 @@ export async function processPPTX({
 
   resultItems.push({
     type: "globalCSS",
-    data: genGlobalCSS(styleTable, settings, slideWidth),
+    data: genGlobalCSS({ styleTable, settings, slideWidth }),
   });
 
   const endTime = new Date();

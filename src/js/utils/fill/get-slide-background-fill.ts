@@ -21,11 +21,17 @@ function isXmlNode(value: XmlValue): value is XmlNode {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function getColorMapOverride(
-  slideContent: XmlNode | undefined,
-  slideLayoutContent: XmlNode | undefined,
-  slideMasterContent: XmlNode | undefined
-): ColorMap | undefined {
+type GetColorMapOverrideOptions = {
+  slideContent: XmlNode | undefined;
+  slideLayoutContent: XmlNode | undefined;
+  slideMasterContent: XmlNode | undefined;
+};
+
+function getColorMapOverride({
+  slideContent,
+  slideLayoutContent,
+  slideMasterContent,
+}: GetColorMapOverrideOptions): ColorMap | undefined {
   const slideColorMapOverride = getTextByPathList({
     node: slideContent as XmlNode,
     path: ["p:sld", "p:clrMapOvr", "a:overrideClrMapping", "attrs"],
@@ -51,7 +57,13 @@ function getColorMapOverride(
 
 type SortableFillEntry = XmlNode & { idex?: number };
 
-function pushSortableFillEntry(list: SortableFillEntry[], key: string, entry: XmlNode): void {
+type PushSortableFillEntryOptions = {
+  list: SortableFillEntry[];
+  key: string;
+  entry: XmlNode;
+};
+
+function pushSortableFillEntry({ list, key, entry }: PushSortableFillEntryOptions): void {
   const order = entry.attrs?.order;
   if (order === undefined) {
     return;
@@ -71,11 +83,11 @@ function buildSortableFillList(backgroundFillList: XmlNode): SortableFillEntry[]
     if (Array.isArray(fillListEntry)) {
       for (const entry of fillListEntry) {
         if (isXmlNode(entry)) {
-          pushSortableFillEntry(sortableFillList, key, entry);
+          pushSortableFillEntry({ list: sortableFillList, key, entry });
         }
       }
     } else if (isXmlNode(fillListEntry)) {
-      pushSortableFillEntry(sortableFillList, key, fillListEntry);
+      pushSortableFillEntry({ list: sortableFillList, key, entry: fillListEntry });
     }
   });
   return sortableFillList;
@@ -114,11 +126,11 @@ export async function getSlideBackgroundFill({
     if (backgroundFillType === "SOLID_FILL") {
       const slideFillValue = backgroundProps["a:solidFill"];
       const slideFill = slideFillValue && isXmlNode(slideFillValue) ? slideFillValue : undefined;
-      const colorMapOverride = getColorMapOverride(
+      const colorMapOverride = getColorMapOverride({
         slideContent,
         slideLayoutContent,
-        slideMasterContent
-      );
+        slideMasterContent,
+      });
       if (slideFill) {
         const slideBackgroundColor = getSolidFill({
           fillNode: slideFill,
@@ -144,11 +156,11 @@ export async function getSlideBackgroundFill({
       });
     }
   } else if (backgroundRef !== undefined) {
-    const colorMapOverride = getColorMapOverride(
+    const colorMapOverride = getColorMapOverride({
       slideContent,
       slideLayoutContent,
-      slideMasterContent
-    );
+      slideMasterContent,
+    });
     const placeholderColor = getSolidFill({
       fillNode: backgroundRef,
       colorMap: colorMapOverride,
@@ -225,7 +237,11 @@ export async function getSlideBackgroundFill({
         ? layoutBackgroundRefValue
         : undefined;
 
-    const colorMapOverride = getColorMapOverride(undefined, slideLayoutContent, slideMasterContent);
+    const colorMapOverride = getColorMapOverride({
+      slideContent: undefined,
+      slideLayoutContent,
+      slideMasterContent,
+    });
 
     if (backgroundProps !== undefined) {
       const backgroundFillType = getFillType({

@@ -36,10 +36,26 @@ export function renderMoon(ctx: MiscSymbolContext): string {
     w +
     "," +
     h +
-    shapeArc(w, hd2, w, hd2, cd4, cd4 + cd2, false).replace("M", "L") +
-    shapeArc(w, hd2, adj2, hd2, cd4 + cd2, cd4, false).replace("M", "L") +
+    shapeArc({
+      cX: w,
+      cY: hd2,
+      rX: w,
+      rY: hd2,
+      stAng: cd4,
+      endAng: cd4 + cd2,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w,
+      cY: hd2,
+      rX: adj2,
+      rY: hd2,
+      stAng: cd4 + cd2,
+      endAng: cd4,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderCorner(ctx: MiscSymbolContext): string {
@@ -97,7 +113,7 @@ export function renderCorner(ctx: MiscSymbolContext): string {
     " L0," +
     h +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderDiagStripe(ctx: MiscSymbolContext): string {
@@ -115,15 +131,20 @@ export function renderDiagStripe(ctx: MiscSymbolContext): string {
   const x2 = (w * a1) / cnsVal;
   const y2 = (h * a1) / cnsVal;
   const d = "M0," + y2 + " L" + x2 + ",0 L" + w + ",0 L0," + h + " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
-export function renderGear(ctx: MiscSymbolContext, shapType: string): string {
+type RenderGearOptions = {
+  ctx: MiscSymbolContext;
+  shapeType: string;
+};
+
+export function renderGear({ ctx, shapeType }: RenderGearOptions): string {
   const { w, h, setTxtRotate } = ctx;
   if (setTxtRotate) setTxtRotate(0);
-  const gearNum = shapType.substr(4);
-  const d = shapeGear(w, h / 3.5, parseInt(gearNum));
-  return createPath(d, ctx, `rotate(20,${(3 / 7) * h},${(3 / 7) * h})`);
+  const gearNum = shapeType.substr(4);
+  const d = shapeGear({ w, h: h / 3.5, points: parseInt(gearNum) });
+  return createPath({ d, ctx, transform: `rotate(20,${(3 / 7) * h},${(3 / 7) * h})` });
 }
 
 export function renderPlus(ctx: MiscSymbolContext): string {
@@ -166,7 +187,15 @@ export function renderTeardrop(ctx: MiscSymbolContext): string {
   const x2 = (w / 2 + x1) / 2;
   const y2 = (h / 2 + y1) / 2;
   const d_val =
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 180, 270, false) +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 180,
+      endAng: 270,
+      isClose: false,
+    }) +
     "Q " +
     x2 +
     ",0 " +
@@ -181,10 +210,26 @@ export function renderTeardrop(ctx: MiscSymbolContext): string {
     w +
     "," +
     h / 2 +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 0, 90, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 90, 180, false).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 0,
+      endAng: 90,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 90,
+      endAng: 180,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }
 
 export function renderPlaque(ctx: MiscSymbolContext): string {
@@ -206,23 +251,35 @@ export function renderPlaque(ctx: MiscSymbolContext): string {
   const d_val =
     "M0," +
     x1 +
-    shapeArc(0, 0, x1, x1, 90, 0, false).replace("M", "L") +
+    shapeArc({ cX: 0, cY: 0, rX: x1, rY: x1, stAng: 90, endAng: 0, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x2 +
     ",0" +
-    shapeArc(w, 0, x1, x1, 180, 90, false).replace("M", "L") +
+    shapeArc({ cX: w, cY: 0, rX: x1, rY: x1, stAng: 180, endAng: 90, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     w +
     "," +
     y2 +
-    shapeArc(w, h, x1, x1, 270, 180, false).replace("M", "L") +
+    shapeArc({ cX: w, cY: h, rX: x1, rY: x1, stAng: 270, endAng: 180, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x1 +
     "," +
     h +
-    shapeArc(0, h, x1, x1, 0, -90, false).replace("M", "L") +
+    shapeArc({ cX: 0, cY: h, rX: x1, rY: x1, stAng: 0, endAng: -90, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " z";
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }
 
 export function renderSun(ctx: MiscSymbolContext): string {
@@ -384,7 +441,15 @@ export function renderSun(ctx: MiscSymbolContext): string {
     x19 +
     "," +
     h / 2 +
-    shapeArc(w / 2, h / 2, wR, hR, 180, 540, false).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: wR,
+      rY: hR,
+      stAng: 180,
+      endAng: 540,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }

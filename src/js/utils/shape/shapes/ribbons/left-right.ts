@@ -99,8 +99,14 @@ export function renderLeftRightRibbon({ ctx }: RibbonRenderOptions): string {
     hc +
     "," +
     ly1 +
-    shapeArc(hc, y1, wd32, hR, 270, 450, false).replace("M", "L") +
-    shapeArc(hc, y2, wd32, hR, 270, 90, false).replace("M", "L") +
+    shapeArc({ cX: hc, cY: y1, rX: wd32, rY: hR, stAng: 270, endAng: 450, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: hc, cY: y2, rX: wd32, rY: hR, stAng: 270, endAng: 90, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     "L" +
     x4 +
     "," +
@@ -125,7 +131,15 @@ export function renderLeftRightRibbon({ ctx }: RibbonRenderOptions): string {
     hc +
     "," +
     ry4 +
-    shapeArc(hc, ry4 - hR, wd32, hR, 90, 180, false).replace("M", "L") +
+    shapeArc({
+      cX: hc,
+      cY: ry4 - hR,
+      rX: wd32,
+      rY: hR,
+      stAng: 90,
+      endAng: 180,
+      isClose: false,
+    }).replace("M", "L") +
     "L" +
     x2 +
     "," +
@@ -156,5 +170,5 @@ export function renderLeftRightRibbon({ ctx }: RibbonRenderOptions): string {
     "," +
     ly3;
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }

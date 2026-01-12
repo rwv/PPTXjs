@@ -92,6 +92,11 @@ export function getStrokeAttrs(ctx: MathShapeContext): string {
 /**
  * Create SVG path element with fill and stroke
  */
-export function createPath(d: string, ctx: MathShapeContext): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: MathShapeContext;
+};
+
+export function createPath({ d, ctx }: CreatePathOptions): string {
   return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }

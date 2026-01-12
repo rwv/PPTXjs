@@ -108,12 +108,28 @@ export function renderBlockArc({ ctx }: ArcRenderOptions): string {
     x1 +
     "," +
     y1 +
-    shapeArc(wd2, hd2, wd2, hd2, stAng, endAng, false).replace("M", "L") +
+    shapeArc({
+      cX: wd2,
+      cY: hd2,
+      rX: wd2,
+      rY: hd2,
+      stAng: stAng,
+      endAng: endAng,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     x2 +
     "," +
     y2 +
-    shapeArc(wd2, hd2, iwd2, ihd2, istAng, iendAng, false).replace("M", "L") +
+    shapeArc({
+      cX: wd2,
+      cY: hd2,
+      rX: iwd2,
+      rY: ihd2,
+      stAng: istAng,
+      endAng: iendAng,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }

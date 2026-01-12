@@ -59,7 +59,7 @@ export function renderFrame({ ctx }: ArcRenderOptions): string {
     "," +
     x1 +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**

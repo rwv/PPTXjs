@@ -12,8 +12,8 @@ export function renderStar4(ctx: StarShapeContext): string {
     hd2 = h / 2;
   const cnstVal1 = 50000 * slideFactor;
 
-  const adj = parseSingleAdj(node, 19098, slideFactor);
-  const a = clamp(adj, 0, cnstVal1);
+  const adj = parseSingleAdj({ node, defaultVal: 19098, slideFactor });
+  const a = clamp({ val: adj, min: 0, max: cnstVal1 });
 
   const iwd2 = (wd2 * a) / cnstVal1;
   const ihd2 = (hd2 * a) / cnstVal1;
@@ -56,7 +56,7 @@ export function renderStar4(ctx: StarShapeContext): string {
     sy2 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -71,8 +71,12 @@ export function renderStar5(ctx: StarShapeContext): string {
   const maxAdj = 50000 * slideFactor;
   const cnstVal1 = 100000 * slideFactor;
 
-  const parsed = parseMultiAdj(node, { adj: 19098, hf: 105146, vf: 110557 }, slideFactor);
-  const a = clamp(parsed.adj, 0, maxAdj);
+  const parsed = parseMultiAdj({
+    node,
+    defaults: { adj: 19098, hf: 105146, vf: 110557 },
+    slideFactor,
+  });
+  const a = clamp({ val: parsed.adj, min: 0, max: maxAdj });
   const hf = parsed.hf;
   const vf = parsed.vf;
 
@@ -146,7 +150,7 @@ export function renderStar5(ctx: StarShapeContext): string {
     sy2 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -162,8 +166,12 @@ export function renderStar6(ctx: StarShapeContext): string {
   const maxAdj = 50000 * slideFactor;
   const cnstVal1 = 100000 * slideFactor;
 
-  const parsed = parseMultiAdj(node, { adj: 28868, hf: 115470 }, slideFactor);
-  const a = clamp(parsed.adj, 0, maxAdj);
+  const parsed = parseMultiAdj({
+    node,
+    defaults: { adj: 28868, hf: 115470 },
+    slideFactor,
+  });
+  const a = clamp({ val: parsed.adj, min: 0, max: maxAdj });
   const hf = parsed.hf;
 
   const swd2 = (wd2 * hf) / cnstVal1;
@@ -232,7 +240,7 @@ export function renderStar6(ctx: StarShapeContext): string {
     vc +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -247,8 +255,12 @@ export function renderStar7(ctx: StarShapeContext): string {
   const maxAdj = 50000 * slideFactor;
   const cnstVal1 = 100000 * slideFactor;
 
-  const parsed = parseMultiAdj(node, { adj: 34601, hf: 102572, vf: 105210 }, slideFactor);
-  const a = clamp(parsed.adj, 0, maxAdj);
+  const parsed = parseMultiAdj({
+    node,
+    defaults: { adj: 34601, hf: 102572, vf: 105210 },
+    slideFactor,
+  });
+  const a = clamp({ val: parsed.adj, min: 0, max: maxAdj });
   const hf = parsed.hf;
   const vf = parsed.vf;
 
@@ -347,7 +359,7 @@ export function renderStar7(ctx: StarShapeContext): string {
     sy3 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -361,8 +373,8 @@ export function renderStar8(ctx: StarShapeContext): string {
     hd2 = h / 2;
   const maxAdj = 50000 * slideFactor;
 
-  const adj = parseSingleAdj(node, 37500, slideFactor);
-  const a = clamp(adj, 0, maxAdj);
+  const adj = parseSingleAdj({ node, defaultVal: 37500, slideFactor });
+  const a = clamp({ val: adj, min: 0, max: maxAdj });
 
   const dx1 = wd2 * Math.cos(0.7853981634);
   const x1 = hc - dx1;
@@ -449,7 +461,7 @@ export function renderStar8(ctx: StarShapeContext): string {
     sy3 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**

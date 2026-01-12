@@ -54,6 +54,6 @@ export function renderPieArcShape({ ctx, shapeType }: ArcRenderOptions): string 
       adj2 = parseInt(shapAdjst2.substr(4)) / 60000;
     }
   }
-  const pieVals = shapePie(H, w, adj1, adj2, isClose);
-  return createPath(pieVals[0], ctx, pieVals[1]);
+  const pieVals = shapePie({ H, w, adj1, adj2, isClose });
+  return createPath({ d: pieVals[0], ctx, transform: pieVals[1] });
 }

@@ -306,7 +306,15 @@ export async function renderCustomGeometry({
         //var shftY = parseInt(multiSapeAry[k].shftY) * emuToPx;
         const endAng = stAng + swAng;
 
-        d += shapeArc(wR, hR, wR, hR, stAng, endAng, false);
+        d += shapeArc({
+          cX: wR,
+          cY: hR,
+          rX: wR,
+          rY: hR,
+          stAng: stAng,
+          endAng: endAng,
+          isClose: false,
+        });
       } else if (multiSapeAry[k].type === "quadBezTo") {
         console.log("custShapType: quadBezTo - TODO");
       } else if (multiSapeAry[k].type === "close") {

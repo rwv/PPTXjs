@@ -253,7 +253,15 @@ export function renderCircularArrow(ctx: CurvedArrowContext): string {
   const ediAng = stiAng + swiAng;
 
   const d_val =
-    shapeArc(w / 2, h / 2, rw1, rh1, strtAng, endAng, false) +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: rw1,
+      rY: rh1,
+      stAng: strtAng,
+      endAng: endAng,
+      isClose: false,
+    }) +
     " L" +
     xGp +
     "," +
@@ -270,7 +278,15 @@ export function renderCircularArrow(ctx: CurvedArrowContext): string {
     xC +
     "," +
     yC +
-    shapeArc(w / 2, h / 2, rw2, rh2, stiAng, ediAng, false).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: rw2,
+      rY: rh2,
+      stAng: stiAng,
+      endAng: ediAng,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }

@@ -54,25 +54,73 @@ export function renderNoSmoking({ ctx }: ArcRenderOptions): string {
     0 +
     "," +
     h / 2 +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 180, 270, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 270, 360, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 0, 90, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 90, 180, false).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 180,
+      endAng: 270,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 270,
+      endAng: 360,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 0,
+      endAng: 90,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 90,
+      endAng: 180,
+      isClose: false,
+    }).replace("M", "L") +
     " z" +
     "M" +
     x1 +
     "," +
     y1 +
-    shapeArc(w / 2, h / 2, iwd2, ihd2, stAng1deg, stAng1deg + swAng2deg, false).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: iwd2,
+      rY: ihd2,
+      stAng: stAng1deg,
+      endAng: stAng1deg + swAng2deg,
+      isClose: false,
+    }).replace("M", "L") +
     " z" +
     "M" +
     x2 +
     "," +
     y2 +
-    shapeArc(w / 2, h / 2, iwd2, ihd2, stAng2deg, stAng2deg + swAng2deg, false).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: iwd2,
+      rY: ihd2,
+      stAng: stAng2deg,
+      endAng: stAng2deg + swAng2deg,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**

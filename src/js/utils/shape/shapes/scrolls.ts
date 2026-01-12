@@ -58,7 +58,12 @@ function getStrokeAttrs(ctx: ScrollShapeContext): string {
 /**
  * Create SVG path element with fill and stroke
  */
-function createPath(d: string, ctx: ScrollShapeContext): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: ScrollShapeContext;
+};
+
+function createPath({ d, ctx }: CreatePathOptions): string {
   return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }
 
@@ -69,8 +74,14 @@ function createPath(d: string, ctx: ScrollShapeContext): string {
 /**
  * Render verticalScroll or horizontalScroll shape
  */
-function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
+type RenderScrollShapeOptions = {
+  ctx: ScrollShapeContext;
+  shapeType: string;
+};
+
+function renderScrollShape({ ctx, shapeType }: RenderScrollShapeOptions): string {
   const { node, w, h, slideFactor } = ctx;
+  const shapType = shapeType;
 
   const shapAdjst = getTextByPathList<string>({
     node: node,
@@ -112,12 +123,28 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       ch +
       "," +
       ch2 +
-      shapeArc(x3, ch2, ch2, ch2, 180, 270, false).replace("M", "L") +
+      shapeArc({
+        cX: x3,
+        cY: ch2,
+        rX: ch2,
+        rY: ch2,
+        stAng: 180,
+        endAng: 270,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x7 +
       "," +
       t +
-      shapeArc(x7, ch2, ch2, ch2, 270, 450, false).replace("M", "L") +
+      shapeArc({
+        cX: x7,
+        cY: ch2,
+        rX: ch2,
+        rY: ch2,
+        stAng: 270,
+        endAng: 450,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x6 +
       "," +
@@ -126,19 +153,46 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       x6 +
       "," +
       y4 +
-      shapeArc(x5, y4, ch2, ch2, 0, 90, false).replace("M", "L") +
+      shapeArc({ cX: x5, cY: y4, rX: ch2, rY: ch2, stAng: 0, endAng: 90, isClose: false }).replace(
+        "M",
+        "L"
+      ) +
       " L" +
       ch2 +
       "," +
       b +
-      shapeArc(ch2, y4, ch2, ch2, 90, 270, false).replace("M", "L") +
+      shapeArc({
+        cX: ch2,
+        cY: y4,
+        rX: ch2,
+        rY: ch2,
+        stAng: 90,
+        endAng: 270,
+        isClose: false,
+      }).replace("M", "L") +
       " z" +
       " M" +
       x3 +
       "," +
       t +
-      shapeArc(x3, ch2, ch2, ch2, 270, 450, false).replace("M", "L") +
-      shapeArc(x3, x3 / 2, ch4, ch4, 90, 270, false).replace("M", "L") +
+      shapeArc({
+        cX: x3,
+        cY: ch2,
+        rX: ch2,
+        rY: ch2,
+        stAng: 270,
+        endAng: 450,
+        isClose: false,
+      }).replace("M", "L") +
+      shapeArc({
+        cX: x3,
+        cY: x3 / 2,
+        rX: ch4,
+        rY: ch4,
+        stAng: 90,
+        endAng: 270,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x4 +
       "," +
@@ -155,8 +209,24 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       ch +
       "," +
       y4 +
-      shapeArc(ch2, y4, ch2, ch2, 0, 270, false).replace("M", "L") +
-      shapeArc(ch2, (y4 + y3) / 2, ch4, ch4, 270, 450, false).replace("M", "L") +
+      shapeArc({
+        cX: ch2,
+        cY: y4,
+        rX: ch2,
+        rY: ch2,
+        stAng: 0,
+        endAng: 270,
+        isClose: false,
+      }).replace("M", "L") +
+      shapeArc({
+        cX: ch2,
+        cY: (y4 + y3) / 2,
+        rX: ch4,
+        rY: ch4,
+        stAng: 270,
+        endAng: 450,
+        isClose: false,
+      }).replace("M", "L") +
       " z" +
       " M" +
       ch +
@@ -180,7 +250,15 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       l +
       "," +
       y3 +
-      shapeArc(ch2, y3, ch2, ch2, 180, 270, false).replace("M", "L") +
+      shapeArc({
+        cX: ch2,
+        cY: y3,
+        rX: ch2,
+        rY: ch2,
+        stAng: 180,
+        endAng: 270,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x3 +
       "," +
@@ -189,12 +267,23 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       x3 +
       "," +
       ch2 +
-      shapeArc(x4, ch2, ch2, ch2, 180, 360, false).replace("M", "L") +
+      shapeArc({
+        cX: x4,
+        cY: ch2,
+        rX: ch2,
+        rY: ch2,
+        stAng: 180,
+        endAng: 360,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       r +
       "," +
       y5 +
-      shapeArc(x4, y5, ch2, ch2, 0, 90, false).replace("M", "L") +
+      shapeArc({ cX: x4, cY: y5, rX: ch2, rY: ch2, stAng: 0, endAng: 90, isClose: false }).replace(
+        "M",
+        "L"
+      ) +
       " L" +
       ch +
       "," +
@@ -203,14 +292,38 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       ch +
       "," +
       y7 +
-      shapeArc(ch2, y7, ch2, ch2, 0, 180, false).replace("M", "L") +
+      shapeArc({
+        cX: ch2,
+        cY: y7,
+        rX: ch2,
+        rY: ch2,
+        stAng: 0,
+        endAng: 180,
+        isClose: false,
+      }).replace("M", "L") +
       " z" +
       "M" +
       x4 +
       "," +
       ch +
-      shapeArc(x4, ch2, ch2, ch2, 90, -180, false).replace("M", "L") +
-      shapeArc((x3 + x4) / 2, ch2, ch4, ch4, 180, 0, false).replace("M", "L") +
+      shapeArc({
+        cX: x4,
+        cY: ch2,
+        rX: ch2,
+        rY: ch2,
+        stAng: 90,
+        endAng: -180,
+        isClose: false,
+      }).replace("M", "L") +
+      shapeArc({
+        cX: (x3 + x4) / 2,
+        cY: ch2,
+        rX: ch4,
+        rY: ch4,
+        stAng: 180,
+        endAng: 0,
+        isClose: false,
+      }).replace("M", "L") +
       " z" +
       " M" +
       x4 +
@@ -228,8 +341,24 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       ch2 +
       "," +
       y3 +
-      shapeArc(y3 / 2, y3, ch4, ch4, 180, 360, false).replace("M", "L") +
-      shapeArc(ch2, y3, ch2, ch2, 0, 180, false).replace("M", "L") +
+      shapeArc({
+        cX: y3 / 2,
+        cY: y3,
+        rX: ch4,
+        rY: ch4,
+        stAng: 180,
+        endAng: 360,
+        isClose: false,
+      }).replace("M", "L") +
+      shapeArc({
+        cX: ch2,
+        cY: y3,
+        rX: ch2,
+        rY: ch2,
+        stAng: 0,
+        endAng: 180,
+        isClose: false,
+      }).replace("M", "L") +
       " M" +
       ch +
       "," +
@@ -240,7 +369,7 @@ function renderScrollShape(ctx: ScrollShapeContext, shapType: string): string {
       y6;
   }
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }
 
 // =============================================================================
@@ -252,8 +381,10 @@ type ScrollRendererOptions = {
   shapeType: string;
 };
 
-const withCtxAndShape = (renderer: (ctx: ScrollShapeContext, shapeType: string) => string) => {
-  return ({ ctx, shapeType }: ScrollRendererOptions) => renderer(ctx, shapeType);
+const withCtxAndShape = (
+  renderer: (options: { ctx: ScrollShapeContext; shapeType: string }) => string
+) => {
+  return ({ ctx, shapeType }: ScrollRendererOptions) => renderer({ ctx, shapeType });
 };
 
 /**

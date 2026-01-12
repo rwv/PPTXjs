@@ -360,5 +360,5 @@ export function renderEllipseRibbon({ ctx, shapeType }: RibbonRenderOptions): st
       y7;
   }
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }

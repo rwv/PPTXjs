@@ -96,5 +96,5 @@ export function renderMathMultiply(ctx: MathShapeContext): string {
     "," +
     vc +
     " z";
-  return createPath(dVal, ctx);
+  return createPath({ d: dVal, ctx });
 }

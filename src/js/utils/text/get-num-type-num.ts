@@ -10,7 +10,12 @@ import { hebrew2Minus } from "./archaic-numbers";
  * @param num - The number to format
  * @returns Formatted string with the number and appropriate punctuation
  */
-export function getNumTypeNum(numberingType: string, num: number | string): string {
+type GetNumTypeNumOptions = {
+  numberingType: string;
+  num: number | string;
+};
+
+export function getNumTypeNum({ numberingType, num }: GetNumTypeNumOptions): string {
   let formattedNumber: string;
 
   switch (numberingType) {
@@ -21,16 +26,16 @@ export function getNumTypeNum(numberingType: string, num: number | string): stri
       formattedNumber = num + ") ";
       break;
     case "alphaLcParenR":
-      formattedNumber = alphaNumeric(num, "lowerCase") + ") ";
+      formattedNumber = alphaNumeric({ num, letterCase: "lowerCase" }) + ") ";
       break;
     case "alphaLcPeriod":
-      formattedNumber = alphaNumeric(num, "lowerCase") + ". ";
+      formattedNumber = alphaNumeric({ num, letterCase: "lowerCase" }) + ". ";
       break;
     case "alphaUcParenR":
-      formattedNumber = alphaNumeric(num, "upperCase") + ") ";
+      formattedNumber = alphaNumeric({ num, letterCase: "upperCase" }) + ") ";
       break;
     case "alphaUcPeriod":
-      formattedNumber = alphaNumeric(num, "upperCase") + ". ";
+      formattedNumber = alphaNumeric({ num, letterCase: "upperCase" }) + ". ";
       break;
     case "romanUcPeriod":
       formattedNumber = romanize(num) + ". ";

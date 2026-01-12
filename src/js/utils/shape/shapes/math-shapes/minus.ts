@@ -26,5 +26,5 @@ export function renderMathMinus(ctx: MathShapeContext): string {
 
   dVal =
     "M" + x1 + "," + y1 + " L" + x2 + "," + y1 + " L" + x2 + "," + y2 + " L" + x1 + "," + y2 + " z";
-  return createPath(dVal, ctx);
+  return createPath({ d: dVal, ctx });
 }

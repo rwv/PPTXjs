@@ -38,6 +38,14 @@ export function renderChord({ ctx }: ArcRenderOptions): string {
   }
   const hR = h / 2;
   const wR = w / 2;
-  const d_val = shapeArc(wR, hR, wR, hR, sAdj1_val, sAdj2_val, true);
+  const d_val = shapeArc({
+    cX: wR,
+    cY: hR,
+    rX: wR,
+    rY: hR,
+    stAng: sAdj1_val,
+    endAng: sAdj2_val,
+    isClose: true,
+  });
   return `<path d='${d_val}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }

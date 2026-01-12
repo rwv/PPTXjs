@@ -198,5 +198,5 @@ export function renderWave({ ctx, shapeType }: RibbonRenderOptions): string {
       " z";
   }
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }

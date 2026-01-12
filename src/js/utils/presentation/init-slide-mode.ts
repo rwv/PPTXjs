@@ -47,7 +47,12 @@ function removeLoadingMessage(): void {
   document.querySelectorAll(".slides-loadnig-msg").forEach((element) => element.remove());
 }
 
-export async function initSlideMode(divId: string, settings: SlideModeSettings): Promise<void> {
+type InitSlideModeOptions = {
+  divId: string;
+  settings: SlideModeSettings;
+};
+
+export async function initSlideMode({ divId, settings }: InitSlideModeOptions): Promise<void> {
   //console.log(settings.slideType)
   if (settings.slideType === "" || settings.slideType === "divs2slidesjs") {
     const container = document.getElementById(divId);
@@ -67,21 +72,24 @@ export async function initSlideMode(divId: string, settings: SlideModeSettings):
     const showFullscreenBtn =
       settings.showFullscreenBtn ?? slideModeConfig.showFullscreenBtn ?? true;
     removeLoadingMessage();
-    initDivs2Slides(container, {
-      first: slideModeConfig.first,
-      nav: slideModeConfig.nav,
-      showPlayPauseBtn: showPlayPauseBtn,
-      showFullscreenBtn: showFullscreenBtn,
-      navTxtColor: slideModeConfig.navTxtColor,
-      keyBoardShortCut: slideModeConfig.keyBoardShortCut,
-      showSlideNum: slideModeConfig.showSlideNum,
-      showTotalSlideNum: slideModeConfig.showTotalSlideNum,
-      autoSlide: slideModeConfig.autoSlide,
-      randomAutoSlide: slideModeConfig.randomAutoSlide,
-      loop: slideModeConfig.loop,
-      background: slideModeConfig.background,
-      transition: slideModeConfig.transition,
-      transitionTime: slideModeConfig.transitionTime,
+    initDivs2Slides({
+      target: container,
+      options: {
+        first: slideModeConfig.first,
+        nav: slideModeConfig.nav,
+        showPlayPauseBtn: showPlayPauseBtn,
+        showFullscreenBtn: showFullscreenBtn,
+        navTxtColor: slideModeConfig.navTxtColor,
+        keyBoardShortCut: slideModeConfig.keyBoardShortCut,
+        showSlideNum: slideModeConfig.showSlideNum,
+        showTotalSlideNum: slideModeConfig.showTotalSlideNum,
+        autoSlide: slideModeConfig.autoSlide,
+        randomAutoSlide: slideModeConfig.randomAutoSlide,
+        loop: slideModeConfig.loop,
+        background: slideModeConfig.background,
+        transition: slideModeConfig.transition,
+        transitionTime: slideModeConfig.transitionTime,
+      },
     });
 
     const slidesScale = settings.slidesScale;

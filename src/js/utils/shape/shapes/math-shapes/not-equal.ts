@@ -153,5 +153,5 @@ export function renderMathNotEqual(ctx: MathShapeContext): string {
     "," +
     y2 +
     " z";
-  return createPath(dVal, ctx);
+  return createPath({ d: dVal, ctx });
 }

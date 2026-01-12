@@ -66,7 +66,12 @@ function getStrokeAttrs(ctx: BracketShapeContext): string {
 /**
  * Create SVG path element with fill and stroke
  */
-function createPath(d: string, ctx: BracketShapeContext): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: BracketShapeContext;
+};
+
+function createPath({ d, ctx }: CreatePathOptions): string {
   return `<path   d='${d}'  fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }
 
@@ -111,36 +116,60 @@ function renderBracePair(ctx: BracketShapeContext): string {
     x2 +
     "," +
     h +
-    shapeArc(x2, y4, x1, x1, cd4, cd2, false).replace("M", "L") +
+    shapeArc({ cX: x2, cY: y4, rX: x1, rY: x1, stAng: cd4, endAng: cd2, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x1 +
     "," +
     y3 +
-    shapeArc(0, y3, x1, x1, 0, -cd4, false).replace("M", "L") +
-    shapeArc(0, y2, x1, x1, cd4, 0, false).replace("M", "L") +
+    shapeArc({ cX: 0, cY: y3, rX: x1, rY: x1, stAng: 0, endAng: -cd4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: 0, cY: y2, rX: x1, rY: x1, stAng: cd4, endAng: 0, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x1 +
     "," +
     x1 +
-    shapeArc(x2, x1, x1, x1, cd2, c3d4, false).replace("M", "L") +
+    shapeArc({ cX: x2, cY: x1, rX: x1, rY: x1, stAng: cd2, endAng: c3d4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " M" +
     x3 +
     "," +
     0 +
-    shapeArc(x3, x1, x1, x1, c3d4, cd, false).replace("M", "L") +
+    shapeArc({ cX: x3, cY: x1, rX: x1, rY: x1, stAng: c3d4, endAng: cd, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x4 +
     "," +
     y2 +
-    shapeArc(w, y2, x1, x1, cd2, cd4, false).replace("M", "L") +
-    shapeArc(w, y3, x1, x1, c3d4, cd2, false).replace("M", "L") +
+    shapeArc({ cX: w, cY: y2, rX: x1, rY: x1, stAng: cd2, endAng: cd4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: w, cY: y3, rX: x1, rY: x1, stAng: c3d4, endAng: cd2, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x4 +
     "," +
     y4 +
-    shapeArc(x3, y4, x1, x1, 0, cd4, false).replace("M", "L");
+    shapeArc({ cX: x3, cY: y4, rX: x1, rY: x1, stAng: 0, endAng: cd4, isClose: false }).replace(
+      "M",
+      "L"
+    );
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -196,20 +225,42 @@ function renderLeftBrace(ctx: BracketShapeContext): string {
     w +
     "," +
     h +
-    shapeArc(w, h - y1, w / 2, y1, cd4, cd2, false).replace("M", "L") +
+    shapeArc({
+      cX: w,
+      cY: h - y1,
+      rX: w / 2,
+      rY: y1,
+      stAng: cd4,
+      endAng: cd2,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     w / 2 +
     "," +
     y4 +
-    shapeArc(0, y4, w / 2, y1, 0, -cd4, false).replace("M", "L") +
-    shapeArc(0, y2, w / 2, y1, cd4, 0, false).replace("M", "L") +
+    shapeArc({ cX: 0, cY: y4, rX: w / 2, rY: y1, stAng: 0, endAng: -cd4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: 0, cY: y2, rX: w / 2, rY: y1, stAng: cd4, endAng: 0, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     w / 2 +
     "," +
     y1 +
-    shapeArc(w, y1, w / 2, y1, cd2, c3d4, false).replace("M", "L");
+    shapeArc({
+      cX: w,
+      cY: y1,
+      rX: w / 2,
+      rY: y1,
+      stAng: cd2,
+      endAng: c3d4,
+      isClose: false,
+    }).replace("M", "L");
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -266,20 +317,37 @@ function renderRightBrace(ctx: BracketShapeContext): string {
     0 +
     "," +
     0 +
-    shapeArc(0, y1, w / 2, y1, c3d4, cd, false).replace("M", "L") +
+    shapeArc({ cX: 0, cY: y1, rX: w / 2, rY: y1, stAng: c3d4, endAng: cd, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     w / 2 +
     "," +
     y2 +
-    shapeArc(w, y2, w / 2, y1, cd2, cd4, false).replace("M", "L") +
-    shapeArc(w, y3 + y1, w / 2, y1, c3d4, cd2, false).replace("M", "L") +
+    shapeArc({ cX: w, cY: y2, rX: w / 2, rY: y1, stAng: cd2, endAng: cd4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({
+      cX: w,
+      cY: y3 + y1,
+      rX: w / 2,
+      rY: y1,
+      stAng: c3d4,
+      endAng: cd2,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     w / 2 +
     "," +
     y4 +
-    shapeArc(0, y4, w / 2, y1, 0, cd4, false).replace("M", "L");
+    shapeArc({ cX: 0, cY: y4, rX: w / 2, rY: y1, stAng: 0, endAng: cd4, isClose: false }).replace(
+      "M",
+      "L"
+    );
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -309,12 +377,18 @@ function renderBracketPair(ctx: BracketShapeContext): string {
   const y2 = b - x1;
 
   const d =
-    shapeArc(x1, x1, x1, x1, c3d4, cd2, false) +
-    shapeArc(x1, y2, x1, x1, cd2, cd4, false).replace("M", "L") +
-    shapeArc(x2, x1, x1, x1, c3d4, c3d4 + cd4, false) +
-    shapeArc(x2, y2, x1, x1, 0, cd4, false).replace("M", "L");
+    shapeArc({ cX: x1, cY: x1, rX: x1, rY: x1, stAng: c3d4, endAng: cd2, isClose: false }) +
+    shapeArc({ cX: x1, cY: y2, rX: x1, rY: x1, stAng: cd2, endAng: cd4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: x2, cY: x1, rX: x1, rY: x1, stAng: c3d4, endAng: c3d4 + cd4, isClose: false }) +
+    shapeArc({ cX: x2, cY: y2, rX: x1, rY: x1, stAng: 0, endAng: cd4, isClose: false }).replace(
+      "M",
+      "L"
+    );
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -349,18 +423,24 @@ function renderLeftBracket(ctx: BracketShapeContext): string {
     r +
     "," +
     b +
-    shapeArc(y1, y2, y1, y1, cd4, cd2, false).replace("M", "L") +
+    shapeArc({ cX: y1, cY: y2, rX: y1, rY: y1, stAng: cd4, endAng: cd2, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     0 +
     "," +
     y1 +
-    shapeArc(y1, y1, y1, y1, cd2, c3d4, false).replace("M", "L") +
+    shapeArc({ cX: y1, cY: y1, rX: y1, rY: y1, stAng: cd2, endAng: c3d4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     r +
     "," +
     0;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -393,18 +473,24 @@ function renderRightBracket(ctx: BracketShapeContext): string {
     0 +
     "," +
     h +
-    shapeArc(y3, y2, y1, y1, cd4, 0, false).replace("M", "L") +
+    shapeArc({ cX: y3, cY: y2, rX: y1, rY: y1, stAng: cd4, endAng: 0, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     w +
     "," +
     h / 2 +
-    shapeArc(y3, y1, y1, y1, cd, c3d4, false).replace("M", "L") +
+    shapeArc({ cX: y3, cY: y1, rX: y1, rY: y1, stAng: cd, endAng: c3d4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     0 +
     "," +
     0;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 // =============================================================================

@@ -25,7 +25,13 @@ export function getStrokeAttrs(ctx: MiscSymbolContext): string {
 /**
  * Create SVG path element
  */
-export function createPath(d: string, ctx: MiscSymbolContext, transform?: string): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: MiscSymbolContext;
+  transform?: string;
+};
+
+export function createPath({ d, ctx, transform }: CreatePathOptions): string {
   const transformAttr = transform ? ` transform='${transform}'` : "";
   return `<path   d='${d}'${transformAttr}  fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }

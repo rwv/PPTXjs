@@ -2,8 +2,9 @@
 /*
         This is my custom tXml.js file
         */
-export function tXml(t, r) {
-  "use strict";
+export function tXml({ xml, options }) {
+  let t = xml;
+  let r = options;
   function e() {
     for (var r = []; t[l]; )
       if (t.charCodeAt(l) == s) {
@@ -169,14 +170,17 @@ tXml.simplify = function (t) {
     return "object" == typeof t ? tXml.toContentString(t.children) : " " + t;
   }),
   (tXml.getElementById = function (t, r, e) {
-    var n = tXml(t, { attrValue: r, simplify: e });
+    var n = tXml({ xml: t, options: { attrValue: r, simplify: e } });
     return e ? n : n[0];
   }),
   (tXml.getElementsByClassName = function (t, r, e) {
-    return tXml(t, {
-      attrName: "class",
-      attrValue: "[a-zA-Z0-9-s ]*" + r + "[a-zA-Z0-9-s ]*",
-      simplify: e,
+    return tXml({
+      xml: t,
+      options: {
+        attrName: "class",
+        attrValue: "[a-zA-Z0-9-s ]*" + r + "[a-zA-Z0-9-s ]*",
+        simplify: e,
+      },
     });
   }),
   (tXml.parseStream = function (t, r) {
@@ -196,7 +200,7 @@ tXml.simplify = function (t) {
         (a++, (i += r));
         for (var e = 0; ; ) {
           n = i.indexOf("<", n) + 1;
-          var o = tXml(i, { pos: n, parseNode: !0 });
+          var o = tXml({ xml: i, options: { pos: n, parseNode: !0 } });
           if (((n = o.pos), n > i.length - 1 || e > n))
             return void (e && ((i = i.slice(e)), (n = 0), (e = 0)));
           (t.emit("xml", o), (e = n));

@@ -37,7 +37,7 @@ export async function readXmlFile({
       fileContent = fileContent.replace(/<!\[CDATA\[(.*?)\]\]>/g, "$1");
     }
 
-    const xmlData = tXml(fileContent, { simplify: 1 });
+    const xmlData = tXml({ xml: fileContent, options: { simplify: 1 } });
 
     if (xmlData["?xml"] !== undefined) {
       return xmlData["?xml"];

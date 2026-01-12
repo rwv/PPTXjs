@@ -81,7 +81,7 @@ export function renderRightArrowCallout({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,0 L${x2},0 L${x2},${y2} L${x3},${y2} L${x3},${y1} L${w},${vc} L${x3},${y4} L${x3},${y3} L${x2},${y3} L${x2},${h} L0,${h} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderDownArrowCallout({ ctx }: ArrowRenderOptions): string {
@@ -146,7 +146,7 @@ export function renderDownArrowCallout({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,0 L${w},0 L${w},${y2} L${x3},${y2} L${x3},${y3} L${x4},${y3} L${hc},${h} L${x1},${y3} L${x2},${y3} L${x2},${y2} L0,${y2} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderLeftArrowCallout({ ctx }: ArrowRenderOptions): string {
@@ -210,7 +210,7 @@ export function renderLeftArrowCallout({ ctx }: ArrowRenderOptions): string {
 
   const d = `M${w},0 L${w},${h} L${x2},${h} L${x2},${y3} L${x3},${y3} L${x3},${y4} L0,${vc} L${x3},${y1} L${x3},${y2} L${x2},${y2} L${x2},0 z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderUpArrowCallout({ ctx }: ArrowRenderOptions): string {
@@ -274,7 +274,7 @@ export function renderUpArrowCallout({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,${h} L0,${y2} L${x2},${y2} L${x2},${y3} L${x1},${y3} L${hc},0 L${x4},${y3} L${x3},${y3} L${x3},${y2} L${w},${y2} L${w},${h} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderLeftRightArrowCallout({ ctx }: ArrowRenderOptions): string {
@@ -341,7 +341,7 @@ export function renderLeftRightArrowCallout({ ctx }: ArrowRenderOptions): string
 
   const d = `M0,${vc} L${x3},${y1} L${x3},${y2} L${x1},${y2} L${x1},0 L${x2},0 L${x2},${y2} L${x4},${y2} L${x4},${y1} L${w},${vc} L${x4},${y4} L${x4},${y3} L${x2},${y3} L${x2},${h} L${x1},${h} L${x1},${y3} L${x3},${y3} L${x3},${y4} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderQuadArrowCallout({ ctx }: ArrowRenderOptions): string {
@@ -414,7 +414,7 @@ export function renderQuadArrowCallout({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,${vc} L${dx3},${y1} L${dx3},${y2} L${x7},${y2} L${x7},${y7} L${x2},${y7} L${x2},${dx3} L${x1},${dx3} L${hc},0 L${x4},${dx3} L${x3},${dx3} L${x3},${y7} L${x8},${y7} L${x8},${y2} L${w - dx3},${y2} L${w - dx3},${y1} L${w},${vc} L${w - dx3},${y4} L${w - dx3},${y3} L${x8},${y3} L${x8},${y8} L${x3},${y8} L${x3},${h - dx3} L${x4},${h - dx3} L${hc},${h} L${x1},${h - dx3} L${x2},${h - dx3} L${x2},${y8} L${x7},${y8} L${x7},${y3} L${dx3},${y3} L${dx3},${y4} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderUpDownArrowCallout({ ctx }: ArrowRenderOptions): string {
@@ -481,5 +481,5 @@ export function renderUpDownArrowCallout({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,${y1} L${x2},${y1} L${x2},${y3} L${x1},${y3} L${hc},0 L${x4},${y3} L${x3},${y3} L${x3},${y1} L${w},${y1} L${w},${y2} L${x3},${y2} L${x3},${y4} L${x4},${y4} L${hc},${h} L${x1},${y4} L${x2},${y4} L${x2},${y2} L0,${y2} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }

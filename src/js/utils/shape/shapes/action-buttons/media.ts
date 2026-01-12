@@ -145,7 +145,7 @@ export function renderActionButtonMovie(ctx: ActionButtonContext): string {
     g39 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -244,5 +244,5 @@ export function renderActionButtonSound(ctx: ActionButtonContext): string {
     "," +
     g23;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }

@@ -12,10 +12,20 @@ export function getStrokeAttrs(ctx: ArrowShapeContext): string {
   return `stroke='${border.color}' stroke-width='${border.width}' stroke-dasharray='${border.strokeDasharray}'`;
 }
 
-export function createPolygon(points: string, ctx: ArrowShapeContext): string {
+type CreatePolygonOptions = {
+  points: string;
+  ctx: ArrowShapeContext;
+};
+
+export function createPolygon({ points, ctx }: CreatePolygonOptions): string {
   return `<polygon points='${points}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }
 
-export function createPath(d: string, ctx: ArrowShapeContext): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: ArrowShapeContext;
+};
+
+export function createPath({ d, ctx }: CreatePathOptions): string {
   return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }

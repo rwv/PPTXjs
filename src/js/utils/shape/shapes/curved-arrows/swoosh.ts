@@ -104,7 +104,7 @@ export function renderSwooshArrow(ctx: CurvedArrowContext): string {
     h +
     " z";
 
-  return createPath(dVal, ctx);
+  return createPath({ d: dVal, ctx });
 }
 
 /**

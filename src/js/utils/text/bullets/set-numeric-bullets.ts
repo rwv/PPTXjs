@@ -80,7 +80,10 @@ export function setNumericBullets(elements: NodeListOf<Element> | Element[]) {
           }
         }
 
-        const bulletLabel = getNumTypeNum(bulletTypeStack[levelIndex], bulletIndex);
+        const bulletLabel = getNumTypeNum({
+          numberingType: bulletTypeStack[levelIndex],
+          num: bulletIndex,
+        });
         bulletSpans[j]!.innerHTML = bulletLabel;
       }
     }

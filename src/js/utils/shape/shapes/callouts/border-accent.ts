@@ -436,5 +436,5 @@ export function renderBorderAccentCallout({ ctx, shapeType }: CalloutRenderOptio
       d_val = "";
   }
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }

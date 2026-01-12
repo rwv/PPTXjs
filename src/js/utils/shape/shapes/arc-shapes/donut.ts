@@ -30,21 +30,85 @@ export function renderDonut({ ctx }: ArcRenderOptions): string {
     0 +
     "," +
     h / 2 +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 180, 270, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 270, 360, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 0, 90, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, w / 2, h / 2, 90, 180, false).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 180,
+      endAng: 270,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 270,
+      endAng: 360,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 0,
+      endAng: 90,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: w / 2,
+      rY: h / 2,
+      stAng: 90,
+      endAng: 180,
+      isClose: false,
+    }).replace("M", "L") +
     " z" +
     "M" +
     dr +
     "," +
     h / 2 +
-    shapeArc(w / 2, h / 2, iwd2, ihd2, 180, 90, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, iwd2, ihd2, 90, 0, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, iwd2, ihd2, 0, -90, false).replace("M", "L") +
-    shapeArc(w / 2, h / 2, iwd2, ihd2, 270, 180, false).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: iwd2,
+      rY: ihd2,
+      stAng: 180,
+      endAng: 90,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: iwd2,
+      rY: ihd2,
+      stAng: 90,
+      endAng: 0,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: iwd2,
+      rY: ihd2,
+      stAng: 0,
+      endAng: -90,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: w / 2,
+      cY: h / 2,
+      rX: iwd2,
+      rY: ihd2,
+      stAng: 270,
+      endAng: 180,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**

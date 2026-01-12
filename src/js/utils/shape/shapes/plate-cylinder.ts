@@ -175,7 +175,12 @@ function renderChevron(ctx: PlateCylinderContext): string {
 /**
  * Render can/cylinder shapes (can, flowChartMagneticDisk, flowChartMagneticDrum)
  */
-function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
+type RenderCylinderOptions = {
+  ctx: PlateCylinderContext;
+  shapeType: string;
+};
+
+function renderCylinder({ ctx, shapeType }: RenderCylinderOptions): string {
   const { node, w, h, slideFactor } = ctx;
 
   const shapAdjst = getTextByPathList<string>({
@@ -189,7 +194,7 @@ function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
     adj = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
   const ss = Math.min(w, h);
-  if (shapType === "flowChartMagneticDisk" || shapType === "flowChartMagneticDrum") {
+  if (shapeType === "flowChartMagneticDisk" || shapeType === "flowChartMagneticDrum") {
     adj = 50000 * slideFactor;
   }
 
@@ -201,16 +206,27 @@ function renderCylinder(ctx: PlateCylinderContext, shapType: string): string {
     wd2 = w / 2;
 
   const tranglRott =
-    shapType === "flowChartMagneticDrum" ? `transform='rotate(90 ${w / 2},${h / 2})'` : "";
+    shapeType === "flowChartMagneticDrum" ? `transform='rotate(90 ${w / 2},${h / 2})'` : "";
 
   const dVal =
-    shapeArc(wd2, y1, wd2, y1, 0, cd2, false) +
-    shapeArc(wd2, y1, wd2, y1, cd2, cd2 + cd2, false).replace("M", "L") +
+    shapeArc({ cX: wd2, cY: y1, rX: wd2, rY: y1, stAng: 0, endAng: cd2, isClose: false }) +
+    shapeArc({
+      cX: wd2,
+      cY: y1,
+      rX: wd2,
+      rY: y1,
+      stAng: cd2,
+      endAng: cd2 + cd2,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     w +
     "," +
     y3 +
-    shapeArc(wd2, y3, wd2, y1, 0, cd2, false).replace("M", "L") +
+    shapeArc({ cX: wd2, cY: y3, rX: wd2, rY: y1, stAng: 0, endAng: cd2, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     0 +
     "," +
@@ -232,8 +248,10 @@ const withCtx = (renderer: (ctx: PlateCylinderContext) => string) => {
   return ({ ctx }: PlateCylinderRendererOptions) => renderer(ctx);
 };
 
-const withCtxAndShape = (renderer: (ctx: PlateCylinderContext, shapeType: string) => string) => {
-  return ({ ctx, shapeType }: PlateCylinderRendererOptions) => renderer(ctx, shapeType);
+const withCtxAndShape = (
+  renderer: (options: { ctx: PlateCylinderContext; shapeType: string }) => string
+) => {
+  return ({ ctx, shapeType }: PlateCylinderRendererOptions) => renderer({ ctx, shapeType });
 };
 
 /**

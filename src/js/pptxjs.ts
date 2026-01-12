@@ -92,7 +92,12 @@ function removeLoadingMessage(): void {
   document.querySelectorAll(".slides-loadnig-msg").forEach((element) => element.remove());
 }
 
-function wrapAll(elements: Element[], wrapper: HTMLElement): void {
+type WrapAllOptions = {
+  elements: Element[];
+  wrapper: HTMLElement;
+};
+
+function wrapAll({ elements, wrapper }: WrapAllOptions): void {
   if (elements.length === 0) {
     return;
   }
@@ -105,7 +110,12 @@ function wrapAll(elements: Element[], wrapper: HTMLElement): void {
   elements.forEach((element) => wrapper.appendChild(element));
 }
 
-function appendResult(target: HTMLElement, data: unknown): void {
+type AppendResultOptions = {
+  target: HTMLElement;
+  data: unknown;
+};
+
+function appendResult({ target, data }: AppendResultOptions): void {
   if (typeof data === "string") {
     target.insertAdjacentHTML("beforeend", data);
     return;
@@ -129,10 +139,12 @@ function createLoadingMessage(): HTMLElement {
   return loading;
 }
 
-export async function pptxToHtml(
-  container: HTMLElement | string,
-  options?: PptxToHtmlOptions
-): Promise<void> {
+type PptxToHtmlArgs = {
+  container: HTMLElement | string;
+  options?: PptxToHtmlOptions;
+};
+
+export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promise<void> {
   //var worker;
   const result = resolveContainer(container);
   const divId = ensureElementId(result);
@@ -210,7 +222,7 @@ export async function pptxToHtml(
       if (key === 116 && !isSlideMode) {
         //F5
         isSlideMode = true;
-        await initSlideMode(divId, settings);
+        await initSlideMode({ divId, settings });
       } else if (key === 116 && isSlideMode) {
         //exit slide mode - TODO
       }
@@ -290,7 +302,7 @@ export async function pptxToHtml(
     for (let i = 0; i < rslt_ary.length; i++) {
       switch (rslt_ary[i]["type"]) {
         case "slide":
-          appendResult(result, rslt_ary[i]["data"]);
+          appendResult({ target: result, data: rslt_ary[i]["data"] });
           break;
         case "pptx-thumb":
           //$("#pptx-thumb").attr("src", "data:image/jpeg;base64," +rslt_ary[i]["data"]);
@@ -300,7 +312,7 @@ export async function pptxToHtml(
           break;
         case "globalCSS":
           //console.log(rslt_ary[i]["data"])
-          appendResult(result, "<style>" + rslt_ary[i]["data"] + "</style>");
+          appendResult({ target: result, data: "<style>" + rslt_ary[i]["data"] + "</style>" });
           break;
         case "ExecutionTime":
           processMsgQueue(MsgQueue);
@@ -311,7 +323,7 @@ export async function pptxToHtml(
 
           if (settings.slideMode && !isSlideMode) {
             isSlideMode = true;
-            await initSlideMode(divId, settings);
+            await initSlideMode({ divId, settings });
           } else if (!settings.slideMode) {
             removeLoadingMessage();
           }
@@ -329,7 +341,7 @@ export async function pptxToHtml(
         const wrapper = document.createElement("div");
         wrapper.id = "all_slides_warpper";
         wrapper.className = "slides";
-        wrapAll(slides, wrapper);
+        wrapAll({ elements: slides, wrapper });
         //$("#" + divId + " .slides").wrap("<div class='reveal'></div>");
       }
 

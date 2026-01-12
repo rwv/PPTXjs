@@ -55,13 +55,29 @@ export function renderMathDivide(ctx: MathShapeContext): string {
     hc +
     "," +
     y1 +
-    shapeArc(cX1, cY1, rad, rad, c3d4, c3d4 + 360, false).replace("M", "L") +
+    shapeArc({
+      cX: cX1,
+      cY: cY1,
+      rX: rad,
+      rY: rad,
+      stAng: c3d4,
+      endAng: c3d4 + 360,
+      isClose: false,
+    }).replace("M", "L") +
     " z" +
     " M" +
     hc +
     "," +
     y5 +
-    shapeArc(cX2, cY2, rad, rad, cd4, cd4 + 360, false).replace("M", "L") +
+    shapeArc({
+      cX: cX2,
+      cY: cY2,
+      rX: rad,
+      rY: rad,
+      stAng: cd4,
+      endAng: cd4 + 360,
+      isClose: false,
+    }).replace("M", "L") +
     " z" +
     " M" +
     x1 +
@@ -80,5 +96,5 @@ export function renderMathDivide(ctx: MathShapeContext): string {
     "," +
     y4 +
     " z";
-  return createPath(dVal, ctx);
+  return createPath({ d: dVal, ctx });
 }

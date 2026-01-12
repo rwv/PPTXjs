@@ -92,9 +92,9 @@ export function renderWedgeEllipseCallout({ ctx }: CalloutRenderOptions): string
     x2 +
     "," +
     y2 +
-    shapeArc(hc, vc, hc, vc, 0, 360, true);
+    shapeArc({ cX: hc, cY: vc, rX: hc, rY: vc, stAng: 0, endAng: 360, isClose: true });
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }
 
 /**
@@ -229,7 +229,7 @@ export function renderWedgeRectCallout({ ctx }: CalloutRenderOptions): string {
     y1 +
     " z";
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }
 
 /**
@@ -312,7 +312,10 @@ export function renderWedgeRoundRectCallout({ ctx }: CalloutRenderOptions): stri
     0 +
     "," +
     u1 +
-    shapeArc(u1, u1, u1, u1, 180, 270, false).replace("M", "L") +
+    shapeArc({ cX: u1, cY: u1, rX: u1, rY: u1, stAng: 180, endAng: 270, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x1 +
     "," +
@@ -329,7 +332,10 @@ export function renderWedgeRoundRectCallout({ ctx }: CalloutRenderOptions): stri
     u2 +
     "," +
     0 +
-    shapeArc(u2, u1, u1, u1, 270, 360, false).replace("M", "L") +
+    shapeArc({ cX: u2, cY: u1, rX: u1, rY: u1, stAng: 270, endAng: 360, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     w +
     "," +
@@ -346,7 +352,10 @@ export function renderWedgeRoundRectCallout({ ctx }: CalloutRenderOptions): stri
     w +
     "," +
     v2 +
-    shapeArc(u2, v2, u1, u1, 0, 90, false).replace("M", "L") +
+    shapeArc({ cX: u2, cY: v2, rX: u1, rY: u1, stAng: 0, endAng: 90, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x2 +
     "," +
@@ -363,7 +372,10 @@ export function renderWedgeRoundRectCallout({ ctx }: CalloutRenderOptions): stri
     u1 +
     "," +
     h +
-    shapeArc(u1, v2, u1, u1, 90, 180, false).replace("M", "L") +
+    shapeArc({ cX: u1, cY: v2, rX: u1, rY: u1, stAng: 90, endAng: 180, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     0 +
     "," +
@@ -378,5 +390,5 @@ export function renderWedgeRoundRectCallout({ ctx }: CalloutRenderOptions): stri
     y1 +
     " z";
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }

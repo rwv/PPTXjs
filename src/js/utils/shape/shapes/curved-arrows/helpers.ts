@@ -27,7 +27,12 @@ export function getStrokeAttrs(ctx: CurvedArrowContext): string {
 /**
  * Create SVG path element with fill and stroke
  */
-export function createPath(d: string, ctx: CurvedArrowContext): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: CurvedArrowContext;
+};
+
+export function createPath({ d, ctx }: CreatePathOptions): string {
   return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }
 

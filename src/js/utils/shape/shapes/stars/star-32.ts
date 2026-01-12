@@ -12,8 +12,8 @@ export function renderStar32(ctx: StarShapeContext): string {
     hd2 = h / 2;
   const maxAdj = 50000 * slideFactor;
 
-  const adj = parseSingleAdj(node, 37500, slideFactor);
-  const a = clamp(adj, 0, maxAdj);
+  const adj = parseSingleAdj({ node, defaultVal: 37500, slideFactor });
+  const a = clamp({ val: adj, min: 0, max: maxAdj });
 
   const dx1 = (wd2 * 98079) / 100000;
   const dx2 = (wd2 * 92388) / 100000;
@@ -365,5 +365,5 @@ export function renderStar32(ctx: StarShapeContext): string {
     sy9 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }

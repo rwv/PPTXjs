@@ -72,7 +72,12 @@ function getStrokeAttrs(ctx: FlowchartShapeContext): string {
 /**
  * Create SVG path element with fill and stroke
  */
-function createPath(d: string, ctx: FlowchartShapeContext): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: FlowchartShapeContext;
+};
+
+function createPath({ d, ctx }: CreatePathOptions): string {
   return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }
 
@@ -86,7 +91,7 @@ function createPath(d: string, ctx: FlowchartShapeContext): string {
 function renderFlowChartCollate(ctx: FlowchartShapeContext): string {
   const { w, h } = ctx;
   const d = "M 0,0" + " L" + w + "," + 0 + " L" + 0 + "," + h + " L" + w + "," + h + " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -124,7 +129,7 @@ function renderFlowChartDocument(ctx: FlowchartShapeContext): string {
     "," +
     y2 +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -230,7 +235,7 @@ function renderFlowChartMultidocument(ctx: FlowchartShapeContext): string {
     x2 +
     "," +
     y9;
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -253,14 +258,30 @@ function renderFlowChartTerminator(ctx: FlowchartShapeContext): string {
     x2 +
     "," +
     0 +
-    shapeArc(x2, h / 2, x1, y1, c3d4, c3d4 + cd2, false).replace("M", "L") +
+    shapeArc({
+      cX: x2,
+      cY: h / 2,
+      rX: x1,
+      rY: y1,
+      stAng: c3d4,
+      endAng: c3d4 + cd2,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     x1 +
     "," +
     h +
-    shapeArc(x1, h / 2, x1, y1, cd4, cd4 + cd2, false).replace("M", "L") +
+    shapeArc({
+      cX: x1,
+      cY: h / 2,
+      rX: x1,
+      rY: y1,
+      stAng: cd4,
+      endAng: cd4 + cd2,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -277,16 +298,38 @@ function renderFlowChartPunchedTape(ctx: FlowchartShapeContext): string {
     0 +
     "," +
     y1 +
-    shapeArc(x1, y1, x1, y1, cd2, 0, false).replace("M", "L") +
-    shapeArc(w * (3 / 4), y1, x1, y1, cd2, 360, false).replace("M", "L") +
+    shapeArc({ cX: x1, cY: y1, rX: x1, rY: y1, stAng: cd2, endAng: 0, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({
+      cX: w * (3 / 4),
+      cY: y1,
+      rX: x1,
+      rY: y1,
+      stAng: cd2,
+      endAng: 360,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     w +
     "," +
     y2 +
-    shapeArc(w * (3 / 4), y2, x1, y1, 0, -cd2, false).replace("M", "L") +
-    shapeArc(x1, y2, x1, y1, 0, cd2, false).replace("M", "L") +
+    shapeArc({
+      cX: w * (3 / 4),
+      cY: y2,
+      rX: x1,
+      rY: y1,
+      stAng: 0,
+      endAng: -cd2,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({ cX: x1, cY: y2, rX: x1, rY: y1, stAng: 0, endAng: cd2, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -307,14 +350,25 @@ function renderFlowChartOnlineStorage(ctx: FlowchartShapeContext): string {
     w +
     "," +
     0 +
-    shapeArc(w, h / 2, x1, y1, c3d4, 90, false).replace("M", "L") +
+    shapeArc({ cX: w, cY: h / 2, rX: x1, rY: y1, stAng: c3d4, endAng: 90, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x1 +
     "," +
     h +
-    shapeArc(x1, h / 2, x1, y1, cd4, 270, false).replace("M", "L") +
+    shapeArc({
+      cX: x1,
+      cY: h / 2,
+      rX: x1,
+      rY: y1,
+      stAng: cd4,
+      endAng: 270,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -340,13 +394,21 @@ function renderFlowChartDisplay(ctx: FlowchartShapeContext): string {
     x2 +
     "," +
     0 +
-    shapeArc(w, h / 2, x1, y1, c3d4, c3d4 + cd2, false).replace("M", "L") +
+    shapeArc({
+      cX: w,
+      cY: h / 2,
+      rX: x1,
+      rY: y1,
+      stAng: c3d4,
+      endAng: c3d4 + cd2,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     x1 +
     "," +
     h +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -367,13 +429,21 @@ function renderFlowChartDelay(ctx: FlowchartShapeContext): string {
     wd2 +
     "," +
     0 +
-    shapeArc(wd2, hd2, wd2, hd2, c3d4, c3d4 + cd2, false).replace("M", "L") +
+    shapeArc({
+      cX: wd2,
+      cY: hd2,
+      rX: wd2,
+      rY: hd2,
+      stAng: c3d4,
+      endAng: c3d4 + cd2,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     0 +
     "," +
     h +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -395,10 +465,42 @@ function renderFlowChartMagneticTape(ctx: FlowchartShapeContext): string {
     wd2 +
     "," +
     h +
-    shapeArc(wd2, hd2, wd2, hd2, cd4, cd2, false).replace("M", "L") +
-    shapeArc(wd2, hd2, wd2, hd2, cd2, c3d4, false).replace("M", "L") +
-    shapeArc(wd2, hd2, wd2, hd2, c3d4, 360, false).replace("M", "L") +
-    shapeArc(wd2, hd2, wd2, hd2, 0, ang1Dg, false).replace("M", "L") +
+    shapeArc({
+      cX: wd2,
+      cY: hd2,
+      rX: wd2,
+      rY: hd2,
+      stAng: cd4,
+      endAng: cd2,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: wd2,
+      cY: hd2,
+      rX: wd2,
+      rY: hd2,
+      stAng: cd2,
+      endAng: c3d4,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: wd2,
+      cY: hd2,
+      rX: wd2,
+      rY: hd2,
+      stAng: c3d4,
+      endAng: 360,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: wd2,
+      cY: hd2,
+      rX: wd2,
+      rY: hd2,
+      stAng: 0,
+      endAng: ang1Dg,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     w +
     "," +
@@ -408,7 +510,7 @@ function renderFlowChartMagneticTape(ctx: FlowchartShapeContext): string {
     "," +
     h +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 // =============================================================================

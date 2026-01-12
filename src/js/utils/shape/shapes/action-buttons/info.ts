@@ -73,7 +73,7 @@ export function renderActionButtonDocument(ctx: ActionButtonContext): string {
     g15 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -132,9 +132,28 @@ export function renderActionButtonHelp(ctx: ActionButtonContext): string {
     g33 +
     "," +
     g27 +
-    shapeArc(cX1, g27, g16, g16, 180, 360, false).replace("M", "L") +
-    shapeArc(cX4, g27, g14, g15, 0, 90, false).replace("M", "L") +
-    shapeArc(cX4, g29, g41, g42, 270, 180, false).replace("M", "L") +
+    shapeArc({
+      cX: cX1,
+      cY: g27,
+      rX: g16,
+      rY: g16,
+      stAng: 180,
+      endAng: 360,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({ cX: cX4, cY: g27, rX: g14, rY: g15, stAng: 0, endAng: 90, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({
+      cX: cX4,
+      cY: g29,
+      rX: g41,
+      rY: g42,
+      stAng: 270,
+      endAng: 180,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     g37 +
     "," +
@@ -147,18 +166,45 @@ export function renderActionButtonHelp(ctx: ActionButtonContext): string {
     g36 +
     "," +
     g29 +
-    shapeArc(cX2, g29, g14, g15, 180, 270, false).replace("M", "L") +
-    shapeArc(g37, g27, g41, g42, 90, 0, false).replace("M", "L") +
-    shapeArc(cX1, g27, g14, g14, 0, -180, false).replace("M", "L") +
+    shapeArc({
+      cX: cX2,
+      cY: g29,
+      rX: g14,
+      rY: g15,
+      stAng: 180,
+      endAng: 270,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({ cX: g37, cY: g27, rX: g41, rY: g42, stAng: 90, endAng: 0, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({
+      cX: cX1,
+      cY: g27,
+      rX: g14,
+      rY: g14,
+      stAng: 0,
+      endAng: -180,
+      isClose: false,
+    }).replace("M", "L") +
     " z" +
     "M" +
     hc +
     "," +
     g31 +
-    shapeArc(hc, cY3, g42, g42, 270, 630, false).replace("M", "L") +
+    shapeArc({
+      cX: hc,
+      cY: cY3,
+      rX: g42,
+      rY: g42,
+      stAng: 270,
+      endAng: 630,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -277,7 +323,7 @@ export function renderActionButtonHome(ctx: ActionButtonContext): string {
     g10 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -335,13 +381,29 @@ export function renderActionButtonInformation(ctx: ActionButtonContext): string 
     hc +
     "," +
     g9 +
-    shapeArc(hc, cY1, dx2, dx2, 270, 630, false).replace("M", "L") +
+    shapeArc({
+      cX: hc,
+      cY: cY1,
+      rX: dx2,
+      rY: dx2,
+      stAng: 270,
+      endAng: 630,
+      isClose: false,
+    }).replace("M", "L") +
     " z" +
     "M" +
     hc +
     "," +
     g25 +
-    shapeArc(hc, cY2, g38, g38, 270, 630, false).replace("M", "L") +
+    shapeArc({
+      cX: hc,
+      cY: cY2,
+      rX: g38,
+      rY: g38,
+      stAng: 270,
+      endAng: 630,
+      isClose: false,
+    }).replace("M", "L") +
     "M" +
     g32 +
     "," +
@@ -384,5 +446,5 @@ export function renderActionButtonInformation(ctx: ActionButtonContext): string 
     g29 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }

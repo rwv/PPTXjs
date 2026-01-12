@@ -46,7 +46,7 @@ export function renderRightArrow({ ctx }: ArrowRenderOptions): string {
   }
 
   const points = `${w} ${h / 2},${sAdj2_val * w} 0,${sAdj2_val * w} ${sAdj1_val * h},0 ${sAdj1_val * h},0 ${(1 - sAdj1_val) * h},${sAdj2_val * w} ${(1 - sAdj1_val) * h},${sAdj2_val * w} ${h}`;
-  return " " + createPolygon(points, ctx);
+  return " " + createPolygon({ points, ctx });
 }
 
 export function renderLeftArrow({ ctx }: ArrowRenderOptions): string {
@@ -76,7 +76,7 @@ export function renderLeftArrow({ ctx }: ArrowRenderOptions): string {
   }
 
   const points = `0 ${h / 2},${sAdj2_val * w} ${h},${sAdj2_val * w} ${(1 - sAdj1_val) * h},${w} ${(1 - sAdj1_val) * h},${w} ${sAdj1_val * h},${sAdj2_val * w} ${sAdj1_val * h},${sAdj2_val * w} 0`;
-  return " " + createPolygon(points, ctx);
+  return " " + createPolygon({ points, ctx });
 }
 
 export function renderDownArrow({ ctx, shapeType }: ArrowRenderOptions): string {
@@ -111,7 +111,7 @@ export function renderDownArrow({ ctx, shapeType }: ArrowRenderOptions): string 
   }
 
   const points = `${(0.5 - sAdj1_val) * w} 0,${(0.5 - sAdj1_val) * w} ${(1 - sAdj2_val) * h},0 ${(1 - sAdj2_val) * h},${w / 2} ${h},${w} ${(1 - sAdj2_val) * h},${(0.5 + sAdj1_val) * w} ${(1 - sAdj2_val) * h},${(0.5 + sAdj1_val) * w} 0`;
-  return " " + createPolygon(points, ctx);
+  return " " + createPolygon({ points, ctx });
 }
 
 export function renderUpArrow({ ctx }: ArrowRenderOptions): string {
@@ -141,7 +141,7 @@ export function renderUpArrow({ ctx }: ArrowRenderOptions): string {
   }
 
   const points = `${w / 2} 0,0 ${sAdj2_val * h},${(0.5 - sAdj1_val) * w} ${sAdj2_val * h},${(0.5 - sAdj1_val) * w} ${h},${(0.5 + sAdj1_val) * w} ${h},${(0.5 + sAdj1_val) * w} ${sAdj2_val * h},${w} ${sAdj2_val * h}`;
-  return " " + createPolygon(points, ctx);
+  return " " + createPolygon({ points, ctx });
 }
 
 export function renderLeftRightArrow({ ctx }: ArrowRenderOptions): string {
@@ -171,7 +171,7 @@ export function renderLeftRightArrow({ ctx }: ArrowRenderOptions): string {
   }
 
   const points = `0 ${h / 2},${sAdj2_val * w} ${h},${sAdj2_val * w} ${(1 - sAdj1_val) * h},${(1 - sAdj2_val) * w} ${(1 - sAdj1_val) * h},${(1 - sAdj2_val) * w} ${h},${w} ${h / 2},${(1 - sAdj2_val) * w} 0,${(1 - sAdj2_val) * w} ${sAdj1_val * h},${sAdj2_val * w} ${sAdj1_val * h},${sAdj2_val * w} 0`;
-  return " " + createPolygon(points, ctx);
+  return " " + createPolygon({ points, ctx });
 }
 
 export function renderUpDownArrow({ ctx }: ArrowRenderOptions): string {
@@ -201,7 +201,7 @@ export function renderUpDownArrow({ ctx }: ArrowRenderOptions): string {
   }
 
   const points = `${w / 2} 0,0 ${sAdj2_val * h},${sAdj1_val * w} ${sAdj2_val * h},${sAdj1_val * w} ${(1 - sAdj2_val) * h},0 ${(1 - sAdj2_val) * h},${w / 2} ${h},${w} ${(1 - sAdj2_val) * h},${(1 - sAdj1_val) * w} ${(1 - sAdj2_val) * h},${(1 - sAdj1_val) * w} ${sAdj2_val * h},${w} ${sAdj2_val * h}`;
-  return " " + createPolygon(points, ctx);
+  return " " + createPolygon({ points, ctx });
 }
 
 // =============================================================================

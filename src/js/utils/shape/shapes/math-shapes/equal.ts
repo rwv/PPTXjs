@@ -67,5 +67,5 @@ export function renderMathEqual(ctx: MathShapeContext): string {
     "," +
     y4 +
     " z";
-  return createPath(dVal, ctx);
+  return createPath({ d: dVal, ctx });
 }

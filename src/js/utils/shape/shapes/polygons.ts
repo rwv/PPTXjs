@@ -93,7 +93,12 @@ function renderRtTriangle(ctx: PolygonShapeContext): string {
 /**
  * Render triangle, flowChartExtract, flowChartMerge shapes
  */
-function renderTriangle(ctx: PolygonShapeContext, shapType: string): string {
+type RenderTriangleOptions = {
+  ctx: PolygonShapeContext;
+  shapeType: string;
+};
+
+function renderTriangle({ ctx, shapeType }: RenderTriangleOptions): string {
   const { node, w, h, slideFactor } = ctx;
 
   const shapAdjst = getTextByPathList<string>({
@@ -105,7 +110,7 @@ function renderTriangle(ctx: PolygonShapeContext, shapType: string): string {
     shapAdjst_val = parseInt(shapAdjst.substr(4)) * slideFactor;
   }
   let tranglRott = "";
-  if (shapType === "flowChartMerge") {
+  if (shapeType === "flowChartMerge") {
     tranglRott = `transform='rotate(180 ${w / 2},${h / 2})'`;
   }
   return ` <polygon ${tranglRott} points='${w * shapAdjst_val} 0,0 ${h},${w} ${h}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
@@ -114,11 +119,16 @@ function renderTriangle(ctx: PolygonShapeContext, shapType: string): string {
 /**
  * Render diamond, flowChartDecision, flowChartSort shapes
  */
-function renderDiamond(ctx: PolygonShapeContext, shapType: string): string {
+type RenderDiamondOptions = {
+  ctx: PolygonShapeContext;
+  shapeType: string;
+};
+
+function renderDiamond({ ctx, shapeType }: RenderDiamondOptions): string {
   const { w, h } = ctx;
 
   let result = ` <polygon points='${w / 2} 0,0 ${h / 2},${w / 2} ${h},${w} ${h / 2}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
-  if (shapType === "flowChartSort") {
+  if (shapeType === "flowChartSort") {
     result += ` <polyline points='0 ${h / 2},${w} ${h / 2}' fill='none' ${getStrokeAttrs(ctx)} />`;
   }
   return result;
@@ -127,7 +137,12 @@ function renderDiamond(ctx: PolygonShapeContext, shapType: string): string {
 /**
  * Render trapezoid, flowChartManualOperation, flowChartManualInput shapes
  */
-function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
+type RenderTrapezoidOptions = {
+  ctx: PolygonShapeContext;
+  shapeType: string;
+};
+
+function renderTrapezoid({ ctx, shapeType }: RenderTrapezoidOptions): string {
   const { node, w, h, slideFactor } = ctx;
 
   const shapAdjst = getTextByPathList<string>({
@@ -142,10 +157,10 @@ function renderTrapezoid(ctx: PolygonShapeContext, shapType: string): string {
   }
   let cnstVal = 0;
   let tranglRott = "";
-  if (shapType === "flowChartManualOperation") {
+  if (shapeType === "flowChartManualOperation") {
     tranglRott = `transform='rotate(180 ${w / 2},${h / 2})'`;
   }
-  if (shapType === "flowChartManualInput") {
+  if (shapeType === "flowChartManualInput") {
     adjst_val = 0;
     cnstVal = h / 5;
   }
@@ -299,8 +314,10 @@ const withCtx = (renderer: (ctx: PolygonShapeContext) => string) => {
   return ({ ctx }: PolygonRendererOptions) => renderer(ctx);
 };
 
-const withCtxAndShape = (renderer: (ctx: PolygonShapeContext, shapeType: string) => string) => {
-  return ({ ctx, shapeType }: PolygonRendererOptions) => renderer(ctx, shapeType);
+const withCtxAndShape = (
+  renderer: (options: { ctx: PolygonShapeContext; shapeType: string }) => string
+) => {
+  return ({ ctx, shapeType }: PolygonRendererOptions) => renderer({ ctx, shapeType });
 };
 
 /**

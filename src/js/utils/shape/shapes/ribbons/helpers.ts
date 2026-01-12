@@ -25,6 +25,11 @@ export function getStrokeAttrs(ctx: RibbonContext): string {
 /**
  * Create SVG path element with fill and stroke
  */
-export function createPath(d: string, ctx: RibbonContext): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: RibbonContext;
+};
+
+export function createPath({ d, ctx }: CreatePathOptions): string {
   return `<path d='${d}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }

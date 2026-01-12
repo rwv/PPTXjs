@@ -103,12 +103,28 @@ export function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
     x5 +
     "," +
     y1 +
-    shapeArc(wR, h, wR, h, stAng, stAng + mswAng, false).replace("M", "L") +
+    shapeArc({
+      cX: wR,
+      cY: h,
+      rX: wR,
+      rY: h,
+      stAng: stAng,
+      endAng: stAng + mswAng,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     x3 +
     "," +
     t +
-    shapeArc(x3, h, wR, h, c3d4, c3d4 + swAngDeg, false).replace("M", "L") +
+    shapeArc({
+      cX: x3,
+      cY: h,
+      rX: wR,
+      rY: h,
+      stAng: c3d4,
+      endAng: c3d4 + swAngDeg,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     (x5 + th) +
     "," +
@@ -122,10 +138,26 @@ export function renderCurvedDownArrow(ctx: CurvedArrowContext): string {
     x3 +
     "," +
     t +
-    shapeArc(x3, h, wR, h, stAng2, stAng2 + swAng2, false).replace("M", "L") +
-    shapeArc(wR, h, wR, h, cd2, cd2 + swAng3, false).replace("M", "L");
+    shapeArc({
+      cX: x3,
+      cY: h,
+      rX: wR,
+      rY: h,
+      stAng: stAng2,
+      endAng: stAng2 + swAng2,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: wR,
+      cY: h,
+      rX: wR,
+      rY: h,
+      stAng: cd2,
+      endAng: cd2 + swAng3,
+      isClose: false,
+    }).replace("M", "L");
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }
 
 /**
@@ -216,17 +248,31 @@ export function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
     r +
     "," +
     y3 +
-    shapeArc(l, hR, w, hR, 0, -cd4, false).replace("M", "L") +
+    shapeArc({ cX: l, cY: hR, rX: w, rY: hR, stAng: 0, endAng: -cd4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     l +
     "," +
     t +
-    shapeArc(l, y3, w, hR, c3d4, c3d4 + cd4, false).replace("M", "L") +
+    shapeArc({
+      cX: l,
+      cY: y3,
+      rX: w,
+      rY: hR,
+      stAng: c3d4,
+      endAng: c3d4 + cd4,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     r +
     "," +
     y3 +
-    shapeArc(l, y3, w, hR, 0, swAngDg, false).replace("M", "L") +
+    shapeArc({ cX: l, cY: y3, rX: w, rY: hR, stAng: 0, endAng: swAngDg, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     x1 +
     "," +
@@ -247,11 +293,30 @@ export function renderCurvedLeftArrow(ctx: CurvedArrowContext): string {
     x1 +
     "," +
     y5 +
-    shapeArc(l, hR, w, hR, swAngDg, swAngDg + swAng2Dg, false).replace("M", "L") +
-    shapeArc(l, hR, w, hR, 0, -cd4, false).replace("M", "L") +
-    shapeArc(l, y3, w, hR, c3d4, c3d4 + cd4, false).replace("M", "L");
+    shapeArc({
+      cX: l,
+      cY: hR,
+      rX: w,
+      rY: hR,
+      stAng: swAngDg,
+      endAng: swAngDg + swAng2Dg,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({ cX: l, cY: hR, rX: w, rY: hR, stAng: 0, endAng: -cd4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({
+      cX: l,
+      cY: y3,
+      rX: w,
+      rY: hR,
+      stAng: c3d4,
+      endAng: c3d4 + cd4,
+      isClose: false,
+    }).replace("M", "L");
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }
 
 /**
@@ -346,7 +411,15 @@ export function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
     l +
     "," +
     hR +
-    shapeArc(w, hR, w, hR, cd2, cd2 + mswAngDg, false).replace("M", "L") +
+    shapeArc({
+      cX: w,
+      cY: hR,
+      rX: w,
+      rY: hR,
+      stAng: cd2,
+      endAng: cd2 + mswAngDg,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     x1 +
     "," +
@@ -367,19 +440,43 @@ export function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
     x1 +
     "," +
     y7 +
-    shapeArc(w, y3, w, hR, stAngDg, stAngDg + swAngDg, false).replace("M", "L") +
+    shapeArc({
+      cX: w,
+      cY: y3,
+      rX: w,
+      rY: hR,
+      stAng: stAngDg,
+      endAng: stAngDg + swAngDg,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     l +
     "," +
     hR +
-    shapeArc(w, hR, w, hR, cd2, cd2 + cd4, false).replace("M", "L") +
+    shapeArc({
+      cX: w,
+      cY: hR,
+      rX: w,
+      rY: hR,
+      stAng: cd2,
+      endAng: cd2 + cd4,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     r +
     "," +
     th +
-    shapeArc(w, y3, w, hR, c3d4, c3d4 + swAng2dg, false).replace("M", "L");
+    shapeArc({
+      cX: w,
+      cY: y3,
+      rX: w,
+      rY: hR,
+      stAng: c3d4,
+      endAng: c3d4 + swAng2dg,
+      isClose: false,
+    }).replace("M", "L");
   ("");
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }
 
 /**
@@ -469,7 +566,15 @@ export function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
   const swAngDg = (swAng * 180) / Math.PI;
 
   const d_val =
-    shapeArc(wR, 0, wR, h, stAng2dg, stAng2dg + swAng2dg, false) +
+    shapeArc({
+      cX: wR,
+      cY: 0,
+      rX: wR,
+      rY: h,
+      stAng: stAng2dg,
+      endAng: stAng2dg + swAng2dg,
+      isClose: false,
+    }) +
     " L" +
     x5 +
     "," +
@@ -490,19 +595,33 @@ export function renderCurvedUpArrow(ctx: CurvedArrowContext): string {
     x7 +
     "," +
     y1 +
-    shapeArc(x3, 0, wR, h, stAng3dg, stAng3dg + swAngDg, false).replace("M", "L") +
+    shapeArc({
+      cX: x3,
+      cY: 0,
+      rX: wR,
+      rY: h,
+      stAng: stAng3dg,
+      endAng: stAng3dg + swAngDg,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     wR +
     "," +
     b +
-    shapeArc(wR, 0, wR, h, cd4, cd2, false).replace("M", "L") +
+    shapeArc({ cX: wR, cY: 0, rX: wR, rY: h, stAng: cd4, endAng: cd2, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     th +
     "," +
     t +
-    shapeArc(x3, 0, wR, h, cd2, cd4, false).replace("M", "L") +
+    shapeArc({ cX: x3, cY: 0, rX: wR, rY: h, stAng: cd2, endAng: cd4, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     "";
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }
 
 /**

@@ -88,11 +88,16 @@ function ensureElementId(element: HTMLElement): string {
   return element.id;
 }
 
-function getElement<T extends Element>(container: HTMLElement, selector: string): T | null {
+type GetElementOptions = {
+  container: HTMLElement;
+  selector: string;
+};
+
+function getElement<T extends Element>({ container, selector }: GetElementOptions): T | null {
   return container.querySelector<T>(selector);
 }
 
-function getElements<T extends Element>(container: HTMLElement, selector: string): T[] {
+function getElements<T extends Element>({ container, selector }: GetElementOptions): T[] {
   return Array.from(container.querySelectorAll<T>(selector));
 }
 
@@ -108,7 +113,12 @@ function isVisible(element: HTMLElement): boolean {
   return element.offsetParent !== null && getComputedStyle(element).display !== "none";
 }
 
-function fadeIn(element: HTMLElement, durationMs: number): void {
+type FadeOptions = {
+  element: HTMLElement;
+  durationMs: number;
+};
+
+function fadeIn({ element, durationMs }: FadeOptions): void {
   showElement(element);
   element.style.opacity = "0";
   if (durationMs <= 0 || !("animate" in element)) {
@@ -124,7 +134,7 @@ function fadeIn(element: HTMLElement, durationMs: number): void {
   };
 }
 
-function fadeOut(element: HTMLElement, durationMs: number): void {
+function fadeOut({ element, durationMs }: FadeOptions): void {
   if (durationMs <= 0 || !("animate" in element)) {
     hideElement(element);
     element.style.opacity = "";
@@ -140,7 +150,12 @@ function fadeOut(element: HTMLElement, durationMs: number): void {
   };
 }
 
-function slideDown(element: HTMLElement, durationMs: number): void {
+type SlideOptions = {
+  element: HTMLElement;
+  durationMs: number;
+};
+
+function slideDown({ element, durationMs }: SlideOptions): void {
   showElement(element);
   const fullHeight = element.scrollHeight;
   if (durationMs <= 0 || !("animate" in element)) {
@@ -160,7 +175,7 @@ function slideDown(element: HTMLElement, durationMs: number): void {
   };
 }
 
-function slideUp(element: HTMLElement, durationMs: number): void {
+function slideUp({ element, durationMs }: SlideOptions): void {
   const height = element.getBoundingClientRect().height;
   if (durationMs <= 0 || !("animate" in element)) {
     hideElement(element);
@@ -190,39 +205,42 @@ function resolveTransition(transition: TransitionType): "default" | "fade" | "sl
   return availableTransitionTypes[randomIndex];
 }
 
-function showWithTransition(
-  element: HTMLElement,
-  transition: "default" | "fade" | "slid",
-  durationMs: number
-): void {
+type TransitionOptions = {
+  element: HTMLElement;
+  transition: "default" | "fade" | "slid";
+  durationMs: number;
+};
+
+function showWithTransition({ element, transition, durationMs }: TransitionOptions): void {
   if (transition === "fade") {
-    fadeIn(element, durationMs);
+    fadeIn({ element, durationMs });
     return;
   }
   if (transition === "slid") {
-    slideDown(element, durationMs);
+    slideDown({ element, durationMs });
     return;
   }
   showElement(element);
 }
 
-function hideWithTransition(
-  element: HTMLElement,
-  transition: "default" | "fade" | "slid",
-  durationMs: number
-): void {
+function hideWithTransition({ element, transition, durationMs }: TransitionOptions): void {
   if (transition === "fade") {
-    fadeOut(element, durationMs);
+    fadeOut({ element, durationMs });
     return;
   }
   if (transition === "slid") {
-    slideUp(element, durationMs);
+    slideUp({ element, durationMs });
     return;
   }
   hideElement(element);
 }
 
-function wrapAll(elements: HTMLElement[], wrapper: HTMLElement): void {
+type WrapAllOptions = {
+  elements: HTMLElement[];
+  wrapper: HTMLElement;
+};
+
+function wrapAll({ elements, wrapper }: WrapAllOptions): void {
   if (elements.length === 0) {
     return;
   }
@@ -274,7 +292,12 @@ function createIconButton(options: {
   return img;
 }
 
-function createSpan(id: string, text: string): HTMLSpanElement {
+type CreateSpanOptions = {
+  id: string;
+  text: string;
+};
+
+function createSpan({ id, text }: CreateSpanOptions): HTMLSpanElement {
   const span = document.createElement("span");
   span.id = id;
   span.textContent = text;
@@ -284,7 +307,12 @@ function createSpan(id: string, text: string): HTMLSpanElement {
 /**
  * Initialize divs2slides for a container element
  */
-export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2SlidesSettings> = {}) {
+type InitDivs2SlidesOptions = {
+  target: HTMLElement;
+  options?: Partial<Divs2SlidesSettings>;
+};
+
+export function initDivs2Slides({ target, options = {} }: InitDivs2SlidesOptions) {
   const defaultSettings: Divs2SlidesSettings = {
     first: 1,
     nav: true /** true,false : show or not nav buttons*/,
@@ -309,7 +337,7 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
   };
 
   const divId = ensureElementId(target);
-  const slides = getElements<HTMLElement>(target, ".slide");
+  const slides = getElements<HTMLElement>({ container: target, selector: ".slide" });
   const totalSlides = slides.length;
   const slideCount = settings.first;
   const autoSlideValue =
@@ -358,13 +386,15 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
         );
 
         if (data.showTotalSlideNum) {
-          toolbar.prepend(createSpan("slides-total-slides-num", data.totalSlides.toString()));
+          toolbar.prepend(
+            createSpan({ id: "slides-total-slides-num", text: data.totalSlides.toString() })
+          );
         }
         if (data.showSlideNum && data.showTotalSlideNum) {
-          toolbar.prepend(createSpan("slides-slides-num-separator", " / "));
+          toolbar.prepend(createSpan({ id: "slides-slides-num-separator", text: " / " }));
         }
         if (data.showSlideNum) {
-          toolbar.prepend(createSpan("slides-slide-num", data.slideCount.toString()));
+          toolbar.prepend(createSpan({ id: "slides-slide-num", text: data.slideCount.toString() }));
         }
         if (data.showFullscreenBtn) {
           toolbar.prepend(
@@ -405,12 +435,19 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
           })
         );
 
-        getElements<HTMLElement>(toolbar, ".slides-nav, .slides-nav-play").forEach((nav) =>
-          setHoverOpacity(nav)
-        );
+        getElements<HTMLElement>({
+          container: toolbar,
+          selector: ".slides-nav, .slides-nav-play",
+        }).forEach((nav) => setHoverOpacity(nav));
 
-        const prevButton = getElement<HTMLElement>(data.target, "#slides-prev");
-        const nextButton = getElement<HTMLElement>(data.target, "#slides-next");
+        const prevButton = getElement<HTMLElement>({
+          container: data.target,
+          selector: "#slides-prev",
+        });
+        const nextButton = getElement<HTMLElement>({
+          container: data.target,
+          selector: "#slides-next",
+        });
         if (data.slideCount === 1) {
           if (prevButton) {
             hideElement(prevButton);
@@ -423,7 +460,10 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
           showElement(nextButton);
         }
       } else {
-        const toolbar = getElement<HTMLElement>(data.target, ".slides-toolbar");
+        const toolbar = getElement<HTMLElement>({
+          container: data.target,
+          selector: ".slides-toolbar",
+        });
         if (toolbar) {
           showElement(toolbar);
         }
@@ -433,7 +473,7 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
       if (!data.target.querySelector("#all_slides_warpper")) {
         const wrapper = document.createElement("div");
         wrapper.id = "all_slides_warpper";
-        wrapAll(data.slides, wrapper);
+        wrapAll({ elements: data.slides, wrapper });
       }
       // Go to first slide
       pptxjslideObj.gotoSlide(1);
@@ -445,7 +485,10 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
       if (data.slideCount < data.totalSlides) {
         pptxjslideObj.gotoSlide(data.slideCount + 1);
         if (!isAutoMode) {
-          const nextButton = getElement<HTMLElement>(data.target, "#slides-next");
+          const nextButton = getElement<HTMLElement>({
+            container: data.target,
+            selector: "#slides-next",
+          });
           if (nextButton) {
             showElement(nextButton);
           }
@@ -455,7 +498,10 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
           pptxjslideObj.gotoSlide(1);
         } else {
           if (!isAutoMode) {
-            const nextButton = getElement<HTMLElement>(data.target, "#slides-next");
+            const nextButton = getElement<HTMLElement>({
+              container: data.target,
+              selector: "#slides-next",
+            });
             if (nextButton) {
               hideElement(nextButton);
             }
@@ -463,8 +509,14 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
         }
       }
       if (!isAutoMode) {
-        const prevButton = getElement<HTMLElement>(data.target, "#slides-prev");
-        const nextButton = getElement<HTMLElement>(data.target, "#slides-next");
+        const prevButton = getElement<HTMLElement>({
+          container: data.target,
+          selector: "#slides-prev",
+        });
+        const nextButton = getElement<HTMLElement>({
+          container: data.target,
+          selector: "#slides-next",
+        });
         if (data.slideCount > 1) {
           if (prevButton) {
             showElement(prevButton);
@@ -485,8 +537,14 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
         pptxjslideObj.gotoSlide(data.slideCount - 1);
       }
       if (!isAutoMode) {
-        const prevButton = getElement<HTMLElement>(data.target, "#slides-prev");
-        const nextButton = getElement<HTMLElement>(data.target, "#slides-next");
+        const prevButton = getElement<HTMLElement>({
+          container: data.target,
+          selector: "#slides-prev",
+        });
+        const nextButton = getElement<HTMLElement>({
+          container: data.target,
+          selector: "#slides-next",
+        });
         if (data.slideCount === 1) {
           if (prevButton) {
             hideElement(prevButton);
@@ -512,12 +570,23 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
         const prevSlide = slides[prevSlidNum];
         if (prevSlide && isVisible(prevSlide)) {
           //remove "index >= 1 &&" bugFix to ver. 1.2.1
-          hideWithTransition(prevSlide, transitionType, transTime);
+          hideWithTransition({
+            element: prevSlide,
+            transition: transitionType,
+            durationMs: transTime,
+          });
         }
-        showWithTransition(nextSlide, transitionType, transTime);
+        showWithTransition({
+          element: nextSlide,
+          transition: transitionType,
+          durationMs: transTime,
+        });
         data.prevSlide = index;
         pptxjslideObj.data.slideCount = idx;
-        const slideNum = getElement<HTMLElement>(data.target, "#slides-slide-num");
+        const slideNum = getElement<HTMLElement>({
+          container: data.target,
+          selector: "#slides-slide-num",
+        });
         if (slideNum) {
           slideNum.textContent = idx.toString();
         }
@@ -587,7 +656,10 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
     closeSileMode: function () {
       const data = pptxjslideObj.data;
       data.isSlideMode = false;
-      const toolbar = getElement<HTMLElement>(data.target, ".slides-toolbar");
+      const toolbar = getElement<HTMLElement>({
+        container: data.target,
+        selector: ".slides-toolbar",
+      });
       if (toolbar) {
         hideElement(toolbar);
       }
@@ -611,9 +683,15 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
         const isStrtLoop = data.isLoopMode;
         //hide and disable next and prev btn
         if (data.nav) {
-          const navButtons = getElements<HTMLElement>(data.target, ".slides-toolbar .slides-nav");
+          const navButtons = getElements<HTMLElement>({
+            container: data.target,
+            selector: ".slides-toolbar .slides-nav",
+          });
           navButtons.forEach((button) => hideElement(button));
-          const playPause = getElement<HTMLImageElement>(data.target, "#slides-play-pause");
+          const playPause = getElement<HTMLImageElement>({
+            container: data.target,
+            selector: "#slides-play-pause",
+          });
           if (playPause) {
             playPause.src = PAUSE_ICON;
           }
@@ -649,9 +727,15 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
         data.isLoopMode = false;
         //show and enable next and prev btn
         if (data.nav) {
-          const navButtons = getElements<HTMLElement>(data.target, ".slides-toolbar .slides-nav");
+          const navButtons = getElements<HTMLElement>({
+            container: data.target,
+            selector: ".slides-toolbar .slides-nav",
+          });
           navButtons.forEach((button) => showElement(button));
-          const playPause = getElement<HTMLImageElement>(data.target, "#slides-play-pause");
+          const playPause = getElement<HTMLImageElement>({
+            container: data.target,
+            selector: "#slides-play-pause",
+          });
           if (playPause) {
             playPause.src = PLAY_ICON;
           }
@@ -672,12 +756,18 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
         const containerRect = container.getBoundingClientRect();
         orginalMainDivWidth = containerRect.width;
         orginalMainDivHeight = containerRect.height;
-        const wrapper = getElement<HTMLElement>(container, "#all_slides_warpper");
+        const wrapper = getElement<HTMLElement>({
+          container: container,
+          selector: "#all_slides_warpper",
+        });
         if (wrapper) {
           const m = getComputedStyle(wrapper).transform;
           orginalSlidesWarpperScale = getScaleFromTransform(m);
         }
-        const toolbar = getElement<HTMLElement>(container, ".slides-toolbar");
+        const toolbar = getElement<HTMLElement>({
+          container: container,
+          selector: ".slides-toolbar",
+        });
         if (toolbar) {
           const toolbarRect = toolbar.getBoundingClientRect();
           orginalSlidesToolbarWidth = toolbarRect.width;
@@ -691,7 +781,10 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
           wrapper.style.transform = "scale(1)";
         }
 
-        const slide = getElement<HTMLElement>(container, "#all_slides_warpper .slide");
+        const slide = getElement<HTMLElement>({
+          container: container,
+          selector: "#all_slides_warpper .slide",
+        });
         if (slide) {
           const slideRect = slide.getBoundingClientRect();
           slide.style.top = `${(winHeight - slideRect.height) / 2}px`;
@@ -703,7 +796,10 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
           toolbar.style.top = "20px";
         }
         //change fullscreen icon to other icon (red color)
-        const fullscreenBtn = getElement<HTMLImageElement>(container, "#slides-full-screen");
+        const fullscreenBtn = getElement<HTMLImageElement>({
+          container: container,
+          selector: "#slides-full-screen",
+        });
         if (fullscreenBtn) {
           fullscreenBtn.src = FULLSCREEN_EXIT_ICON;
         }
@@ -726,25 +822,37 @@ export function initDivs2Slides(target: HTMLElement, options: Partial<Divs2Slide
             */
       container.style.width = `${orginalMainDivWidth}px`;
       container.style.height = `${orginalMainDivHeight}px`;
-      const wrapper = getElement<HTMLElement>(container, "#all_slides_warpper");
+      const wrapper = getElement<HTMLElement>({
+        container: container,
+        selector: "#all_slides_warpper",
+      });
       if (wrapper) {
         wrapper.style.transform = `scale(${orginalSlidesWarpperScale})`;
       }
 
-      const slide = getElement<HTMLElement>(container, "#all_slides_warpper .slide");
+      const slide = getElement<HTMLElement>({
+        container: container,
+        selector: "#all_slides_warpper .slide",
+      });
       if (slide) {
         slide.style.top = "0px";
         slide.style.left = "0px";
       }
 
-      const toolbar = getElement<HTMLElement>(container, ".slides-toolbar");
+      const toolbar = getElement<HTMLElement>({
+        container: container,
+        selector: ".slides-toolbar",
+      });
       if (data.nav && toolbar) {
         toolbar.style.width = `${orginalSlidesToolbarWidth}px`;
         toolbar.style.top = `${orginalSlidesToolbarTop}px`;
       }
 
       //change fullscreen icon to orginal icon - TODO
-      const fullscreenBtn = getElement<HTMLImageElement>(container, "#slides-full-screen");
+      const fullscreenBtn = getElement<HTMLImageElement>({
+        container: container,
+        selector: "#slides-full-screen",
+      });
       if (fullscreenBtn) {
         fullscreenBtn.src = FULLSCREEN_ICON;
       }

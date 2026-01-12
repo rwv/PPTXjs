@@ -76,7 +76,7 @@ export function renderHalfFrame({ ctx }: ArcRenderOptions): string {
     h +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**

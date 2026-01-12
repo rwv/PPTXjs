@@ -101,12 +101,28 @@ export function renderRibbon({ ctx, shapeType }: RibbonRenderOptions): string {
       x2 +
       "," +
       hR +
-      shapeArc(x3, hR, wd32, hR, 180, 270, false).replace("M", "L") +
+      shapeArc({
+        cX: x3,
+        cY: hR,
+        rX: wd32,
+        rY: hR,
+        stAng: 180,
+        endAng: 270,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x8 +
       "," +
       t +
-      shapeArc(x8, hR, wd32, hR, 270, 360, false).replace("M", "L") +
+      shapeArc({
+        cX: x8,
+        cY: hR,
+        rX: wd32,
+        rY: hR,
+        stAng: 270,
+        endAng: 360,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x9 +
       "," +
@@ -131,22 +147,54 @@ export function renderRibbon({ ctx, shapeType }: RibbonRenderOptions): string {
       x7 +
       "," +
       b +
-      shapeArc(x7, y6, wd32, hR, 90, 270, false).replace("M", "L") +
+      shapeArc({
+        cX: x7,
+        cY: y6,
+        rX: wd32,
+        rY: hR,
+        stAng: 90,
+        endAng: 270,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x8 +
       "," +
       y1 +
-      shapeArc(x8, y7, wd32, hR, 90, -90, false).replace("M", "L") +
+      shapeArc({
+        cX: x8,
+        cY: y7,
+        rX: wd32,
+        rY: hR,
+        stAng: 90,
+        endAng: -90,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x3 +
       "," +
       y2 +
-      shapeArc(x3, y7, wd32, hR, 270, 90, false).replace("M", "L") +
+      shapeArc({
+        cX: x3,
+        cY: y7,
+        rX: wd32,
+        rY: hR,
+        stAng: 270,
+        endAng: 90,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x4 +
       "," +
       y1 +
-      shapeArc(x4, y6, wd32, hR, 270, 450, false).replace("M", "L") +
+      shapeArc({
+        cX: x4,
+        cY: y6,
+        rX: wd32,
+        rY: hR,
+        stAng: 270,
+        endAng: 450,
+        isClose: false,
+      }).replace("M", "L") +
       " z" +
       " M" +
       x5 +
@@ -196,22 +244,54 @@ export function renderRibbon({ ctx, shapeType }: RibbonRenderOptions): string {
       x4 +
       "," +
       t +
-      shapeArc(x4, hR, wd32, hR, 270, 450, false).replace("M", "L") +
+      shapeArc({
+        cX: x4,
+        cY: hR,
+        rX: wd32,
+        rY: hR,
+        stAng: 270,
+        endAng: 450,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x3 +
       "," +
       y1 +
-      shapeArc(x3, y6, wd32, hR, 270, 90, false).replace("M", "L") +
+      shapeArc({
+        cX: x3,
+        cY: y6,
+        rX: wd32,
+        rY: hR,
+        stAng: 270,
+        endAng: 90,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x8 +
       "," +
       y2 +
-      shapeArc(x8, y6, wd32, hR, 90, -90, false).replace("M", "L") +
+      shapeArc({
+        cX: x8,
+        cY: y6,
+        rX: wd32,
+        rY: hR,
+        stAng: 90,
+        endAng: -90,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x7 +
       "," +
       y1 +
-      shapeArc(x7, hR, wd32, hR, 90, 270, false).replace("M", "L") +
+      shapeArc({
+        cX: x7,
+        cY: hR,
+        rX: wd32,
+        rY: hR,
+        stAng: 90,
+        endAng: 270,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       r +
       "," +
@@ -232,12 +312,23 @@ export function renderRibbon({ ctx, shapeType }: RibbonRenderOptions): string {
       x9 +
       "," +
       y5 +
-      shapeArc(x8, y5, wd32, hR, 0, 90, false).replace("M", "L") +
+      shapeArc({ cX: x8, cY: y5, rX: wd32, rY: hR, stAng: 0, endAng: 90, isClose: false }).replace(
+        "M",
+        "L"
+      ) +
       " L" +
       x3 +
       "," +
       b +
-      shapeArc(x3, y5, wd32, hR, 90, 180, false).replace("M", "L") +
+      shapeArc({
+        cX: x3,
+        cY: y5,
+        rX: wd32,
+        rY: hR,
+        stAng: 90,
+        endAng: 180,
+        isClose: false,
+      }).replace("M", "L") +
       " L" +
       x2 +
       "," +
@@ -285,5 +376,5 @@ export function renderRibbon({ ctx, shapeType }: RibbonRenderOptions): string {
       y4;
   }
 
-  return createPath(d_val, ctx);
+  return createPath({ d: d_val, ctx });
 }

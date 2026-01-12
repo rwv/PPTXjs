@@ -79,7 +79,7 @@ export function renderQuadArrow({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,${vc} L${x1},${y2} L${x1},${y3} L${x3},${y3} L${x3},${x1} L${x2},${x1} L${hc},0 L${x5},${x1} L${x4},${x1} L${x4},${y3} L${x6},${y3} L${x6},${y2} L${w},${vc} L${x6},${y5} L${x6},${y4} L${x4},${y4} L${x4},${y6} L${x5},${y6} L${hc},${h} L${x2},${y6} L${x3},${y6} L${x3},${y4} L${x1},${y4} L${x1},${y5} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderLeftRightUpArrow({ ctx }: ArrowRenderOptions): string {
@@ -140,7 +140,7 @@ export function renderLeftRightUpArrow({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,${y4} L${x1},${y2} L${x1},${y3} L${x3},${y3} L${x3},${x1} L${x2},${x1} L${hc},0 L${x5},${x1} L${x4},${x1} L${x4},${y3} L${x6},${y3} L${x6},${y2} L${w},${y4} L${x6},${h} L${x6},${y5} L${x1},${y5} L${x1},${h} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderLeftUpArrow({ ctx }: ArrowRenderOptions): string {
@@ -198,7 +198,7 @@ export function renderLeftUpArrow({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,${y4} L${x1},${y2} L${x1},${y3} L${x3},${y3} L${x3},${x1} L${x2},${x1} L${x4},0 L${w},${x1} L${x5},${x1} L${x5},${y5} L${x1},${y5} L${x1},${h} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderBentUpArrow({ ctx }: ArrowRenderOptions): string {
@@ -252,7 +252,7 @@ export function renderBentUpArrow({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,${y2} L${x2},${y2} L${x2},${y1} L${x1},${y1} L${x3},0 L${w},${y1} L${x4},${y1} L${x4},${h} L0,${h} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderBentArrow({ ctx }: ArrowRenderOptions): string {
@@ -321,12 +321,18 @@ export function renderBentArrow({ ctx }: ArrowRenderOptions): string {
 
   const d =
     `M0,${h} L0,${y5}` +
-    shapeArc(bd, y5, bd, bd, 180, 270, false).replace("M", "L") +
+    shapeArc({ cX: bd, cY: y5, rX: bd, rY: bd, stAng: 180, endAng: 270, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     ` L${x4},${dh2} L${x4},0 L${w},${aw2} L${x4},${y4} L${x4},${y3} L${x3},${y3}` +
-    shapeArc(x3, y6, bd2, bd2, 270, 180, false).replace("M", "L") +
+    shapeArc({ cX: x3, cY: y6, rX: bd2, rY: bd2, stAng: 270, endAng: 180, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     ` L${th},${h} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderUturnArrow({ ctx }: ArrowRenderOptions): string {
@@ -409,16 +415,28 @@ export function renderUturnArrow({ ctx }: ArrowRenderOptions): string {
 
   const d =
     `M0,${h} L0,${bd}` +
-    shapeArc(bd, bd, bd, bd, 180, 270, false).replace("M", "L") +
+    shapeArc({ cX: bd, cY: bd, rX: bd, rY: bd, stAng: 180, endAng: 270, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     ` L${x4},0` +
-    shapeArc(x4, bd, bd, bd, 270, 360, false).replace("M", "L") +
+    shapeArc({ cX: x4, cY: bd, rX: bd, rY: bd, stAng: 270, endAng: 360, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     ` L${x9},${y4} L${w},${y4} L${x8},${y5} L${x6},${y4} L${x7},${y4} L${x7},${x3}` +
-    shapeArc(x5, x3, bd2, bd2, 0, -90, false).replace("M", "L") +
+    shapeArc({ cX: x5, cY: x3, rX: bd2, rY: bd2, stAng: 0, endAng: -90, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     ` L${x3},${th}` +
-    shapeArc(x3, x3, bd2, bd2, 270, 180, false).replace("M", "L") +
+    shapeArc({ cX: x3, cY: x3, rX: bd2, rY: bd2, stAng: 270, endAng: 180, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     ` L${th},${h} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderStripedRightArrow({ ctx }: ArrowRenderOptions): string {
@@ -468,7 +486,7 @@ export function renderStripedRightArrow({ ctx }: ArrowRenderOptions): string {
     ` M${ssd16},${y1} L${ssd8},${y1} L${ssd8},${y2} L${ssd16},${y2} z` +
     ` M${x4},${y1} L${x5},${y1} L${x5},0 L${w},${vc} L${x5},${h} L${x5},${y2} L${x4},${y2} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderNotchedRightArrow({ ctx }: ArrowRenderOptions): string {
@@ -512,7 +530,7 @@ export function renderNotchedRightArrow({ ctx }: ArrowRenderOptions): string {
 
   const d = `M0,${y1} L${x2},${y1} L${x2},0 L${w},${vc} L${x2},${h} L${x2},${y2} L0,${y2} L${x1},${vc} z`;
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 // =============================================================================

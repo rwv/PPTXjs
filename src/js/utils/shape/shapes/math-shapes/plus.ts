@@ -79,5 +79,5 @@ export function renderMathPlus(ctx: MathShapeContext): string {
     "," +
     y3 +
     " z";
-  return createPath(dVal, ctx);
+  return createPath({ d: dVal, ctx });
 }

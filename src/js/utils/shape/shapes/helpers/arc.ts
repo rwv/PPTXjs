@@ -10,15 +10,17 @@
  * @param isClose - Whether to close the path with 'z' command
  * @returns SVG path string
  */
-export function shapeArc(
-  cX: number | string,
-  cY: number | string,
-  rX: number | string,
-  rY: number | string,
-  stAng: number | string,
-  endAng: number | string,
-  isClose: boolean
-): string {
+type ShapeArcOptions = {
+  cX: number | string;
+  cY: number | string;
+  rX: number | string;
+  rY: number | string;
+  stAng: number | string;
+  endAng: number | string;
+  isClose: boolean;
+};
+
+export function shapeArc({ cX, cY, rX, rY, stAng, endAng, isClose }: ShapeArcOptions): string {
   // Convert to numbers
   const centerX = typeof cX === "number" ? cX : parseFloat(cX);
   const centerY = typeof cY === "number" ? cY : parseFloat(cY);

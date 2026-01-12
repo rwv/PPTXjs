@@ -57,21 +57,77 @@ export function renderCloud(ctx: MiscSymbolContext): string {
     rX12 = (w * 6928) / 43200,
     rY12 = (h * 9407) / 43200;
   const d =
-    shapeArc(x11, y11, rX12, rY12, 122, 180, false) +
-    shapeArc(x0, y0, rX11, rY11, 122, 182, false).replace("M", "L") +
-    shapeArc(x1, y7, rX10, rY10, 142, 232, false).replace("M", "L") +
-    shapeArc(x2, y8, rX9, rY9, 172, 257, false).replace("M", "L") +
-    shapeArc(x3, y9, rX8, rY8, 190, 280, false).replace("M", "L") +
-    shapeArc(x4, y10, rX7, rY7, 213, 317, false).replace("M", "L") +
-    shapeArc(x5, y7, rX6, rY6, 253, 357, false).replace("M", "L") +
-    shapeArc(x6, y6, rX4, rY5, 284, 380, false).replace("M", "L") +
-    shapeArc(x7, y5, rX4, rY4, 322, 416, false).replace("M", "L") +
-    shapeArc(x8, y4, rX3, rY3, 357, 451, false).replace("M", "L") +
-    shapeArc(x9, y3, rX2, rY2, 29, 118, false).replace("M", "L") +
-    shapeArc(x10, y2, rX1, rY1, 64, 151, false).replace("M", "L") +
-    shapeArc(x11, y1, rX12, rY12, 84, 121, false).replace("M", "L") +
+    shapeArc({ cX: x11, cY: y11, rX: rX12, rY: rY12, stAng: 122, endAng: 180, isClose: false }) +
+    shapeArc({
+      cX: x0,
+      cY: y0,
+      rX: rX11,
+      rY: rY11,
+      stAng: 122,
+      endAng: 182,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({
+      cX: x1,
+      cY: y7,
+      rX: rX10,
+      rY: rY10,
+      stAng: 142,
+      endAng: 232,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({ cX: x2, cY: y8, rX: rX9, rY: rY9, stAng: 172, endAng: 257, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: x3, cY: y9, rX: rX8, rY: rY8, stAng: 190, endAng: 280, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({
+      cX: x4,
+      cY: y10,
+      rX: rX7,
+      rY: rY7,
+      stAng: 213,
+      endAng: 317,
+      isClose: false,
+    }).replace("M", "L") +
+    shapeArc({ cX: x5, cY: y7, rX: rX6, rY: rY6, stAng: 253, endAng: 357, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: x6, cY: y6, rX: rX4, rY: rY5, stAng: 284, endAng: 380, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: x7, cY: y5, rX: rX4, rY: rY4, stAng: 322, endAng: 416, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: x8, cY: y4, rX: rX3, rY: rY3, stAng: 357, endAng: 451, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: x9, cY: y3, rX: rX2, rY: rY2, stAng: 29, endAng: 118, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({ cX: x10, cY: y2, rX: rX1, rY: rY1, stAng: 64, endAng: 151, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
+    shapeArc({
+      cX: x11,
+      cY: y1,
+      rX: rX12,
+      rY: rY12,
+      stAng: 84,
+      endAng: 121,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 export function renderSmileyFace(ctx: MiscSymbolContext): string {
@@ -108,8 +164,8 @@ export function renderSmileyFace(ctx: MiscSymbolContext): string {
   const cY1 = y1 - hR * Math.sin(Math.PI);
   const cX2 = x3 - wR * Math.cos(Math.PI);
   const d_val =
-    shapeArc(cX1, cY1, wR, hR, 180, 540, false) +
-    shapeArc(cX2, cY1, wR, hR, 180, 540, false) +
+    shapeArc({ cX: cX1, cY: cY1, rX: wR, rY: hR, stAng: 180, endAng: 540, isClose: false }) +
+    shapeArc({ cX: cX2, cY: cY1, rX: wR, rY: hR, stAng: 180, endAng: 540, isClose: false }) +
     " M" +
     x1 +
     "," +
@@ -132,7 +188,15 @@ export function renderSmileyFace(ctx: MiscSymbolContext): string {
     y2 +
     " M0," +
     hd2 +
-    shapeArc(wd2, hd2, wd2, hd2, 180, 540, false).replace("M", "L") +
+    shapeArc({
+      cX: wd2,
+      cY: hd2,
+      rX: wd2,
+      rY: hd2,
+      stAng: 180,
+      endAng: 540,
+      isClose: false,
+    }).replace("M", "L") +
     " z";
   return `<path d='${d_val}' fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }

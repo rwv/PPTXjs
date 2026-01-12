@@ -1,10 +1,12 @@
-export function shapePie(
-  H: number | string,
-  w: number | string,
-  adj1: number | string,
-  adj2: number | string,
-  isClose: boolean
-): [string, string] {
+type ShapePieOptions = {
+  H: number | string;
+  w: number | string;
+  adj1: number | string;
+  adj2: number | string;
+  isClose: boolean;
+};
+
+export function shapePie({ H, w, adj1, adj2, isClose }: ShapePieOptions): [string, string] {
   const pieVal = typeof adj2 === "number" ? adj2 : parseFloat(adj2);
   const piAngle = typeof adj1 === "number" ? adj1 : parseFloat(adj1);
   const size = typeof H === "number" ? H : parseFloat(H);

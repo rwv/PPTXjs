@@ -5,7 +5,12 @@
  * @param letterCase - "upperCase" or "lowerCase"
  * @returns Alphabetic string representation
  */
-export function alphaNumeric(num: number | string, letterCase: "upperCase" | "lowerCase"): string {
+type AlphaNumericOptions = {
+  num: number | string;
+  letterCase: "upperCase" | "lowerCase";
+};
+
+export function alphaNumeric({ num, letterCase }: AlphaNumericOptions): string {
   const numValue = Number(num) - 1;
   let alphaLabel = "";
 

@@ -66,8 +66,10 @@ const withCtx = (renderer: (ctx: MiscSymbolContext) => string) => {
   return ({ ctx }: MiscSymbolRendererOptions) => renderer(ctx);
 };
 
-const withCtxAndShape = (renderer: (ctx: MiscSymbolContext, shapeType: string) => string) => {
-  return ({ ctx, shapeType }: MiscSymbolRendererOptions) => renderer(ctx, shapeType);
+const withCtxAndShape = (
+  renderer: (options: { ctx: MiscSymbolContext; shapeType: string }) => string
+) => {
+  return ({ ctx, shapeType }: MiscSymbolRendererOptions) => renderer({ ctx, shapeType });
 };
 
 const MISC_SYMBOL_RENDERERS: Record<string, (options: MiscSymbolRendererOptions) => string> = {

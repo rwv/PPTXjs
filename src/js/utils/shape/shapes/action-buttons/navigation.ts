@@ -48,7 +48,7 @@ export function renderActionButtonBackPrevious(ctx: ActionButtonContext): string
     g10 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -119,7 +119,7 @@ export function renderActionButtonBeginning(ctx: ActionButtonContext): string {
     g10 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -190,7 +190,7 @@ export function renderActionButtonEnd(ctx: ActionButtonContext): string {
     g10 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -239,7 +239,7 @@ export function renderActionButtonForwardNext(ctx: ActionButtonContext): string 
     g10 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }
 
 /**
@@ -313,12 +313,23 @@ export function renderActionButtonReturn(ctx: ActionButtonContext): string {
     g24 +
     "," +
     g20 +
-    shapeArc(cX1, g20, g27, g27, 0, 90, false).replace("M", "L") +
+    shapeArc({ cX: cX1, cY: g20, rX: g27, rY: g27, stAng: 0, endAng: 90, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     g25 +
     "," +
     g19 +
-    shapeArc(g25, cY2, g27, g27, 90, 180, false).replace("M", "L") +
+    shapeArc({
+      cX: g25,
+      cY: cY2,
+      rX: g27,
+      rY: g27,
+      stAng: 90,
+      endAng: 180,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     g26 +
     "," +
@@ -331,17 +342,28 @@ export function renderActionButtonReturn(ctx: ActionButtonContext): string {
     g11 +
     "," +
     g20 +
-    shapeArc(cX3, g20, g17, g17, 180, 90, false).replace("M", "L") +
+    shapeArc({
+      cX: cX3,
+      cY: g20,
+      rX: g17,
+      rY: g17,
+      stAng: 180,
+      endAng: 90,
+      isClose: false,
+    }).replace("M", "L") +
     " L" +
     hc +
     "," +
     g10 +
-    shapeArc(hc, cY4, g17, g17, 90, 0, false).replace("M", "L") +
+    shapeArc({ cX: hc, cY: cY4, rX: g17, rY: g17, stAng: 90, endAng: 0, isClose: false }).replace(
+      "M",
+      "L"
+    ) +
     " L" +
     g22 +
     "," +
     g21 +
     " z";
 
-  return createPath(d, ctx);
+  return createPath({ d, ctx });
 }

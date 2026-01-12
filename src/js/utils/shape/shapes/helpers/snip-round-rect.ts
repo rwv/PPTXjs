@@ -13,14 +13,23 @@
  *   - "diag": adjust corners A,C with adj1 and B,D with adj2
  * @returns SVG path string
  */
-export function shapeSnipRoundRect(
-  w: number | string,
-  h: number | string,
-  adj1: number | string,
-  adj2: number | string,
-  shapeType: "round" | "snip",
-  adjType: "cornr1" | "cornr2" | "cornrAll" | "diag"
-): string {
+type ShapeSnipRoundRectOptions = {
+  w: number | string;
+  h: number | string;
+  adj1: number | string;
+  adj2: number | string;
+  shapeType: "round" | "snip";
+  adjType: "cornr1" | "cornr2" | "cornrAll" | "diag";
+};
+
+export function shapeSnipRoundRect({
+  w,
+  h,
+  adj1,
+  adj2,
+  shapeType,
+  adjType,
+}: ShapeSnipRoundRectOptions): string {
   // Convert to numbers
   const width = typeof w === "number" ? w : parseFloat(w);
   const height = typeof h === "number" ? h : parseFloat(h);

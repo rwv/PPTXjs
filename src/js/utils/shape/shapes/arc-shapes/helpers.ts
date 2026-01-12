@@ -25,7 +25,13 @@ export function getStrokeAttrs(ctx: ArcShapeContext): string {
 /**
  * Create SVG path element with fill and stroke
  */
-export function createPath(d: string, ctx: ArcShapeContext, transform?: string): string {
+type CreatePathOptions = {
+  d: string;
+  ctx: ArcShapeContext;
+  transform?: string;
+};
+
+export function createPath({ d, ctx, transform }: CreatePathOptions): string {
   const transformAttr = transform ? ` transform='${transform}'` : "";
   return `<path   d='${d}'${transformAttr}  fill='${getFillAttr(ctx)}' ${getStrokeAttrs(ctx)} />`;
 }

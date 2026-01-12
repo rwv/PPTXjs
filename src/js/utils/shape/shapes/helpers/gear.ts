@@ -6,7 +6,14 @@
  * @param points - Number of teeth/notches on the gear
  * @returns SVG path string representing the gear shape
  */
-export function shapeGear(w: number | string, h: number | string, points: number | string): string {
+type ShapeGearOptions = {
+  w: number | string;
+  h: number | string;
+  points: number | string;
+};
+
+export function shapeGear({ w, h, points }: ShapeGearOptions): string {
+  void w;
   // Convert to numbers
   const height = typeof h === "number" ? h : parseFloat(h);
   const notches = typeof points === "number" ? points : parseFloat(points);
