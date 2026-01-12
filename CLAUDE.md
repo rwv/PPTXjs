@@ -39,20 +39,20 @@ pnpm test:ui
 
 ### Entry Points
 
-1. **pptxjs-entry** (`src/pptxjs-entry.ts`) - ESM entry that loads D3 v3 and NVD3, then exports `pptxToHtml`.
-2. **pptxjs core** (`src/js/pptxjs.ts`) - Main PPTX parser and renderer (exported and attached to `window`).
-3. **divs2slides** (`src/js/divs2slides.ts`) - Slideshow presentation mode with navigation and transitions.
+1. **pptxjs core** (`src/js/pptxjs.ts`) - Main PPTX parser and renderer (exported and attached to `window`).
+2. **divs2slides** (`src/js/divs2slides.ts`) - Slideshow presentation mode with navigation and transitions.
+3. **chart deps** (`src/js/utils/vendors/import-nv-d3.ts`) - Loads D3 v3/NVD3 globals and NVD3 CSS for chart rendering.
 
 ### ESM Entry (No Script Tags)
 
-- Import `pptxToHtml` from the entry and call `await ensurePptxDependencies()` before use.
+- Import `pptxToHtml` from `src/js/pptxjs.ts`; chart rendering loads D3/NVD3 on demand.
 
 ### Core PPTX Processing Flow
 
 The main processing happens in `src/js/pptxjs.ts` (~13,000 lines):
 
 1. **ZIP Extraction**: Uses zip.js via the archive adapter to read PPTX entries
-2. **XML Parsing**: Custom tXml parser (`src/js/utils/vendors/txml.js`) converts XML to JS objects
+2. **XML Parsing**: Custom tXml parser (`src/js/utils/vendors/txml/`) converts XML to JS objects
 3. **Theme Resolution**: Extracts color schemes, fonts from `theme/theme*.xml`
 4. **Layout Hierarchy**: Resolves properties through slide → layout → master → theme fallback chain
 5. **HTML Generation**: Creates HTML divs with inline CSS for each slide element

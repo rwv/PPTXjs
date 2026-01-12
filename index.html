@@ -6,11 +6,9 @@
 <title>PPTXjs - Meshesha</title>
 
 <script type="module">
-	import { ensurePptxDependencies, pptxToHtml } from "./src/pptxjs-entry.ts";
+	import { pptxToHtml } from "./src/js/pptxjs.ts";
 
 	document.addEventListener("DOMContentLoaded", async function () {
-		await ensurePptxDependencies();
-
 		var oldWidth = "";
 		var oldMargin = "";
 		var fullscreenButton = document.getElementById("fullscreen-btn");

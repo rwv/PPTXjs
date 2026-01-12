@@ -64,9 +64,7 @@ PPTXjs
 ----
  use ESM import (bundler required for D3 v3 and NVD3 CJS/UMD):
  ```
-import { ensurePptxDependencies, pptxToHtml } from "./src/pptxjs-entry.ts";
-
-await ensurePptxDependencies();
+import { pptxToHtml } from "./src/js/pptxjs.ts";
 ```
  html body :
  ```
@@ -78,7 +76,6 @@ await ensurePptxDependencies();
  ```
  add javascript:
  ```
-await ensurePptxDependencies();
 await pptxToHtml("#your_div_id_result", {
   pptxFileUrl: "path/to/yore_pptx_file.pptx",
   fileInputId: "upload_pptx_fiile",

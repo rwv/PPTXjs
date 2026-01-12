@@ -1,4 +1,4 @@
-import { ensurePptxDependencies, pptxToHtml } from "./pptxjs-entry";
+import { pptxToHtml } from "./js/pptxjs";
 
 type PptxToHtmlOptions = {
   pptxFileUrl: string;
@@ -10,8 +10,6 @@ type PptxToHtmlOptions = {
 
 export async function getPageElementsFromPPTX(file: Blob) {
   const url = URL.createObjectURL(file);
-
-  await ensurePptxDependencies();
 
   const element = document.createElement("div");
   const elementID = crypto.randomUUID();

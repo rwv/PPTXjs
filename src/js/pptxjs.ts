@@ -8,6 +8,8 @@
  * fix issues:
  * [#16](https://github.com/meshesha/PPTXjs/issues/16)
  */
+import "../../css/pptxjs.css";
+
 import { setNumericBullets } from "./utils/text";
 import { processMsgQueue } from "./utils/chart";
 import { updateProgressBar } from "./utils/ui";

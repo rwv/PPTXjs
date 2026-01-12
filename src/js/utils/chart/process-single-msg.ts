@@ -1,3 +1,5 @@
+import { d3, nv } from "../vendors/import-nv-d3";
+
 type ChartMessage = {
   chartID: string | number;
   chartType: string;
@@ -28,9 +30,6 @@ export function processSingleMsg(message: unknown): boolean {
   }
 
   const { chartID: chartId, chartType, chartData } = message;
-  type D3Module = typeof import("d3");
-  type NvModule = typeof import("nvd3");
-  const { nv, d3 } = window as { nv: NvModule; d3: D3Module };
 
   let chartDataset: unknown = [];
 
