@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 
-import { getPageElementsFromPPTX } from "../index";
+import { getPageElementsFromPPTX } from "./helpers/get-page-elements-from-pptx";
 import SamplePptx from "./example.pptx?url";
 
 describe("PPTXjs Loading", () => {
