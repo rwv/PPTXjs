@@ -19,11 +19,11 @@ export function applyTint({ colorValue, tintValue, isAlpha }: ApplyTintOptions):
   const tintAmount = typeof tintValue === "number" ? tintValue : parseFloat(tintValue);
   const color = tinycolor(colorValue).toHsl();
 
-  // Clamp tint value to max 1
-  const clampedTint = Math.min(tintAmount, 1);
+  const safeTint = Number.isFinite(tintAmount) ? tintAmount : 1;
+  const clampedTint = Math.min(Math.max(safeTint, 0), 1);
 
   // Calculate new lightness (lighter)
-  const lightnessValue = color.l * clampedTint + (1 - clampedTint);
+  const lightnessValue = Math.min(Math.max(color.l * clampedTint + (1 - clampedTint), 0), 1);
 
   if (isAlpha) {
     return tinycolor({ h: color.h, s: color.s, l: lightnessValue, a: color.a }).toHex8();
