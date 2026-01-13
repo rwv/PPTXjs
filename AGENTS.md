@@ -36,7 +36,7 @@ All commands must pass before committing.
 - `src/__tests__/index.browser.test.ts`: browser tests (Vitest + Playwright).
 - `src/__tests__/__screenshots__/**`: Playwright snapshot images (OS/browser specific).
 - `src/__tests__/__snapshots__/**`: Vitest snapshot files.
-- `src/__tests__/example.pptx`: test fixture PPTX.
+- `src/__tests__/fixtures/example.pptx`: test fixture PPTX.
 - `src/css/`: runtime styles.
 - `.husky/`: Git hooks (commitlint and lint-staged).
 - `commitlint.config.ts`: commitlint rules.
