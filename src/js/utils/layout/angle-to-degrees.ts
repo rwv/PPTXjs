@@ -13,5 +13,8 @@ export function angleToDegrees({ angle }: AngleToDegreesOptions): number {
     return 0;
   }
   const angleNum = typeof angle === "number" ? angle : parseFloat(angle);
+  if (!Number.isFinite(angleNum)) {
+    return 0;
+  }
   return Math.round(angleNum / 60000);
 }
