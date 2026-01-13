@@ -17,6 +17,9 @@ export function shapeGear({ w, h, points }: ShapeGearOptions): string {
   // Convert to numbers
   const height = typeof h === "number" ? h : parseFloat(h);
   const notches = typeof points === "number" ? points : parseFloat(points);
+  if (!Number.isFinite(height) || !Number.isFinite(notches) || height <= 0 || notches <= 0) {
+    return "";
+  }
 
   // Calculate radii
   const innerRadius = height;
