@@ -83,6 +83,7 @@ export async function processPPTX({
   }
 
   const contentTypes = await getContentTypes({ archive });
+  const slidePaths = Array.isArray(contentTypes.slides) ? contentTypes.slides : [];
   const slideSize = await getSlideSizeAndSetDefaultTextStyle({
     archive,
     slideFactor: emuToPx,
@@ -102,27 +103,16 @@ export async function processPPTX({
     slide_num: 0,
   });
 
-  const slideCount = contentTypes["slides"].length;
+  const slideCount = slidePaths.length;
   for (let slideIndex = 0; slideIndex < slideCount; slideIndex += 1) {
-    const slidePath = contentTypes["slides"][slideIndex];
-    let slideFilename = "";
-    let slideFilenameParts: string[] = [];
-    if (slidePath.indexOf("/") !== -1) {
-      slideFilenameParts = slidePath.split("/");
-      slideFilename = slideFilenameParts.pop() ?? "";
-    } else {
-      slideFilename = slidePath;
-    }
-    let slideBasename = "";
-    if (slideFilename.indexOf(".") !== -1) {
-      const slideBasenameParts = slideFilename.split(".");
-      slideBasenameParts.pop();
-      slideBasename = slideBasenameParts.join(".");
-    }
-    let slideNumber = 1;
-    if (slideBasename !== "" && slideFilename.indexOf("slide") !== -1) {
-      slideNumber = Number(slideBasename.substr(5));
-    }
+    const slidePath = slidePaths[slideIndex];
+    const slideFilename = slidePath.split("/").pop() ?? slidePath;
+    const slideBasename = slideFilename.replace(/\.[^.]+$/, "");
+    // PPTX slide names are typically slide1.xml; fall back to the index if parsing fails.
+    const slideMatch = /slide(\d+)/i.exec(slideBasename);
+    const parsedSlideNumber =
+      slideMatch && slideMatch[1] ? Number.parseInt(slideMatch[1], 10) : Number.NaN;
+    const slideNumber = Number.isFinite(parsedSlideNumber) ? parsedSlideNumber : slideIndex + 1;
     const slideHtml = await processSingleSlide({
       archive,
       slideFilePath: slidePath,
