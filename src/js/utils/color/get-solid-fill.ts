@@ -117,12 +117,12 @@ export function getSolidFill({
     colorNode = fillNode["a:scrgbClr"];
     //<a:scrgbClr r="50%" g="50%" b="50%"/>  //Need to test/////////////////////////////////////////////
     const colorAttrs = colorNode["attrs"];
-    const red =
-      colorAttrs["r"].indexOf("%") !== -1 ? colorAttrs["r"].split("%").shift() : colorAttrs["r"];
-    const green =
-      colorAttrs["g"].indexOf("%") !== -1 ? colorAttrs["g"].split("%").shift() : colorAttrs["g"];
-    const blue =
-      colorAttrs["b"].indexOf("%") !== -1 ? colorAttrs["b"].split("%").shift() : colorAttrs["b"];
+    const redValue = colorAttrs?.["r"] ?? "";
+    const greenValue = colorAttrs?.["g"] ?? "";
+    const blueValue = colorAttrs?.["b"] ?? "";
+    const red = redValue.includes("%") ? redValue.split("%")[0] : redValue;
+    const green = greenValue.includes("%") ? greenValue.split("%")[0] : greenValue;
+    const blue = blueValue.includes("%") ? blueValue.split("%")[0] : blueValue;
     //var scrgbClr = red + "," + green + "," + blue;
     hexColor =
       toHex({ value: 255 * (Number(red) / 100) }) +
@@ -142,19 +142,12 @@ export function getSolidFill({
     colorNode = fillNode["a:hslClr"];
     //<a:hslClr hue="14400000" sat="100%" lum="50%"/>  //Need to test/////////////////////////////////////////////
     const colorAttrs = colorNode["attrs"];
-    const hue = Number(colorAttrs["hue"]) / 100000;
-    const sat =
-      Number(
-        colorAttrs["sat"].indexOf("%") !== -1
-          ? colorAttrs["sat"].split("%").shift()
-          : colorAttrs["sat"]
-      ) / 100;
-    const lum =
-      Number(
-        colorAttrs["lum"].indexOf("%") !== -1
-          ? colorAttrs["lum"].split("%").shift()
-          : colorAttrs["lum"]
-      ) / 100;
+    const hueValue = colorAttrs?.["hue"] ?? "";
+    const satValue = colorAttrs?.["sat"] ?? "";
+    const lumValue = colorAttrs?.["lum"] ?? "";
+    const hue = Number(hueValue) / 100000;
+    const sat = Number(satValue.includes("%") ? satValue.split("%")[0] : satValue) / 100;
+    const lum = Number(lumValue.includes("%") ? lumValue.split("%")[0] : lumValue) / 100;
     //var hslClr = defBultColorVals["hue"] + "," + defBultColorVals["sat"] + "," + defBultColorVals["lum"];
     const hslRgb = hslToRgb({ hue, saturation: sat, lightness: lum });
     hexColor = toHex({ value: hslRgb.r }) + toHex({ value: hslRgb.g }) + toHex({ value: hslRgb.b });
