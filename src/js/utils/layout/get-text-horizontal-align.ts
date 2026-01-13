@@ -57,7 +57,10 @@ export function getTextHorizontalAlign({
         path: ["a:pPr", "attrs", "lvl"],
       });
       if (levelAttr !== undefined) {
-        listLevel = parseInt(String(levelAttr), 10) + 1;
+        const parsedLevel = Number.parseInt(String(levelAttr), 10);
+        if (Number.isFinite(parsedLevel)) {
+          listLevel = parsedLevel + 1;
+        }
       }
       const levelKey = "a:lvl" + listLevel + "pPr";
       const layoutTypeEntry = warpContext.slideLayoutTables?.typeTable[shapeType];
