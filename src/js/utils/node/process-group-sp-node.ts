@@ -74,51 +74,86 @@ export async function processGroupSpNode({
   let heightPx: number | undefined;
   let shapeType = "group";
   if (transformNode !== undefined) {
-    const offsetAttrs = (transformNode["a:off"] as XmlNode)["attrs"] as Record<string, string>;
-    const childOffsetAttrs = (transformNode["a:chOff"] as XmlNode)["attrs"] as Record<
-      string,
-      string
-    >;
-    const extentAttrs = (transformNode["a:ext"] as XmlNode)["attrs"] as Record<string, string>;
-    const childExtentAttrs = (transformNode["a:chExt"] as XmlNode)["attrs"] as Record<
-      string,
-      string
-    >;
-    const offsetX = parseInt(offsetAttrs["x"]) * emuToPx;
-    const offsetY = parseInt(offsetAttrs["y"]) * emuToPx;
-    const childOffsetX = parseInt(childOffsetAttrs["x"]) * emuToPx;
-    const childOffsetY = parseInt(childOffsetAttrs["y"]) * emuToPx;
-    const extentWidth = parseInt(extentAttrs["cx"]) * emuToPx;
-    const extentHeight = parseInt(extentAttrs["cy"]) * emuToPx;
-    const childExtentWidth = parseInt(childExtentAttrs["cx"]) * emuToPx;
-    const childExtentHeight = parseInt(childExtentAttrs["cy"]) * emuToPx;
-    let rotation = parseInt((transformNode["attrs"] as Record<string, string>)["rot"]);
+    const parseEmuValue = (value: string | number | undefined): number | undefined => {
+      if (value === undefined || value === null) {
+        return undefined;
+      }
+      const parsed = Number.parseInt(String(value), 10);
+      return Number.isFinite(parsed) ? parsed * emuToPx : undefined;
+    };
+
+    const offsetX = parseEmuValue(
+      getTextByPathList<string | number>({ node: transformNode, path: ["a:off", "attrs", "x"] })
+    );
+    const offsetY = parseEmuValue(
+      getTextByPathList<string | number>({ node: transformNode, path: ["a:off", "attrs", "y"] })
+    );
+    const childOffsetX = parseEmuValue(
+      getTextByPathList<string | number>({ node: transformNode, path: ["a:chOff", "attrs", "x"] })
+    );
+    const childOffsetY = parseEmuValue(
+      getTextByPathList<string | number>({ node: transformNode, path: ["a:chOff", "attrs", "y"] })
+    );
+    const extentWidth = parseEmuValue(
+      getTextByPathList<string | number>({ node: transformNode, path: ["a:ext", "attrs", "cx"] })
+    );
+    const extentHeight = parseEmuValue(
+      getTextByPathList<string | number>({ node: transformNode, path: ["a:ext", "attrs", "cy"] })
+    );
+    const childExtentWidth = parseEmuValue(
+      getTextByPathList<string | number>({ node: transformNode, path: ["a:chExt", "attrs", "cx"] })
+    );
+    const childExtentHeight = parseEmuValue(
+      getTextByPathList<string | number>({ node: transformNode, path: ["a:chExt", "attrs", "cy"] })
+    );
+    const rotationRaw = Number.parseInt(
+      String(
+        getTextByPathList<string | number>({ node: transformNode, path: ["attrs", "rot"] }) ?? ""
+      ),
+      10
+    );
     // angleToDegrees(getTextByPathList({ node: slideXfrmNode, path: ["attrs", "rot"] }));
     // var rotX = 0;
     // var rotY = 0;
-    topPx = offsetY - childOffsetY;
-    leftPx = offsetX - childOffsetX;
-    widthPx = extentWidth - childExtentWidth;
-    heightPx = extentHeight - childExtentHeight;
-    if (!isNaN(rotation)) {
-      rotation = angleToDegrees({ angle: rotation });
+    if (offsetY !== undefined && childOffsetY !== undefined) {
+      topPx = offsetY - childOffsetY;
+    }
+    if (offsetX !== undefined && childOffsetX !== undefined) {
+      leftPx = offsetX - childOffsetX;
+    }
+    if (extentWidth !== undefined && childExtentWidth !== undefined) {
+      widthPx = extentWidth - childExtentWidth;
+    }
+    if (extentHeight !== undefined && childExtentHeight !== undefined) {
+      heightPx = extentHeight - childExtentHeight;
+    }
+    if (Number.isFinite(rotationRaw)) {
+      const rotation = angleToDegrees({ angle: rotationRaw });
       rotationCss += "transform: rotate(" + rotation + "deg) ; transform-origin: center;";
       // var cLin = Math.sqrt(Math.pow((chy), 2) + Math.pow((chx), 2));
       // var rdian = degreesToRadians(rotate);
       // rotX = cLin * Math.cos(rdian);
       // rotY = cLin * Math.sin(rdian);
       if (rotation !== 0) {
-        topPx = offsetY;
-        leftPx = offsetX;
-        widthPx = extentWidth;
-        heightPx = extentHeight;
+        if (offsetY !== undefined) {
+          topPx = offsetY;
+        }
+        if (offsetX !== undefined) {
+          leftPx = offsetX;
+        }
+        if (extentWidth !== undefined) {
+          widthPx = extentWidth;
+        }
+        if (extentHeight !== undefined) {
+          heightPx = extentHeight;
+        }
         shapeType = "group-rotate";
       }
     }
   }
   let groupStyle = "";
 
-  if (rotationCss !== undefined && rotationCss !== "") {
+  if (rotationCss) {
     groupStyle += rotationCss;
   }
 
@@ -134,7 +169,10 @@ export async function processGroupSpNode({
   if (heightPx !== undefined) {
     groupStyle += "height: " + heightPx + "px;";
   }
-  const zIndexOrder = (groupNodeRecord["attrs"] as Record<string, string | number>)["order"];
+  const attrs = groupNodeRecord["attrs"] as Record<string, string | number> | undefined;
+  const zIndexRaw = attrs?.["order"];
+  const zIndexParsed = Number.parseInt(String(zIndexRaw ?? ""), 10);
+  const zIndexOrder = Number.isFinite(zIndexParsed) ? zIndexParsed : 0;
 
   let htmlOutput =
     "<div class='block group' style='z-index: " +
