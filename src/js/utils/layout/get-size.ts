@@ -45,9 +45,11 @@ export function getSize({
   // Find extent with fallback hierarchy: slide -> layout -> master
   if (slideSpNode !== undefined) {
     extentAttributes = slideSpNode["a:ext"]?.attrs;
-  } else if (slideLayoutSpNode !== undefined) {
+  }
+  if (extentAttributes === undefined && slideLayoutSpNode !== undefined) {
     extentAttributes = slideLayoutSpNode["a:ext"]?.attrs;
-  } else if (slideMasterSpNode !== undefined) {
+  }
+  if (extentAttributes === undefined && slideMasterSpNode !== undefined) {
     extentAttributes = slideMasterSpNode["a:ext"]?.attrs;
   }
 
