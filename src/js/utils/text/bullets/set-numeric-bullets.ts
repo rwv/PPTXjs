@@ -38,6 +38,12 @@ export function setNumericBullets(elements: NodeListOf<Element> | Element[]) {
       for (let j = 0; j < bulletSpans.length; j++) {
         const bulletType = bulletSpans[j]?.getAttribute("data-bulltname") ?? "";
         const bulletLevel = bulletSpans[j]?.getAttribute("data-bulltlvl") ?? "";
+        const currentLevel = Number(bulletLevel);
+        const prevLevel = Number(prevBulletLevel);
+        const levelIncreased =
+          Number.isFinite(currentLevel) && Number.isFinite(prevLevel) && currentLevel > prevLevel;
+        const levelDecreased =
+          Number.isFinite(currentLevel) && Number.isFinite(prevLevel) && currentLevel < prevLevel;
 
         if (bulletIndex === 0) {
           prevBulletType = bulletType;
@@ -59,25 +65,22 @@ export function setNumericBullets(elements: NodeListOf<Element> | Element[]) {
             levelCounters[levelIndex] = bulletIndex;
             bulletTypeStack[levelIndex] = bulletType;
             bulletIndex = 1;
-          } else if (
-            bulletType !== prevBulletType &&
-            Number(bulletLevel) > Number(prevBulletLevel)
-          ) {
+          } else if (bulletType !== prevBulletType && levelIncreased) {
             prevBulletType = bulletType;
             prevBulletLevel = bulletLevel;
             levelIndex++;
             levelCounters[levelIndex] = bulletIndex;
             bulletTypeStack[levelIndex] = bulletType;
             bulletIndex = 1;
-          } else if (
-            bulletType !== prevBulletType &&
-            Number(bulletLevel) < Number(prevBulletLevel)
-          ) {
+          } else if (bulletType !== prevBulletType && levelDecreased) {
             prevBulletType = bulletType;
             prevBulletLevel = bulletLevel;
-            levelIndex--;
-            bulletIndex = levelCounters[levelIndex] + 1;
+            levelIndex = Math.max(0, levelIndex - 1);
+            bulletIndex = (levelCounters[levelIndex] ?? 0) + 1;
           }
+        }
+        if (bulletTypeStack[levelIndex] === undefined) {
+          bulletTypeStack[levelIndex] = bulletType;
         }
 
         const bulletLabel = getNumTypeNum({
