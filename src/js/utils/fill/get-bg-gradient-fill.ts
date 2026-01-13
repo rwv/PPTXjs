@@ -49,8 +49,13 @@ export function getBgGradientFill({
       gradientFillNode !== undefined
         ? getTextByPathList({ node: gradientFillNode, path: ["a:gsLst", "a:gs"] })
         : undefined;
-    const gradientStops =
-      gradientStopsValue && isXmlNodeArray(gradientStopsValue) ? gradientStopsValue : [];
+    const gradientStops = gradientStopsValue
+      ? isXmlNodeArray(gradientStopsValue)
+        ? gradientStopsValue
+        : isXmlNode(gradientStopsValue)
+          ? [gradientStopsValue]
+          : []
+      : [];
     const colorStops: string[] = [];
     const positionStops: string[] = [];
     const colorMapValue = getTextByPathList({
@@ -67,9 +72,13 @@ export function getBgGradientFill({
         placeholderColor,
         warpContext,
       });
-      const pos = getTextByPathList<string>({ node: gradientStops[i], path: ["attrs", "pos"] });
-      if (pos !== undefined) {
-        positionStops[i] = Number(pos) / 1000 + "%";
+      const pos = getTextByPathList<string | number>({
+        node: gradientStops[i],
+        path: ["attrs", "pos"],
+      });
+      const posValue = pos !== undefined ? Number(pos) : Number.NaN;
+      if (Number.isFinite(posValue)) {
+        positionStops[i] = posValue / 1000 + "%";
       } else {
         positionStops[i] = "";
       }
