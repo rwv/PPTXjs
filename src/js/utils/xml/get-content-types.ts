@@ -22,16 +22,29 @@ export async function getContentTypes({ archive }: GetContentTypesOptions): Prom
     return { slides: [], slideLayouts: [] };
   }
 
-  const overrideEntries = contentTypesData["Types"]["Override"];
+  const overrideEntries = contentTypesData["Types"]?.["Override"];
+  const overrideList = Array.isArray(overrideEntries)
+    ? overrideEntries
+    : overrideEntries
+      ? [overrideEntries]
+      : [];
   const slidePaths: string[] = [];
   const slideLayoutPaths: string[] = [];
-  for (const overrideEntry of overrideEntries) {
-    switch (overrideEntry["attrs"]["ContentType"]) {
+  for (const overrideEntry of overrideList) {
+    const attrs =
+      overrideEntry && typeof overrideEntry === "object" ? overrideEntry["attrs"] : undefined;
+    const contentType = typeof attrs?.["ContentType"] === "string" ? attrs["ContentType"] : "";
+    const partNameRaw = typeof attrs?.["PartName"] === "string" ? attrs["PartName"] : "";
+    if (!partNameRaw) {
+      continue;
+    }
+    const partName = partNameRaw.startsWith("/") ? partNameRaw.slice(1) : partNameRaw;
+    switch (contentType) {
       case "application/vnd.openxmlformats-officedocument.presentationml.slide+xml":
-        slidePaths.push(overrideEntry["attrs"]["PartName"].substr(1));
+        slidePaths.push(partName);
         break;
       case "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml":
-        slideLayoutPaths.push(overrideEntry["attrs"]["PartName"].substr(1));
+        slideLayoutPaths.push(partName);
         break;
       default:
     }
