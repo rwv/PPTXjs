@@ -38,6 +38,3 @@ All commands must pass before committing.
 - `src/__tests__/__snapshots__/**`: Vitest snapshot files.
 - `src/__tests__/example.pptx`: test fixture PPTX.
 - `src/css/`: runtime styles.
-- `js-original/`: legacy built artifacts.
-- `index.html`: demo harness page.
-- `Sample_12.pptx`: sample PPTX for manual/testing.
