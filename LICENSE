@@ -1,3 +1,16 @@
+PPTX-JS License
+
+This project contains code derived from meshesha/PPTXjs (https://github.com/meshesha/PPTXjs),
+which is licensed under the MIT License. That portion remains under the MIT License, reproduced
+below.
+
+All other code in this repository is licensed under the GNU Affero General Public License v3.0
+(AGPLv3), or a commercial license from the copyright holder. Commercial licensing: i@rwv.dev
+
+AGPLv3 text: https://www.gnu.org/licenses/agpl-3.0.html
+
+---
+
 MIT License
 
 Copyright (c) 2017 meshesha
