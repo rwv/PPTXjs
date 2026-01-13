@@ -16,7 +16,11 @@ type ArchaicRule = [number | RegExp, string];
 export function archaicNumbers(rules: ArchaicRule[]) {
   return {
     format: function (value: number): string {
+      if (!Number.isFinite(value) || value <= 0) {
+        return "";
+      }
       let formatted = "";
+      let remaining = Math.floor(value);
 
       // Process each rule in order
       for (let i = 0; i < rules.length; i++) {
@@ -26,9 +30,9 @@ export function archaicNumbers(rules: ArchaicRule[]) {
 
         if (typeof num === "number" && num > 0) {
           // For numeric rules, repeatedly subtract and append character
-          while (value >= num) {
+          while (remaining >= num) {
             formatted += char;
-            value -= num;
+            remaining -= num;
           }
         } else if (num instanceof RegExp) {
           // For regex rules, perform replacement
