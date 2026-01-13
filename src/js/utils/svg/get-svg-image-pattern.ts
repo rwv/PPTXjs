@@ -53,8 +53,12 @@ export function getSvgImagePattern({
     width &&
     height
   ) {
-    tileWidth = (Number(tileScaleX) / 100000) * width;
-    tileHeight = (Number(tileScaleY) / 100000) * height;
+    const scaleX = Number(tileScaleX);
+    const scaleY = Number(tileScaleY);
+    if (Number.isFinite(scaleX) && Number.isFinite(scaleY)) {
+      tileWidth = (scaleX / 100000) * width;
+      tileHeight = (scaleY / 100000) * height;
+    }
   }
 
   const blipNode = getTextByPathList<XmlNode>({ node: blipFillNode, path: ["a:blip"] });
@@ -66,9 +70,11 @@ export function getSvgImagePattern({
 
   const alphaAmount = alphaModFixNode?.["amt"];
   if (alphaAmount !== undefined && alphaAmount !== "") {
-    const opacityAmount = Number(alphaAmount) / 100000;
-    const opacity = opacityAmount;
-    imageOpacityAttr = "opacity='" + opacity + "'";
+    const parsedOpacity = Number(alphaAmount);
+    if (Number.isFinite(parsedOpacity)) {
+      const opacity = Math.min(1, Math.max(0, parsedOpacity / 100000));
+      imageOpacityAttr = "opacity='" + opacity + "'";
+    }
   }
 
   let patternMarkup: string;
@@ -107,8 +113,10 @@ export function getSvgImagePattern({
           placeholderColor: undefined,
           warpContext,
         });
-        const duotoneColor = tinycolor("#" + hexColor);
-        duotoneColors.push(duotoneColor.toRgb());
+        if (hexColor) {
+          const duotoneColor = tinycolor("#" + hexColor);
+          duotoneColors.push(duotoneColor.toRgb());
+        }
       }
     });
 
