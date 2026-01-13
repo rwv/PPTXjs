@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Project status
-- This repo modernizes the legacy PPTXjs jQuery plugin and now targets native DOM APIs plus stronger TypeScript types for PPTX-to-HTML conversion.
+- This repo modernizes the legacy PPTXjs jQuery plugin and is published as `pptx-js`, targeting native DOM APIs plus stronger TypeScript types for PPTX-to-HTML conversion.
 
 ## Scripts
 - test: `pnpm test`

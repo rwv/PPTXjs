@@ -1,4 +1,4 @@
-PPTXjs
+pptx-js
 ==========
 [![MIT License][license-image]][license-url]
 

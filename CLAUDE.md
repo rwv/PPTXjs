@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-PPTXjs converts PowerPoint (PPTX) files to HTML using pure JavaScript and native DOM APIs. It parses the OOXML structure of PPTX files and renders slides as HTML/CSS with support for text, shapes, images, videos, charts, SmartArt diagrams, tables, and themes.
+pptx-js converts PowerPoint (PPTX) files to HTML using pure JavaScript and native DOM APIs. It parses the OOXML structure of PPTX files and renders slides as HTML/CSS with support for text, shapes, images, videos, charts, SmartArt diagrams, tables, and themes.
 
 **Current Goal**: Continue modernizing legacy JavaScript into ESM TypeScript modules while keeping checks passing (`pnpm lint && pnpm type-check && pnpm test`).
 
