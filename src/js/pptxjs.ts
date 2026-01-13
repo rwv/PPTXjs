@@ -123,7 +123,7 @@ function appendResult({ target, data }: AppendResultOptions): void {
     target.insertAdjacentHTML("beforeend", data);
     return;
   }
-  if (data instanceof Node) {
+  if (typeof Node !== "undefined" && data instanceof Node) {
     target.appendChild(data);
   }
 }
@@ -220,13 +220,13 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
   if (settings.keyBoardShortCut) {
     document.addEventListener("keydown", async function (event: KeyboardEvent) {
       event.preventDefault();
-      const key = event.keyCode;
-      console.log(key, isDone);
-      if (key === 116 && !isSlideMode) {
+      const isF5 = event.key === "F5" || event.keyCode === 116;
+      console.log(event.keyCode, isDone);
+      if (isF5 && !isSlideMode) {
         //F5
         isSlideMode = true;
         await initSlideMode({ divId, settings });
-      } else if (key === 116 && isSlideMode) {
+      } else if (isF5 && isSlideMode) {
         //exit slide mode - TODO
       }
     });
@@ -259,11 +259,15 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
         if (!file) {
           return;
         }
-        // var fileName = file[0].name;
+        const fileName = "name" in file ? String(file.name) : "";
         //var fileSize = file[0].size;
         const fileType = file.type;
+        // Some browsers provide empty/opaque MIME types; fall back to filename.
         if (
-          fileType === "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+          fileType ===
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation" ||
+          fileType === "application/octet-stream" ||
+          fileName.toLowerCase().endsWith(".pptx")
         ) {
           try {
             const arrayBuffer = await file.arrayBuffer();
@@ -283,7 +287,7 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
     //'use strict';
     //console.log("file", file, "size:", file.byteLength);
     if (file.byteLength < 10) {
-      console.error("file url error (" + settings.pptxFileUrl + "0)");
+      console.error("file url error (" + settings.pptxFileUrl + ")");
       removeLoadingMessage();
       return;
     }
@@ -360,10 +364,12 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
     let trnsfrmScl = "";
     let scaleVal = 1;
     if (sScale !== "") {
-      const numsScale = parseInt(sScale);
-      scaleVal = numsScale / 100;
-      if (settings.slideMode && settings.slideType !== "revealjs") {
-        trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
+      const numsScale = Number.parseInt(sScale, 10);
+      if (Number.isFinite(numsScale)) {
+        scaleVal = numsScale / 100;
+        if (settings.slideMode && settings.slideType !== "revealjs") {
+          trnsfrmScl = "transform:scale(" + scaleVal + "); transform-origin:top";
+        }
       }
     }
 
