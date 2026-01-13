@@ -96,12 +96,14 @@ export async function initSlideMode({ divId, settings }: InitSlideModeOptions): 
     let transformScaleStyle = "";
     let scaleValue = 1;
     if (slidesScale !== "") {
-      const parsedScale = parseInt(slidesScale);
-      scaleValue = parsedScale / 100;
-      transformScaleStyle = "transform:scale(" + scaleValue + "); transform-origin:top";
+      const parsedScale = Number.parseInt(slidesScale, 10);
+      if (Number.isFinite(parsedScale) && parsedScale > 0) {
+        scaleValue = parsedScale / 100;
+        transformScaleStyle = "transform:scale(" + scaleValue + "); transform-origin:top";
+      }
     }
 
-    const slideCount = 1;
+    const slideCount = slides.length;
     const slideScaleValue = scaleValue;
     //console.log(slidesHeight);
     const wrapper = document.getElementById("all_slides_warpper");
