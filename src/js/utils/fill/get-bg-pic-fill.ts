@@ -91,8 +91,11 @@ export async function getBgPicFill({
     alphaModFixNode["amt"] !== undefined &&
     alphaModFixNode["amt"] !== ""
   ) {
-    const opacityAmount = parseInt(String(alphaModFixNode["amt"]), 10) / 100000;
-    imageOpacityStyle = "opacity:" + opacityAmount + ";";
+    const parsedOpacity = Number.parseInt(String(alphaModFixNode["amt"]), 10);
+    if (Number.isFinite(parsedOpacity)) {
+      const opacityAmount = Math.min(1, Math.max(0, parsedOpacity / 100000));
+      imageOpacityStyle = "opacity:" + opacityAmount + ";";
+    }
   }
 
   const tileAttrsValue = getTextByPathList({
@@ -121,15 +124,18 @@ export async function getBgPicFill({
     backgroundCss += "background-repeat: no-repeat;";
     backgroundCss += "background-position: center;";
     if (fillRectAttrs !== undefined) {
-      backgroundCss += "background-size:  100% 100%;;";
+      backgroundCss += "background-size: 100% 100%;";
     }
   }
+  const zIndexStyle =
+    zIndexOrder === undefined || zIndexOrder === null
+      ? ""
+      : "z-index: " + String(zIndexOrder) + ";";
   const composedCss =
     "background: url(" +
     pictureFillDataUrl +
-    ");  z-index: " +
-    String(zIndexOrder ?? "") +
-    ";" +
+    ");" +
+    zIndexStyle +
     backgroundCss +
     imageOpacityStyle;
 
