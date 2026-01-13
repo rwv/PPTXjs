@@ -27,6 +27,10 @@ export function getSvgGradient({
   colorStops,
   shapeId,
 }: GetSvgGradientOptions): string {
+  if (colorStops.length < 2) {
+    return "";
+  }
+
   const middleStops = getMiddleStops({ middleStopCount: colorStops.length - 2 });
 
   const svgHeight = height;
