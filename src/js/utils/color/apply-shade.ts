@@ -19,11 +19,11 @@ export function applyShade({ colorValue, shadeValue, isAlpha }: ApplyShadeOption
   const shadeAmount = typeof shadeValue === "number" ? shadeValue : parseFloat(shadeValue);
   const color = tinycolor(colorValue).toHsl();
 
-  // Clamp shade value to max 1
-  const clampedShade = Math.min(shadeAmount, 1);
+  const safeShade = Number.isFinite(shadeAmount) ? shadeAmount : 1;
+  const clampedShade = Math.min(Math.max(safeShade, 0), 1);
 
   // Calculate new lightness (darker)
-  const lightnessValue = Math.min(color.l * clampedShade, 1);
+  const lightnessValue = Math.min(Math.max(color.l * clampedShade, 0), 1);
 
   if (isAlpha) {
     return tinycolor({ h: color.h, s: color.s, l: lightnessValue, a: color.a }).toHex8();
