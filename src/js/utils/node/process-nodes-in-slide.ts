@@ -4,6 +4,7 @@ import { processCxnSpNode } from "../shape/process-cxn-sp-node";
 import { processPicNode } from "../media/process-pic-node";
 import { processGraphicFrameNode } from "./process-graphic-frame-node";
 import { processGroupSpNode } from "./process-group-sp-node";
+import type { StyleTable } from "../../types/style";
 import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
 function firstXmlNode(value: XmlNode | XmlNode[] | undefined): XmlNode | undefined {
@@ -60,9 +61,9 @@ type ProcessNodesInSlideOptions = {
   warpContext: WarpContext | Record<string, unknown>;
   sourceType: string;
   shapeType: string;
-  tableStyles: unknown;
+  tableStyles: Record<string, unknown> | null;
   firstLineBreak: { value: boolean };
-  styleTable: unknown;
+  styleTable: StyleTable;
   rtlLanguages: string[];
   emuToPx: number;
   fontSizeScale: number;

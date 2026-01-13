@@ -69,23 +69,25 @@ import {
   renderConnectorShape,
 } from "./shapes";
 import { isBasicShape, renderBasicShape } from "./shapes/basic-shapes";
+import type { StyleTable } from "../../types/style";
+import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 type GenShapeOptions = {
-  shapeNode: any;
-  parentNode: any;
-  layoutShapeNode: any;
-  masterShapeNode: any;
+  shapeNode: XmlNode;
+  parentNode: XmlNode | XmlNode[] | undefined;
+  layoutShapeNode: XmlNode | undefined;
+  masterShapeNode: XmlNode | undefined;
   shapeId: number | string | undefined;
   shapeName: string | undefined;
   placeholderIndex: number | string | undefined;
   placeholderType: string | undefined;
   zIndexOrder: number | string | undefined;
-  warpContext: any;
+  warpContext: WarpContext;
   isUserDrawnBackground: boolean | undefined;
   shapeType: string | undefined;
   sourceType: string;
   emuToPx: number;
-  styleTable: any;
+  styleTable: StyleTable;
   fontSizeScale: number;
   rtlLanguages: string[];
   firstLineBreak: { value: boolean };
@@ -111,10 +113,11 @@ export async function genShape({
   rtlLanguages,
   firstLineBreak,
 }: GenShapeOptions): Promise<string> {
+  const parentNode = Array.isArray(pNode) ? pNode[0] : pNode;
   // Initialize shape rendering context
   const context = await initShapeContext({
     node,
-    parentNode: pNode,
+    parentNode,
     slideLayoutSpNode,
     slideMasterSpNode,
     id,
@@ -458,7 +461,7 @@ export async function genShape({
       "' style='" +
       getPosition({
         slideSpNode: slideXfrmNode,
-        parentNode: pNode,
+        parentNode,
         slideLayoutSpNode: slideLayoutXfrmNode,
         slideMasterSpNode: slideMasterXfrmNode,
         shapeType: sType,
@@ -484,7 +487,7 @@ export async function genShape({
         type = "shape";
       }
       result += await genTextBody({
-        textBodyNode: node["p:txBody"],
+        textBodyNode: node["p:txBody"] as XmlNode | undefined,
         spNode: node,
         shapeType: type,
         placeholderIndex: idx,
@@ -506,7 +509,7 @@ export async function genShape({
       masterShapeNode: slideMasterSpNode,
       slideXfrmNode,
       slideLayoutXfrmNode,
-      parentNode: pNode,
+      parentNode,
       slideMasterXfrmNode,
       width: w,
       height: h,
@@ -551,7 +554,7 @@ export async function genShape({
       "' style='" +
       getPosition({
         slideSpNode: slideXfrmNode,
-        parentNode: pNode,
+        parentNode,
         slideLayoutSpNode: slideLayoutXfrmNode,
         slideMasterSpNode: slideMasterXfrmNode,
         shapeType: sType,
@@ -571,7 +574,7 @@ export async function genShape({
       }) +
       (await getShapeFill({
         shapeNode: node,
-        parentNode: pNode,
+        parentNode,
         isSvgMode: false,
         warpContext,
         sourceType: source,
@@ -587,7 +590,7 @@ export async function genShape({
     // TextBody
     if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
       result += await genTextBody({
-        textBodyNode: node["p:txBody"],
+        textBodyNode: node["p:txBody"] as XmlNode | undefined,
         spNode: node,
         shapeType: type,
         placeholderIndex: idx,

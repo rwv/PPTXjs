@@ -1,5 +1,6 @@
 import { eachElement } from "../object";
 import { getTextByPathList } from "../object";
+import type { XmlNode } from "../../types/pptx-xml";
 
 /**
  * Extract chart data from XML series node
@@ -19,7 +20,7 @@ import { getTextByPathList } from "../object";
  * // [{ key: "Series1", values: [{x: "0", y: 10}], xlabels: {"0": "Jan"} }]
  */
 type ExtractChartDataOptions = {
-  seriesNodeData: any;
+  seriesNodeData: XmlNode | XmlNode[] | undefined;
 };
 
 export function extractChartData({ seriesNodeData }: ExtractChartDataOptions) {
@@ -29,21 +30,31 @@ export function extractChartData({ seriesNodeData }: ExtractChartDataOptions) {
     return chartSeries;
   }
 
-  if (seriesNodeData["c:xVal"] !== undefined) {
+  if (!Array.isArray(seriesNodeData) && seriesNodeData["c:xVal"] !== undefined) {
     let axisValues: number[] = [];
+    const xValueNodes = getTextByPathList<XmlNode | XmlNode[]>({
+      node: seriesNodeData,
+      path: ["c:xVal", "c:numRef", "c:numCache", "c:pt"],
+    });
     eachElement({
-      node: seriesNodeData["c:xVal"]["c:numRef"]["c:numCache"]["c:pt"],
-      callback: function (pointEntry: any) {
-        axisValues.push(parseFloat(pointEntry["c:v"]));
+      node: xValueNodes,
+      callback: function (pointEntry: XmlNode) {
+        const value = getTextByPathList<string | number>({ node: pointEntry, path: ["c:v"] });
+        axisValues.push(parseFloat(String(value ?? "")));
         return "";
       },
     });
     chartSeries.push(axisValues);
     axisValues = [];
+    const yValueNodes = getTextByPathList<XmlNode | XmlNode[]>({
+      node: seriesNodeData,
+      path: ["c:yVal", "c:numRef", "c:numCache", "c:pt"],
+    });
     eachElement({
-      node: seriesNodeData["c:yVal"]["c:numRef"]["c:numCache"]["c:pt"],
-      callback: function (pointEntry: any) {
-        axisValues.push(parseFloat(pointEntry["c:v"]));
+      node: yValueNodes,
+      callback: function (pointEntry: XmlNode) {
+        const value = getTextByPathList<string | number>({ node: pointEntry, path: ["c:v"] });
+        axisValues.push(parseFloat(String(value ?? "")));
         return "";
       },
     });
@@ -51,7 +62,7 @@ export function extractChartData({ seriesNodeData }: ExtractChartDataOptions) {
   } else {
     eachElement({
       node: seriesNodeData,
-      callback: function (seriesEntry: any, seriesIndex: number) {
+      callback: function (seriesEntry: XmlNode, seriesIndex: number) {
         const seriesValues: Array<{ x: string | number; y: number }> = [];
         const seriesLabel =
           getTextByPathList({
@@ -61,48 +72,71 @@ export function extractChartData({ seriesNodeData }: ExtractChartDataOptions) {
 
         // Category (string or number)
         const categoryLabels: Record<string, string> = {};
-        if (
-          getTextByPathList({
-            node: seriesEntry,
-            path: ["c:cat", "c:strRef", "c:strCache", "c:pt"],
-          }) !== undefined
-        ) {
+        const stringCategoryNodes = getTextByPathList<XmlNode | XmlNode[]>({
+          node: seriesEntry,
+          path: ["c:cat", "c:strRef", "c:strCache", "c:pt"],
+        });
+        if (stringCategoryNodes !== undefined) {
           eachElement({
-            node: seriesEntry["c:cat"]["c:strRef"]["c:strCache"]["c:pt"],
-            callback: function (pointEntry: any) {
-              categoryLabels[pointEntry["attrs"]["idx"]] = pointEntry["c:v"];
+            node: stringCategoryNodes,
+            callback: function (pointEntry: XmlNode) {
+              const idx = getTextByPathList<string | number>({
+                node: pointEntry,
+                path: ["attrs", "idx"],
+              });
+              const value = getTextByPathList<string | number>({ node: pointEntry, path: ["c:v"] });
+              if (idx !== undefined && value !== undefined) {
+                categoryLabels[String(idx)] = String(value);
+              }
               return "";
             },
           });
-        } else if (
-          getTextByPathList({
+        } else {
+          const numberCategoryNodes = getTextByPathList<XmlNode | XmlNode[]>({
             node: seriesEntry,
             path: ["c:cat", "c:numRef", "c:numCache", "c:pt"],
-          }) !== undefined
-        ) {
-          eachElement({
-            node: seriesEntry["c:cat"]["c:numRef"]["c:numCache"]["c:pt"],
-            callback: function (pointEntry: any) {
-              categoryLabels[pointEntry["attrs"]["idx"]] = pointEntry["c:v"];
-              return "";
-            },
           });
+          if (numberCategoryNodes !== undefined) {
+            eachElement({
+              node: numberCategoryNodes,
+              callback: function (pointEntry: XmlNode) {
+                const idx = getTextByPathList<string | number>({
+                  node: pointEntry,
+                  path: ["attrs", "idx"],
+                });
+                const value = getTextByPathList<string | number>({
+                  node: pointEntry,
+                  path: ["c:v"],
+                });
+                if (idx !== undefined && value !== undefined) {
+                  categoryLabels[String(idx)] = String(value);
+                }
+                return "";
+              },
+            });
+          }
         }
 
         // Value
-        if (
-          getTextByPathList({
-            node: seriesEntry,
-            path: ["c:val", "c:numRef", "c:numCache", "c:pt"],
-          }) !== undefined
-        ) {
+        const valueNodes = getTextByPathList<XmlNode | XmlNode[]>({
+          node: seriesEntry,
+          path: ["c:val", "c:numRef", "c:numCache", "c:pt"],
+        });
+        if (valueNodes !== undefined) {
           eachElement({
-            node: seriesEntry["c:val"]["c:numRef"]["c:numCache"]["c:pt"],
-            callback: function (pointEntry: any) {
-              seriesValues.push({
-                x: pointEntry["attrs"]["idx"],
-                y: parseFloat(pointEntry["c:v"]),
+            node: valueNodes,
+            callback: function (pointEntry: XmlNode) {
+              const idx = getTextByPathList<string | number>({
+                node: pointEntry,
+                path: ["attrs", "idx"],
               });
+              const value = getTextByPathList<string | number>({ node: pointEntry, path: ["c:v"] });
+              if (idx !== undefined && value !== undefined) {
+                seriesValues.push({
+                  x: idx,
+                  y: parseFloat(String(value)),
+                });
+              }
               return "";
             },
           });

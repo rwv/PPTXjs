@@ -29,6 +29,8 @@
  */
 
 import type { PptxArchive } from "../../archive/pptx-archive";
+import type { RenderSettings } from "../../types/pptx-settings";
+import type { StyleTable } from "../../types/style";
 import { base64ArrayBuffer } from "../media";
 import { getContentTypes, getSlideSizeAndSetDefaultTextStyle, readXmlFile } from "../xml";
 import { processSingleSlide } from "../slide";
@@ -37,14 +39,24 @@ import { genGlobalCSS } from "../css";
 type ProcessPptxOptions = {
   archive: PptxArchive;
   emuToPx: number;
-  settings: any;
-  styleTable: any;
+  settings: RenderSettings;
+  styleTable: StyleTable;
   rtlLanguages: string[];
   fontSizeScale: number;
   chartIdCounter: { value: number };
-  messageQueue: any;
+  messageQueue: Array<{ data: unknown; type?: string }>;
   firstLineBreak: { value: boolean };
 };
+
+type SlideSizeResult = Awaited<ReturnType<typeof getSlideSizeAndSetDefaultTextStyle>>;
+
+type PptxResultItem =
+  | { type: "pptx-thumb"; data: string; slide_num: number }
+  | { type: "slideSize"; data: SlideSizeResult; slide_num: number }
+  | { type: "slide"; data: string; slide_num: number; file_name: string }
+  | { type: "progress-update"; data: number; slide_num: number }
+  | { type: "globalCSS"; data: string }
+  | { type: "ExecutionTime"; data: number };
 
 export async function processPPTX({
   archive,
@@ -56,8 +68,8 @@ export async function processPPTX({
   chartIdCounter,
   messageQueue,
   firstLineBreak,
-}: ProcessPptxOptions): Promise<any[]> {
-  const resultItems = [];
+}: ProcessPptxOptions): Promise<PptxResultItem[]> {
+  const resultItems: PptxResultItem[] = [];
   const startTime = new Date();
 
   const thumbFile = await archive.file("docProps/thumbnail.jpeg");
@@ -78,7 +90,11 @@ export async function processPPTX({
   });
   const defaultTextStyle = slideSize.defaultTextStyle;
   const slideWidth = slideSize.width;
-  const tableStyles = await readXmlFile({ archive, filename: "ppt/tableStyles.xml" });
+  const tableStylesContent = await readXmlFile({ archive, filename: "ppt/tableStyles.xml" });
+  const tableStyles =
+    tableStylesContent && typeof tableStylesContent === "object"
+      ? (tableStylesContent as Record<string, unknown>)
+      : null;
   //console.log("slideSize: ", slideSize)
   resultItems.push({
     type: "slideSize",
@@ -136,9 +152,8 @@ export async function processPPTX({
     });
   }
 
-  resultItems.sort(function (a, b) {
-    return a.slide_num - b.slide_num;
-  });
+  const getSlideNum = (item: PptxResultItem): number => ("slide_num" in item ? item.slide_num : 0);
+  resultItems.sort((a, b) => getSlideNum(a) - getSlideNum(b));
 
   resultItems.push({
     type: "globalCSS",

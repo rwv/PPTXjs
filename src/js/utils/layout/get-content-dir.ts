@@ -15,10 +15,12 @@
  * @param warpContext - Container object with master slide text styles
  * @returns CSS class name for content direction (currently always "content")
  */
+import type { WarpContext } from "../../types/pptx-xml";
+
 type GetContentDirOptions = {
   textBodyNode: Record<string, unknown>;
   shapeType: string | undefined;
-  warpContext: Record<string, unknown>;
+  warpContext: WarpContext | Record<string, unknown>;
 };
 
 export function getContentDir(options: GetContentDirOptions): string {

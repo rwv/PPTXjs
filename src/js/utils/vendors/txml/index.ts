@@ -13,4 +13,7 @@ export type {
   TXmlNode,
   TXmlOptions,
   TXmlResult,
+  TXmlSimplified,
+  TXmlSimplifiedAttrs,
+  TXmlSimplifiedNode,
 } from "./types";

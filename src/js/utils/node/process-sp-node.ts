@@ -1,5 +1,6 @@
 import { getTextByPathList } from "../object";
 import { genShape } from "../shape";
+import type { StyleTable } from "../../types/style";
 import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 /**
@@ -33,7 +34,7 @@ type ProcessSpNodeOptions = {
   sourceType: string;
   shapeType: string;
   emuToPx: number;
-  styleTable: unknown;
+  styleTable: StyleTable;
   fontSizeScale: number;
   rtlLanguages: string[];
   firstLineBreak: { value: boolean };
@@ -150,7 +151,7 @@ export async function processSpNode({
     placeholderIndex,
     placeholderType,
     zIndexOrder,
-    warpContext,
+    warpContext: context,
     isUserDrawnBackground,
     shapeType,
     sourceType,

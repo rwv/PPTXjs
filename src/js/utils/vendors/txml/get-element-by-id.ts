@@ -1,6 +1,14 @@
 import { tXml } from "./t-xml";
+import type { TXmlResult } from "./types";
 
-export const getElementById = (xml: string, id: string, simplify?: boolean | number): any => {
+export const getElementById = (
+  xml: string,
+  id: string,
+  simplify?: boolean | number
+): TXmlResult | undefined => {
   const result = tXml({ xml, options: { attrValue: id, simplify } });
-  return simplify ? result : result[0];
+  if (simplify) {
+    return result;
+  }
+  return Array.isArray(result) ? result[0] : undefined;
 };

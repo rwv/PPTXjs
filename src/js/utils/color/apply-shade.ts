@@ -10,7 +10,7 @@ type ApplyShadeOptions = {
  * Applies a shade transformation to a color
  * Shade makes colors darker by reducing lightness
  *
- * @param colorValue - Color string (any format supported by tinycolor)
+ * @param colorValue - Color string (supported formats per tinycolor)
  * @param shadeValue - Shade amount (0-1, where 0 is black, 1 is original)
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)

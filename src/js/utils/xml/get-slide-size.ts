@@ -1,5 +1,6 @@
 import { readXmlFile } from "./read-xml-file";
 import type { PptxArchive } from "../../archive/pptx-archive";
+import type { XmlNode } from "../../types/pptx-xml";
 
 type GetSlideSizeOptions = {
   archive: PptxArchive;
@@ -23,7 +24,7 @@ export async function getSlideSizeAndSetDefaultTextStyle({
   width: number;
   height: number;
   appVersion: number;
-  defaultTextStyle: unknown;
+  defaultTextStyle: XmlNode | undefined;
 }> {
   //get app version
   const app = await readXmlFile({ archive, filename: "docProps/app.xml" });
@@ -79,7 +80,9 @@ export async function getSlideSizeAndSetDefaultTextStyle({
   //console.log("scaleX: ", scaleX, "scaleY:", scaleY)
   //slideFactor = slideFactor * scaleX;
 
-  const defaultTextStyle = content["p:presentation"]["p:defaultTextStyle"];
+  const defaultTextStyle = (content as XmlNode)["p:presentation"]["p:defaultTextStyle"] as
+    | XmlNode
+    | undefined;
 
   const slideWidth = (slideSizeWidth * slideFactor + settings.incSlide.width) | 0; // * scaleX;//parseInt(slideSizeAttributes["cx"]) * 96 / 914400;
   const slideHeight = (slideSizeHeight * slideFactor + settings.incSlide.height) | 0; // * scaleY;//parseInt(slideSizeAttributes["cy"]) * 96 / 914400;

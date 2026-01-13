@@ -9,7 +9,7 @@ type ApplyLumOffOptions = {
 /**
  * Applies a luminance offset to a color
  *
- * @param colorValue - Color string (any format supported by tinycolor)
+ * @param colorValue - Color string (supported formats per tinycolor)
  * @param offset - Luminance offset to add (-1 to 1)
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)

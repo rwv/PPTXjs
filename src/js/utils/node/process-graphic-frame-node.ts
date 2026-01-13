@@ -3,6 +3,7 @@ import { genTable } from "../table";
 import { genChart } from "../chart";
 import { genDiagram } from "../diagram";
 import { processGroupSpNode } from "./process-group-sp-node";
+import type { StyleTable } from "../../types/style";
 import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
 function isXmlNode(value: XmlValue): value is XmlNode {
@@ -46,9 +47,9 @@ type ProcessGraphicFrameNodeOptions = {
   warpContext: WarpContext;
   sourceType: string;
   shapeType: string;
-  tableStyles: unknown;
+  tableStyles: Record<string, unknown> | null;
   firstLineBreak: { value: boolean };
-  styleTable: unknown;
+  styleTable: StyleTable;
   rtlLanguages: string[];
   emuToPx: number;
   fontSizeScale: number;

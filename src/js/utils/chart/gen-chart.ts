@@ -86,6 +86,7 @@ export async function genChart({
   let chartPayload = null;
   for (const key in plotAreaNode) {
     const plotAreaEntry = plotAreaNode[key] as XmlNode;
+    const seriesNodes = plotAreaEntry["c:ser"] as XmlNode | XmlNode[] | undefined;
     switch (key) {
       case "c:lineChart":
         chartPayload = {
@@ -93,7 +94,7 @@ export async function genChart({
           data: {
             chartID: "chart" + chartId,
             chartType: "lineChart",
-            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
+            chartData: extractChartData({ seriesNodeData: seriesNodes }),
           },
         };
         break;
@@ -103,7 +104,7 @@ export async function genChart({
           data: {
             chartID: "chart" + chartId,
             chartType: "barChart",
-            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
+            chartData: extractChartData({ seriesNodeData: seriesNodes }),
           },
         };
         break;
@@ -113,7 +114,7 @@ export async function genChart({
           data: {
             chartID: "chart" + chartId,
             chartType: "pieChart",
-            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
+            chartData: extractChartData({ seriesNodeData: seriesNodes }),
           },
         };
         break;
@@ -123,7 +124,7 @@ export async function genChart({
           data: {
             chartID: "chart" + chartId,
             chartType: "pie3DChart",
-            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
+            chartData: extractChartData({ seriesNodeData: seriesNodes }),
           },
         };
         break;
@@ -133,7 +134,7 @@ export async function genChart({
           data: {
             chartID: "chart" + chartId,
             chartType: "areaChart",
-            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
+            chartData: extractChartData({ seriesNodeData: seriesNodes }),
           },
         };
         break;
@@ -143,7 +144,7 @@ export async function genChart({
           data: {
             chartID: "chart" + chartId,
             chartType: "scatterChart",
-            chartData: extractChartData({ seriesNodeData: plotAreaEntry["c:ser"] }),
+            chartData: extractChartData({ seriesNodeData: seriesNodes }),
           },
         };
         break;

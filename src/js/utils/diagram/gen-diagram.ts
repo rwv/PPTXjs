@@ -1,6 +1,7 @@
 import { getTextByPathList } from "../object";
 import { getPosition, getSize } from "../layout";
 import { processSpNode } from "../node";
+import type { StyleTable } from "../../types/style";
 import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
 type DiagramWarpContext = WarpContext & { digramFileContent?: XmlNode };
@@ -46,7 +47,7 @@ type GenDiagramOptions = {
   warpContext: DiagramWarpContext;
   shapeType: string;
   emuToPx: number;
-  styleTable: unknown;
+  styleTable: StyleTable;
   fontSizeFactor: number;
   rtlLanguages: string[];
   firstLineBreak: { value: boolean };

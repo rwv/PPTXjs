@@ -4,7 +4,11 @@ import { getTableBorders } from "../border";
 import { getPosition, getSize } from "../layout";
 import { getTableCellParams } from "./get-table-cell-params";
 import { getTableRowStyle, getTableStyleById } from "./helpers";
-import type { XmlNode } from "../../types/pptx-xml";
+import type { StyleTable } from "../../types/style";
+import type { WarpContext, XmlNode } from "../../types/pptx-xml";
+
+const isXmlNode = (value: unknown): value is XmlNode =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 /**
  * Generate HTML table from PPTX table node
@@ -36,11 +40,11 @@ import type { XmlNode } from "../../types/pptx-xml";
  * @returns HTML string for the table
  */
 type GenTableOptions = {
-  node: any;
-  warpContext: any;
-  tableStyles: any;
+  node: XmlNode;
+  warpContext: WarpContext;
+  tableStyles: Record<string, unknown> | null;
   firstLineBreak: { value: boolean };
-  styleTable: any;
+  styleTable: StyleTable;
   rtlLanguages: string[];
   emuToPx: number;
   fontSizeScale: number;
@@ -56,7 +60,7 @@ export async function genTable({
   emuToPx,
   fontSizeScale,
 }: GenTableOptions): Promise<string> {
-  const order = node["attrs"]["order"];
+  const order = node.attrs?.order ?? 0;
   const tableNode = getTextByPathList<XmlNode>({
     node,
     path: ["a:graphic", "a:graphicData", "a:tbl"],
@@ -73,15 +77,15 @@ export async function genTable({
   });
   let tblDir = "";
   if (getTblPr !== undefined) {
-    const isRTL = getTblPr["attrs"]["rtl"];
+    const isRTL = getTblPr.attrs?.rtl;
     tblDir = String(isRTL) === "1" ? "dir=rtl" : "dir=ltr";
   }
-  const firstRowAttr = getTblPr["attrs"]["firstRow"]; //associated element <a:firstRow> in the table styles
-  const firstColAttr = getTblPr["attrs"]["firstCol"]; //associated element <a:firstCol> in the table styles
-  const lastRowAttr = getTblPr["attrs"]["lastRow"]; //associated element <a:lastRow> in the table styles
-  const lastColAttr = getTblPr["attrs"]["lastCol"]; //associated element <a:lastCol> in the table styles
-  const bandRowAttr = getTblPr["attrs"]["bandRow"]; //associated element <a:band1H>, <a:band2H> in the table styles
-  const bandColAttr = getTblPr["attrs"]["bandCol"]; //associated element <a:band1V>, <a:band2V> in the table styles
+  const firstRowAttr = getTblPr?.attrs?.firstRow; //associated element <a:firstRow> in the table styles
+  const firstColAttr = getTblPr?.attrs?.firstCol; //associated element <a:firstCol> in the table styles
+  const lastRowAttr = getTblPr?.attrs?.lastRow; //associated element <a:lastRow> in the table styles
+  const lastColAttr = getTblPr?.attrs?.lastCol; //associated element <a:lastCol> in the table styles
+  const bandRowAttr = getTblPr?.attrs?.bandRow; //associated element <a:band1H>, <a:band2H> in the table styles
+  const bandColAttr = getTblPr?.attrs?.bandCol; //associated element <a:band1V>, <a:band2V> in the table styles
   //console.log("getTblPr: ", getTblPr);
   const tblStylAttrObj = {
     isFrstRowAttr: firstRowAttr !== undefined && firstRowAttr === "1" ? 1 : 0,
@@ -96,9 +100,12 @@ export async function genTable({
     getTblPr !== undefined
       ? getTextByPathList<string>({ node: getTblPr, path: ["a:tableStyleId"] })
       : undefined;
-  const thisTblStyle = getTableStyleById({ styleId: tbleStyleId, tableStyles });
+  const thisTblStyle = getTableStyleById({
+    styleId: tbleStyleId,
+    tableStyles: tableStyles ?? undefined,
+  });
   if (thisTblStyle !== undefined) {
-    warpContext["thisTbiStyle"] = thisTblStyle;
+    (warpContext as WarpContext & Record<string, unknown>)["thisTbiStyle"] = thisTblStyle;
   }
   const tblStyl =
     thisTblStyle !== undefined
@@ -172,16 +179,20 @@ export async function genTable({
     "'>";
 
   const trNodesValue = tableNode ? tableNode["a:tr"] : undefined;
-  const trNodes = Array.isArray(trNodesValue) ? trNodesValue : trNodesValue ? [trNodesValue] : [];
+  const trNodes = Array.isArray(trNodesValue)
+    ? trNodesValue.filter(isXmlNode)
+    : isXmlNode(trNodesValue)
+      ? [trNodesValue]
+      : [];
   //multi rows
   let rowSpanAry: number[] = [];
   for (let i = 0; i < trNodes.length; i++) {
     //////////////rows Style ////////////Amir
-    const rowHeightParam = trNodes[i]["attrs"]["h"];
+    const rowHeightParam = trNodes[i].attrs?.h;
     let rowHeight = 0;
     let rowsStyl = "";
     if (rowHeightParam !== undefined) {
-      rowHeight = parseInt(rowHeightParam) * emuToPx;
+      rowHeight = parseInt(String(rowHeightParam), 10) * emuToPx;
       rowsStyl += "height:" + rowHeight + "px;";
     }
     // Get row styling based on position and table style attributes
@@ -207,7 +218,11 @@ export async function genTable({
     ////////////////////////////////////////////////
 
     const tcNodesValue = trNodes[i]["a:tc"];
-    const tcNodes = Array.isArray(tcNodesValue) ? tcNodesValue : tcNodesValue ? [tcNodesValue] : [];
+    const tcNodes = Array.isArray(tcNodesValue)
+      ? tcNodesValue.filter(isXmlNode)
+      : isXmlNode(tcNodesValue)
+        ? [tcNodesValue]
+        : [];
     if (tcNodes.length > 0) {
       if (tcNodes.length > 1) {
         //multi columns
@@ -220,22 +235,22 @@ export async function genTable({
         let totalColSpan = 0;
         while (j < tcNodes.length) {
           if (rowSpanAry[j] === 0 && totalColSpan === 0) {
-            let a_sorce;
+            let cellSource: string | undefined;
             //j=0 : first col
             if (j === 0 && tblStylAttrObj["isFrstColAttr"] === 1) {
-              a_sorce = "a:firstCol";
+              cellSource = "a:firstCol";
               if (
                 tblStylAttrObj["isLstRowAttr"] === 1 &&
                 i === trNodes.length - 1 &&
                 getTextByPathList({ node: thisTblStyle, path: ["a:seCell"] }) !== undefined
               ) {
-                a_sorce = "a:seCell";
+                cellSource = "a:seCell";
               } else if (
                 tblStylAttrObj["isFrstRowAttr"] === 1 &&
                 i === 0 &&
                 getTextByPathList({ node: thisTblStyle, path: ["a:neCell"] }) !== undefined
               ) {
-                a_sorce = "a:neCell";
+                cellSource = "a:neCell";
               }
             } else if (
               j > 0 &&
@@ -249,28 +264,28 @@ export async function genTable({
                 if (aBandNode === undefined) {
                   aBandNode = getTextByPathList({ node: thisTblStyle, path: ["a:band1V"] });
                   if (aBandNode !== undefined) {
-                    a_sorce = "a:band2V";
+                    cellSource = "a:band2V";
                   }
                 } else {
-                  a_sorce = "a:band2V";
+                  cellSource = "a:band2V";
                 }
               }
             }
 
             if (j === tcNodes.length - 1 && tblStylAttrObj["isLstColAttr"] === 1) {
-              a_sorce = "a:lastCol";
+              cellSource = "a:lastCol";
               if (
                 tblStylAttrObj["isLstRowAttr"] === 1 &&
                 i === trNodes.length - 1 &&
                 getTextByPathList({ node: thisTblStyle, path: ["a:swCell"] }) !== undefined
               ) {
-                a_sorce = "a:swCell";
+                cellSource = "a:swCell";
               } else if (
                 tblStylAttrObj["isFrstRowAttr"] === 1 &&
                 i === 0 &&
                 getTextByPathList({ node: thisTblStyle, path: ["a:nwCell"] }) !== undefined
               ) {
-                a_sorce = "a:nwCell";
+                cellSource = "a:nwCell";
               }
             }
 
@@ -279,7 +294,7 @@ export async function genTable({
               getColsGrid,
               colIndex: j,
               tableStyle: thisTblStyle,
-              cellSource: a_sorce,
+              cellSource,
               warpContext,
               firstLineBreak,
               styleTable,
@@ -294,7 +309,8 @@ export async function genTable({
             const colSpan = cellParmAry[4];
 
             if (rowSpan !== undefined) {
-              rowSpanAry[j] = parseInt(rowSpan) - 1;
+              const rowSpanValue = parseInt(String(rowSpan), 10);
+              rowSpanAry[j] = rowSpanValue - 1;
               tableHtml +=
                 "<td class='" +
                 cssName +
@@ -303,13 +319,14 @@ export async function genTable({
                 "," +
                 j +
                 "' rowspan ='" +
-                parseInt(rowSpan) +
+                rowSpanValue +
                 "' style='" +
                 colStyl +
                 "'>" +
                 text +
                 "</td>";
             } else if (colSpan !== undefined) {
+              const colSpanValue = parseInt(String(colSpan), 10);
               tableHtml +=
                 "<td class='" +
                 cssName +
@@ -318,13 +335,13 @@ export async function genTable({
                 "," +
                 j +
                 "' colspan = '" +
-                parseInt(colSpan) +
+                colSpanValue +
                 "' style='" +
                 colStyl +
                 "'>" +
                 text +
                 "</td>";
-              totalColSpan = parseInt(colSpan) - 1;
+              totalColSpan = colSpanValue - 1;
             } else {
               tableHtml +=
                 "<td class='" +
@@ -352,9 +369,9 @@ export async function genTable({
       } else {
         //single column
 
-        let a_sorce;
+        let cellSource: string | undefined;
         if (tblStylAttrObj["isFrstColAttr"] === 1 && !(tblStylAttrObj["isLstRowAttr"] === 1)) {
-          a_sorce = "a:firstCol";
+          cellSource = "a:firstCol";
         } else if (
           tblStylAttrObj["isBandColAttr"] === 1 &&
           !(tblStylAttrObj["isLstRowAttr"] === 1)
@@ -363,15 +380,15 @@ export async function genTable({
           if (aBandNode === undefined) {
             aBandNode = getTextByPathList({ node: thisTblStyle, path: ["a:band1V"] });
             if (aBandNode !== undefined) {
-              a_sorce = "a:band2V";
+              cellSource = "a:band2V";
             }
           } else {
-            a_sorce = "a:band2V";
+            cellSource = "a:band2V";
           }
         }
 
         if (tblStylAttrObj["isLstColAttr"] === 1 && !(tblStylAttrObj["isLstRowAttr"] === 1)) {
-          a_sorce = "a:lastCol";
+          cellSource = "a:lastCol";
         }
 
         const cellParmAry = await getTableCellParams({
@@ -379,7 +396,7 @@ export async function genTable({
           getColsGrid,
           colIndex: 0,
           tableStyle: thisTblStyle,
-          cellSource: a_sorce,
+          cellSource,
           warpContext,
           firstLineBreak,
           styleTable,
@@ -393,11 +410,12 @@ export async function genTable({
         const rowSpan = cellParmAry[3];
 
         if (rowSpan !== undefined) {
+          const rowSpanValue = parseInt(String(rowSpan), 10);
           tableHtml +=
             "<td  class='" +
             cssName +
             "' rowspan='" +
-            parseInt(rowSpan) +
+            rowSpanValue +
             "' style = '" +
             colStyl +
             "'>" +

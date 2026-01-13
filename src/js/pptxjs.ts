@@ -16,6 +16,7 @@ import { updateProgressBar } from "./utils/ui";
 import { initSlideMode } from "./utils/presentation";
 import { processPPTX } from "./utils/pptx";
 import { createPptxArchive } from "./archive";
+import type { StyleTable } from "./types/style";
 
 type SlideModeConfig = {
   first: number;
@@ -154,7 +155,7 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
   let isDone = false;
   const is_first_br = false;
 
-  const MsgQueue: Array<{ data: unknown }> = [];
+  const MsgQueue: Array<{ data: unknown; type?: string }> = [];
 
   const chartID = { value: 0 };
 
@@ -163,7 +164,7 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
   const slideFactor = 96 / 914400;
   const fontSizeFactor = 4 / 3.2;
   let isSlideMode = false;
-  const styleTable: Record<string, unknown> = {};
+  const styleTable: StyleTable = {};
   const defaultSettings: PptxToHtmlSettings = {
     // These are the defaults.
     pptxFileUrl: "",
@@ -302,9 +303,10 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
     //s = readXmlFile(zip, 'ppt/tableStyles.xml');
     //var slidesHeight = $("#" + divId + " .slide").height();
     for (let i = 0; i < rslt_ary.length; i++) {
-      switch (rslt_ary[i]["type"]) {
+      const resultEntry = rslt_ary[i];
+      switch (resultEntry.type) {
         case "slide":
-          appendResult({ target: result, data: rslt_ary[i]["data"] });
+          appendResult({ target: result, data: resultEntry.data });
           break;
         case "pptx-thumb":
           //$("#pptx-thumb").attr("src", "data:image/jpeg;base64," +rslt_ary[i]["data"]);
@@ -314,7 +316,7 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
           break;
         case "globalCSS":
           //console.log(rslt_ary[i]["data"])
-          appendResult({ target: result, data: "<style>" + rslt_ary[i]["data"] + "</style>" });
+          appendResult({ target: result, data: "<style>" + resultEntry.data + "</style>" });
           break;
         case "ExecutionTime":
           processMsgQueue(MsgQueue);
@@ -332,7 +334,9 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
           break;
         case "progress-update":
           //console.log(rslt_ary[i]["data"]); //update progress bar - TODO
-          updateProgressBar(rslt_ary[i]["data"]);
+          if (typeof resultEntry.data === "number") {
+            updateProgressBar(resultEntry.data);
+          }
           break;
         default:
       }

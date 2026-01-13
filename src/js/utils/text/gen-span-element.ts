@@ -11,6 +11,7 @@ import {
 } from "../font";
 import { getTextHorizontalAlign, getTextVerticalAlign } from "../layout";
 import { escapeHtml } from "../string";
+import type { StyleTable } from "../../types/style";
 import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 const asXmlNode = (value: unknown): XmlNode | undefined => {
@@ -52,7 +53,7 @@ type GenSpanElementOptions = {
   placeholderIndex: number | string | undefined;
   shapeType: string | undefined;
   warpContext: WarpContext;
-  styleTable: Record<string, { name: string; text: string }>;
+  styleTable: StyleTable;
   firstLineBreak: { value: boolean };
   rtlLanguages: string[];
   emuToPx: number;

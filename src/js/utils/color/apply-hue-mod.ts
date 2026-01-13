@@ -10,7 +10,7 @@ type ApplyHueModOptions = {
  * Applies a hue multiplier to a color
  * FIXED BUG: Original code had typo "cocacl_h" in one place
  *
- * @param colorValue - Color string (any format supported by tinycolor)
+ * @param colorValue - Color string (supported formats per tinycolor)
  * @param multiplier - Hue multiplier
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)

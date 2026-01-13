@@ -3,6 +3,7 @@ import { getSolidFill } from "../color";
 import { getShapeFill } from "../fill";
 import { getBorder } from "../border";
 import { genTextBody } from "../text";
+import type { StyleTable } from "../../types/style";
 import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 /**
@@ -39,7 +40,7 @@ type GetTableCellParamsOptions = {
   cellSource: string | undefined;
   warpContext: WarpContext;
   firstLineBreak: { value: boolean };
-  styleTable: any;
+  styleTable: StyleTable;
   rtlLanguages: string[];
   emuToPx: number;
   fontSizeScale: number;
@@ -57,7 +58,9 @@ export async function getTableCellParams({
   rtlLanguages,
   emuToPx,
   fontSizeScale,
-}: GetTableCellParamsOptions): Promise<[string, string, string, any, any]> {
+}: GetTableCellParamsOptions): Promise<
+  [string, string, string, string | number | undefined, string | number | undefined]
+> {
   //tableStyle["a:band1V"] => tableStyle[cellSource]
   //text, cell-width, cell-borders,
   //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpContext);//tableStyles
@@ -67,7 +70,7 @@ export async function getTableCellParams({
     path: ["attrs", "gridSpan"],
   });
   let colStyl = "word-wrap: break-word;";
-  let colWidth;
+  let colWidth: number | undefined;
   let cellFillColor = "";
   let colFontColor = "";
   let colFontWeight = "";
@@ -95,7 +98,7 @@ export async function getTableCellParams({
   }
 
   const text = await genTextBody({
-    textBodyNode: tcNodes["a:txBody"],
+    textBodyNode: tcNodes["a:txBody"] as XmlNode | undefined,
     spNode: tcNodes,
     shapeType: undefined,
     placeholderIndex: undefined,
@@ -283,9 +286,12 @@ export async function getTableCellParams({
   // }
 
   //Text style
-  let rowTextStyle;
+  let rowTextStyle: XmlNode | undefined;
   if (cellSource !== undefined) {
-    rowTextStyle = getTextByPathList({ node: tableStyle, path: [cellSource, "a:tcTxStyle"] });
+    rowTextStyle = getTextByPathList<XmlNode>({
+      node: tableStyle,
+      path: [cellSource, "a:tcTxStyle"],
+    });
   }
   // if (rowTextStyle === undefined) {
   //     rowTextStyle = getTextByPathList({ node: tableStyle, path: ["a:wholeTbl", "a:tcTxStyle"] });
@@ -300,8 +306,11 @@ export async function getTableCellParams({
     if (resolvedFontColor !== undefined) {
       colFontColor = resolvedFontColor;
     }
-    const resolvedFontWeight =
-      getTextByPathList({ node: rowTextStyle, path: ["attrs", "b"] }) === "on" ? "bold" : "";
+    const boldValue = getTextByPathList<string | number>({
+      node: rowTextStyle,
+      path: ["attrs", "b"],
+    });
+    const resolvedFontWeight = boldValue === "on" ? "bold" : "";
     if (resolvedFontWeight !== "") {
       colFontWeight = resolvedFontWeight;
     }

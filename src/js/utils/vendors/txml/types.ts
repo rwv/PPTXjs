@@ -22,4 +22,13 @@ export type TXmlInput = {
   options?: TXmlOptions;
 };
 
-export type TXmlResult = any;
+export type TXmlSimplifiedAttrs = Record<string, TXmlAttributeValue | number>;
+
+export type TXmlSimplified = string | TXmlSimplifiedNode;
+
+export type TXmlSimplifiedNode = {
+  attrs?: TXmlSimplifiedAttrs;
+  [key: string]: TXmlSimplified | TXmlSimplified[] | TXmlSimplifiedAttrs;
+};
+
+export type TXmlResult = TXmlNode | Array<TXmlNode | string> | TXmlSimplified;

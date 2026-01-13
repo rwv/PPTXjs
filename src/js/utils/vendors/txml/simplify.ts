@@ -1,9 +1,9 @@
-import type { TXmlNode } from "./types";
+import type { TXmlNode, TXmlSimplified, TXmlSimplifiedNode } from "./types";
 
 let orderCounter = 1;
 
-export const simplify = (nodes?: Array<TXmlNode | string>): any => {
-  const result: Record<string, unknown> = {};
+export const simplify = (nodes?: Array<TXmlNode | string>): TXmlSimplified => {
+  const result: TXmlSimplifiedNode = {};
   if (nodes === undefined) {
     return {};
   }
@@ -18,10 +18,10 @@ export const simplify = (nodes?: Array<TXmlNode | string>): any => {
         result[xmlNode.tagName] = [];
       }
       const simplified = simplify(xmlNode.children || []);
-      (result[xmlNode.tagName] as unknown[]).push(simplified);
+      (result[xmlNode.tagName] as TXmlSimplified[]).push(simplified);
 
       if (simplified && typeof simplified === "object") {
-        const simplifiedNode = simplified as { attrs?: Record<string, unknown> };
+        const simplifiedNode = simplified as TXmlSimplifiedNode;
         if (xmlNode.attributes) {
           simplifiedNode.attrs = xmlNode.attributes;
         }

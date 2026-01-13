@@ -1,5 +1,6 @@
 import type { PptxArchive } from "../../archive/pptx-archive";
 import { tXml } from "../vendors/txml";
+import type { TXmlResult } from "../vendors/txml";
 
 type ReadXmlFileOptions = {
   archive: PptxArchive;
@@ -22,7 +23,7 @@ export async function readXmlFile({
   filename,
   isSlideContent,
   appVersion,
-}: ReadXmlFileOptions): Promise<any | null> {
+}: ReadXmlFileOptions): Promise<TXmlResult | null> {
   try {
     const file = await archive.file(filename);
     if (!file) {
@@ -39,11 +40,13 @@ export async function readXmlFile({
 
     const xmlData = tXml({ xml: fileContent, options: { simplify: 1 } });
 
-    if (xmlData["?xml"] !== undefined) {
-      return xmlData["?xml"];
-    } else {
-      return xmlData;
+    if (xmlData && typeof xmlData === "object" && !Array.isArray(xmlData)) {
+      const xmlRecord = xmlData as Record<string, TXmlResult>;
+      if (xmlRecord["?xml"] !== undefined) {
+        return xmlRecord["?xml"];
+      }
     }
+    return xmlData;
   } catch {
     // console.log("error readXmlFile: the file '", filename, "' not exit")
     return null;

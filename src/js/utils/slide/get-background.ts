@@ -2,6 +2,7 @@ import { getTextByPathList } from "../object";
 import { getSlideBackgroundFill } from "../fill";
 import { processNodesInSlide } from "../node";
 import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+import type { StyleTable } from "../../types/style";
 
 function isXmlNode(value: XmlValue): value is XmlNode {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -53,9 +54,9 @@ type GetBackgroundOptions = {
   warpContext: WarpContext;
   slideDimensions: { width: number; height: number };
   slideIndex: number;
-  tableStyles: unknown;
+  tableStyles: Record<string, unknown> | null;
   firstLineBreak: { value: boolean };
-  styleTable: unknown;
+  styleTable: StyleTable;
   rtlLanguages: string[];
   emuToPx: number;
   fontSizeScale: number;

@@ -1,8 +1,4 @@
-interface StyleTableEntry {
-  name: string;
-  suffix?: string;
-  text: string;
-}
+import type { StyleTable } from "../../types/style";
 
 interface GlobalSettings {
   slideMode?: boolean;
@@ -18,7 +14,7 @@ interface GlobalSettings {
  * @returns CSS text string
  */
 type GenGlobalCssOptions = {
-  styleTable: Record<string, StyleTableEntry>;
+  styleTable: StyleTable;
   settings: GlobalSettings;
   slideWidth: number;
 };

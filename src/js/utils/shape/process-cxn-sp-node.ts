@@ -1,4 +1,7 @@
+import { getTextByPathList } from "../object";
 import { genShape } from "./gen-shape";
+import type { StyleTable } from "../../types/style";
+import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 /**
  * Process connection shape node and delegate to genShape
@@ -19,13 +22,13 @@ import { genShape } from "./gen-shape";
  * @returns HTML string for the connection shape
  */
 type ProcessCxnSpNodeOptions = {
-  spNode: Record<string, unknown>;
-  parentNodes: unknown;
-  warpContext: unknown;
+  spNode: XmlNode;
+  parentNodes: XmlNode | XmlNode[] | undefined;
+  warpContext: WarpContext;
   sourceType: string;
   shapeType: string;
   emuToPx: number;
-  styleTable: unknown;
+  styleTable: StyleTable;
   fontSizeScale: number;
   rtlLanguages: string[];
   firstLineBreak: { value: boolean };
@@ -43,29 +46,30 @@ export async function processCxnSpNode({
   rtlLanguages,
   firstLineBreak,
 }: ProcessCxnSpNodeOptions): Promise<string> {
-  const connectionNodeRecord = spNode as Record<string, unknown>;
-  const nonVisualConnectionProps = connectionNodeRecord["p:nvCxnSpPr"] as Record<string, unknown>;
-  const connectionPropsAttrs = (nonVisualConnectionProps["p:cNvPr"] as Record<string, unknown>)[
-    "attrs"
-  ] as Record<string, string | number>;
-  const shapeId = connectionPropsAttrs["id"];
-  const shapeName = connectionPropsAttrs["name"] as string | undefined;
-  const placeholderNode = (nonVisualConnectionProps["p:nvPr"] as Record<string, unknown>)["p:ph"];
-  let placeholderIndex: string | number | undefined;
-  let placeholderType: string | undefined;
-  if (placeholderNode !== undefined) {
-    const shapeNonVisualProps = connectionNodeRecord["p:nvSpPr"] as Record<string, unknown>;
-    const placeholderAttrs = (
-      (shapeNonVisualProps["p:nvPr"] as Record<string, unknown>)["p:ph"] as Record<string, unknown>
-    )["attrs"] as Record<string, string | number>;
-    placeholderIndex = placeholderAttrs["idx"];
-    placeholderType = placeholderAttrs["type"] as string | undefined;
-  }
+  const shapeId = getTextByPathList<string | number>({
+    node: spNode,
+    path: ["p:nvCxnSpPr", "p:cNvPr", "attrs", "id"],
+  });
+  const shapeName = getTextByPathList<string>({
+    node: spNode,
+    path: ["p:nvCxnSpPr", "p:cNvPr", "attrs", "name"],
+  });
+  const placeholderIndex = getTextByPathList<string | number>({
+    node: spNode,
+    path: ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "idx"],
+  });
+  const placeholderType = getTextByPathList<string>({
+    node: spNode,
+    path: ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"],
+  });
   // <p:cNvCxnSpPr>(<p:cNvCxnSpPr>, <a:endCxn>)
-  const zIndexOrder = (connectionNodeRecord["attrs"] as Record<string, string | number>)["order"];
+  const zIndexOrder = getTextByPathList<string | number>({
+    node: spNode,
+    path: ["attrs", "order"],
+  });
 
   return await genShape({
-    shapeNode: connectionNodeRecord,
+    shapeNode: spNode,
     parentNode: parentNodes,
     layoutShapeNode: undefined,
     masterShapeNode: undefined,

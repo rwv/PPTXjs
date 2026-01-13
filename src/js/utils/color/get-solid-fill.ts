@@ -10,13 +10,13 @@ import { applySatMod } from "./apply-sat-mod";
 import { applyShade } from "./apply-shade";
 import { applyTint } from "./apply-tint";
 import { getSchemeColorFromTheme } from "./get-scheme-color-from-theme";
-import type { WarpContext } from "../../types/pptx-xml";
+import type { WarpContext, XmlAttrs, XmlNode } from "../../types/pptx-xml";
 
 /**
  * Color node with attributes from PPTX XML
  */
-interface ColorNode {
-  attrs?: {
+interface ColorNode extends XmlNode {
+  attrs?: XmlAttrs & {
     val?: string;
     r?: string;
     g?: string;
@@ -25,29 +25,26 @@ interface ColorNode {
     sat?: string;
     lum?: string;
     lastClr?: string;
-    [key: string]: string | undefined;
   };
-  "a:alpha"?: { attrs?: { val?: string } };
-  "a:hueMod"?: { attrs?: { val?: string } };
-  "a:lumMod"?: { attrs?: { val?: string } };
-  "a:lumOff"?: { attrs?: { val?: string } };
-  "a:satMod"?: { attrs?: { val?: string } };
-  "a:shade"?: { attrs?: { val?: string } };
-  "a:tint"?: { attrs?: { val?: string } };
-  [key: string]: any;
+  "a:alpha"?: XmlNode;
+  "a:hueMod"?: XmlNode;
+  "a:lumMod"?: XmlNode;
+  "a:lumOff"?: XmlNode;
+  "a:satMod"?: XmlNode;
+  "a:shade"?: XmlNode;
+  "a:tint"?: XmlNode;
 }
 
 /**
  * PPTX fill node containing color information
  */
-interface FillNode {
+interface FillNode extends XmlNode {
   "a:srgbClr"?: ColorNode;
   "a:schemeClr"?: ColorNode;
   "a:scrgbClr"?: ColorNode;
   "a:prstClr"?: ColorNode;
   "a:hslClr"?: ColorNode;
   "a:sysClr"?: ColorNode;
-  [key: string]: any;
 }
 
 /**

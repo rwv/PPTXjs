@@ -1,10 +1,11 @@
 import { tXml } from "./t-xml";
+import type { TXmlResult } from "./types";
 
 export const getElementsByClassName = (
   xml: string,
   className: string,
   simplify?: boolean | number
-): any =>
+): TXmlResult =>
   tXml({
     xml,
     options: {

@@ -1,6 +1,7 @@
 import { getTextByPathList } from "../object";
 import { angleToDegrees } from "../layout";
 import { processNodesInSlide } from "./process-nodes-in-slide";
+import type { StyleTable } from "../../types/style";
 import type { WarpContext, XmlNode } from "../../types/pptx-xml";
 
 /**
@@ -36,9 +37,9 @@ type ProcessGroupSpNodeOptions = {
   warpContext: WarpContext | Record<string, unknown>;
   sourceType: string;
   emuToPx: number;
-  tableStyles: unknown;
+  tableStyles: Record<string, unknown> | null;
   firstLineBreak: { value: boolean };
-  styleTable: unknown;
+  styleTable: StyleTable;
   rtlLanguages: string[];
   fontSizeScale: number;
   chartIdCounter: { value: number };
@@ -67,10 +68,10 @@ export async function processGroupSpNode({
     path: ["p:grpSpPr", "a:xfrm"],
   });
   let rotationCss = ""; //;" border: 3px solid black;";
-  let topPx;
-  let leftPx;
-  let widthPx;
-  let heightPx;
+  let topPx: number | undefined;
+  let leftPx: number | undefined;
+  let widthPx: number | undefined;
+  let heightPx: number | undefined;
   let shapeType = "group";
   if (transformNode !== undefined) {
     const offsetAttrs = (transformNode["a:off"] as XmlNode)["attrs"] as Record<string, string>;

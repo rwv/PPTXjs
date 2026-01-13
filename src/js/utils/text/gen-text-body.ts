@@ -7,7 +7,27 @@ import {
 } from "../layout";
 import { genBuChar } from "../bullet";
 import { genSpanElement } from "./gen-span-element";
-import type { XmlNode } from "../../types/pptx-xml";
+import type { StyleTable } from "../../types/style";
+import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
+
+const isXmlNode = (value: XmlValue): value is XmlNode =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const toXmlNodeArray = (value: XmlValue | undefined): XmlNode[] => {
+  if (value === undefined || value === null) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value.filter(isXmlNode);
+  }
+  return isXmlNode(value) ? [value] : [];
+};
+
+const getOrderValue = (node: XmlNode): number => {
+  const orderValue = node.attrs?.order;
+  const orderNumber = Number(orderValue ?? 0);
+  return Number.isNaN(orderNumber) ? 0 : orderNumber;
+};
 
 function measureHtmlWidth(html: string): number {
   const temp = document.createElement("div");
@@ -52,14 +72,14 @@ function measureHtmlWidth(html: string): number {
  * @returns HTML string for the text body
  */
 type GenTextBodyOptions = {
-  textBodyNode: any;
-  spNode: any;
+  textBodyNode: XmlNode | undefined;
+  spNode: XmlNode;
   shapeType: string | undefined;
   placeholderIndex: number | string | undefined;
-  warpContext: any;
+  warpContext: WarpContext;
   tableColumnWidth: number | string | undefined;
   firstLineBreak: { value: boolean };
-  styleTable: any;
+  styleTable: StyleTable;
   rtlLanguages: string[];
   emuToPx: number;
   fontSizeScale: number;
@@ -90,37 +110,28 @@ export async function genTextBody({
 
   //var lstStyle = textBodyNode["a:lstStyle"];
 
-  let apNode = textBodyNode["a:p"];
-  if (apNode.constructor !== Array) {
-    apNode = [apNode];
-  }
+  const paragraphNodes = toXmlNodeArray(textBodyNode["a:p"]);
 
-  for (let i = 0; i < apNode.length; i++) {
-    const pNode = apNode[i];
-    let rNode = pNode["a:r"];
-    let fldNode = pNode["a:fld"];
-    let brNode = pNode["a:br"];
-    if (rNode !== undefined) {
-      rNode = rNode.constructor === Array ? rNode : [rNode];
+  for (let i = 0; i < paragraphNodes.length; i++) {
+    const pNode = paragraphNodes[i];
+    const rNodes = toXmlNodeArray(pNode["a:r"]);
+    const fldNodes = toXmlNodeArray(pNode["a:fld"]);
+    const brNodes = toXmlNodeArray(pNode["a:br"]);
+    let runNodes: XmlNode[] | undefined = rNodes.length > 0 ? rNodes : undefined;
+    if (runNodes !== undefined && fldNodes.length > 0) {
+      runNodes = runNodes.concat(fldNodes);
     }
-    if (rNode !== undefined && fldNode !== undefined) {
-      fldNode = fldNode.constructor === Array ? fldNode : [fldNode];
-      rNode = rNode.concat(fldNode);
-    }
-    if (rNode !== undefined && brNode !== undefined) {
+    if (runNodes !== undefined && brNodes.length > 0) {
       firstLineBreak.value = true;
-      brNode = brNode.constructor === Array ? brNode : [brNode];
-      brNode.forEach(function (item: any) {
+      brNodes.forEach((item) => {
         item.type = "br";
       });
-      if (brNode.length > 1) {
-        brNode.shift();
+      if (brNodes.length > 1) {
+        brNodes.shift();
       }
-      rNode = rNode.concat(brNode);
+      runNodes = runNodes.concat(brNodes);
       //console.log("single a:p  rNode:", rNode, "brNode:", brNode )
-      rNode.sort(function (a: any, b: any) {
-        return a.attrs.order - b.attrs.order;
-      });
+      runNodes.sort((a, b) => getOrderValue(a) - getOrderValue(b));
       //console.log("sorted rNode:",rNode)
     }
     //rtlStr = "";//"dir='"+isRTL+"'";
@@ -158,7 +169,7 @@ export async function genTextBody({
       node: spNode,
       path: ["p:spPr", "a:xfrm", "a:ext", "attrs", "cx"],
     });
-    let prg_height_node; // = getTextByPathList({ node: spNode, path: ["p:spPr", "a:xfrm", "a:ext", "attrs", "cy"] });
+    let prg_height_node: string | number | undefined; // = getTextByPathList({ node: spNode, path: ["p:spPr", "a:xfrm", "a:ext", "attrs", "cy"] });
     const sld_prg_width =
       prg_width_node !== undefined
         ? "width:" + parseInt(String(prg_width_node), 10) * emuToPx + "px;"
@@ -228,7 +239,7 @@ export async function genTextBody({
     let prgrph_text = "";
     //var prgr_txt_art = [];
     let total_text_len = 0;
-    if (rNode === undefined && pNode !== undefined) {
+    if (runNodes === undefined || runNodes.length === 0) {
       // without r
       const prgr_text = genSpanElement({
         runNode: pNode,
@@ -248,11 +259,11 @@ export async function genTextBody({
         total_text_len += measureHtmlWidth(prgr_text);
       }
       prgrph_text += prgr_text;
-    } else if (rNode !== undefined) {
+    } else {
       // with multi r
-      for (let j = 0; j < rNode.length; j++) {
+      for (let j = 0; j < runNodes.length; j++) {
         const prgr_text = genSpanElement({
-          runNode: rNode[j],
+          runNode: runNodes[j],
           paragraphNode: pNode,
           textBodyNode,
           parentFontStyle: pFontStyle,

@@ -9,7 +9,7 @@ type ApplyLumModOptions = {
 /**
  * Applies a luminance multiplier to a color
  *
- * @param colorValue - Color string (any format supported by tinycolor)
+ * @param colorValue - Color string (supported formats per tinycolor)
  * @param multiplier - Luminance multiplier (typically 0-2)
  * @param isAlpha - Whether to include alpha channel in output
  * @returns Hex color string (with or without alpha)

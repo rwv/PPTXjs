@@ -16,6 +16,9 @@ const DOUBLE_QUOTE = '"'.charCodeAt(0);
 const isAlpha = (code: number): boolean =>
   (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
 
+const isTXmlNode = (value: unknown): value is TXmlNode =>
+  !!value && typeof value === "object" && "tagName" in (value as TXmlNode);
+
 export const tXml = ({ xml, options = {} }: TXmlInput): TXmlResult => {
   let xmlText = xml;
   let cursor = options.pos ?? 0;
@@ -185,12 +188,18 @@ export const tXml = ({ xml, options = {} }: TXmlInput): TXmlResult => {
 
   if (options.filter) {
     const nodes = Array.isArray(result) ? result : result ? [result] : [];
-    result = filter(nodes, options.filter);
+    const filteredNodes = nodes.filter(
+      (node): node is TXmlNode | string => typeof node === "string" || isTXmlNode(node)
+    );
+    result = filter(filteredNodes, options.filter);
   }
 
   if (options.simplify) {
     const nodes = Array.isArray(result) ? result : result ? [result] : [];
-    result = simplify(nodes);
+    const simplifiableNodes = nodes.filter(
+      (node): node is TXmlNode | string => typeof node === "string" || isTXmlNode(node)
+    );
+    result = simplify(simplifiableNodes);
   }
 
   if (result && typeof result === "object") {

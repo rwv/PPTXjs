@@ -15,38 +15,129 @@ import { getTextByPathList } from "../../object";
 import { getVerticalAlign, getPosition, getSize, getContentDir } from "../../layout";
 import { shapeArc } from "./helpers/arc";
 import { genTextBody } from "../../text";
-import type { XmlNode, XmlValue } from "../../../types/pptx-xml";
+import type { StyleTable } from "../../../types/style";
+import type { WarpContext, XmlNode, XmlValue } from "../../../types/pptx-xml";
 
 const isXmlNode = (value: XmlValue): value is XmlNode =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const isNodeRecord = (value: Record<string, unknown>): value is Record<string, XmlNode> =>
+  Object.keys(value).length > 0 && Object.keys(value).every((key) => !Number.isNaN(Number(key)));
+
+const toXmlNodeArray = (value: XmlValue | undefined): XmlNode[] => {
+  if (value === undefined || value === null) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value.filter(isXmlNode);
+  }
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    if (isNodeRecord(record)) {
+      return Object.values(record).filter(isXmlNode);
+    }
+    return [record as XmlNode];
+  }
+  return [];
+};
+
+const getNodeAttrValue = (node: XmlNode, attr: string): string => {
+  const attrValue = getTextByPathList<string | number>({ node, path: ["attrs", attr] });
+  if (attrValue !== undefined) {
+    return String(attrValue);
+  }
+  const directValue = node[attr];
+  return typeof directValue === "string" || typeof directValue === "number"
+    ? String(directValue)
+    : "";
+};
+
+const getNodeOrder = (node: XmlNode): number => {
+  const attrValue = getTextByPathList<string | number>({ node, path: ["attrs", "order"] });
+  if (attrValue !== undefined) {
+    const orderNumber = Number(attrValue);
+    return Number.isNaN(orderNumber) ? 0 : orderNumber;
+  }
+  const directValue = node["order"];
+  const orderNumber =
+    typeof directValue === "string" || typeof directValue === "number" ? Number(directValue) : NaN;
+  return Number.isNaN(orderNumber) ? 0 : orderNumber;
+};
+
+type ShapeBorder = {
+  color: string;
+  width: string;
+  strokeDasharray: string;
+};
+
+type PathPoint = {
+  type: "movto" | "lnto";
+  order: number;
+  x: string;
+  y: string;
+};
+
+type CubicBezierPoint = {
+  x: string;
+  y: string;
+};
+
+type CubicBezierSegment = {
+  type: "cubicBezTo";
+  order: number;
+  cubBzPt: CubicBezierPoint[];
+};
+
+type ArcSegment = {
+  type: "arcTo";
+  order: number;
+  hR: string;
+  wR: string;
+  stAng: string;
+  swAng: string;
+  shftX: number;
+  shftY: number;
+};
+
+type CloseSegment = {
+  type: "close";
+  order: number;
+};
+
+type QuadBezierSegment = {
+  type: "quadBezTo";
+  order: number;
+};
+
+type ShapeSegment = PathPoint | CubicBezierSegment | ArcSegment | CloseSegment | QuadBezierSegment;
+
 type RenderCustomGeometryOptions = {
-  custShapType: any;
-  shapeNode: any;
-  layoutShapeNode: any;
-  masterShapeNode: any;
-  slideXfrmNode: any;
-  slideLayoutXfrmNode: any;
-  parentNode: any;
-  slideMasterXfrmNode: any;
+  custShapType: XmlNode;
+  shapeNode: XmlNode;
+  layoutShapeNode: XmlNode | undefined;
+  masterShapeNode: XmlNode | undefined;
+  slideXfrmNode: XmlNode | undefined;
+  slideLayoutXfrmNode: XmlNode | undefined;
+  parentNode: XmlNode | undefined;
+  slideMasterXfrmNode: XmlNode | undefined;
   width: number;
   height: number;
-  shapeId: any;
+  shapeId: string;
   imgFillFlg: boolean;
   grndFillFlg: boolean;
   fillColor: string;
-  border: any;
-  id: any;
-  idx: any;
-  placeholderType: any;
-  shapeName: any;
-  order: any;
-  shapeType: any;
+  border: ShapeBorder | undefined;
+  id: number | string | undefined;
+  idx: number | string | undefined;
+  placeholderType: string | undefined;
+  shapeName: string | undefined;
+  order: number | string | undefined;
+  shapeType: string | undefined;
   txtRotate: number | undefined;
-  warpContext: any;
-  isUserDrawnBg: any;
+  warpContext: WarpContext;
+  isUserDrawnBg: boolean | undefined;
   firstLineBreak: { value: boolean };
-  styleTable: any;
+  styleTable: StyleTable;
   rtlLanguages: string[];
   emuToPx: number;
   fontSizeScale: number;
@@ -106,147 +197,89 @@ export async function renderCustomGeometry({
 
   //console.log("custShapType : ", custShapType, ", pathLstNode: ", pathLstNode, ", node: ", node);//, ", y:", y, ", w:", w, ", h:", h);
 
-  let moveToNode = getTextByPathList<XmlNode | XmlNode[]>({ node: pathNodes, path: ["a:moveTo"] });
-
-  const lnToNodes = pathNodes["a:lnTo"] as XmlNode | XmlNode[] | undefined; //total a:pt : 1
-  let cubicBezToNodes = pathNodes["a:cubicBezTo"] as XmlNode | XmlNode[] | undefined; //total a:pt : 3
-  const arcToNodes = pathNodes["a:arcTo"] as XmlNode | undefined; //total a:pt : 0?1? ; attrs: ~4 ()
-  let closeNode = getTextByPathList<XmlNode | XmlNode[]>({
-    node: pathNodes,
-    path: ["a:close"],
-  }); //total a:pt : 0
+  const moveToNodes = toXmlNodeArray(
+    getTextByPathList<XmlNode | XmlNode[]>({ node: pathNodes, path: ["a:moveTo"] })
+  );
+  const lnToNodes = toXmlNodeArray(pathNodes["a:lnTo"]);
+  const cubicBezToNodes = toXmlNodeArray(pathNodes["a:cubicBezTo"]);
+  const arcToValue = pathNodes["a:arcTo"];
+  const arcToNode = arcToValue !== undefined && isXmlNode(arcToValue) ? arcToValue : undefined;
+  const closeNodes = toXmlNodeArray(
+    getTextByPathList<XmlNode | XmlNode[]>({ node: pathNodes, path: ["a:close"] })
+  );
   //quadBezTo //total a:pt : 2 - TODO
-  //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
-  if (!Array.isArray(moveToNode)) {
-    moveToNode = moveToNode ? [moveToNode] : [];
-  }
-  //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
 
-  const multiSapeAry = [];
-  if (moveToNode.length > 0) {
+  const multiSapeAry: ShapeSegment[] = [];
+  if (moveToNodes.length > 0) {
     //a:moveTo
-    Object.keys(moveToNode).forEach(function (key) {
-      const moveToPtNode = moveToNode[key]["a:pt"];
-      if (moveToPtNode !== undefined) {
-        Object.keys(moveToPtNode).forEach(function (key2) {
-          const ptObj: any = {};
-          const moveToNoPt = moveToPtNode[key2];
-          const spX = moveToNoPt["x"]; //parseInt(moveToNoPt["attrs", "x"]) * emuToPx;
-          const spY = moveToNoPt["y"]; //parseInt(moveToNoPt["attrs", "y"]) * emuToPx;
-          const ptOrdr = moveToNoPt["order"];
-          ptObj.type = "movto";
-          ptObj.order = ptOrdr;
-          ptObj.x = spX;
-          ptObj.y = spY;
-          multiSapeAry.push(ptObj);
-          //console.log(key2, lnToNoPt);
-        });
+    for (const moveToNode of moveToNodes) {
+      const moveToPtNodes = toXmlNodeArray(moveToNode["a:pt"]);
+      for (const pointNode of moveToPtNodes) {
+        const ptObj: PathPoint = {
+          type: "movto",
+          order: getNodeOrder(pointNode),
+          x: getNodeAttrValue(pointNode, "x"),
+          y: getNodeAttrValue(pointNode, "y"),
+        };
+        multiSapeAry.push(ptObj);
       }
-    });
+    }
     //a:lnTo
-    if (lnToNodes !== undefined) {
-      Object.keys(lnToNodes).forEach(function (key) {
-        const lnToPtNode = lnToNodes[key]["a:pt"];
-        if (lnToPtNode !== undefined) {
-          Object.keys(lnToPtNode).forEach(function (key2) {
-            const ptObj: any = {};
-            const lnToNoPt = lnToPtNode[key2];
-            const ptX = lnToNoPt["x"];
-            const ptY = lnToNoPt["y"];
-            const ptOrdr = lnToNoPt["order"];
-            ptObj.type = "lnto";
-            ptObj.order = ptOrdr;
-            ptObj.x = ptX;
-            ptObj.y = ptY;
-            multiSapeAry.push(ptObj);
-            //console.log(key2, lnToNoPt);
-          });
-        }
-      });
+    for (const lnToNode of lnToNodes) {
+      const lnToPtNodes = toXmlNodeArray(lnToNode["a:pt"]);
+      for (const pointNode of lnToPtNodes) {
+        const ptObj: PathPoint = {
+          type: "lnto",
+          order: getNodeOrder(pointNode),
+          x: getNodeAttrValue(pointNode, "x"),
+          y: getNodeAttrValue(pointNode, "y"),
+        };
+        multiSapeAry.push(ptObj);
+      }
     }
     //a:cubicBezTo
-    if (cubicBezToNodes !== undefined) {
-      const cubicBezToPtNodesAry: any = [];
-      //console.log("cubicBezToNodes: ", cubicBezToNodes, ", is arry: ", Array.isArray(cubicBezToNodes))
-      if (!Array.isArray(cubicBezToNodes)) {
-        cubicBezToNodes = [cubicBezToNodes];
+    for (const cubicNode of cubicBezToNodes) {
+      const pointNodes = toXmlNodeArray(cubicNode["a:pt"]);
+      if (pointNodes.length === 0) {
+        continue;
       }
-      Object.keys(cubicBezToNodes).forEach(function (key) {
-        //console.log("cubicBezTo[" + key + "]:");
-        cubicBezToPtNodesAry.push(cubicBezToNodes[key]["a:pt"]);
-      });
-
-      //console.log("cubicBezToNodes: ", cubicBezToPtNodesAry)
-      cubicBezToPtNodesAry.forEach(function (key2) {
-        //console.log("cubicBezToPtNodesAry: key2 : ", key2)
-        const nodeObj: any = {};
-        nodeObj.type = "cubicBezTo";
-        nodeObj.order = key2[0]["attrs"]["order"];
-        const pts_ary: any = [];
-        key2.forEach(function (pt: any) {
-          const pt_obj = {
-            x: pt["attrs"]["x"],
-            y: pt["attrs"]["y"],
-          };
-          pts_ary.push(pt_obj);
-        });
-        nodeObj.cubBzPt = pts_ary; //key2;
-        multiSapeAry.push(nodeObj);
-      });
+      const nodeObj: CubicBezierSegment = {
+        type: "cubicBezTo",
+        order: getNodeOrder(pointNodes[0]),
+        cubBzPt: pointNodes.map((point) => ({
+          x: getNodeAttrValue(point, "x"),
+          y: getNodeAttrValue(point, "y"),
+        })),
+      };
+      multiSapeAry.push(nodeObj);
     }
     //a:arcTo
-    if (arcToNodes !== undefined) {
-      const arcToNodesAttrs = arcToNodes["attrs"];
-      const arcOrder = arcToNodesAttrs["order"];
-      const hR = arcToNodesAttrs["hR"];
-      const wR = arcToNodesAttrs["wR"];
-      const stAng = arcToNodesAttrs["stAng"];
-      const swAng = arcToNodesAttrs["swAng"];
-      let shftX = 0;
-      let shftY = 0;
-      const arcToPtNode =
-        arcToNodes !== undefined
-          ? getTextByPathList<XmlNode>({ node: arcToNodes, path: ["a:pt", "attrs"] })
-          : undefined;
-      if (arcToPtNode !== undefined) {
-        const shiftXValue = arcToPtNode["x"];
-        const shiftYValue = arcToPtNode["y"];
-        shftX = shiftXValue !== undefined ? Number(shiftXValue) : 0;
-        shftY = shiftYValue !== undefined ? Number(shiftYValue) : 0;
-        //console.log("shftX: ",shftX," shftY: ",shftY)
-      }
-      const ptObj: any = {};
-      ptObj.type = "arcTo";
-      ptObj.order = arcOrder;
-      ptObj.hR = hR;
-      ptObj.wR = wR;
-      ptObj.stAng = stAng;
-      ptObj.swAng = swAng;
-      ptObj.shftX = shftX;
-      ptObj.shftY = shftY;
+    if (arcToNode !== undefined) {
+      const arcPointAttrs = getTextByPathList<Record<string, string | number>>({
+        node: arcToNode,
+        path: ["a:pt", "attrs"],
+      });
+      const ptObj: ArcSegment = {
+        type: "arcTo",
+        order: getNodeOrder(arcToNode),
+        hR: getNodeAttrValue(arcToNode, "hR"),
+        wR: getNodeAttrValue(arcToNode, "wR"),
+        stAng: getNodeAttrValue(arcToNode, "stAng"),
+        swAng: getNodeAttrValue(arcToNode, "swAng"),
+        shftX: arcPointAttrs?.x !== undefined ? Number(arcPointAttrs.x) : 0,
+        shftY: arcPointAttrs?.y !== undefined ? Number(arcPointAttrs.y) : 0,
+      };
       multiSapeAry.push(ptObj);
     }
     //a:quadBezTo - TODO
 
     //a:close
-    if (closeNode !== undefined) {
-      if (!Array.isArray(closeNode)) {
-        closeNode = [closeNode];
-      }
-      // Object.keys(closeNode).forEach(function (key) {
-      //     //console.log("cubicBezTo[" + key + "]:");
-      //     cubicBezToPtNodesAry.push(closeNode[key]["a:pt"]);
-      // });
-      Object.keys(closeNode).forEach(function (key) {
-        //console.log("custShapType >> closeNode: key: ", key);
-        const clsAttrs = closeNode[key]["attrs"];
-        //var clsAttrs = closeNode["attrs"];
-        const clsOrder = clsAttrs["order"];
-        const ptObj: any = {};
-        ptObj.type = "close";
-        ptObj.order = clsOrder;
-        multiSapeAry.push(ptObj);
-      });
+    for (const closeNode of closeNodes) {
+      const ptObj: CloseSegment = {
+        type: "close",
+        order: getNodeOrder(closeNode),
+      };
+      multiSapeAry.push(ptObj);
     }
 
     // console.log("custShapType >> multiSapeAry: ", multiSapeAry);
@@ -260,71 +293,83 @@ export async function renderCustomGeometry({
     let k = 0;
     let d = "";
     while (k < multiSapeAry.length) {
-      if (multiSapeAry[k].type === "movto") {
-        //start point
-        const spX = parseInt(multiSapeAry[k].x) * cX; //emuToPx;
-        const spY = parseInt(multiSapeAry[k].y) * cY; //emuToPx;
-        // if (d == "") {
-        //     d = "M" + spX + "," + spY;
-        // } else {
-        //     //shape without close : then close the shape and start new path
-        //     result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-        //         "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
-        //     result += "/>";
+      const segment = multiSapeAry[k];
+      switch (segment.type) {
+        case "movto": {
+          //start point
+          const spX = parseInt(segment.x, 10) * cX; //emuToPx;
+          const spY = parseInt(segment.y, 10) * cY; //emuToPx;
+          // if (d == "") {
+          //     d = "M" + spX + "," + spY;
+          // } else {
+          //     //shape without close : then close the shape and start new path
+          //     result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+          //         "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
+          //     result += "/>";
 
-        //     if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
-        //         result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
-        //     }
-        //     if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
-        //         result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
-        //     }
-        //     result += "/>";
+          //     if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
+          //         result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
+          //     }
+          //     if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
+          //         result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
+          //     }
+          //     result += "/>";
 
-        //     d = "M" + spX + "," + spY;
-        //     isClose = true;
-        // }
+          //     d = "M" + spX + "," + spY;
+          //     isClose = true;
+          // }
 
-        d += " M" + spX + "," + spY;
-      } else if (multiSapeAry[k].type === "lnto") {
-        const Lx = parseInt(multiSapeAry[k].x) * cX; //emuToPx;
-        const Ly = parseInt(multiSapeAry[k].y) * cY; //emuToPx;
-        d += " L" + Lx + "," + Ly;
-      } else if (multiSapeAry[k].type === "cubicBezTo") {
-        const Cx1 = parseInt(multiSapeAry[k].cubBzPt[0].x) * cX; //emuToPx;
-        const Cy1 = parseInt(multiSapeAry[k].cubBzPt[0].y) * cY; //emuToPx;
-        const Cx2 = parseInt(multiSapeAry[k].cubBzPt[1].x) * cX; //emuToPx;
-        const Cy2 = parseInt(multiSapeAry[k].cubBzPt[1].y) * cY; //emuToPx;
-        const Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX; //emuToPx;
-        const Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY; //emuToPx;
-        d += " C" + Cx1 + "," + Cy1 + " " + Cx2 + "," + Cy2 + " " + Cx3 + "," + Cy3;
-      } else if (multiSapeAry[k].type === "arcTo") {
-        const hR: any = parseInt(multiSapeAry[k].hR) * cX; //emuToPx;
-        const wR: any = parseInt(multiSapeAry[k].wR) * cY; //emuToPx;
-        const stAng: any = parseInt(multiSapeAry[k].stAng) / 60000;
-        const swAng: any = parseInt(multiSapeAry[k].swAng) / 60000;
-        //var shftX = parseInt(multiSapeAry[k].shftX) * emuToPx;
-        //var shftY = parseInt(multiSapeAry[k].shftY) * emuToPx;
-        const endAng = stAng + swAng;
+          d += " M" + spX + "," + spY;
+          break;
+        }
+        case "lnto": {
+          const Lx = parseInt(segment.x, 10) * cX; //emuToPx;
+          const Ly = parseInt(segment.y, 10) * cY; //emuToPx;
+          d += " L" + Lx + "," + Ly;
+          break;
+        }
+        case "cubicBezTo": {
+          const Cx1 = parseInt(segment.cubBzPt[0].x, 10) * cX; //emuToPx;
+          const Cy1 = parseInt(segment.cubBzPt[0].y, 10) * cY; //emuToPx;
+          const Cx2 = parseInt(segment.cubBzPt[1].x, 10) * cX; //emuToPx;
+          const Cy2 = parseInt(segment.cubBzPt[1].y, 10) * cY; //emuToPx;
+          const Cx3 = parseInt(segment.cubBzPt[2].x, 10) * cX; //emuToPx;
+          const Cy3 = parseInt(segment.cubBzPt[2].y, 10) * cY; //emuToPx;
+          d += " C" + Cx1 + "," + Cy1 + " " + Cx2 + "," + Cy2 + " " + Cx3 + "," + Cy3;
+          break;
+        }
+        case "arcTo": {
+          const hR = parseInt(segment.hR, 10) * cX; //emuToPx;
+          const wR = parseInt(segment.wR, 10) * cY; //emuToPx;
+          const stAng = parseInt(segment.stAng, 10) / 60000;
+          const swAng = parseInt(segment.swAng, 10) / 60000;
+          //var shftX = parseInt(multiSapeAry[k].shftX) * emuToPx;
+          //var shftY = parseInt(multiSapeAry[k].shftY) * emuToPx;
+          const endAng = stAng + swAng;
 
-        d += shapeArc({
-          cX: wR,
-          cY: hR,
-          rX: wR,
-          rY: hR,
-          stAng: stAng,
-          endAng: endAng,
-          isClose: false,
-        });
-      } else if (multiSapeAry[k].type === "quadBezTo") {
-        console.log("custShapType: quadBezTo - TODO");
-      } else if (multiSapeAry[k].type === "close") {
-        // result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
-        //     "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
-        // result += "/>";
-        // d = "";
-        // isClose = true;
+          d += shapeArc({
+            cX: wR,
+            cY: hR,
+            rX: wR,
+            rY: hR,
+            stAng: stAng,
+            endAng: endAng,
+            isClose: false,
+          });
+          break;
+        }
+        case "quadBezTo":
+          console.log("custShapType: quadBezTo - TODO");
+          break;
+        case "close":
+          // result += "<path d='" + d + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
+          //     "' stroke='" + ((border === undefined) ? "" : border.color) + "' stroke-width='" + ((border === undefined) ? "" : border.width) + "' stroke-dasharray='" + ((border === undefined) ? "" : border.strokeDasharray) + "' ";
+          // result += "/>";
+          // d = "";
+          // isClose = true;
 
-        d += "z";
+          d += "z";
+          break;
       }
       k++;
     }
@@ -397,7 +442,7 @@ export async function renderCustomGeometry({
       type = "shape";
     }
     result += await genTextBody({
-      textBodyNode: node["p:txBody"],
+      textBodyNode: node["p:txBody"] as XmlNode | undefined,
       spNode: node,
       shapeType: type,
       placeholderIndex: idx,
