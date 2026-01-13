@@ -69,37 +69,45 @@ export class ZipJsAdapter implements PptxArchive {
   }
 
   async file(path: string): Promise<PPTXArchiveFile | undefined> {
-    const cached = this.fileCache.get(path);
+    const normalizedPath = this.normalizePath(path);
+    const cached = this.fileCache.get(normalizedPath);
     if (cached) {
       return cached;
     }
-    const entry = this.entries.get(path);
+    const entry = this.entries.get(normalizedPath);
     if (!entry) {
       return undefined;
     }
-    const file = new ZipJsArchiveFile(this, path, entry);
-    this.fileCache.set(path, file);
+    const file = new ZipJsArchiveFile(this, normalizedPath, entry);
+    this.fileCache.set(normalizedPath, file);
     return file;
   }
 
   async readEntryArrayBuffer(path: string, entry: FileEntry): Promise<ArrayBuffer> {
-    const cached = this.arrayBufferCache.get(path);
+    const normalizedPath = this.normalizePath(path);
+    const cached = this.arrayBufferCache.get(normalizedPath);
     if (cached) {
       return cached;
     }
     const fileBuffer = await entry.arrayBuffer();
-    this.arrayBufferCache.set(path, fileBuffer);
+    this.arrayBufferCache.set(normalizedPath, fileBuffer);
     return fileBuffer;
   }
 
   async readEntryText(path: string, entry: FileEntry): Promise<string> {
-    const cached = this.textCache.get(path);
+    const normalizedPath = this.normalizePath(path);
+    const cached = this.textCache.get(normalizedPath);
     if (cached) {
       return cached;
     }
-    const file = await this.readEntryArrayBuffer(path, entry);
+    const file = await this.readEntryArrayBuffer(normalizedPath, entry);
     const text = this.decoder.decode(file);
-    this.textCache.set(path, text);
+    this.textCache.set(normalizedPath, text);
     return text;
+  }
+
+  // Normalize path separators and trim leading slashes for stable cache keys.
+  private normalizePath(path: string): string {
+    return path.replace(/\\/g, "/").replace(/^\/+/, "");
   }
 }
