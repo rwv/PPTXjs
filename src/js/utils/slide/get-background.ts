@@ -109,6 +109,8 @@ export async function getBackground({
         path: ["p:sldLayout", "attrs", "showMasterSp"],
       })
     : undefined;
+  const shouldShowMasterShapes =
+    showMasterShapes === undefined || showMasterShapes === "1" || showMasterShapes === 1;
   //console.log("slideLayoutContent : ", slideLayoutContent, ", showMasterSp: ", showMasterShapes)
   const backgroundCss = await getSlideBackgroundFill({ warpContext });
   let backgroundHtml =
@@ -154,17 +156,10 @@ export async function getBackground({
       }
     }
   }
-  if (
-    masterShapeTree !== undefined &&
-    (showMasterShapes === "1" || showMasterShapes === undefined)
-  ) {
+  if (masterShapeTree !== undefined && shouldShowMasterShapes) {
     for (const shapeNodeKey in masterShapeTree) {
       const shapeNodes = asXmlNodeArray(masterShapeTree[shapeNodeKey]);
       for (const shapeNode of shapeNodes) {
-        void getTextByPathList({
-          node: shapeNode,
-          path: ["p:nvSpPr", "p:nvPr", "p:ph", "attrs", "type"],
-        });
         //if (_nodePhTypeAry.indexOf(_phType) > -1) {
         backgroundHtml += await processNodesInSlide({
           nodeType: shapeNodeKey,
