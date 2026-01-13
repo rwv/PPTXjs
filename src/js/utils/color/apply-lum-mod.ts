@@ -19,12 +19,9 @@ export function applyLumMod({ colorValue, multiplier, isAlpha }: ApplyLumModOpti
   const color = tinycolor(colorValue).toHsl();
 
   // Calculate new luminance
-  let luminanceValue = color.l * multiplierValue;
-
-  // Clamp to max 1
-  if (luminanceValue >= 1) {
-    luminanceValue = 1;
-  }
+  const safeMultiplier = Number.isFinite(multiplierValue) ? multiplierValue : 1;
+  let luminanceValue = color.l * safeMultiplier;
+  luminanceValue = Math.min(1, Math.max(0, luminanceValue));
 
   if (isAlpha) {
     return tinycolor({ h: color.h, s: color.s, l: luminanceValue, a: color.a }).toHex8();
