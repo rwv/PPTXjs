@@ -19,5 +19,8 @@ export { ZipJsAdapter } from "./zipjs-adapter";
  * const imageData = imageFile ? await imageFile.arrayBuffer() : new ArrayBuffer(0);
  */
 export async function createPptxArchive(data: ArrayBuffer): Promise<PptxArchive> {
+  if (data.byteLength === 0) {
+    throw new Error("Empty PPTX buffer");
+  }
   return ZipJsAdapter.fromArrayBuffer(data);
 }
