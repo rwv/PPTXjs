@@ -36,11 +36,20 @@ import { getSlideBackgroundFill } from "../fill";
 import { getBackground } from "./get-background";
 import { processNodesInSlide } from "../node";
 
-const normalizeTarget = (value: string | number | undefined): string =>
-  String(value ?? "").replace("../", "ppt/");
+const normalizeTarget = (value: string | number | undefined): string => {
+  const target = String(value ?? "");
+  return target.startsWith("../") ? target.replace("../", "ppt/") : target;
+};
 const relationshipPrefix = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
 const getRelationshipType = (value: string | number | undefined): string => String(value ?? "");
 const stripRelationshipPrefix = (value: string): string => value.replace(relationshipPrefix, "");
+const getRelationshipId = (relationship: XmlNode): string | undefined => {
+  const idValue = relationship.attrs?.Id;
+  return idValue !== undefined ? String(idValue) : undefined;
+};
+// Normalize relationship nodes into a predictable array.
+const asRelationshipArray = (value: XmlNode | XmlNode[] | undefined): XmlNode[] =>
+  value ? (Array.isArray(value) ? value : [value]) : [];
 
 type ProcessSingleSlideOptions = {
   archive: PptxArchive;
@@ -90,41 +99,49 @@ export async function processSingleSlide({
   if (!slideRelContent || typeof slideRelContent !== "object") {
     throw new Error(`Missing slide relationships: ${slideRelPath}`);
   }
-  let relationshipEntries = (slideRelContent as XmlNode)["Relationships"]["Relationship"] as
-    | XmlNode
-    | XmlNode[];
+  const relationshipEntries = getTextByPathList<XmlNode | XmlNode[]>({
+    node: slideRelContent as XmlNode,
+    path: ["Relationships", "Relationship"],
+  });
+  if (!relationshipEntries) {
+    throw new Error(`Missing slide relationships entries: ${slideRelPath}`);
+  }
   //console.log("RelationshipArray: " , RelationshipArray)
   let layoutFilePath = "";
   let diagramFilePath = "";
   const slideResourceMap: Record<string, { type: string; target: string }> = {};
-  if (Array.isArray(relationshipEntries)) {
-    for (let i = 0; i < relationshipEntries.length; i++) {
-      const relationship = relationshipEntries[i];
-      const relationshipType = getRelationshipType(relationship.attrs?.Type);
-      switch (relationshipType) {
-        case `${relationshipPrefix}slideLayout`:
-          layoutFilePath = normalizeTarget(relationship.attrs?.Target);
-          break;
-        case "http://schemas.microsoft.com/office/2007/relationships/diagramDrawing":
-          diagramFilePath = normalizeTarget(relationship.attrs?.Target);
-          slideResourceMap[relationship["attrs"]["Id"]] = {
+  for (const relationship of asRelationshipArray(relationshipEntries)) {
+    const relationshipType = getRelationshipType(relationship.attrs?.Type);
+    const target = normalizeTarget(relationship.attrs?.Target);
+    const relationshipId = getRelationshipId(relationship);
+    switch (relationshipType) {
+      case `${relationshipPrefix}slideLayout`:
+        layoutFilePath = target;
+        break;
+      case "http://schemas.microsoft.com/office/2007/relationships/diagramDrawing":
+        diagramFilePath = target;
+        if (relationshipId) {
+          slideResourceMap[relationshipId] = {
             type: stripRelationshipPrefix(relationshipType),
-            target: normalizeTarget(relationship.attrs?.Target),
+            target,
           };
-          break;
-        case `${relationshipPrefix}notesSlide`:
-        case `${relationshipPrefix}image`:
-        case `${relationshipPrefix}chart`:
-        case `${relationshipPrefix}hyperlink`:
-        default:
-          slideResourceMap[relationship["attrs"]["Id"]] = {
+        }
+        break;
+      case `${relationshipPrefix}notesSlide`:
+      case `${relationshipPrefix}image`:
+      case `${relationshipPrefix}chart`:
+      case `${relationshipPrefix}hyperlink`:
+      default:
+        if (relationshipId) {
+          slideResourceMap[relationshipId] = {
             type: stripRelationshipPrefix(relationshipType),
-            target: normalizeTarget(relationship.attrs?.Target),
+            target,
           };
-      }
+        }
     }
-  } else {
-    layoutFilePath = normalizeTarget(relationshipEntries["attrs"]["Target"]);
+  }
+  if (!layoutFilePath) {
+    throw new Error(`Missing slide layout relationship: ${slideRelPath}`);
   }
   //console.log(slideResObj);
   // Open slideLayoutXX.xml
@@ -153,28 +170,34 @@ export async function processSingleSlide({
   if (!slideLayoutRelContent || typeof slideLayoutRelContent !== "object") {
     throw new Error(`Missing slide layout relationships: ${slideLayoutRelPath}`);
   }
-  relationshipEntries = (slideLayoutRelContent as XmlNode)["Relationships"]["Relationship"] as
-    | XmlNode
-    | XmlNode[];
+  const layoutRelationshipEntries = getTextByPathList<XmlNode | XmlNode[]>({
+    node: slideLayoutRelContent as XmlNode,
+    path: ["Relationships", "Relationship"],
+  });
+  if (!layoutRelationshipEntries) {
+    throw new Error(`Missing slide layout relationships entries: ${slideLayoutRelPath}`);
+  }
   let masterFilePath = "";
   const layoutResourceMap: Record<string, { type: string; target: string }> = {};
-  if (Array.isArray(relationshipEntries)) {
-    for (let i = 0; i < relationshipEntries.length; i++) {
-      const relationship = relationshipEntries[i];
-      const relationshipType = getRelationshipType(relationship.attrs?.Type);
-      switch (relationshipType) {
-        case `${relationshipPrefix}slideMaster`:
-          masterFilePath = normalizeTarget(relationship.attrs?.Target);
-          break;
-        default:
-          layoutResourceMap[relationship["attrs"]["Id"]] = {
+  for (const relationship of asRelationshipArray(layoutRelationshipEntries)) {
+    const relationshipType = getRelationshipType(relationship.attrs?.Type);
+    const target = normalizeTarget(relationship.attrs?.Target);
+    const relationshipId = getRelationshipId(relationship);
+    switch (relationshipType) {
+      case `${relationshipPrefix}slideMaster`:
+        masterFilePath = target;
+        break;
+      default:
+        if (relationshipId) {
+          layoutResourceMap[relationshipId] = {
             type: stripRelationshipPrefix(relationshipType),
-            target: normalizeTarget(relationship.attrs?.Target),
+            target,
           };
-      }
+        }
     }
-  } else {
-    masterFilePath = normalizeTarget(relationshipEntries["attrs"]["Target"]);
+  }
+  if (!masterFilePath) {
+    throw new Error(`Missing slide master relationship: ${slideLayoutRelPath}`);
   }
   // Open slideMasterXX.xml
   const slideMasterXml = await readXmlFile({ archive, filename: masterFilePath });
@@ -196,35 +219,41 @@ export async function processSingleSlide({
   if (!slideMasterRelContent || typeof slideMasterRelContent !== "object") {
     throw new Error(`Missing slide master relationships: ${slideMasterRelPath}`);
   }
-  relationshipEntries = (slideMasterRelContent as XmlNode)["Relationships"]["Relationship"] as
-    | XmlNode
-    | XmlNode[];
+  const masterRelationshipEntries = getTextByPathList<XmlNode | XmlNode[]>({
+    node: slideMasterRelContent as XmlNode,
+    path: ["Relationships", "Relationship"],
+  });
+  if (!masterRelationshipEntries) {
+    throw new Error(`Missing slide master relationships entries: ${slideMasterRelPath}`);
+  }
   let themeFilePath = "";
   const masterResourceMap: Record<string, { type: string; target: string }> = {};
-  if (Array.isArray(relationshipEntries)) {
-    for (let i = 0; i < relationshipEntries.length; i++) {
-      const relationship = relationshipEntries[i];
-      const relationshipType = getRelationshipType(relationship.attrs?.Type);
-      switch (relationshipType) {
-        case `${relationshipPrefix}theme`:
-          themeFilePath = normalizeTarget(relationship.attrs?.Target);
-          break;
-        default:
-          masterResourceMap[relationship["attrs"]["Id"]] = {
+  for (const relationship of asRelationshipArray(masterRelationshipEntries)) {
+    const relationshipType = getRelationshipType(relationship.attrs?.Type);
+    const target = normalizeTarget(relationship.attrs?.Target);
+    const relationshipId = getRelationshipId(relationship);
+    switch (relationshipType) {
+      case `${relationshipPrefix}theme`:
+        themeFilePath = target;
+        break;
+      default:
+        if (relationshipId) {
+          masterResourceMap[relationshipId] = {
             type: stripRelationshipPrefix(relationshipType),
-            target: normalizeTarget(relationship.attrs?.Target),
+            target,
           };
-      }
+        }
     }
-  } else {
-    themeFilePath = normalizeTarget(relationshipEntries["attrs"]["Target"]);
   }
   //console.log(themeFilePath)
   //Load Theme file
   const themeResourceMap: Record<string, { type: string; target: string }> = {};
   let themeXml: XmlNode | null = null;
-  if (themeFilePath !== undefined) {
+  if (themeFilePath) {
     const themeFileName = themeFilePath.split("/").pop();
+    if (!themeFileName) {
+      throw new Error(`Invalid theme path: ${themeFilePath}`);
+    }
     const themeRelPath = themeFilePath.replace(themeFileName, "_rels/" + themeFileName) + ".rels";
     //console.log("themeFilename: ", themeFilePath, ", themeName: ", themeFileName, ", themeRelPath: ", themeRelPath)
     const themeXmlContent = await readXmlFile({ archive, filename: themeFilePath });
@@ -260,8 +289,11 @@ export async function processSingleSlide({
   //Load diagram file
   const diagramResourceMap: Record<string, { type: string; target: string }> = {};
   let diagramFileContent: XmlNode | Record<string, unknown> | null = {};
-  if (diagramFilePath !== undefined) {
+  if (diagramFilePath) {
     const diagramFileName = diagramFilePath.split("/").pop();
+    if (!diagramFileName) {
+      throw new Error(`Invalid diagram path: ${diagramFilePath}`);
+    }
     const diagramRelPath =
       diagramFilePath.replace(diagramFileName, "_rels/" + diagramFileName) + ".rels";
     //console.log("diagramFilename: ", diagramFilePath, ", diagramRelPath: ", diagramRelPath)
@@ -278,21 +310,15 @@ export async function processSingleSlide({
       const diagramRelationshipEntries = (diagramRelContent as XmlNode)["Relationships"][
         "Relationship"
       ] as XmlNode | XmlNode[];
-      if (Array.isArray(diagramRelationshipEntries)) {
-        for (let i = 0; i < diagramRelationshipEntries.length; i++) {
-          const relationship = diagramRelationshipEntries[i];
-          const relationshipType = getRelationshipType(relationship.attrs?.Type);
-          diagramResourceMap[relationship["attrs"]["Id"]] = {
-            type: stripRelationshipPrefix(relationshipType),
-            target: normalizeTarget(relationship.attrs?.Target),
-          };
+      for (const relationship of asRelationshipArray(diagramRelationshipEntries)) {
+        const relationshipType = getRelationshipType(relationship.attrs?.Type);
+        const relationshipId = getRelationshipId(relationship);
+        if (!relationshipId) {
+          continue;
         }
-      } else {
-        //console.log("diagram relationshipEntries: ", diagramRelationshipEntries)
-        const relationshipType = getRelationshipType(diagramRelationshipEntries.attrs?.Type);
-        diagramResourceMap[diagramRelationshipEntries["attrs"]["Id"]] = {
+        diagramResourceMap[relationshipId] = {
           type: stripRelationshipPrefix(relationshipType),
-          target: normalizeTarget(diagramRelationshipEntries["attrs"]["Target"]),
+          target: normalizeTarget(relationship.attrs?.Target),
         };
       }
     }
@@ -309,7 +335,15 @@ export async function processSingleSlide({
     throw new Error(`Missing slide content: ${slideFilePath}`);
   }
   const slideRecord = slideXml as XmlNode;
-  const slideNodeTree = slideRecord["p:sld"]["p:cSld"]["p:spTree"] as XmlNode;
+  const slideNodeTreeValue = slideRecord["p:sld"]?.["p:cSld"]?.["p:spTree"];
+  let slideNodeTree: XmlNode = {};
+  if (
+    slideNodeTreeValue &&
+    typeof slideNodeTreeValue === "object" &&
+    !Array.isArray(slideNodeTreeValue)
+  ) {
+    slideNodeTree = slideNodeTreeValue as XmlNode;
+  }
   const warpContext = {
     archive: archive,
     slideLayoutContent: slideLayoutRecord,
