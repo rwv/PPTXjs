@@ -25,6 +25,9 @@ export async function readXmlFile({
   appVersion,
 }: ReadXmlFileOptions): Promise<TXmlResult | null> {
   try {
+    if (!filename.trim()) {
+      return null;
+    }
     const file = await archive.file(filename);
     if (!file) {
       return null;
