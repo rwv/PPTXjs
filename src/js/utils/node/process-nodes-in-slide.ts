@@ -7,11 +7,19 @@ import { processGroupSpNode } from "./process-group-sp-node";
 import type { StyleTable } from "../../types/style";
 import type { WarpContext, XmlNode, XmlValue } from "../../types/pptx-xml";
 
+function isXmlNode(value: unknown): value is XmlNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 function firstXmlNode(value: XmlNode | XmlNode[] | undefined): XmlNode | undefined {
   if (value === undefined) {
     return undefined;
   }
-  return Array.isArray(value) ? value[0] : value;
+  if (Array.isArray(value)) {
+    const first = value[0];
+    return isXmlNode(first) ? first : undefined;
+  }
+  return value;
 }
 
 function asXmlNodeValue(value: XmlValue | undefined): XmlNode | undefined {
@@ -19,9 +27,9 @@ function asXmlNodeValue(value: XmlValue | undefined): XmlNode | undefined {
     return undefined;
   }
   if (Array.isArray(value)) {
-    return value.length > 0 ? value[0] : undefined;
+    return value.find(isXmlNode);
   }
-  return typeof value === "object" ? (value as XmlNode) : undefined;
+  return isXmlNode(value) ? value : undefined;
 }
 
 /**
