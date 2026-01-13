@@ -9,5 +9,9 @@ type ExtractFileExtensionOptions = {
 };
 
 export function extractFileExtension({ filename }: ExtractFileExtensionOptions): string {
-  return filename.substr((~-filename.lastIndexOf(".") >>> 0) + 2);
+  const dotIndex = filename.lastIndexOf(".");
+  if (dotIndex <= 0 || dotIndex === filename.length - 1) {
+    return "";
+  }
+  return filename.slice(dotIndex + 1);
 }
