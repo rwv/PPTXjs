@@ -20,12 +20,10 @@ export function applyHueMod({ colorValue, multiplier, isAlpha }: ApplyHueModOpti
   const color = tinycolor(colorValue).toHsl();
 
   // Calculate new hue
-  let hueValue = color.h * multiplierValue;
-
+  const safeMultiplier = Number.isFinite(multiplierValue) ? multiplierValue : 1;
+  let hueValue = color.h * safeMultiplier;
   // Wrap hue to 0-360 range
-  if (hueValue >= 360) {
-    hueValue = hueValue - 360;
-  }
+  hueValue = ((hueValue % 360) + 360) % 360;
 
   // BUG FIX: Original code used "cocacl_h" (typo) in the isAlpha branch
   if (isAlpha) {
