@@ -49,8 +49,14 @@ export async function processPicNode({
   let hasMediaAsset = false;
   const zIndexValue = String(pictureNode.attrs?.order ?? 0);
 
-  const blipFillNode = pictureNode["p:blipFill"] as XmlNode;
-  const blipNode = blipFillNode["a:blip"] as XmlNode;
+  const blipFillNode = asXmlNode(pictureNode["p:blipFill"]);
+  if (!blipFillNode) {
+    throw new Error("Missing blip fill for picture node.");
+  }
+  const blipNode = asXmlNode(blipFillNode["a:blip"]);
+  if (!blipNode) {
+    throw new Error("Missing blip node for picture embed.");
+  }
   const relationshipIdValue = blipNode.attrs?.["r:embed"];
   if (relationshipIdValue === undefined) {
     throw new Error("Missing relationship id for picture embed.");
@@ -58,12 +64,12 @@ export async function processPicNode({
   const relationshipId = String(relationshipIdValue);
   let relationshipTargets: RelationshipMap;
   if (sourceType === "slideMasterBg") {
-    relationshipTargets = warpContextValue.masterResObj ?? warpContextValue.slideResObj;
+    relationshipTargets = warpContextValue.masterResObj ?? warpContextValue.slideResObj ?? {};
   } else if (sourceType === "slideLayoutBg") {
-    relationshipTargets = warpContextValue.layoutResObj ?? warpContextValue.slideResObj;
+    relationshipTargets = warpContextValue.layoutResObj ?? warpContextValue.slideResObj ?? {};
   } else {
     //imgName = warpObj["slideResObj"][rid]["target"];
-    relationshipTargets = warpContextValue.slideResObj;
+    relationshipTargets = warpContextValue.slideResObj ?? {};
   }
   const imagePath = relationshipTargets[relationshipId]?.target;
   if (!imagePath) {
