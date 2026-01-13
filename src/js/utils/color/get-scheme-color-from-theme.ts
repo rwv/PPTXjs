@@ -79,40 +79,49 @@ export function getSchemeColorFromTheme({
     }
   }
   //console.log("getSchemeColorFromTheme slideLayoutColorOverride: ", slideLayoutColorOverride);
-  const schemeColorName = schemeColorKey.substring(2);
+  const normalizedSchemeKey = schemeColorKey.startsWith("a:")
+    ? schemeColorKey
+    : `a:${schemeColorKey}`;
+  const schemeColorName = normalizedSchemeKey.slice(2);
+  let schemeColorRef = normalizedSchemeKey;
+  const getDefaultSchemeKey = (name: string): string | undefined => {
+    switch (name) {
+      case "tx1":
+        return "a:dk1";
+      case "tx2":
+        return "a:dk2";
+      case "bg1":
+        return "a:lt1";
+      case "bg2":
+        return "a:lt2";
+      default:
+        return undefined;
+    }
+  };
   let color: string | undefined;
   if (schemeColorName === "phClr" && phClr !== undefined) {
     color = phClr;
   } else {
     if (slideLayoutColorOverride !== undefined) {
-      switch (schemeColorName) {
-        case "tx1":
-        case "tx2":
-        case "bg1":
-        case "bg2":
-          schemeColorKey = "a:" + slideLayoutColorOverride[schemeColorName];
-          break;
+      const overrideKey = slideLayoutColorOverride[schemeColorName];
+      if (overrideKey) {
+        schemeColorRef = `a:${overrideKey}`;
+      } else {
+        const fallbackKey = getDefaultSchemeKey(schemeColorName);
+        if (fallbackKey) {
+          schemeColorRef = fallbackKey;
+        }
       }
     } else {
-      switch (schemeColorName) {
-        case "tx1":
-          schemeColorKey = "a:dk1";
-          break;
-        case "tx2":
-          schemeColorKey = "a:dk2";
-          break;
-        case "bg1":
-          schemeColorKey = "a:lt1";
-          break;
-        case "bg2":
-          schemeColorKey = "a:lt2";
-          break;
+      const fallbackKey = getDefaultSchemeKey(schemeColorName);
+      if (fallbackKey) {
+        schemeColorRef = fallbackKey;
       }
     }
     //console.log("getSchemeColorFromTheme:  schemeColorKey: ", schemeColorKey);
     const refNode = getTextByPathList({
       node: warpContext["themeContent"] as XmlNode,
-      path: ["a:theme", "a:themeElements", "a:clrScheme", schemeColorKey],
+      path: ["a:theme", "a:themeElements", "a:clrScheme", schemeColorRef],
     });
     if (refNode !== undefined && isXmlNode(refNode)) {
       color = getTextByPathList({ node: refNode, path: ["a:srgbClr", "attrs", "val"] });
