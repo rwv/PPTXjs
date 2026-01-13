@@ -19,7 +19,7 @@ type SetTextByPathListOptions = {
 };
 
 export function setTextByPathList({ node, path, value }: SetTextByPathListOptions): void {
-  if (path.constructor !== Array) {
+  if (!Array.isArray(path)) {
     throw Error("Error of path type! path is not array.");
   }
 
@@ -28,28 +28,18 @@ export function setTextByPathList({ node, path, value }: SetTextByPathListOption
   }
 
   type NodeRecord = Record<string | number, unknown>;
-  const target = node as NodeRecord & {
-    set?: (parts: readonly (string | number)[], value: unknown) => unknown;
-  };
-
-  Reflect.defineProperty(target, "set", {
-    value: (parts: readonly (string | number)[], value: unknown) => {
-      let currentNode: NodeRecord = target;
-      const pathLength = parts.length;
-      for (let index = 0; index < pathLength; index += 1) {
-        const pathKey = parts[index];
-        if (currentNode[pathKey] == null) {
-          if (index === pathLength - 1) {
-            currentNode[pathKey] = value;
-          } else {
-            currentNode[pathKey] = {};
-          }
-        }
-        currentNode = currentNode[pathKey] as NodeRecord;
-      }
-      return currentNode;
-    },
-  });
-
-  target.set?.(path, value);
+  let currentNode = node as NodeRecord;
+  const pathLength = path.length;
+  for (let index = 0; index < pathLength; index += 1) {
+    const pathKey = path[index];
+    if (index === pathLength - 1) {
+      currentNode[pathKey] = value;
+      break;
+    }
+    const nextNode = currentNode[pathKey];
+    if (!nextNode || typeof nextNode !== "object") {
+      currentNode[pathKey] = {};
+    }
+    currentNode = currentNode[pathKey] as NodeRecord;
+  }
 }
