@@ -19,15 +19,8 @@ export function applyLumOff({ colorValue, offset, isAlpha }: ApplyLumOffOptions)
   const color = tinycolor(colorValue).toHsl();
 
   // Calculate new luminance
-  const luminanceValue = offsetValue + color.l;
-
-  // Clamp to max 1
-  if (luminanceValue >= 1) {
-    if (isAlpha) {
-      return tinycolor({ h: color.h, s: color.s, l: 1, a: color.a }).toHex8();
-    }
-    return tinycolor({ h: color.h, s: color.s, l: 1, a: color.a }).toHex();
-  }
+  const safeOffset = Number.isFinite(offsetValue) ? offsetValue : 0;
+  const luminanceValue = Math.min(1, Math.max(0, safeOffset + color.l));
 
   if (isAlpha) {
     return tinycolor({ h: color.h, s: color.s, l: luminanceValue, a: color.a }).toHex8();
