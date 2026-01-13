@@ -42,7 +42,10 @@ export function getLayoutAndMasterNode({
   let listLevel = 1;
   const levelAttr = getTextByPathList<string>({ node: paragraphPropsNode, path: ["attrs", "lvl"] });
   if (levelAttr !== undefined) {
-    listLevel = parseInt(levelAttr) + 1;
+    const parsedLevel = Number.parseInt(levelAttr, 10);
+    if (Number.isFinite(parsedLevel)) {
+      listLevel = parsedLevel + 1;
+    }
   }
   if (layoutIndex !== undefined && context.slideLayoutTables !== undefined) {
     //slidelayout
