@@ -22,6 +22,10 @@ export function svgAngle({
   const height = parseFloat(String(svgHeightInput));
   const angle = parseFloat(String(angleDegrees));
 
+  if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+    return [0, 0, 100, 0];
+  }
+
   let edgeY = 2;
   let edgeX = 2;
   const widthCenter = width / 2;
@@ -31,7 +35,8 @@ export function svgAngle({
   let tempX2 = 2;
   let tempY2 = 2;
 
-  const normalizedAngle = ((angle % 360) + 360) % 360;
+  const safeAngle = Number.isFinite(angle) ? angle : 0;
+  const normalizedAngle = ((safeAngle % 360) + 360) % 360;
   const angleRadians = ((360 - normalizedAngle) * Math.PI) / 180;
   const slope = Math.tan(angleRadians);
   const yIntercept = heightCenter - slope * widthCenter;
