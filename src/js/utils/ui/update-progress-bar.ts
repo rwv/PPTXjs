@@ -5,6 +5,9 @@
  */
 export function updateProgressBar(percent: number): void {
   //console.log("percent: ", percent)
+  if (typeof document === "undefined") {
+    return;
+  }
   const progressBarElement = document.querySelector(".slides-loading-progress-bar");
   if (!progressBarElement) {
     return;
