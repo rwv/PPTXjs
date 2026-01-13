@@ -98,10 +98,17 @@ export async function genDiagram({
     path: ["p:drawing", "p:spTree", "p:sp"],
   });
   let diagramHtml = "";
-  if (diagramShapeNodes !== undefined && isXmlNodeArray(diagramShapeNodes)) {
-    const diagramShapeCount = diagramShapeNodes.length;
+  const diagramShapes = diagramShapeNodes
+    ? isXmlNodeArray(diagramShapeNodes)
+      ? diagramShapeNodes
+      : isXmlNode(diagramShapeNodes)
+        ? [diagramShapeNodes]
+        : []
+    : [];
+  if (diagramShapes.length > 0) {
+    const diagramShapeCount = diagramShapes.length;
     for (let i = 0; i < diagramShapeCount; i++) {
-      const diagramShapeNode = diagramShapeNodes[i];
+      const diagramShapeNode = diagramShapes[i];
       // var dspSpObjToStr = JSON.stringify(dspSp);
       // var pSpStr = dspSpObjToStr.replace(/dsp:/g, "p:");
       // var pSpStrToObj = JSON.parse(pSpStr);
