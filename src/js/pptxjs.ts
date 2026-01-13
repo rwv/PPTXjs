@@ -384,7 +384,3 @@ export async function pptxToHtml({ container, options }: PptxToHtmlArgs): Promis
     //}
   }
 }
-
-if (typeof window !== "undefined") {
-  (window as unknown as { pptxToHtml?: typeof pptxToHtml }).pptxToHtml = pptxToHtml;
-}
