@@ -19,7 +19,9 @@ export function getTextVerticalAlign({ textRunNode }: GetTextVerticalAlignOption
     node: textRunNode,
     path: ["a:rPr", "attrs", "baseline"],
   });
-  return baselineValue === undefined
-    ? "baseline"
-    : parseInt(String(baselineValue), 10) / 1000 + "%";
+  if (baselineValue === undefined) {
+    return "baseline";
+  }
+  const parsedBaseline = Number.parseInt(String(baselineValue), 10);
+  return Number.isFinite(parsedBaseline) ? parsedBaseline / 1000 + "%" : "baseline";
 }
