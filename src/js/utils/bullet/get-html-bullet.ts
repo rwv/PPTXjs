@@ -15,6 +15,9 @@ type GetHtmlBulletOptions = {
 
 export function getHtmlBullet({ typefaceNode, bulletChar }: GetHtmlBulletOptions): string {
   // http://www.alanwood.net/demos/wingdings.html
+  if (!bulletChar) {
+    return "";
+  }
   // Handle common special cases
   switch (bulletChar) {
     case "§":
