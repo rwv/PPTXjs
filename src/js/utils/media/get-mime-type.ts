@@ -38,5 +38,6 @@ type GetMimeTypeOptions = {
 };
 
 export function getMimeType({ fileExtension }: GetMimeTypeOptions): string {
-  return MIME_TYPE_MAP[fileExtension.toLowerCase()] || "";
+  const normalized = fileExtension.trim().toLowerCase();
+  return MIME_TYPE_MAP[normalized] || "";
 }
