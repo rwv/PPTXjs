@@ -10,6 +10,14 @@ export function shapePie({ H, w, adj1, adj2, isClose }: ShapePieOptions): [strin
   const pieVal = typeof adj2 === "number" ? adj2 : parseFloat(adj2);
   const piAngle = typeof adj1 === "number" ? adj1 : parseFloat(adj1);
   const size = typeof H === "number" ? H : parseFloat(H);
+  if (
+    !Number.isFinite(pieVal) ||
+    !Number.isFinite(piAngle) ||
+    !Number.isFinite(size) ||
+    size <= 0
+  ) {
+    return ["", ""];
+  }
   const radius = size / 2;
   let value = pieVal - piAngle;
   if (value < 0) {
@@ -49,7 +57,11 @@ export function shapePie({ H, w, adj1, adj2, isClose }: ShapePieOptions): [strin
   } else {
     const longArc = value <= 180 ? 0 : 1;
     const radius1 = radius;
-    const radius2 = typeof w === "number" ? w / 2 : parseFloat(w) / 2;
+    const widthValue = typeof w === "number" ? w : parseFloat(w);
+    if (!Number.isFinite(widthValue) || widthValue <= 0) {
+      return ["", ""];
+    }
+    const radius2 = widthValue / 2;
     const d =
       "M" +
       radius1 +
