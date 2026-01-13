@@ -15,7 +15,11 @@ export function getBase64ImageDimensions({
   const base64Data = (base64Match ? base64Match[1] : imgSrc).replace(/\s/g, "");
 
   try {
-    const binary = window.atob(base64Data);
+    const atobFn = typeof globalThis !== "undefined" ? globalThis.atob : undefined;
+    if (typeof atobFn !== "function") {
+      return [1, 1];
+    }
+    const binary = atobFn(base64Data);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i += 1) {
       bytes[i] = binary.charCodeAt(i);
@@ -100,6 +104,9 @@ export function getBase64ImageDimensions({
     // Fall through to Image-based fallback.
   }
 
+  if (typeof Image === "undefined") {
+    return [1, 1];
+  }
   const image = new Image();
   image.src = imgSrc;
   if (image.width && image.height) {
