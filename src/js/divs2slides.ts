@@ -339,10 +339,24 @@ export function initDivs2Slides({ target, options = {} }: InitDivs2SlidesOptions
   const divId = ensureElementId(target);
   const slides = getElements<HTMLElement>({ container: target, selector: ".slide" });
   const totalSlides = slides.length;
-  const slideCount = settings.first;
+  if (totalSlides === 0) {
+    // Avoid initializing slide mode when there are no slides.
+    return;
+  }
+  const slideCount = Math.min(Math.max(settings.first, 1), totalSlides);
   const autoSlideValue =
-    typeof settings.autoSlide === "number" ? settings.autoSlide : settings.autoSlide ? 1 : false;
+    typeof settings.autoSlide === "number" &&
+    Number.isFinite(settings.autoSlide) &&
+    settings.autoSlide > 0
+      ? settings.autoSlide
+      : settings.autoSlide
+        ? 1
+        : false;
   const backgroundValue = typeof settings.background === "string" ? settings.background : false;
+  const transitionTime =
+    Number.isFinite(settings.transitionTime) && settings.transitionTime > 0
+      ? settings.transitionTime
+      : defaultSettings.transitionTime;
 
   let orginalMainDivWidth = 0;
   let orginalMainDivHeight = 0;
@@ -749,7 +763,10 @@ export function initDivs2Slides({ target, options = {} }: InitDivs2SlidesOptions
       const container = data.target;
       if (!document.fullscreenElement) {
         // current working methods
-        container.requestFullscreen();
+        if (!container.requestFullscreen) {
+          return;
+        }
+        void container.requestFullscreen().catch(() => undefined);
         const winWidth = window.innerWidth || document.documentElement.clientWidth;
         const winHeight = window.innerHeight || document.documentElement.clientHeight;
         //Need to save:
@@ -804,7 +821,9 @@ export function initDivs2Slides({ target, options = {} }: InitDivs2SlidesOptions
           fullscreenBtn.src = FULLSCREEN_EXIT_ICON;
         }
       } else {
-        document.exitFullscreen();
+        if (document.exitFullscreen) {
+          void document.exitFullscreen().catch(() => undefined);
+        }
 
         pptxjslideObj.exitFullscreenMod();
       }
@@ -874,7 +893,7 @@ export function initDivs2Slides({ target, options = {} }: InitDivs2SlidesOptions
     slideCount: slideCount,
     prevSlide: 0,
     transition: settings.transition,
-    transitionTime: settings.transitionTime,
+    transitionTime: transitionTime,
     slctdBgClr: backgroundValue,
     prevBgColor: undefined,
     timeBetweenSlides: autoSlideValue,
