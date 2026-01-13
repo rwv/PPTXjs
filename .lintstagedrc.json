@@ -2,9 +2,9 @@
   "src/**/*.{ts,js}": [
     "prettier --write",
     "eslint --fix",
-    "vitest related --run --passWithNoTests"
+    "vitest related --run --browser.headless --passWithNoTests"
   ],
-  "src/**/*.{json,md}": [
+  "src/**/*.{json,md,css}": [
     "prettier --write"
   ]
 }
