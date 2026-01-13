@@ -16,7 +16,7 @@ export function getDingbatToUnicode({
   typefaceNode,
   bulletChar,
 }: GetDingbatToUnicodeOptions): string | null {
-  if (!dingbat_unicode) {
+  if (!dingbat_unicode || !typefaceNode || !bulletChar) {
     return null;
   }
 
