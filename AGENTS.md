@@ -38,3 +38,13 @@ All commands must pass before committing.
 - `src/__tests__/__snapshots__/**`: Vitest snapshot files.
 - `src/__tests__/example.pptx`: test fixture PPTX.
 - `src/css/`: runtime styles.
+- `.husky/`: Git hooks (commitlint and lint-staged).
+- `commitlint.config.ts`: commitlint rules.
+- `.lintstagedrc.json`: lint-staged rules.
+
+## Rendering flow
+1) `pptxToHtml` in `src/js/pptxjs.ts` loads the PPTX (fetch or file input), creates a PPTX archive (`createPptxArchive`), and prepares settings/state.
+2) `processPPTX` in `src/js/utils/pptx/process-pptx.ts` reads content types, slide size/default text, and table styles; it loops slides and calls `processSingleSlide`, then emits `globalCSS` and `ExecutionTime`.
+3) `processSingleSlide` in `src/js/utils/slide/process-single-slide.ts` resolves slide/layout/master/theme/diagram relationships, builds the `warpContext`, renders background, and iterates `p:spTree` nodes via `processNodesInSlide`.
+4) Node processors under `src/js/utils/node/**` and `src/js/utils/**` render shapes, text, tables, media, charts, and fill the `styleTable` plus chart message queue.
+5) Back in `pptxToHtml`, the renderer appends slide HTML/CSS, flushes chart rendering (`processMsgQueue`), applies numeric bullets, wraps slides for reveal/divs2slides, and applies scaling/slide mode.
