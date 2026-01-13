@@ -15,16 +15,13 @@ export function alphaNumeric({ num, letterCase }: AlphaNumericOptions): string {
   if (!Number.isFinite(parsed) || parsed <= 0) {
     return "";
   }
-  const numValue = Math.floor(parsed) - 1;
+  let numValue = Math.floor(parsed);
   let alphaLabel = "";
-  const firstChar = numValue / 26 >= 1 ? String.fromCharCode(Math.floor(numValue / 26) + 64) : "";
-  const secondChar = String.fromCharCode((numValue % 26) + 65);
-
-  if (letterCase === "upperCase") {
-    alphaLabel = (firstChar + secondChar).toUpperCase();
-  } else if (letterCase === "lowerCase") {
-    alphaLabel = (firstChar + secondChar).toLowerCase();
+  while (numValue > 0) {
+    numValue -= 1;
+    alphaLabel = String.fromCharCode((numValue % 26) + 65) + alphaLabel;
+    numValue = Math.floor(numValue / 26);
   }
 
-  return alphaLabel;
+  return letterCase === "lowerCase" ? alphaLabel.toLowerCase() : alphaLabel.toUpperCase();
 }
