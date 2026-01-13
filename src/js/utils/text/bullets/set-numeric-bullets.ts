@@ -31,9 +31,9 @@ export function setNumericBullets(elements: NodeListOf<Element> | Element[]) {
       let prevBulletType = "";
       let prevBulletLevel = "";
       let bulletIndex = 0;
-      const levelCounters = new Array();
+      const levelCounters: number[] = [];
       let levelIndex = 0;
-      const bulletTypeStack = new Array();
+      const bulletTypeStack: string[] = [];
 
       for (let j = 0; j < bulletSpans.length; j++) {
         const bulletType = bulletSpans[j]?.getAttribute("data-bulltname") ?? "";

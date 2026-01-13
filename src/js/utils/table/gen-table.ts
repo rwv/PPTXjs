@@ -228,9 +228,7 @@ export async function genTable({
         //multi columns
         let j = 0;
         if (rowSpanAry.length === 0) {
-          rowSpanAry = Array.apply(null, Array(tcNodes.length)).map(function () {
-            return 0;
-          });
+          rowSpanAry = Array.from({ length: tcNodes.length }, () => 0);
         }
         let totalColSpan = 0;
         while (j < tcNodes.length) {

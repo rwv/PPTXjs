@@ -475,7 +475,6 @@ export function renderCurvedRightArrow(ctx: CurvedArrowContext): string {
       endAng: c3d4 + swAng2dg,
       isClose: false,
     }).replace("M", "L");
-  ("");
   return createPath({ d: d_val, ctx });
 }
 

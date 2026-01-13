@@ -163,7 +163,7 @@ export const tXml = ({ xml, options = {} }: TXmlInput): TXmlResult => {
   const findAttributeMatch = (): number => {
     const attrName = options.attrName ?? "id";
     const attrValue = options.attrValue ?? "";
-    const pattern = new RegExp(`\\s${attrName}\\s*=['\"]${attrValue}['\"]`);
+    const pattern = new RegExp(`\\s${attrName}\\s*=['"]${attrValue}['"]`);
     const match = pattern.exec(xmlText);
     return match ? match.index : -1;
   };
