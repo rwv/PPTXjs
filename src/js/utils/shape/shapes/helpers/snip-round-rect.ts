@@ -33,8 +33,18 @@ export function shapeSnipRoundRect({
   // Convert to numbers
   const width = typeof w === "number" ? w : parseFloat(w);
   const height = typeof h === "number" ? h : parseFloat(h);
-  const adjust1 = typeof adj1 === "number" ? adj1 : parseFloat(adj1);
-  const adjust2 = typeof adj2 === "number" ? adj2 : parseFloat(adj2);
+  if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+    return "";
+  }
+  const clampAdjust = (value: number | string): number => {
+    const parsed = typeof value === "number" ? value : parseFloat(value);
+    if (!Number.isFinite(parsed)) {
+      return 0;
+    }
+    return Math.min(1, Math.max(0, parsed));
+  };
+  const adjust1 = clampAdjust(adj1);
+  const adjust2 = clampAdjust(adj2);
 
   // Determine corner adjustments based on type
   // adjA = top-left, adjB = bottom-left, adjC = bottom-right, adjD = top-right
