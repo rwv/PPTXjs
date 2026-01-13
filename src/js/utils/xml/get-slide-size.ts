@@ -31,18 +31,34 @@ export async function getSlideSizeAndSetDefaultTextStyle({
   if (!app) {
     throw new Error("Missing docProps/app.xml in PPTX.");
   }
-  const appVersionString = app["Properties"]["AppVersion"];
-  const appVersion = parseInt(appVersionString);
-  console.log("create by Office PowerPoint app verssion: ", appVersionString);
+  const appVersionString = app["Properties"]?.["AppVersion"];
+  const appVersionParsed = Number.parseInt(String(appVersionString ?? ""), 10);
+  const appVersion = Number.isFinite(appVersionParsed) ? appVersionParsed : 0;
+  console.log("create by Office PowerPoint app verssion: ", appVersionString ?? "unknown");
 
   //get slide dimensions
   const content = await readXmlFile({ archive, filename: "ppt/presentation.xml" });
   if (!content) {
     throw new Error("Missing ppt/presentation.xml in PPTX.");
   }
-  const slideSizeAttributes = content["p:presentation"]["p:sldSz"]["attrs"];
-  const slideSizeWidth = parseInt(slideSizeAttributes["cx"]);
-  const slideSizeHeight = parseInt(slideSizeAttributes["cy"]);
+  const presentation = content["p:presentation"];
+  if (!presentation || typeof presentation !== "object") {
+    throw new Error("Missing presentation info in ppt/presentation.xml.");
+  }
+  const rawSlideSizeNode = (presentation as Record<string, unknown>)["p:sldSz"];
+  const slideSizeNode =
+    rawSlideSizeNode && typeof rawSlideSizeNode === "object"
+      ? (rawSlideSizeNode as { attrs?: Record<string, unknown> })
+      : undefined;
+  const slideSizeAttributes = slideSizeNode?.attrs;
+  if (!slideSizeAttributes) {
+    throw new Error("Missing slide size info in ppt/presentation.xml.");
+  }
+  const slideSizeWidth = Number.parseInt(String(slideSizeAttributes["cx"] ?? ""), 10);
+  const slideSizeHeight = Number.parseInt(String(slideSizeAttributes["cy"] ?? ""), 10);
+  if (!Number.isFinite(slideSizeWidth) || !Number.isFinite(slideSizeHeight)) {
+    throw new Error("Invalid slide size values in ppt/presentation.xml.");
+  }
   const slideSizeType = slideSizeAttributes["type"];
   console.log("Presentation size type: ", slideSizeType);
 
@@ -80,9 +96,7 @@ export async function getSlideSizeAndSetDefaultTextStyle({
   //console.log("scaleX: ", scaleX, "scaleY:", scaleY)
   //slideFactor = slideFactor * scaleX;
 
-  const defaultTextStyle = (content as XmlNode)["p:presentation"]["p:defaultTextStyle"] as
-    | XmlNode
-    | undefined;
+  const defaultTextStyle = (presentation as XmlNode)["p:defaultTextStyle"] as XmlNode | undefined;
 
   const slideWidth = (slideSizeWidth * slideFactor + settings.incSlide.width) | 0; // * scaleX;//parseInt(slideSizeAttributes["cx"]) * 96 / 914400;
   const slideHeight = (slideSizeHeight * slideFactor + settings.incSlide.height) | 0; // * scaleY;//parseInt(slideSizeAttributes["cy"]) * 96 / 914400;
