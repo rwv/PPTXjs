@@ -9,7 +9,12 @@ export function updateProgressBar(percent: number): void {
   if (!progressBarElement) {
     return;
   }
+  if (!Number.isFinite(percent)) {
+    return;
+  }
+  const normalizedPercent = Math.min(100, Math.max(0, percent));
   const progressBar = progressBarElement as HTMLElement;
-  progressBar.style.width = percent + "%";
-  progressBar.innerHTML = "<span style='text-align: center;'>Loading...(" + percent + "%)</span>";
+  progressBar.style.width = normalizedPercent + "%";
+  progressBar.innerHTML =
+    "<span style='text-align: center;'>Loading...(" + normalizedPercent + "%)</span>";
 }
