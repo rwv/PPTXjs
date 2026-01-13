@@ -6,7 +6,7 @@ export default defineConfig({
       entry: "src/index.ts",
       name: "PPTXjs",
       formats: ["es", "iife"],
-      fileName: (format) => (format === "es" ? "pptxjs.esm" : "pptxjs.iife"),
+      fileName: (format) => (format === "es" ? "pptxjs.esm.js" : "pptxjs.iife.js"),
       cssFileName: "pptxjs",
     },
     rollupOptions: {
