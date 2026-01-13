@@ -29,6 +29,19 @@ export function shapeArc({ cX, cY, rX, rY, stAng, endAng, isClose }: ShapeArcOpt
   const startAngle = typeof stAng === "number" ? stAng : parseFloat(stAng);
   const endAngle = typeof endAng === "number" ? endAng : parseFloat(endAng);
 
+  if (
+    !Number.isFinite(centerX) ||
+    !Number.isFinite(centerY) ||
+    !Number.isFinite(radiusX) ||
+    !Number.isFinite(radiusY) ||
+    !Number.isFinite(startAngle) ||
+    !Number.isFinite(endAngle) ||
+    radiusX <= 0 ||
+    radiusY <= 0
+  ) {
+    return "";
+  }
+
   let dData = "";
   let angle = startAngle;
   let isFirstPoint = true;
