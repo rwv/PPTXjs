@@ -22,5 +22,9 @@ export function getTextByPathStr({ node, pathStr }: GetTextByPathStrOptions): Xm
   if (!node) {
     return undefined;
   }
-  return getTextByPathList({ node, path: pathStr.trim().split(/\s+/) });
+  const trimmedPath = pathStr.trim();
+  if (!trimmedPath) {
+    return undefined;
+  }
+  return getTextByPathList({ node, path: trimmedPath.split(/\s+/) });
 }
