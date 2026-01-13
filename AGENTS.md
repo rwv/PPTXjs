@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Project status
-- This repo modernizes the legacy PPTXjs jQuery plugin and is published as `pptx-js`, targeting native DOM APIs plus stronger TypeScript types for PPTX-to-HTML conversion.
+- This repo is the standalone `pptx-js` library for converting PPTX files to HTML. It ships ESM + IIFE builds via Vite and uses native DOM APIs with TypeScript types.
 
 ## Scripts
 - test: `pnpm test`
@@ -23,25 +23,25 @@
 All commands must pass before committing.
 
 ## Current goal
-- Replace any remaining jQuery usage with native DOM APIs and keep all checks passing.
+- Keep the PPTX-to-HTML renderer stable while improving type safety and keeping ESM/IIFE builds and tests green.
 
 ## Repo overview
-- `src/js/pptxjs.ts`: main PPTX parser and renderer (exports `pptxToHtml` and attaches to `window`).
+- `src/index.ts`: public entry for bundling (exports `pptxToHtml`).
+- `src/js/pptxjs.ts`: main PPTX parser and renderer (exports `pptxToHtml`; no global window attach).
 - `src/js/divs2slides.ts`: slideshow/presentation mode implementation.
 - `src/js/types/**`: shared TypeScript types (settings, XML, styles).
 - `src/js/utils/**`: utility modules grouped by domain (layout, color, font, shape, media, chart, xml, vendors).
-- `src/js/utils/vendors/import-nv-d3.ts`: loads D3/NVD3 globals and the NVD3 CSS for charts.
+- `src/js/utils/vendors/import-nv-d3.ts`: loads D3/NVD3 globals and NVD3 CSS for charts.
 - `src/js/utils/vendors/txml/**`: typed TXML parser for PPTX XML.
 - `src/js/archive/zipjs-adapter.ts`: zip.js-backed archive adapter used by `createPptxArchive`.
-- `src/index.ts`: test helper that uses `pptxToHtml` to render slides.
+- `src/css/pptxjs.css`: runtime styles bundled by Vite.
 - `src/__tests__/index.browser.test.ts`: browser tests (Vitest + Playwright).
 - `src/__tests__/__screenshots__/**`: Playwright snapshot images (OS/browser specific).
 - `src/__tests__/__snapshots__/**`: Vitest snapshot files.
 - `src/__tests__/fixtures/example.pptx`: test fixture PPTX.
-- `src/css/`: runtime styles.
-- `.husky/`: Git hooks (commitlint and lint-staged).
-- `commitlint.config.ts`: commitlint rules.
-- `.lintstagedrc.json`: lint-staged rules.
+- `vite.config.ts`: Vite library build (ESM + IIFE).
+- `dist/`: build outputs (`pptxjs.esm.js`, `pptxjs.iife.js`, `pptxjs.css`).
+- `.husky/`, `commitlint.config.ts`, `.lintstagedrc.json`: commit hooks and lint-staged rules.
 
 ## Rendering flow
 1) `pptxToHtml` in `src/js/pptxjs.ts` loads the PPTX (fetch or file input), creates a PPTX archive (`createPptxArchive`), and prepares settings/state.
