@@ -25,6 +25,13 @@ export function hslToRgb({ hue, saturation, lightness }: HslToRgbOptions): RgbCo
   const hueValue = typeof hue === "number" ? hue : parseFloat(hue);
   const saturationValue = typeof saturation === "number" ? saturation : parseFloat(saturation);
   const lightnessValue = typeof lightness === "number" ? lightness : parseFloat(lightness);
+  if (
+    !Number.isFinite(hueValue) ||
+    !Number.isFinite(saturationValue) ||
+    !Number.isFinite(lightnessValue)
+  ) {
+    return { r: 0, g: 0, b: 0 };
+  }
 
   let temp2: number;
   const hueNorm = hueValue / 60;
