@@ -5,10 +5,11 @@
  * @returns Roman numeral string, or false if invalid input
  */
 export function romanize(num: number | string): string | false {
-  const numValue = +num;
-  if (!numValue) {
+  const parsed = Number(num);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
     return false;
   }
+  const numValue = Math.floor(parsed);
 
   const digits = String(numValue).split("");
   const key = [
