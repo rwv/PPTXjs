@@ -85,6 +85,14 @@ export function getPosition({
   shapeType,
   emuToPx,
 }: GetPositionOptions): string {
+  const parseEmuValue = (value: string | number | undefined): number | undefined => {
+    if (value === undefined || value === null) {
+      return undefined;
+    }
+    const parsed = Number.parseInt(String(value), 10);
+    return Number.isFinite(parsed) ? parsed * emuToPx : undefined;
+  };
+
   let offsetAttributes: { x?: string; y?: string } | undefined;
   let xPosition = -1,
     yPosition = -1;
@@ -112,9 +120,25 @@ export function getPosition({
       path: ["p:grpSpPr", "a:xfrm"],
     });
     // BUG FIX: Use the group transform node when computing offsets.
-    if (groupTransformNode !== undefined) {
-      groupOffsetX = parseInt(groupTransformNode["a:off"]["attrs"]["x"]) * emuToPx;
-      groupOffsetY = parseInt(groupTransformNode["a:off"]["attrs"]["y"]) * emuToPx;
+    if (groupTransformNode && typeof groupTransformNode === "object") {
+      const groupOffsetXValue = parseEmuValue(
+        getTextByPathList({
+          node: groupTransformNode as XmlNode,
+          path: ["a:off", "attrs", "x"],
+        })
+      );
+      const groupOffsetYValue = parseEmuValue(
+        getTextByPathList({
+          node: groupTransformNode as XmlNode,
+          path: ["a:off", "attrs", "y"],
+        })
+      );
+      if (groupOffsetXValue !== undefined) {
+        groupOffsetX = groupOffsetXValue;
+      }
+      if (groupOffsetYValue !== undefined) {
+        groupOffsetY = groupOffsetYValue;
+      }
       // var chx = parseInt(grpXfrmNode["a:chOff"]["attrs"]["x"]) * emuToPx;
       // var chy = parseInt(grpXfrmNode["a:chOff"]["attrs"]["y"]) * emuToPx;
       // var cx = parseInt(grpXfrmNode["a:ext"]["attrs"]["cx"]) * emuToPx;
@@ -131,15 +155,29 @@ export function getPosition({
     parentNode !== undefined &&
     parentNode["p:grpSpPr"] !== undefined
   ) {
-    const groupTransformNode = parentNode["p:grpSpPr"]["a:xfrm"];
-    if (groupTransformNode !== undefined && groupTransformNode["a:chOff"] !== undefined) {
+    const groupTransformNode = parentNode["p:grpSpPr"]?.["a:xfrm"];
+    if (groupTransformNode && typeof groupTransformNode === "object") {
       // var ox = parseInt(xfrmNode["a:off"]["attrs"]["x"]) * emuToPx;
       // var oy = parseInt(xfrmNode["a:off"]["attrs"]["y"]) * emuToPx;
-      const childOffsetXValue = parseInt(groupTransformNode["a:chOff"]["attrs"]["x"]) * emuToPx;
-      const childOffsetYValue = parseInt(groupTransformNode["a:chOff"]["attrs"]["y"]) * emuToPx;
+      const childOffsetXValue = parseEmuValue(
+        getTextByPathList({
+          node: groupTransformNode as XmlNode,
+          path: ["a:chOff", "attrs", "x"],
+        })
+      );
+      const childOffsetYValue = parseEmuValue(
+        getTextByPathList({
+          node: groupTransformNode as XmlNode,
+          path: ["a:chOff", "attrs", "y"],
+        })
+      );
 
-      childOffsetX = childOffsetXValue;
-      childOffsetY = childOffsetYValue;
+      if (childOffsetXValue !== undefined) {
+        childOffsetX = childOffsetXValue;
+      }
+      if (childOffsetYValue !== undefined) {
+        childOffsetY = childOffsetYValue;
+      }
     }
   }
 
