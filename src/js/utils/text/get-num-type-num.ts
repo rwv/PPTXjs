@@ -17,37 +17,40 @@ type GetNumTypeNumOptions = {
 
 export function getNumTypeNum({ numberingType, num }: GetNumTypeNumOptions): string {
   let formattedNumber: string;
+  const fallback = String(num);
+  const numericValue = Number(num);
+  const hasNumericValue = Number.isFinite(numericValue);
 
   switch (numberingType) {
     case "arabicPeriod":
-      formattedNumber = num + ". ";
+      formattedNumber = fallback + ". ";
       break;
     case "arabicParenR":
-      formattedNumber = num + ") ";
+      formattedNumber = fallback + ") ";
       break;
     case "alphaLcParenR":
-      formattedNumber = alphaNumeric({ num, letterCase: "lowerCase" }) + ") ";
+      formattedNumber = (alphaNumeric({ num, letterCase: "lowerCase" }) || fallback) + ") ";
       break;
     case "alphaLcPeriod":
-      formattedNumber = alphaNumeric({ num, letterCase: "lowerCase" }) + ". ";
+      formattedNumber = (alphaNumeric({ num, letterCase: "lowerCase" }) || fallback) + ". ";
       break;
     case "alphaUcParenR":
-      formattedNumber = alphaNumeric({ num, letterCase: "upperCase" }) + ") ";
+      formattedNumber = (alphaNumeric({ num, letterCase: "upperCase" }) || fallback) + ") ";
       break;
     case "alphaUcPeriod":
-      formattedNumber = alphaNumeric({ num, letterCase: "upperCase" }) + ". ";
+      formattedNumber = (alphaNumeric({ num, letterCase: "upperCase" }) || fallback) + ". ";
       break;
     case "romanUcPeriod":
-      formattedNumber = romanize(num) + ". ";
+      formattedNumber = (romanize(num) || fallback) + ". ";
       break;
     case "romanLcParenR":
-      formattedNumber = romanize(num) + ") ";
+      formattedNumber = (romanize(num) || fallback) + ") ";
       break;
     case "hebrew2Minus":
-      formattedNumber = hebrew2Minus.format(Number(num)) + "-";
+      formattedNumber = (hasNumericValue ? hebrew2Minus.format(numericValue) : fallback) + "-";
       break;
     default:
-      formattedNumber = String(num);
+      formattedNumber = fallback;
   }
 
   return formattedNumber;
