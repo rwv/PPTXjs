@@ -19,12 +19,9 @@ export function applySatMod({ colorValue, multiplier, isAlpha }: ApplySatModOpti
   const color = tinycolor(colorValue).toHsl();
 
   // Calculate new saturation
-  let saturationValue = color.s * multiplierValue;
-
-  // Clamp to max 1
-  if (saturationValue >= 1) {
-    saturationValue = 1;
-  }
+  const safeMultiplier = Number.isFinite(multiplierValue) ? multiplierValue : 1;
+  let saturationValue = color.s * safeMultiplier;
+  saturationValue = Math.min(1, Math.max(0, saturationValue));
 
   if (isAlpha) {
     return tinycolor({ h: color.h, s: saturationValue, l: color.l, a: color.a }).toHex8();
