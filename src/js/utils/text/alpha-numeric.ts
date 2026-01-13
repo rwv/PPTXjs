@@ -11,19 +11,19 @@ type AlphaNumericOptions = {
 };
 
 export function alphaNumeric({ num, letterCase }: AlphaNumericOptions): string {
-  const numValue = Number(num) - 1;
+  const parsed = Number(num);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return "";
+  }
+  const numValue = Math.floor(parsed) - 1;
   let alphaLabel = "";
+  const firstChar = numValue / 26 >= 1 ? String.fromCharCode(Math.floor(numValue / 26) + 64) : "";
+  const secondChar = String.fromCharCode((numValue % 26) + 65);
 
   if (letterCase === "upperCase") {
-    alphaLabel = (
-      (numValue / 26 >= 1 ? String.fromCharCode(numValue / 26 + 64) : "") +
-      String.fromCharCode((numValue % 26) + 65)
-    ).toUpperCase();
+    alphaLabel = (firstChar + secondChar).toUpperCase();
   } else if (letterCase === "lowerCase") {
-    alphaLabel = (
-      (numValue / 26 >= 1 ? String.fromCharCode(numValue / 26 + 64) : "") +
-      String.fromCharCode((numValue % 26) + 65)
-    ).toLowerCase();
+    alphaLabel = (firstChar + secondChar).toLowerCase();
   }
 
   return alphaLabel;
