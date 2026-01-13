@@ -27,12 +27,13 @@ export function renderBulletNumeric({
   bulletNumberType,
   level,
 }: RenderBulletNumericOptions): string {
+  const colorValue = bulletColor[0] ?? "000000";
   let bullet =
     "<div style='height: 100%;" +
     marginLeftStyle +
     marginRightStyle +
     "color:#" +
-    bulletColor[0] +
+    colorValue +
     ";" +
     "font-size:" +
     bulletSize +
