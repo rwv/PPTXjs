@@ -73,13 +73,23 @@ export function processSingleMsg(message: unknown): boolean {
     }
     case "scatterChart": {
       const scatterSeries: Array<{ key: string; values: Array<{ x: number; y: number }> }> = [];
-      const seriesData = chartData as Array<number[]>;
+      const seriesData = chartData as Array<unknown>;
       for (let seriesIndex = 0; seriesIndex < seriesData.length; seriesIndex += 1) {
-        const points: Array<{ x: number; y: number }> = [];
-        for (let pointIndex = 0; pointIndex < seriesData[seriesIndex].length; pointIndex += 1) {
-          points.push({ x: pointIndex, y: seriesData[seriesIndex][pointIndex] });
+        const series = seriesData[seriesIndex];
+        if (!Array.isArray(series)) {
+          continue;
         }
-        scatterSeries.push({ key: "data" + (seriesIndex + 1), values: points });
+        const points: Array<{ x: number; y: number }> = [];
+        for (let pointIndex = 0; pointIndex < series.length; pointIndex += 1) {
+          const yValue = Number(series[pointIndex]);
+          if (!Number.isFinite(yValue)) {
+            continue;
+          }
+          points.push({ x: pointIndex, y: yValue });
+        }
+        if (points.length > 0) {
+          scatterSeries.push({ key: "data" + (seriesIndex + 1), values: points });
+        }
       }
       chartDataset = scatterSeries;
 
