@@ -175,11 +175,7 @@ export async function processGroupSpNode({
   const zIndexOrder = Number.isFinite(zIndexParsed) ? zIndexParsed : 0;
 
   let htmlOutput =
-    "<div class='block group' style='z-index: " +
-    zIndexOrder +
-    ";" +
-    groupStyle +
-    " border:1px solid red;'>";
+    "<div class='block group' style='z-index: " + zIndexOrder + ";" + groupStyle + "'>";
 
   // Process all child nodes
   for (const nodeKey in groupNodeRecord) {
