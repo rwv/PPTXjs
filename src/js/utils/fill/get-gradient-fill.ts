@@ -34,8 +34,13 @@ export function getGradientFill({ gradientFillNode, warpContext }: GetGradientFi
     node: gradientFillNode,
     path: ["a:gsLst", "a:gs"],
   });
-  const gradientStops =
-    gradientStopsValue && isXmlNodeArray(gradientStopsValue) ? gradientStopsValue : [];
+  const gradientStops = gradientStopsValue
+    ? isXmlNodeArray(gradientStopsValue)
+      ? gradientStopsValue
+      : isXmlNode(gradientStopsValue)
+        ? [gradientStopsValue]
+        : []
+    : [];
   const colorStops: Array<string | undefined> = [];
   for (let i = 0; i < gradientStops.length; i++) {
     const solidFillColor = getSolidFill({
