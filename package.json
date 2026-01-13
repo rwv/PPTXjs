@@ -13,6 +13,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,js,json,md,css}\"",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
+    "build": "vite build",
     "prepare": "husky"
   },
   "keywords": [],

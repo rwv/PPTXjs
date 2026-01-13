@@ -7,6 +7,7 @@
 - test: `pnpm test`
 - test:ui: `pnpm test:ui`
 - test:watch: `pnpm test:watch`
+- build: `pnpm build`
 - format: `pnpm format`
 - format:check: `pnpm format:check`
 - lint: `pnpm lint`
