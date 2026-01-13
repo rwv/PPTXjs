@@ -42,6 +42,14 @@ export function getPregraphMargn({
     return ["", 0];
   }
 
+  const parseEmuValue = (value: string | number | undefined): number | undefined => {
+    if (value === undefined || value === null) {
+      return undefined;
+    }
+    const parsed = Number.parseInt(String(value), 10);
+    return Number.isFinite(parsed) ? parsed * emuToPx : undefined;
+  };
+
   let marginLeftStyle = "",
     marginValue = 0;
   const paragraphPropsNode = asXmlNode(paragraphNode["a:pPr"]);
@@ -104,7 +112,10 @@ export function getPregraphMargn({
   }
   let indent = 0;
   if (indentValueNode !== undefined) {
-    indent = parseInt(String(indentValueNode), 10) * emuToPx;
+    const parsedIndent = parseEmuValue(indentValueNode);
+    if (parsedIndent !== undefined) {
+      indent = parsedIndent;
+    }
   }
 
   // marL
@@ -129,7 +140,10 @@ export function getPregraphMargn({
   }
   let marginLeft = 0;
   if (marginLeftNode !== undefined) {
-    marginLeft = parseInt(String(marginLeftNode), 10) * emuToPx;
+    const parsedMargin = parseEmuValue(marginLeftNode);
+    if (parsedMargin !== undefined) {
+      marginLeft = parsedMargin;
+    }
   }
 
   if (indentValueNode !== undefined || marginLeftNode !== undefined) {
