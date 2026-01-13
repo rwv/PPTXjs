@@ -40,7 +40,10 @@ export function extractChartData({ seriesNodeData }: ExtractChartDataOptions) {
       node: xValueNodes,
       callback: function (pointEntry: XmlNode) {
         const value = getTextByPathList<string | number>({ node: pointEntry, path: ["c:v"] });
-        axisValues.push(parseFloat(String(value ?? "")));
+        const parsed = parseFloat(String(value ?? ""));
+        if (Number.isFinite(parsed)) {
+          axisValues.push(parsed);
+        }
         return "";
       },
     });
@@ -54,7 +57,10 @@ export function extractChartData({ seriesNodeData }: ExtractChartDataOptions) {
       node: yValueNodes,
       callback: function (pointEntry: XmlNode) {
         const value = getTextByPathList<string | number>({ node: pointEntry, path: ["c:v"] });
-        axisValues.push(parseFloat(String(value ?? "")));
+        const parsed = parseFloat(String(value ?? ""));
+        if (Number.isFinite(parsed)) {
+          axisValues.push(parsed);
+        }
         return "";
       },
     });
@@ -131,10 +137,11 @@ export function extractChartData({ seriesNodeData }: ExtractChartDataOptions) {
                 path: ["attrs", "idx"],
               });
               const value = getTextByPathList<string | number>({ node: pointEntry, path: ["c:v"] });
-              if (idx !== undefined && value !== undefined) {
+              const parsed = parseFloat(String(value ?? ""));
+              if (idx !== undefined && Number.isFinite(parsed)) {
                 seriesValues.push({
                   x: idx,
-                  y: parseFloat(String(value)),
+                  y: parsed,
                 });
               }
               return "";
