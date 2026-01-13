@@ -69,6 +69,9 @@ function pushSortableFillEntry({ list, key, entry }: PushSortableFillEntryOption
     return;
   }
   const idex = Number(order);
+  if (!Number.isFinite(idex)) {
+    return;
+  }
   const sortableEntry: SortableFillEntry = { [key]: entry, idex, attrs: { order } };
   list.push(sortableEntry);
 }
