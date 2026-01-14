@@ -84,7 +84,7 @@ export async function genChart({
   }
 
   let chartPayload = null;
-  for (const key in plotAreaNode) {
+  for (const key of Object.keys(plotAreaNode)) {
     const plotAreaEntry = plotAreaNode[key] as XmlNode;
     const seriesNodes = plotAreaEntry["c:ser"] as XmlNode | XmlNode[] | undefined;
     switch (key) {
