@@ -7,6 +7,9 @@ type RenderRectLikeOptions = {
 
 export function renderRectLike({ shapeType, params }: RenderRectLikeOptions): string {
   const { w, h, shpId, fillColor, grndFillFlg, imgFillFlg, border } = params;
+  if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) {
+    return "";
+  }
   let result = "";
   result +=
     "<rect x='0' y='0' width='" +
