@@ -102,7 +102,8 @@ export function processShapeEffects({
     const shadowDistancePx = parseInt(String(distanceValue ?? "0"), 10) * emuToPx; //(px) //* (3 / 4); //(pt)
     //var rotWithShape = outerShdwAttrs["rotWithShape"];
     const blurValue = outerShadowAttrs["blurRad"];
-    const blurRadiusPx = blurValue ? parseInt(String(blurValue), 10) * emuToPx : ""; //+ "px"
+    const parsedBlur = blurValue ? parseInt(String(blurValue), 10) * emuToPx : 0;
+    const blurRadiusPx = Number.isFinite(parsedBlur) ? parsedBlur : 0;
     //var sx = (outerShdwAttrs["sx"]) ? (parseInt(outerShdwAttrs["sx"]) / 100000) : 1;
     //var sy = (outerShdwAttrs["sy"]) ? (parseInt(outerShdwAttrs["sy"]) / 100000) : 1;
     const offsetY = shadowDistancePx * Math.sin((directionDegrees * Math.PI) / 180);
@@ -123,25 +124,27 @@ export function processShapeEffects({
     //result += shadowFilterStr;
 
     //css:
-    let svgShadowStyle =
-      "filter:drop-shadow(" +
-      offsetX +
-      "px " +
-      offsetY +
-      "px " +
-      blurRadiusPx +
-      "px #" +
-      shadowColor +
-      ");";
+    if (shadowColor) {
+      let svgShadowStyle =
+        "filter:drop-shadow(" +
+        offsetX +
+        "px " +
+        offsetY +
+        "px " +
+        blurRadiusPx +
+        "px #" +
+        shadowColor +
+        ");";
 
-    if (svgShadowStyle in styleTable) {
-      svgShadowStyle += "do-nothing: " + svgClassName + ";";
+      if (svgShadowStyle in styleTable) {
+        svgShadowStyle += "do-nothing: " + svgClassName + ";";
+      }
+
+      styleTable[svgShadowStyle] = {
+        name: effectsClassName,
+        text: svgShadowStyle,
+      };
     }
-
-    styleTable[svgShadowStyle] = {
-      name: effectsClassName,
-      text: svgShadowStyle,
-    };
   }
   ////////////////////////////////////////////////////////////////////////////////////////
 
