@@ -11,6 +11,9 @@ type GetBase64ImageDimensionsOptions = {
 export function getBase64ImageDimensions({
   imgSrc,
 }: GetBase64ImageDimensionsOptions): [number, number] {
+  if (!imgSrc.trim()) {
+    return [1, 1];
+  }
   const base64Match = imgSrc.match(/base64,(.*)$/);
   const base64Data = (base64Match ? base64Match[1] : imgSrc).replace(/\s/g, "");
 
