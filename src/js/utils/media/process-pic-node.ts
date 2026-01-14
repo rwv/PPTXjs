@@ -127,6 +127,10 @@ export async function processPicNode({
   let isMediaSupported = false;
   let isVideoLinkSource = false;
   const shouldProcessMedia = renderSettings.mediaProcess;
+  const canCreateObjectUrl =
+    typeof URL !== "undefined" &&
+    typeof URL.createObjectURL === "function" &&
+    typeof Blob !== "undefined";
   if (videoNode !== undefined && shouldProcessMedia) {
     const videoRelationshipIdValue = videoNode.attrs?.["r:link"];
     if (videoRelationshipIdValue !== undefined) {
@@ -150,12 +154,14 @@ export async function processPicNode({
           }
           videoArrayBuffer = await videoArchiveFile.arrayBuffer();
           videoMimeType = getMimeType({ fileExtension: videoExtension });
-          videoBlob = new Blob([videoArrayBuffer], {
-            type: videoMimeType,
-          });
-          videoObjectUrl = URL.createObjectURL(videoBlob);
-          isMediaSupported = true;
-          hasMediaAsset = true;
+          if (canCreateObjectUrl) {
+            videoBlob = new Blob([videoArrayBuffer], {
+              type: videoMimeType,
+            });
+            videoObjectUrl = URL.createObjectURL(videoBlob);
+            isMediaSupported = true;
+            hasMediaAsset = true;
+          }
         }
       }
     }
@@ -186,9 +192,11 @@ export async function processPicNode({
           throw new Error(`File not found in archive: ${audioPath}`);
         }
         audioArrayBuffer = await audioArchiveFile.arrayBuffer();
-        audioBlob = new Blob([audioArrayBuffer]);
-        audioObjectUrl = URL.createObjectURL(audioBlob);
-        if (transformPropertiesNode) {
+        if (canCreateObjectUrl) {
+          audioBlob = new Blob([audioArrayBuffer]);
+          audioObjectUrl = URL.createObjectURL(audioBlob);
+        }
+        if (transformPropertiesNode && canCreateObjectUrl) {
           const extentAttributes = asXmlNode(transformPropertiesNode["a:ext"])?.attrs;
           const offsetAttributes = asXmlNode(transformPropertiesNode["a:off"])?.attrs;
           if (extentAttributes && offsetAttributes) {
