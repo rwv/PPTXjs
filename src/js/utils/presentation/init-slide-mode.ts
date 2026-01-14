@@ -54,6 +54,9 @@ type InitSlideModeOptions = {
 
 export async function initSlideMode({ divId, settings }: InitSlideModeOptions): Promise<void> {
   //console.log(settings.slideType)
+  if (typeof document === "undefined") {
+    return;
+  }
   if (settings.slideType === "" || settings.slideType === "divs2slidesjs") {
     const container = document.getElementById(divId);
     if (!container) {
