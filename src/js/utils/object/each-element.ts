@@ -15,7 +15,7 @@ type EachElementOptions<T> = {
 };
 
 export function eachElement<T>({ node, callback }: EachElementOptions<T>): string {
-  if (node === undefined) {
+  if (node === undefined || node === null) {
     return "";
   }
 
