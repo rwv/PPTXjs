@@ -39,20 +39,24 @@ export async function renderBulletPic({
   let bulletImageHtml = "";
 
   if (bulletPicId !== undefined) {
-    const imgPath = warpContext["slideResObj"][bulletPicId]["target"];
-    const imgFile = await warpContext.archive.file(imgPath);
-    if (!imgFile) {
+    const imgPath = warpContext.slideResObj?.[bulletPicId]?.target;
+    if (!imgPath) {
       bulletImageHtml = "&#8227;";
     } else {
-      const imgArrayBuffer = await imgFile.arrayBuffer();
-      const imgExt = imgPath.split(".").pop() ?? "";
-      const imgMimeType = getMimeType({ fileExtension: imgExt });
-      bulletImageHtml =
-        "<img src='data:" +
-        imgMimeType +
-        ";base64," +
-        base64ArrayBuffer({ arrayBuffer: imgArrayBuffer }) +
-        "' style='width: 100%;'/>";
+      const imgFile = await warpContext.archive.file(imgPath);
+      if (!imgFile) {
+        bulletImageHtml = "&#8227;";
+      } else {
+        const imgArrayBuffer = await imgFile.arrayBuffer();
+        const imgExt = imgPath.split(".").pop() ?? "";
+        const imgMimeType = getMimeType({ fileExtension: imgExt });
+        bulletImageHtml =
+          "<img src='data:" +
+          imgMimeType +
+          ";base64," +
+          base64ArrayBuffer({ arrayBuffer: imgArrayBuffer }) +
+          "' style='width: 100%;'/>";
+      }
     }
   }
 
