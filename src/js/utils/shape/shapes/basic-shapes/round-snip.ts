@@ -10,6 +10,9 @@ type RenderRoundSnipRectOptions = {
 
 export function renderRoundSnipRect({ shapeType, params }: RenderRoundSnipRectOptions): string {
   const { node, w, h, shpId, fillColor, grndFillFlg, imgFillFlg, border } = params;
+  if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) {
+    return "";
+  }
   let result = "";
   const shapAdjst = getTextByPathList<XmlNode | XmlNode[]>({
     node: node,
