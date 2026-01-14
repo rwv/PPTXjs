@@ -7,6 +7,9 @@ type RenderEllipseLikeOptions = {
 
 export function renderEllipseLike({ shapeType, params }: RenderEllipseLikeOptions): string {
   const { w, h, shpId, fillColor, grndFillFlg, imgFillFlg, border } = params;
+  if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) {
+    return "";
+  }
   let result = "";
   result +=
     "<ellipse cx='" +
