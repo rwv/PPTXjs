@@ -172,10 +172,15 @@ export async function genBuChar({
       //dfltBultSize = XXpt
       //var dfltBultSizeNoPt = dfltBultSize.substr(0, dfltBultSize.length - 2);
       const defaultBulletSizeValue = parsePxValue(defaultBulletSize);
-      bulletSize = scaleFraction * defaultBulletSizeValue + "px"; // + "pt";
+      if (Number.isFinite(defaultBulletSizeValue)) {
+        bulletSize = scaleFraction * defaultBulletSizeValue + "px"; // + "pt";
+      }
     }
   } else {
-    bulletSize = (parseIntValue(bulletFontSize) / 100) * fontSizeScale + "px";
+    const bulletSizeValue = parseIntValue(bulletFontSize);
+    if (Number.isFinite(bulletSizeValue)) {
+      bulletSize = (bulletSizeValue / 100) * fontSizeScale + "px";
+    }
   }
 
   //get definde bullet COLOR
