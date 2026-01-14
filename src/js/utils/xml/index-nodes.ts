@@ -66,7 +66,7 @@ export function indexNodes({ content }: IndexNodesOptions): {
     }
   };
 
-  for (const nodeKey in shapeTreeNode) {
+  for (const nodeKey of Object.keys(shapeTreeNode)) {
     if (nodeKey === "p:nvGrpSpPr" || nodeKey === "p:grpSpPr") {
       continue;
     }
