@@ -121,7 +121,9 @@ export function renderBulletChar({
   }
 
   // IE11 compatibility check
+  const hasDom = typeof window !== "undefined" && typeof document !== "undefined";
   const isIE11 =
+    hasDom &&
     !!(window as { MSInputMethodContext?: unknown }).MSInputMethodContext &&
     !!(document as Document & { documentMode?: unknown }).documentMode;
   let bulletHtml = bulletChar;
